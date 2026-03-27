@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 define('BASE_PATH', dirname(__DIR__));
 
-require BASE_PATH . '/vendor/autoload.php';
+require BASE_PATH . '/app/autoload.php';
 
 $app = new App\Core\App();
 $app->run();

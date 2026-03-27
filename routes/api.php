@@ -3,15 +3,7 @@
 $router->group(['prefix' => 'api'], function($router) {
 
     // --- Health check ---
-    $router->get('/health', function() {
-        header('Content-Type: application/json');
-        echo json_encode([
-            'status' => 'ok',
-            'version' => '1.0.0',
-            'timestamp' => date('c'),
-        ]);
-        exit;
-    });
+    $router->get('/health', '{"status":"ok","version":"1.0.0"}');
 
     // --- Future API v1 routes ---
     // These routes will require API authentication (token-based).

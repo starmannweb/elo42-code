@@ -56,7 +56,13 @@ if (!function_exists('e')) {
 if (!function_exists('url')) {
     function url(string $path = ''): string
     {
-        $base = rtrim(env('APP_URL', 'http://localhost'), '/');
+        $appUrl = env('APP_URL', '');
+        if (empty($appUrl)) {
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $appUrl = $scheme . '://' . $host;
+        }
+        $base = rtrim($appUrl, '/');
         return $base . '/' . ltrim($path, '/');
     }
 }

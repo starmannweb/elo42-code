@@ -77,22 +77,11 @@ class App
 
     private function handleException(\Exception $e): void
     {
-        $logger = new \App\Support\Logger();
-        $logger->error($e->getMessage(), [
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString(),
-        ]);
-
-        if (env('APP_DEBUG', false)) {
-            http_response_code(500);
-            echo '<h1>Error</h1>';
-            echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
-            echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
-        } else {
-            http_response_code(500);
-            echo '<h1>Erro interno</h1>';
-            echo '<p>Ocorreu um erro inesperado. Tente novamente mais tarde.</p>';
-        }
+        http_response_code(500);
+        echo '<h1>Error Debug</h1>';
+        echo '<p><strong>Message:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
+        echo '<p><strong>File:</strong> ' . htmlspecialchars($e->getFile()) . '</p>';
+        echo '<p><strong>Line:</strong> ' . $e->getLine() . '</p>';
+        echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
     }
 }

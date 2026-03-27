@@ -2,8 +2,6 @@
 
 use App\Core\Router;
 
-$router = Router::getInstance();
-
 $router->group(['middleware' => ['auth', 'csrf', 'admin']], function (Router $r) {
 
     // Dashboard
