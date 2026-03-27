@@ -5,6 +5,7 @@ spl_autoload_register(function ($class) {
     $prefixes = [
         'App\\' => __DIR__ . '/',
         'Modules\\' => dirname(__DIR__) . '/modules/',
+        'Database\\' => dirname(__DIR__) . '/database/',
     ];
     
     foreach ($prefixes as $prefix => $base_dir) {

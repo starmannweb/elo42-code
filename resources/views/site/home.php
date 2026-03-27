@@ -4,29 +4,43 @@
 
 <!-- Hero -->
 <section class="hero">
+    <div class="hero__bg"></div>
     <div class="hero__overlay"></div>
     <div class="container">
         <div class="hero__content">
+            <div class="hero__badge">✦ Plataforma para igrejas e organizações</div>
+
             <h1 class="hero__title">
-                Mais impacto, menos custo:<br>
-                <span>tecnologia a serviço da missão.</span>
+                Menos improviso.<br>
+                Mais <span>gestão, tecnologia e impacto</span> para a sua missão.
             </h1>
 
             <p class="hero__subtitle">
-                Um passo a passo guiado (com área de membros e suporte) para você ser aprovado, ativar
-                benefícios e reduzir custos com ferramentas essenciais.
-            </p>
-
-            <p class="hero__description">
-                O Hub Elo 42 reúne gestão, tecnologia, benefícios e consultoria para
-                transformar a administração da sua igreja. Conectando propósito e impacto.
+                A Elo 42 reúne implantação, benefícios, suporte e gestão em uma plataforma feita
+                para igrejas e organizações que precisam operar com mais ordem, clareza e eficiência.
             </p>
 
             <div class="hero__actions">
                 <a href="<?= url('/contato') ?>" class="btn btn--hero">
-                    Quero falar com um especialista
+                    Falar com um especialista
                     <span class="btn__arrow">↗</span>
                 </a>
+                <a href="<?= url('/plataforma') ?>" class="btn btn--secondary btn--lg">Conhecer a plataforma</a>
+            </div>
+
+            <div class="hero__stats">
+                <div>
+                    <div class="hero__stat-value">100%</div>
+                    <div class="hero__stat-label">Centralizado</div>
+                </div>
+                <div>
+                    <div class="hero__stat-value">6+</div>
+                    <div class="hero__stat-label">Módulos integrados</div>
+                </div>
+                <div>
+                    <div class="hero__stat-value">24/7</div>
+                    <div class="hero__stat-label">Suporte disponível</div>
+                </div>
             </div>
         </div>
     </div>

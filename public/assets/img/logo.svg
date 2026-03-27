@@ -1,3 +1,13 @@
-<svg width="140" height="40" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
-  <text x="5" y="30" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#D4A256">Elo 42</text>
+<svg width="160" height="50" viewBox="0 0 160 50" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4A256"/>
+      <stop offset="100%" style="stop-color:#E8B84A"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="4" width="36" height="32" rx="6" fill="none" stroke="url(#gold)" stroke-width="2.5"/>
+  <text x="8" y="30" font-family="'Saira', Arial, sans-serif" font-size="22" font-weight="800" fill="url(#gold)" letter-spacing="-1">E</text>
+  <text x="20" y="30" font-family="'Saira', Arial, sans-serif" font-size="22" font-weight="800" fill="url(#gold)" letter-spacing="-1">lo</text>
+  <text x="46" y="30" font-family="'Saira', Arial, sans-serif" font-size="22" font-weight="800" fill="url(#gold)" letter-spacing="-1">42</text>
+  <text x="2" y="46" font-family="'Saira', Arial, sans-serif" font-size="7" fill="#D4A256" opacity="0.7" letter-spacing="0.5">Conectando propósito e impacto</text>
 </svg>
