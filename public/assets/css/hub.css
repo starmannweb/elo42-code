@@ -7,6 +7,17 @@
     display: flex;
     min-height: 100vh;
     background: var(--color-bg-light);
+    font-family: 'Inter', sans-serif;
+}
+
+.hub-layout h1,
+.hub-layout h2,
+.hub-layout h3,
+.hub-layout h4,
+.hub-layout h5,
+.hub-layout h6,
+.hub-layout .font-heading {
+    font-family: 'Inter', sans-serif;
 }
 
 .hub-sidebar {
@@ -46,11 +57,17 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-lg);
     font-weight: 800;
     color: var(--color-white);
     text-decoration: none;
+}
+
+.hub-sidebar__logo img {
+    max-height: 32px;
+    width: auto;
+    object-fit: contain;
 }
 
 .hub-sidebar__nav {
@@ -229,7 +246,7 @@
 }
 
 .dashboard-greeting__title {
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-3xl);
     font-weight: 800;
     color: var(--color-text-primary);
@@ -314,7 +331,7 @@
 }
 
 .status-card__value {
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-2xl);
     font-weight: 800;
     color: var(--color-text-primary);
@@ -328,7 +345,7 @@
 
 /* --- Quick actions --- */
 .dashboard-section__title {
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-lg);
     font-weight: 700;
     color: var(--color-text-primary);

@@ -8,6 +8,12 @@
     display: flex;
 }
 
+.auth-page *,
+.auth-page *::before,
+.auth-page *::after {
+    box-sizing: border-box;
+}
+
 .auth-page__sidebar {
     flex: 0 0 480px;
     background: linear-gradient(165deg, #020A1A 0%, var(--color-deep-blue) 50%, #0D2B5E 100%);
@@ -52,6 +58,12 @@
     margin-bottom: var(--space-12);
     position: relative;
     z-index: 2;
+}
+
+.auth-sidebar__logo img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
 }
 
 .auth-sidebar__title {
@@ -118,11 +130,12 @@
     justify-content: center;
     padding: var(--space-10);
     background: var(--color-bg-light);
+    overflow-y: auto;
 }
 
 .auth-form-container {
     width: 100%;
-    max-width: 480px;
+    max-width: 520px;
 }
 
 .auth-form-container__header {
@@ -144,9 +157,10 @@
 /* --- Auth Form --- */
 .auth-form {
     background: var(--color-white);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-xl);
-    padding: var(--space-8);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-10);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
 .auth-form .form-group {
@@ -155,8 +169,17 @@
 
 .auth-form .form-input,
 .auth-form .form-select {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9375rem;
+    color: var(--color-text-primary);
     background: var(--color-bg-light);
-    border-color: var(--color-border-light);
+    border: 1.5px solid var(--color-border-light);
+    border-radius: 12px;
+    outline: none;
+    transition: all 150ms ease;
 }
 
 .auth-form .form-input:focus,
@@ -164,6 +187,15 @@
     background: var(--color-white);
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(10, 77, 255, 0.1);
+}
+
+.auth-form .form-label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 6px;
 }
 
 .auth-form__row {
@@ -181,6 +213,8 @@
     padding: var(--space-4);
     font-size: var(--text-base);
     font-weight: 700;
+    border-radius: var(--radius-xl);
+    letter-spacing: 0.02em;
 }
 
 .auth-form__footer {
@@ -240,29 +274,127 @@
 }
 
 /* --- Password Toggle --- */
-.form-password {
+.auth-form .form-password {
     position: relative;
 }
 
-.form-password .form-input {
-    padding-right: var(--space-12);
+.auth-form .form-password .form-input {
+    padding-right: 48px;
+}
+
+.auth-form .form-password .form-input::placeholder {
+    font-size: 0.875rem;
 }
 
 .form-password__toggle {
     position: absolute;
-    right: var(--space-3);
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     cursor: pointer;
-    font-size: var(--text-sm);
     color: var(--color-text-muted);
-    padding: var(--space-2);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 .form-password__toggle:hover {
     color: var(--color-primary);
+}
+
+.form-password__toggle svg {
+    display: block;
+}
+
+/* --- Legal Modals --- */
+.legal-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.legal-modal.active {
+    display: flex;
+}
+
+.legal-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.legal-modal__content {
+    position: relative;
+    background: var(--color-white);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 640px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.legal-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.legal-modal__header h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.legal-modal__close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+    border-radius: 8px;
+    transition: all 150ms ease;
+}
+
+.legal-modal__close:hover {
+    background: var(--color-bg-light);
+    color: var(--color-text-primary);
+}
+
+.legal-modal__body {
+    padding: 24px;
+    overflow-y: auto;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+.legal-modal__body h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-top: 20px;
+    margin-bottom: 6px;
+}
+
+.legal-modal__body p {
+    margin-bottom: 10px;
 }
 
 /* --- Onboarding Steps Header --- */

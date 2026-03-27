@@ -10,6 +10,17 @@ class Session
     {
         if (session_status() === PHP_SESSION_NONE) {
             $config = config('session', []);
+            $sessionPath = $config['path'] ?? null;
+
+            if (is_string($sessionPath) && $sessionPath !== '') {
+                if (!is_dir($sessionPath)) {
+                    mkdir($sessionPath, 0775, true);
+                }
+
+                if (is_dir($sessionPath) && is_writable($sessionPath)) {
+                    session_save_path($sessionPath);
+                }
+            }
 
             session_name($config['name'] ?? 'elo42_session');
 

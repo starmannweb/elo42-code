@@ -3,7 +3,7 @@
 <?php $__view->section('content'); ?>
 
 <!-- Hero -->
-<section class="hero">
+<section class="hero" id="inicio">
     <div class="hero__bg"></div>
     <div class="hero__overlay"></div>
     <div class="container">
@@ -21,11 +21,23 @@
             </p>
 
             <div class="hero__actions">
-                <a href="<?= url('/contato') ?>" class="btn btn--hero">
-                    Falar com um especialista
-                    <span class="btn__arrow">↗</span>
-                </a>
-                <a href="<?= url('/plataforma') ?>" class="btn btn--secondary btn--lg">Conhecer a plataforma</a>
+                <div class="glowbox glowbox-active">
+                    <div class="glowbox-animations">
+                        <div class="glowbox-glow"></div>
+                        <div class="glowbox-stars-masker">
+                            <div class="glowbox-stars"></div>
+                        </div>
+                    </div>
+                    <div class="glowbox-borders-masker">
+                        <div class="glowbox-borders"></div>
+                    </div>
+                    <a href="#servicos">
+                        <div class="btn-cta-box">
+                            <div class="btn-cta">Quero falar com um especialista</div>
+                            <img src="https://zeph.com.br/wp-content/uploads/2023/12/seta-2.svg" class="arrow-icon" alt="Seta" />
+                        </div>
+                    </a>
+                </div>
             </div>
 
             <div class="hero__stats">
@@ -46,8 +58,8 @@
     </div>
 </section>
 
-<!-- O que é o Elo 42? -->
-<section class="section">
+<!-- Sobre -->
+<section class="section" id="sobre">
     <div class="container">
         <div class="section__header animate-on-scroll">
             <span class="section__badge">✦ Sobre a plataforma</span>
@@ -85,11 +97,11 @@
     </div>
 </section>
 
-<!-- Soluções em Cards -->
-<section class="section section--light">
+<!-- Serviços — Bento Grid -->
+<section class="section section--dark" id="servicos">
     <div class="container">
         <div class="section__header animate-on-scroll">
-            <span class="section__badge">✦ Soluções</span>
+            <span class="section__badge">✦ Serviços</span>
             <h2 class="section__title">Um ecossistema completo para a sua operação</h2>
             <p class="section__subtitle">
                 Cada módulo do Elo 42 resolve um problema real. Juntos, eles formam a base operacional
@@ -97,66 +109,72 @@
             </p>
         </div>
 
-        <div class="grid grid--3 animate-on-scroll">
-            <div class="card">
-                <div class="card__icon">🏠</div>
-                <h3 class="card__title">Central Elo 42</h3>
-                <p class="card__text">
-                    O hub central onde líderes e gestores acessam todos os recursos, relatórios e acompanhamentos da organização em tempo real.
-                </p>
-                <span class="card__tag">Para gestores e líderes</span>
-            </div>
+        <div class="bento-grid animate-on-scroll">
+            <!-- 1. Central Elo 42 — tall com imagem -->
+            <a href="<?= url('/servico/central-elo42') ?>" class="bento-card bento-card--tall">
+                <div class="bento-card__icon bento-card__icon--bolt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                <h3 class="bento-card__title">Central Elo 42</h3>
+                <p class="bento-card__text">O hub central onde líderes e gestores acessam todos os recursos, relatórios e acompanhamentos da organização em tempo real.</p>
+                <div class="bento-card__image bento-card__image--cover bento-card__image--central">
+                    <img src="<?= url('/assets/img/dashboard.png') ?>" alt="Central Elo 42" />
+                </div>
+            </a>
 
-            <div class="card">
-                <div class="card__icon">⚙️</div>
-                <h3 class="card__title">Plataforma de Gestão</h3>
-                <p class="card__text">
-                    Cadastro de membros, controle financeiro, agenda de eventos, grupos, comunicação interna e relatórios em um só lugar.
-                </p>
-                <span class="card__tag">Para a operação diária</span>
-            </div>
+            <!-- 2. Plataforma de Gestão — large card com imagem -->
+            <a href="<?= url('/servico/plataforma-gestao') ?>" class="bento-card bento-card--large bento-card--accent">
+                <div class="bento-card__body">
+                    <div class="bento-card__icon bento-card__icon--check"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <h3 class="bento-card__title">Plataforma de Gestão</h3>
+                    <p class="bento-card__text">Cadastro de membros, controle financeiro, agenda de eventos, grupos, comunicação interna e relatórios em um só lugar.</p>
+                </div>
+                <div class="bento-card__image">
+                    <img src="<?= url('/assets/img/dashboard.png') ?>" alt="Plataforma de Gestão" />
+                </div>
+            </a>
 
-            <div class="card">
-                <div class="card__icon">🎁</div>
-                <h3 class="card__title">Benefícios e Programas</h3>
-                <p class="card__text">
-                    Programas exclusivos, convênios, capacitações e vantagens para membros e colaboradores vinculados à sua organização.
-                </p>
-                <span class="card__tag">Para membros e equipe</span>
-            </div>
+            <!-- 3. Google Ad Grants / Nonprofits — tall com imagem -->
+            <a href="<?= url('/servico/google-ad-grants') ?>" class="bento-card bento-card--tall">
+                <div class="bento-card__image bento-card__image--cover" style="height: 240px; margin-bottom: 24px; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fff;">
+                    <img src="<?= url('/assets/img/ads.png') ?>" alt="Google para Nonprofits" style="width: auto; height: 100%; object-fit: contain; max-width: 100%;" />
+                </div>
+                <div class="bento-card__icon bento-card__icon--megaphone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
+                <h3 class="bento-card__title">Google para Nonprofits</h3>
+                <p class="bento-card__text">Alcance mais pessoas com até US$ 10.000/mês em anúncios gratuitos do Google Ad Grants, estruturamos campanhas focadas no seu ministério.</p>
+            </a>
 
-            <div class="card">
-                <div class="card__icon">📦</div>
-                <h3 class="card__title">Hub de Implantação</h3>
-                <p class="card__text">
-                    Acompanhamento passo a passo da implantação. Checklists, marcos, reuniões e documentação para cada fase do processo.
-                </p>
-                <span class="card__tag">Para novas organizações</span>
-            </div>
+            <!-- 4. Expositor de IA -->
+            <a href="<?= url('/servico/hokmah-expositor') ?>" class="bento-card">
+                <div class="bento-card__icon bento-card__icon--book"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+                <h3 class="bento-card__title">Expositor de IA</h3>
+                <p class="bento-card__text">Ambiente de aprofundamento exegético com IA para pastores — onde a exegese vem primeiro e o sermão nasce do texto.</p>
+            </a>
 
-            <div class="card">
-                <div class="card__icon">💡</div>
-                <h3 class="card__title">Consultoria</h3>
-                <p class="card__text">
-                    Consultoria estratégica e operacional sob medida para organizações que precisam de orientação qualificada e contínua.
-                </p>
-                <span class="card__tag">Para líderes e diretoria</span>
-            </div>
+            <!-- 5. Consultoria -->
+            <a href="<?= url('/servico/consultoria') ?>" class="bento-card bento-card--accent">
+                <div class="bento-card__icon bento-card__icon--lightbulb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></div>
+                <h3 class="bento-card__title">Consultoria <span class="bento-badge">(em breve)</span></h3>
+                <p class="bento-card__text">Consultoria estratégica e operacional sob medida para organizações que precisam de orientação qualificada e contínua.</p>
+            </a>
 
-            <div class="card">
-                <div class="card__icon">🌐</div>
-                <h3 class="card__title">Sites prontos</h3>
-                <p class="card__text">
-                    Sites profissionais e responsivos, prontos para publicação, com a identidade visual e informações da sua organização.
-                </p>
-                <span class="card__tag">Para presença digital</span>
-            </div>
+            <!-- 6. Sites prontos — wide com imagem lateral -->
+            <a href="<?= url('/servico/sites-prontos') ?>" class="bento-card bento-card--wide">
+                <div class="bento-card__content-row">
+                    <div>
+                        <div class="bento-card__icon bento-card__icon--globe"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                        <h3 class="bento-card__title">Sites para Igrejas</h3>
+                        <p class="bento-card__text">Sites profissionais e responsivos, prontos para publicação, com a identidade visual e informações da sua organização.</p>
+                    </div>
+                    <div class="bento-card__image bento-card__image--side" style="display: flex; align-items: center; justify-content: center; background: transparent; padding-top: 20px;">
+                        <img src="<?= url('/assets/img/ipporto.png') ?>" alt="Sites para Igrejas" style="width: auto; height: 100%; object-fit: contain; max-width: 100%; transform: scale(1.1); transform-origin: right bottom;" />
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 </section>
 
-<!-- Como funciona -->
-<section class="section">
+<!-- Projetos / Como funciona -->
+<section class="section" id="projetos">
     <div class="container">
         <div class="section__header animate-on-scroll">
             <span class="section__badge">✦ Como funciona</span>
@@ -168,9 +186,9 @@
 
         <div class="steps animate-on-scroll">
             <div class="steps__tabs">
-                <button class="steps__tab active" data-target="step-1">1. Cadastre-se</button>
-                <button class="steps__tab" data-target="step-2">2. Ative seus recursos</button>
-                <button class="steps__tab" data-target="step-3">3. Centralize tudo</button>
+                <button class="steps__tab active" data-target="step-1">Cadastre-se</button>
+                <button class="steps__tab" data-target="step-2">Ative seus recursos</button>
+                <button class="steps__tab" data-target="step-3">Centralize tudo</button>
             </div>
 
             <div id="step-1" class="steps__content active">
@@ -218,8 +236,8 @@
     </div>
 </section>
 
-<!-- Diferenciais -->
-<section class="section section--dark">
+<!-- Funcionalidades -->
+<section class="section section--dark" id="funcionalidades">
     <div class="container">
         <div class="section__header animate-on-scroll">
             <span class="section__badge">✦ Diferenciais</span>
@@ -279,7 +297,7 @@
 </section>
 
 <!-- FAQ -->
-<section class="section">
+<section class="section" id="faq">
     <div class="container">
         <div class="section__header animate-on-scroll">
             <span class="section__badge">✦ FAQ</span>
@@ -370,8 +388,24 @@
                 da sua organização com tecnologia, acompanhamento e clareza.
             </p>
             <div class="cta-section__actions">
-                <a href="<?= url('/contato') ?>" class="btn btn--gold btn--lg">Falar com um especialista</a>
-                <a href="<?= url('/cadastro') ?>" class="btn btn--secondary btn--lg">Criar minha conta</a>
+                <div class="glowbox glowbox-active glowbox--gold">
+                    <div class="glowbox-animations">
+                        <div class="glowbox-glow"></div>
+                        <div class="glowbox-stars-masker">
+                            <div class="glowbox-stars"></div>
+                        </div>
+                    </div>
+                    <div class="glowbox-borders-masker">
+                        <div class="glowbox-borders"></div>
+                    </div>
+                    <a href="<?= url('/contato') ?>">
+                        <div class="btn-cta-box">
+                            <div class="btn-cta">Falar com um especialista</div>
+                            <img src="https://zeph.com.br/wp-content/uploads/2023/12/seta-2.svg" class="arrow-icon" alt="Seta" />
+                        </div>
+                    </a>
+                </div>
+                <a href="<?= url('/cadastro') ?>" class="btn btn--outline-light btn--lg">Criar minha conta</a>
             </div>
         </div>
     </div>

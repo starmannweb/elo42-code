@@ -18,7 +18,7 @@
     <div class="auth-page">
         <aside class="auth-page__sidebar">
             <a href="<?= url('/') ?>" class="auth-sidebar__logo">
-                <img src="<?= url('/assets/img/logo.svg') ?>" alt="Elo 42" height="32">
+                <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="32" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
             </a>
 
             <h1 class="auth-sidebar__title">

@@ -26,6 +26,26 @@
     <?= $__view->partial('footer') ?>
 
     <button class="scroll-top" aria-label="Voltar ao topo">&uarr;</button>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale conosco pelo WhatsApp">
+        <div id="whatsapp-lottie"></div>
+    </a>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
     <script src="<?= asset('js/app.js') ?>"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('whatsapp-lottie')) {
+                lottie.loadAnimation({
+                    container: document.getElementById('whatsapp-lottie'),
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    path: '<?= asset('data/whatsapp-lottie.json') ?>'
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -247,3 +247,96 @@
         padding: var(--space-8) 0;
     }
 }
+
+/* --- Service Page --- */
+.service-content {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-12);
+    align-items: start;
+}
+
+.service-content__description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+    margin-bottom: var(--space-10);
+}
+
+.service-features__title {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-6);
+}
+
+.service-features__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.service-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--color-bg-light);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-base);
+    color: var(--color-text-primary);
+    line-height: 1.5;
+}
+
+.service-feature-item__icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-sm);
+    font-weight: 700;
+}
+
+.service-cta-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-6));
+}
+
+.service-cta-card__title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+}
+
+.service-cta-card__text {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-6);
+}
+
+.service-back {
+    margin-top: var(--space-4);
+    text-align: center;
+}
+
+@media (max-width: 1024px) {
+    .service-content {
+        grid-template-columns: 1fr;
+    }
+    .service-cta-card {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .service-features__grid {
+        grid-template-columns: 1fr;
+    }
+}

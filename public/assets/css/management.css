@@ -13,7 +13,7 @@
 }
 
 .mgmt-header__title {
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-2xl);
     font-weight: 800;
     color: var(--color-text-primary);
@@ -73,7 +73,7 @@
 .mgmt-stat__icon--teal   { background: rgba(20, 184, 166, 0.08); }
 
 .mgmt-stat__value {
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-xl);
     font-weight: 800;
     color: var(--color-text-primary);
@@ -249,7 +249,7 @@
 }
 
 .mgmt-form-card__title {
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-lg);
     font-weight: 700;
     color: var(--color-text-primary);
@@ -350,7 +350,7 @@
 }
 
 .financial-summary__value {
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-2xl);
     font-weight: 800;
     margin-top: var(--space-2);
@@ -478,7 +478,7 @@
 }
 
 .mgmt-empty__title {
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-lg);
     font-weight: 700;
     color: var(--color-text-primary);
@@ -536,7 +536,7 @@
 }
 
 .confirm-modal__title {
-    font-family: var(--font-heading);
+    font-family: 'Inter', sans-serif;
     font-size: var(--text-lg);
     font-weight: 700;
     margin-bottom: var(--space-2);

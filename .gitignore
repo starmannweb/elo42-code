@@ -3,9 +3,11 @@
 /storage/logs/*
 /storage/uploads/*
 /storage/cache/*
+/storage/sessions/*
 !storage/logs/.gitkeep
 !storage/uploads/.gitkeep
 !storage/cache/.gitkeep
+!storage/sessions/.gitkeep
 *.log
 .DS_Store
 Thumbs.db

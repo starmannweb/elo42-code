@@ -15,9 +15,13 @@ class Request
 
     public function uri(): string
     {
-        $uri = $_GET['url'] ?? '';
+        if (!empty($_GET['url'])) {
+            $uri = $_GET['url'];
+        } else {
+            $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+        }
         $uri = '/' . trim($uri, '/');
-        return strtok($uri, '?') ?: '/';
+        return $uri === '/' ? '/' : rtrim($uri, '/');
     }
 
     public function input(string $key, mixed $default = null): mixed

@@ -3,20 +3,24 @@
  */
 document.addEventListener('DOMContentLoaded', function() {
 
-    // --- Password toggle ---
+    // --- Password toggle (eye icon) ---
     document.querySelectorAll('[data-toggle-password]').forEach(button => {
         button.addEventListener('click', function() {
             const inputId = this.dataset.togglePassword;
             const input = document.getElementById(inputId);
-
             if (!input) return;
+
+            const eyeOpen = this.querySelector('.icon-eye');
+            const eyeOff = this.querySelector('.icon-eye-off');
 
             if (input.type === 'password') {
                 input.type = 'text';
-                this.textContent = 'Ocultar';
+                if (eyeOpen) eyeOpen.style.display = 'none';
+                if (eyeOff) eyeOff.style.display = 'block';
             } else {
                 input.type = 'password';
-                this.textContent = 'Mostrar';
+                if (eyeOpen) eyeOpen.style.display = 'block';
+                if (eyeOff) eyeOff.style.display = 'none';
             }
         });
     });

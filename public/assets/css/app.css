@@ -50,7 +50,7 @@
 
     /* Typography */
     --font-heading: 'Saira', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-body: 'Saira', sans-serif;
 
     /* Font Sizes */
     --text-xs: 0.75rem;
@@ -541,8 +541,8 @@ textarea:focus-visible,
 /* --- Scroll to Top --- */
 .scroll-top {
     position: fixed;
-    bottom: var(--space-8);
-    right: var(--space-8);
+    bottom: 24px;
+    right: 24px;
     width: 44px;
     height: 44px;
     border-radius: var(--radius-full);
@@ -650,6 +650,13 @@ textarea:focus-visible,
 @media (max-width: 768px) {
     :root {
         --header-height: 64px;
+    }
+
+    .scroll-top {
+        right: 16px;
+        bottom: 16px;
+        width: 42px;
+        height: 42px;
     }
 
     .container {

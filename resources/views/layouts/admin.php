@@ -23,13 +23,13 @@
             $user = \App\Core\Session::user() ?? [];
             $parts = explode(' ', $user['name'] ?? '');
             $initials = strtoupper(substr($parts[0] ?? '', 0, 1) . substr(end($parts) ?: '', 0, 1));
-            $uri = '/' . trim($_GET['url'] ?? '', '/');
+            $uri = !empty($_GET['url']) ? '/' . trim($_GET['url'], '/') : (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/');
         ?>
 
         <aside class="hub-sidebar admin-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu admin">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/admin') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo.svg') ?>" alt="Elo 42 Admin" height="28">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42 Admin" height="28" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
                 </a>
             </div>
 

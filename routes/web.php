@@ -3,6 +3,7 @@
 use Modules\Site\Controllers\SiteController;
 
 $router->get('/', [SiteController::class, 'home']);
+$router->get('/servico/{slug}', [SiteController::class, 'service']);
 $router->get('/sobre', [SiteController::class, 'about']);
 $router->get('/solucoes', [SiteController::class, 'solutions']);
 $router->get('/plataforma', [SiteController::class, 'platform']);

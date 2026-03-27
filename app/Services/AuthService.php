@@ -62,7 +62,11 @@ class AuthService
     {
         $user = Session::user();
         if ($user) {
-            $this->logAudit((int) $user['id'], 'user.logout');
+            try {
+                $this->logAudit((int) $user['id'], 'user.logout');
+            } catch (\Exception $e) {
+                // Ignore audit log error if database is not configured
+            }
         }
         Session::destroy();
     }

@@ -28,7 +28,7 @@
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu lateral">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo.svg') ?>" alt="Elo 42" height="28">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="28" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
                 </a>
             </div>
 

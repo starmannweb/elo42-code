@@ -15,6 +15,7 @@ use App\Models\Sermon;
 use App\Models\ActionPlan;
 use App\Models\Donation;
 use App\Models\Member;
+use App\Models\Event;
 use App\Models\FinancialTransaction;
 
 class GeneralController extends Controller
