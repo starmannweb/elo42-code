@@ -18,8 +18,7 @@
     <div class="auth-page">
         <aside class="auth-page__sidebar">
             <a href="<?= url('/') ?>" class="auth-sidebar__logo">
-                <span class="navbar__logo-mark">E42</span>
-                Elo 42
+                <img src="<?= url('/assets/img/logo.svg') ?>" alt="Elo 42" height="32">
             </a>
 
             <h1 class="auth-sidebar__title">

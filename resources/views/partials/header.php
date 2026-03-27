@@ -1,8 +1,7 @@
 <header class="site-header" id="site-header" role="banner">
     <nav class="navbar container" aria-label="Navegação principal">
         <a href="<?= url('/') ?>" class="navbar__logo" aria-label="Elo 42 — Página inicial">
-            <span class="navbar__logo-mark" aria-hidden="true">E42</span>
-            Elo 42
+            <img src="<?= url('/assets/img/logo.svg') ?>" alt="Elo 42" height="32">
         </a>
 
         <ul class="navbar__menu" id="nav-menu" role="menubar">

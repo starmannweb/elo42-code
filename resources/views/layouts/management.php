@@ -29,8 +29,7 @@
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu de gestão">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <span class="navbar__logo-mark">E42</span>
-                    Elo 42
+                    <img src="<?= url('/assets/img/logo.svg') ?>" alt="Elo 42" height="28">
                 </a>
             </div>
 
