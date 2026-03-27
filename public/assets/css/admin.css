@@ -1,0 +1,135 @@
+/* ============================================
+   Admin Module — Elo 42 Platform
+   ============================================ */
+
+/* Admin accent colors — using specificity instead of !important */
+.hub-layout .hub-sidebar.admin-sidebar {
+    background: linear-gradient(180deg, #0f172a 0%, #1e2a4a 100%);
+}
+
+.hub-sidebar .navbar__logo-mark.admin-logo-mark {
+    background: linear-gradient(135deg, #dc2626, #f97316);
+}
+
+.hub-sidebar__user-avatar.admin-avatar {
+    background: linear-gradient(135deg, #dc2626, #f97316);
+}
+
+.hub-topbar.admin-topbar {
+    border-bottom-color: rgba(220, 38, 38, 0.15);
+}
+
+.admin-badge-top {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: linear-gradient(135deg, #dc2626, #f97316);
+    color: var(--color-white);
+}
+
+/* Ticket thread */
+.ticket-thread {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.ticket-reply {
+    position: relative;
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    border: 1px solid var(--color-border-light);
+    background: var(--color-white);
+    line-height: 1.6;
+}
+
+.ticket-reply--admin {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.ticket-reply__meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.ticket-reply__author {
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.ticket-reply--admin .ticket-reply__author {
+    color: var(--color-primary);
+}
+
+/* Settings table */
+.settings-grid {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.settings-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-border-light);
+    transition: background 0.15s ease;
+}
+
+.settings-row:hover {
+    background: var(--color-bg-light);
+}
+
+.settings-row__key {
+    font-family: monospace;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    word-break: break-all;
+}
+
+.settings-row__desc {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+}
+
+/* Log row */
+.log-entry {
+    display: grid;
+    grid-template-columns: 140px 120px 1fr;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    font-size: var(--text-sm);
+    border-bottom: 1px solid var(--color-border-light);
+    transition: background 0.15s ease;
+}
+
+.log-entry:hover {
+    background: var(--color-bg-light);
+}
+
+.log-entry__time {
+    font-family: monospace;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+/* --- Responsive Admin --- */
+@media (max-width: 1024px) {
+    .settings-row { grid-template-columns: 160px 1fr; }
+}
+
+@media (max-width: 768px) {
+    .settings-row { grid-template-columns: 1fr; gap: var(--space-2); }
+    .log-entry { grid-template-columns: 1fr; gap: var(--space-1); }
+}

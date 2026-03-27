@@ -1,0 +1,290 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\ChurchManagement\Controllers;
+
+use App\Core\Controller;
+use App\Core\Request;
+use App\Core\Session;
+use App\Core\Database;
+use App\Models\ChurchRequest;
+use App\Models\Visit;
+use App\Models\CounselingSession;
+use App\Models\Sermon;
+use App\Models\ActionPlan;
+use App\Models\Donation;
+use App\Models\Member;
+use App\Models\FinancialTransaction;
+
+class GeneralController extends Controller
+{
+    private function orgId(): int { return (int) Session::get('organization')['id']; }
+
+    // --- Requests ---
+    public function requests(Request $req): void
+    {
+        $this->view('management/requests/index', [
+            'pageTitle' => 'Solicitações — Gestão', 'breadcrumb' => 'Solicitações',
+            'requests' => ChurchRequest::byOrg($this->orgId()),
+        ]);
+    }
+
+    public function createRequest(Request $req): void
+    {
+        $this->view('management/requests/form', [
+            'pageTitle' => 'Nova solicitação', 'breadcrumb' => 'Solicitações / Nova',
+            'item' => null, 'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+        ]);
+    }
+
+    public function storeRequest(Request $req): void
+    {
+        $this->validate($req, ['title' => 'required']);
+        ChurchRequest::create(array_merge($req->only(['title','description','type','priority','member_id']), [
+            'organization_id' => $this->orgId(), 'created_by' => Session::user()['id'],
+        ]));
+        Session::flash('success', 'Solicitação registrada.');
+        redirect('/gestao/solicitacoes');
+    }
+
+    public function updateRequestStatus(Request $req): void
+    {
+        $id = (int) $req->param('id');
+        $item = ChurchRequest::find($id);
+        if (!$item || (int)$item['organization_id'] !== $this->orgId()) { redirect('/gestao/solicitacoes'); }
+        $data = ['status' => $req->input('status')];
+        if ($req->input('status') === 'resolved') { $data['resolved_at'] = date('Y-m-d H:i:s'); }
+        ChurchRequest::update($id, $data);
+        Session::flash('success', 'Status atualizado.');
+        redirect('/gestao/solicitacoes');
+    }
+
+    // --- Visits ---
+    public function visits(Request $req): void
+    {
+        $this->view('management/visits/index', [
+            'pageTitle' => 'Visitas — Gestão', 'breadcrumb' => 'Visitas',
+            'visits' => Visit::byOrg($this->orgId()),
+        ]);
+    }
+
+    public function createVisit(Request $req): void
+    {
+        $this->view('management/visits/form', [
+            'pageTitle' => 'Nova visita', 'breadcrumb' => 'Visitas / Nova', 'item' => null,
+            'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+        ]);
+    }
+
+    public function storeVisit(Request $req): void
+    {
+        $this->validate($req, ['visitor_name' => 'required', 'visit_date' => 'required']);
+        Visit::create(array_merge($req->only(['visitor_name','phone','email','visit_date','source','notes','assigned_to']), [
+            'organization_id' => $this->orgId(),
+        ]));
+        Session::flash('success', 'Visita registrada.');
+        redirect('/gestao/visitas');
+    }
+
+    public function updateVisitFollowUp(Request $req): void
+    {
+        $id = (int) $req->param('id');
+        $v = Visit::find($id);
+        if (!$v || (int)$v['organization_id'] !== $this->orgId()) { redirect('/gestao/visitas'); }
+        Visit::update($id, ['follow_up' => $req->input('follow_up')]);
+        Session::flash('success', 'Status atualizado.');
+        redirect('/gestao/visitas');
+    }
+
+    // --- Counseling ---
+    public function counseling(Request $req): void
+    {
+        $this->view('management/counseling/index', [
+            'pageTitle' => 'Aconselhamento — Gestão', 'breadcrumb' => 'Aconselhamento',
+            'sessions' => CounselingSession::byOrg($this->orgId()),
+        ]);
+    }
+
+    public function createCounseling(Request $req): void
+    {
+        $this->view('management/counseling/form', [
+            'pageTitle' => 'Novo atendimento', 'breadcrumb' => 'Aconselhamento / Novo', 'item' => null,
+            'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+        ]);
+    }
+
+    public function storeCounseling(Request $req): void
+    {
+        $this->validate($req, ['subject' => 'required', 'session_date' => 'required']);
+        CounselingSession::create(array_merge($req->only(['member_id','counselor_name','subject','session_date','status','notes','is_confidential']), [
+            'organization_id' => $this->orgId(),
+        ]));
+        Session::flash('success', 'Sessão registrada.');
+        redirect('/gestao/aconselhamento');
+    }
+
+    // --- Sermons ---
+    public function sermons(Request $req): void
+    {
+        $this->view('management/sermons/index', [
+            'pageTitle' => 'Sermões — Gestão', 'breadcrumb' => 'Sermões',
+            'sermons' => Sermon::byOrg($this->orgId(), $req->input('search')),
+        ]);
+    }
+
+    public function createSermon(Request $req): void
+    {
+        $this->view('management/sermons/form', [
+            'pageTitle' => 'Novo sermão', 'breadcrumb' => 'Sermões / Novo', 'item' => null,
+        ]);
+    }
+
+    public function storeSermon(Request $req): void
+    {
+        $this->validate($req, ['title' => 'required']);
+        Sermon::create(array_merge($req->only(['title','preacher','sermon_date','bible_reference','summary','series_name','tags','status']), [
+            'organization_id' => $this->orgId(),
+        ]));
+        Session::flash('success', 'Sermão registrado.');
+        redirect('/gestao/sermoes');
+    }
+
+    // --- Action Plans ---
+    public function plans(Request $req): void
+    {
+        $this->view('management/plans/index', [
+            'pageTitle' => 'Plano de Ação — Gestão', 'breadcrumb' => 'Plano de Ação',
+            'plans' => ActionPlan::byOrg($this->orgId()),
+        ]);
+    }
+
+    public function createPlan(Request $req): void
+    {
+        $this->view('management/plans/form', [
+            'pageTitle' => 'Novo plano', 'breadcrumb' => 'Plano de Ação / Novo', 'item' => null,
+        ]);
+    }
+
+    public function storePlan(Request $req): void
+    {
+        $this->validate($req, ['title' => 'required']);
+        ActionPlan::create(array_merge($req->only(['title','description','start_date','end_date','status']), [
+            'organization_id' => $this->orgId(), 'created_by' => Session::user()['id'],
+        ]));
+        Session::flash('success', 'Plano criado.');
+        redirect('/gestao/planos');
+    }
+
+    public function showPlan(Request $req): void
+    {
+        $plan = ActionPlan::getWithDetails((int) $req->param('id'));
+        if (!$plan) { redirect('/gestao/planos'); }
+        $this->view('management/plans/show', [
+            'pageTitle' => e($plan['title']) . ' — Gestão', 'breadcrumb' => 'Planos / ' . $plan['title'],
+            'plan' => $plan, 'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+        ]);
+    }
+
+    public function storeObjective(Request $req): void
+    {
+        $planId = (int) $req->param('id');
+        $this->validate($req, ['title' => 'required']);
+        $pdo = Database::connection();
+        $pdo->prepare("INSERT INTO action_plan_objectives (plan_id, title, description) VALUES (:pid, :title, :desc)")
+            ->execute(['pid' => $planId, 'title' => $req->input('title'), 'desc' => $req->input('description')]);
+        Session::flash('success', 'Objetivo adicionado.');
+        redirect('/gestao/planos/' . $planId);
+    }
+
+    public function storeTask(Request $req): void
+    {
+        $objId = (int) $req->param('objective_id');
+        $planId = (int) $req->param('id');
+        $this->validate($req, ['title' => 'required']);
+        $pdo = Database::connection();
+        $pdo->prepare("INSERT INTO action_plan_tasks (objective_id, title, assigned_to, due_date) VALUES (:oid, :title, :assigned, :due)")
+            ->execute(['oid' => $objId, 'title' => $req->input('title'), 'assigned' => $req->input('assigned_to') ?: null, 'due' => $req->input('due_date') ?: null]);
+        Session::flash('success', 'Tarefa adicionada.');
+        redirect('/gestao/planos/' . $planId);
+    }
+
+    public function updateTaskStatus(Request $req): void
+    {
+        $taskId = (int) $req->param('task_id');
+        $planId = (int) $req->param('id');
+        $pdo = Database::connection();
+        $pdo->prepare("UPDATE action_plan_tasks SET status = :status WHERE id = :id")->execute([
+            'status' => $req->input('status'), 'id' => $taskId,
+        ]);
+        Session::flash('success', 'Tarefa atualizada.');
+        redirect('/gestao/planos/' . $planId);
+    }
+
+    // --- Donations ---
+    public function donations(Request $req): void
+    {
+        $page = (int) ($req->input('page', '1'));
+        $filters = [
+            'type'       => $req->input('type', ''),
+            'start_date' => $req->input('start_date', date('Y-m-01')),
+            'end_date'   => $req->input('end_date', date('Y-m-t')),
+        ];
+        $result = Donation::byOrg($this->orgId(), $filters, $page);
+        $summary = Donation::summaryByType($this->orgId(), $filters['start_date'], $filters['end_date']);
+
+        $this->view('management/donations/index', [
+            'pageTitle'  => 'Doações — Gestão', 'breadcrumb' => 'Doações',
+            'donations'  => $result['data'], 'pagination' => $result,
+            'summary'    => $summary, 'filters' => $filters,
+        ]);
+    }
+
+    public function createDonation(Request $req): void
+    {
+        $this->view('management/donations/form', [
+            'pageTitle' => 'Nova doação', 'breadcrumb' => 'Doações / Nova', 'item' => null,
+            'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+        ]);
+    }
+
+    public function storeDonation(Request $req): void
+    {
+        $this->validate($req, ['amount' => 'required', 'donation_date' => 'required']);
+        Donation::create(array_merge($req->only(['member_id','donor_name','type','amount','donation_date','payment_method','reference','notes']), [
+            'organization_id' => $this->orgId(),
+        ]));
+        Session::flash('success', 'Doação registrada.');
+        redirect('/gestao/doacoes');
+    }
+
+    // --- Reports ---
+    public function reports(Request $req): void
+    {
+        $orgId = $this->orgId();
+        $startDate = $req->input('start_date', date('Y-m-01'));
+        $endDate = $req->input('end_date', date('Y-m-t'));
+
+        $this->view('management/reports/index', [
+            'pageTitle'      => 'Relatórios — Gestão', 'breadcrumb' => 'Relatórios',
+            'totalMembers'   => Member::countByOrg($orgId),
+            'activeMembers'  => Member::countByOrg($orgId, 'active'),
+            'newMembers'     => Member::newThisMonth($orgId),
+            'activeEvents'   => Event::countActive($orgId),
+            'financial'      => FinancialTransaction::summary($orgId, $startDate, $endDate),
+            'donationSummary' => Donation::summaryByType($orgId, $startDate, $endDate),
+            'openRequests'   => ChurchRequest::countOpen($orgId),
+            'pendingTasks'   => ActionPlan::pendingTasks($orgId),
+            'filters'        => ['start_date' => $startDate, 'end_date' => $endDate],
+        ]);
+    }
+
+    // --- Settings ---
+    public function settings(Request $req): void
+    {
+        $this->view('management/settings/index', [
+            'pageTitle' => 'Configurações — Gestão', 'breadcrumb' => 'Configurações',
+            'categories' => FinancialTransaction::getCategories($this->orgId()),
+        ]);
+    }
+}
