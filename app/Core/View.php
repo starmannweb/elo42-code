@@ -19,7 +19,9 @@ class View
         $content = $this->renderFile($view, $data);
 
         if ($this->currentLayout) {
-            $this->sections['content'] = $content;
+            if (!isset($this->sections['content']) || empty($this->sections['content'])) {
+                $this->sections['content'] = $content;
+            }
             return $this->renderFile(
                 'layouts/' . $this->currentLayout,
                 array_merge($this->layoutData, $data)
