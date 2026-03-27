@@ -70,7 +70,23 @@ if (!function_exists('url')) {
 if (!function_exists('asset')) {
     function asset(string $path): string
     {
-        return url('assets/' . ltrim($path, '/'));
+        $relativePath = ltrim($path, '/');
+        $assetUrl = url('assets/' . $relativePath);
+
+        $version = env('ASSET_VERSION');
+        if (!$version && defined('BASE_PATH')) {
+            $fullPath = BASE_PATH . '/public/assets/' . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+            if (is_file($fullPath)) {
+                $version = (string) filemtime($fullPath);
+            }
+        }
+
+        if ($version) {
+            $separator = str_contains($assetUrl, '?') ? '&' : '?';
+            $assetUrl .= $separator . 'v=' . rawurlencode((string) $version);
+        }
+
+        return $assetUrl;
     }
 }
 
