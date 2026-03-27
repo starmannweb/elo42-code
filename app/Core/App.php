@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Support\Logger;
+
 class App
 {
     private Router $router;
@@ -26,7 +28,7 @@ class App
 
         try {
             $this->router->dispatch($method, $uri, $this->request);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleException($e);
         }
     }
@@ -87,13 +89,36 @@ class App
         }
     }
 
-    private function handleException(\Exception $e): void
+    private function handleException(\Throwable $e): void
     {
+        try {
+            (new Logger())->error('app.unhandled_exception', [
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
+        } catch (\Throwable $logError) {
+            // Ignore logger failures.
+        }
+
+        $debug = (bool) config('app.debug', false);
+
         http_response_code(500);
-        echo '<h1>Error Debug</h1>';
-        echo '<p><strong>Message:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
-        echo '<p><strong>File:</strong> ' . htmlspecialchars($e->getFile()) . '</p>';
-        echo '<p><strong>Line:</strong> ' . $e->getLine() . '</p>';
-        echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
+
+        if ($debug) {
+            echo '<h1>Error Debug</h1>';
+            echo '<p><strong>Message:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
+            echo '<p><strong>File:</strong> ' . htmlspecialchars($e->getFile()) . '</p>';
+            echo '<p><strong>Line:</strong> ' . $e->getLine() . '</p>';
+            echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
+            return;
+        }
+
+        echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Erro interno</title>';
+        echo '<style>body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#061a3a;color:#e7edf7;display:grid;place-items:center;min-height:100vh;padding:24px}';
+        echo '.card{max-width:680px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:28px;box-shadow:0 14px 44px rgba(0,0,0,.35)}';
+        echo 'h1{margin:0 0 12px;font-size:28px}p{margin:0;color:#b7c6df;line-height:1.6}a{color:#8ec1ff;text-decoration:none;font-weight:600}</style></head><body>';
+        echo '<div class="card"><h1>Ops, tivemos um problema temporario.</h1><p>Nossa equipe ja foi notificada e estamos trabalhando para normalizar o sistema. Tente novamente em alguns instantes.</p>';
+        echo '<p style="margin-top:14px;"><a href="' . htmlspecialchars(url('/')) . '">Voltar para a pagina inicial</a></p></div></body></html>';
     }
 }

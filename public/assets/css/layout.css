@@ -1,5 +1,5 @@
 /* =============================================
-   ELO 42 — Site Layout Styles
+   ELO 42 - Site Layout Styles
    ============================================= */
 
 /* --- Header / Navbar --- */
@@ -9,15 +9,11 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: var(--space-3) 0;
+    padding: var(--space-2) 0;
     transition: all var(--transition-base);
 }
 
 .site-header--scrolled {
-    background: rgba(7, 27, 59, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(214, 166, 70, 0.1);
     padding: var(--space-2) 0;
 }
 
@@ -27,19 +23,27 @@
     justify-content: space-between;
     max-width: var(--container-max);
     margin: 0 auto;
-    padding: var(--space-3) var(--space-6);
-    background: rgba(7, 27, 59, 0.35);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(214, 166, 70, 0.25);
-    border-radius: var(--radius-2xl);
+    padding: 12px 26px;
+    background:
+        radial-gradient(80% 140% at 50% -30%, rgba(255, 255, 255, 0.18), transparent 68%),
+        linear-gradient(90deg, rgba(10, 34, 73, 0.84) 0%, rgba(12, 45, 92, 0.72) 52%, rgba(8, 26, 61, 0.84) 100%);
+    backdrop-filter: blur(22px) saturate(120%);
+    -webkit-backdrop-filter: blur(22px) saturate(120%);
+    border: 1px solid rgba(214, 166, 70, 0.42);
+    border-radius: 32px;
+    box-shadow:
+        0 12px 38px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
 .site-header--scrolled .navbar {
-    background: transparent;
-    border-color: transparent;
-    backdrop-filter: none;
-    border-radius: 0;
+    background:
+        radial-gradient(85% 150% at 50% -35%, rgba(255, 255, 255, 0.12), transparent 70%),
+        linear-gradient(90deg, rgba(7, 27, 59, 0.95) 0%, rgba(9, 34, 73, 0.88) 50%, rgba(6, 24, 55, 0.95) 100%);
+    border-color: rgba(214, 166, 70, 0.35);
+    box-shadow:
+        0 10px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .navbar__logo {
@@ -120,18 +124,20 @@
 }
 
 .navbar__cta {
-    padding: var(--space-2) var(--space-5);
-    background: var(--color-primary);
+    padding: 10px 22px;
+    background: linear-gradient(180deg, #2D7DFF 0%, #0A4DFF 100%);
     color: var(--color-white);
     font-size: var(--text-sm);
-    font-weight: 600;
-    border-radius: var(--radius-lg);
+    font-weight: 700;
+    border-radius: 16px;
+    border: 1px solid rgba(67, 140, 255, 0.7);
+    box-shadow: 0 8px 24px rgba(10, 77, 255, 0.35);
     transition: all var(--transition-base);
 }
 
 .navbar__cta:hover {
-    background: #0841D8;
-    transform: translateY(-1px);
+    background: linear-gradient(180deg, #3A86FF 0%, #0B56FF 100%);
+    transform: translateY(-2px);
 }
 
 /* Mobile Toggle */
@@ -668,8 +674,11 @@
 /* --- Bento Grid (Services) --- */
 .bento-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto auto auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+        "central platform platform"
+        "ads expositor consultoria"
+        "ads sites sites";
     gap: 16px;
 }
 
@@ -695,55 +704,51 @@
     transform: translateY(-2px);
 }
 
-/* Row 1: large (2 cols) + normal (1 col) */
-.bento-card--large {
-    grid-column: 1 / 3;
-    grid-row: 1;
+.bento-card--central {
+    grid-area: central;
     min-height: 280px;
-    flex-direction: row;
-    align-items: stretch;
-    gap: 24px;
 }
 
-.bento-card--large .bento-card__body {
-    flex: 1;
+.bento-card--platform {
+    grid-area: platform;
+    min-height: 280px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 42%);
+    gap: 22px;
+    align-items: stretch;
+}
+
+.bento-card--platform .bento-card__body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
 }
 
-.bento-card--large .bento-card__image {
-    flex: 0 0 45%;
+.bento-card--platform .bento-card__image {
     margin: -28px -28px -28px 0;
     border-radius: 0;
+    background: rgba(255, 255, 255, 0.92);
 }
 
-.bento-card:nth-child(2) {
-    grid-column: 3;
-    grid-row: 1;
+.bento-card--ads {
+    grid-area: ads;
+    min-height: 560px;
 }
 
-/* Row 2-3: tall (1 col, 2 rows) + normal + normal */
-.bento-card--tall {
-    grid-column: 1;
-    grid-row: 2 / 4;
-    min-height: 400px;
+.bento-card--expositor {
+    grid-area: expositor;
 }
 
-.bento-card:nth-child(4) {
-    grid-column: 2;
-    grid-row: 2;
+.bento-card--consultoria {
+    grid-area: consultoria;
 }
 
-.bento-card:nth-child(5) {
-    grid-column: 3;
-    grid-row: 2;
+.bento-card--sites {
+    grid-area: sites;
 }
 
-/* Row 3: wide (cols 2-3) */
 .bento-card--wide {
-    grid-column: 2 / 4;
-    grid-row: 3;
+    min-height: 280px;
 }
 
 .bento-card--accent {
@@ -831,25 +836,12 @@
 
 .bento-card__image--cover {
     margin: 0 0 16px 0;
-    height: 180px;
-    flex-grow: 1;
+    height: 280px;
+    background: rgba(255, 255, 255, 0.94);
 }
 
-.bento-card__image--central {
-    margin-top: 24px;
-    min-height: 240px;
-    background: rgba(255, 255, 255, 0.96);
-    display: flex;
-    align-items: stretch;
-    justify-content: center;
-    flex-grow: 1;
-}
-
-.bento-card__image--central img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
+.bento-card__image--cover img {
+    object-fit: contain;
 }
 
 .bento-card__image--side {
@@ -858,6 +850,16 @@
     flex-shrink: 0;
     height: auto;
     align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.bento-card__image--side img {
+    object-fit: contain;
+    transform: scale(1.06);
+    transform-origin: center;
 }
 
 .bento-card__content-row {
@@ -873,46 +875,64 @@
 
 @media (max-width: 1024px) {
     .bento-grid {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas:
+            "platform platform"
+            "central ads"
+            "expositor consultoria"
+            "sites sites";
     }
-    .bento-card--large { grid-column: span 2; grid-row: auto; flex-direction: row; }
-    .bento-card--wide { grid-column: span 2; grid-row: auto; }
-    .bento-card--tall { grid-column: span 1; grid-row: auto; min-height: 220px; }
-    .bento-card:nth-child(2),
-    .bento-card:nth-child(4),
-    .bento-card:nth-child(5) { grid-column: auto; grid-row: auto; }
-    .bento-card__image--side { width: 200px; }
+
+    .bento-card--platform {
+        grid-template-columns: minmax(0, 1fr) minmax(220px, 40%);
+    }
+
+    .bento-card--ads {
+        min-height: 380px;
+    }
+
+    .bento-card__image--side {
+        width: 220px;
+    }
 }
 
 @media (max-width: 768px) {
     .bento-grid {
         grid-template-columns: 1fr;
+        grid-template-areas:
+            "central"
+            "platform"
+            "ads"
+            "expositor"
+            "consultoria"
+            "sites";
     }
-    .bento-card--large,
-    .bento-card--wide,
-    .bento-card--tall {
-        grid-column: 1;
-        grid-row: auto;
+
+    .bento-card--platform {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .bento-card--platform .bento-card__image {
+        margin: 16px -28px -28px -28px;
+        height: 190px;
+    }
+
+    .bento-card--ads {
         min-height: auto;
     }
-    .bento-card--large { flex-direction: column; }
-    .bento-card--large .bento-card__image {
-        flex: none;
-        margin: 16px -28px -28px -28px;
-        height: 180px;
+
+    .bento-card__image--cover {
+        height: 220px;
     }
+
     .bento-card__content-row {
         flex-direction: column;
     }
+
     .bento-card__image--side {
         width: 100%;
-        height: 160px;
-    }
-
-    .bento-card__image--central {
-        min-height: 180px;
-        margin-top: 16px;
+        height: 190px;
     }
 }
 
@@ -1555,3 +1575,4 @@
         height: 74px;
     }
 }
+

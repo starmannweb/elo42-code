@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Core\Database;
 use App\Core\Session;
 use App\Models\User;
+use App\Support\Logger;
 
 class AuthService
 {
@@ -37,25 +38,43 @@ class AuthService
 
     public function attempt(string $email, string $password): array
     {
-        $user = User::findByEmail($email);
+        try {
+            $user = User::findByEmail($email);
 
-        if (!$user) {
-            return ['success' => false, 'error' => 'E-mail ou senha incorretos.'];
+            if (!$user) {
+                return ['success' => false, 'error' => 'E-mail ou senha incorretos.'];
+            }
+
+            if ($user['status'] === 'suspended') {
+                return ['success' => false, 'error' => 'Sua conta esta suspensa. Entre em contato com o suporte.'];
+            }
+
+            if (!User::verifyPassword($password, $user['password'])) {
+                return ['success' => false, 'error' => 'E-mail ou senha incorretos.'];
+            }
+
+            $this->loginUser($user);
+            $this->updateLastLogin((int) $user['id']);
+            $this->logAudit((int) $user['id'], 'user.login');
+
+            return ['success' => true, 'user' => $user];
+        } catch (\Throwable $e) {
+            try {
+                (new Logger())->error('auth.attempt_failed', [
+                    'email' => $email,
+                    'error' => $e->getMessage(),
+                    'file'  => $e->getFile(),
+                    'line'  => $e->getLine(),
+                ]);
+            } catch (\Throwable $logError) {
+                // Ignore logger failures.
+            }
+
+            return [
+                'success' => false,
+                'error'   => 'Nao foi possivel autenticar agora. Tente novamente em alguns instantes.',
+            ];
         }
-
-        if ($user['status'] === 'suspended') {
-            return ['success' => false, 'error' => 'Sua conta está suspensa. Entre em contato com o suporte.'];
-        }
-
-        if (!User::verifyPassword($password, $user['password'])) {
-            return ['success' => false, 'error' => 'E-mail ou senha incorretos.'];
-        }
-
-        $this->loginUser($user);
-        $this->updateLastLogin((int) $user['id']);
-        $this->logAudit((int) $user['id'], 'user.login');
-
-        return ['success' => true, 'user' => $user];
     }
 
     public function logout(): void
