@@ -1,0 +1,14 @@
+﻿services:
+  - type: web
+    name: elo42-code
+    env: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://elo42-code.onrender.com

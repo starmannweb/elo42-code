@@ -1,0 +1,40 @@
+﻿name: CI
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+
+jobs:
+  php-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_mysql
+
+      - name: PHP lint
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            php -l "$file"
+          done < <(find . -name "*.php" -not -path "./vendor/*" -print0)
+
+      - name: Smoke test home page
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp .env.example .env
+          php -S 127.0.0.1:8080 -t public > /tmp/php-server.log 2>&1 &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID" EXIT
+          sleep 2
+          curl -fsS http://127.0.0.1:8080/ > /tmp/home.html
+          grep -qi "elo 42" /tmp/home.html
