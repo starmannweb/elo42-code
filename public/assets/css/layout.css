@@ -25,9 +25,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: var(--container-max);
-    margin: 0 auto;
-    padding: 12px 26px;
+    width: 100%;
+    padding: 12px var(--space-6);
     background:
         radial-gradient(80% 140% at 50% -30%, rgba(255, 255, 255, 0.18), transparent 68%),
         linear-gradient(90deg, rgba(10, 34, 73, 0.84) 0%, rgba(12, 45, 92, 0.72) 52%, rgba(8, 26, 61, 0.84) 100%);
@@ -1411,7 +1410,7 @@
     position: relative;
     z-index: 2;
     text-align: center;
-    max-width: 640px;
+    max-width: 860px;
     margin: 0 auto;
 }
 
@@ -1426,6 +1425,9 @@
     color: var(--color-text-on-dark-secondary);
     margin-bottom: var(--space-8);
     line-height: 1.7;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .cta-section__actions {
