@@ -14,19 +14,19 @@
     <link rel="stylesheet" href="<?= asset('css/auth.css') ?>">
 </head>
 <body>
-    <a href="#auth-main" class="skip-to-content">Pular para o conteudo</a>
+    <a href="#auth-main" class="skip-to-content">Pular para o conteúdo</a>
     <div class="auth-page">
         <aside class="auth-page__sidebar">
             <a href="<?= url('/') ?>" class="auth-sidebar__logo">
-                <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="38" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
+                <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="44" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
             </a>
 
             <h1 class="auth-sidebar__title">
-                <?= $__view->yield('sidebar_title', 'Gestao, tecnologia e <span>impacto</span> para a sua missao.') ?>
+                <?= $__view->yield('sidebar_title', 'Gestão, tecnologia e <span>impacto</span> para a sua missão.') ?>
             </h1>
 
             <p class="auth-sidebar__text">
-                <?= $__view->yield('sidebar_text', 'A Elo 42 centraliza tudo que sua organizacao precisa para operar com ordem, clareza e eficiencia.') ?>
+                <?= $__view->yield('sidebar_text', 'A Elo 42 centraliza tudo que sua organização precisa para operar com ordem, clareza e eficiência.') ?>
             </p>
 
             <div class="auth-sidebar__features">
@@ -37,7 +37,7 @@
                             <path d="M8 9h8M8 12h8M8 15h5"></path>
                         </svg>
                     </span>
-                    Gestao centralizada de membros e financas
+                    Gestão centralizada de membros e finanças
                 </div>
                 <div class="auth-sidebar__feature">
                     <span class="auth-sidebar__feature-icon" aria-hidden="true">
@@ -46,7 +46,7 @@
                             <path d="M12 16V8M9 11l3-3 3 3"></path>
                         </svg>
                     </span>
-                    Implantacao assistida e acompanhamento
+                    Implantação assistida e acompanhamento
                 </div>
                 <div class="auth-sidebar__feature">
                     <span class="auth-sidebar__feature-icon" aria-hidden="true">
@@ -55,7 +55,7 @@
                             <path d="M8 11V8a4 4 0 1 1 8 0v3"></path>
                         </svg>
                     </span>
-                    Seguranca e controle de permissoes
+                    Segurança e controle de permissões
                 </div>
                 <div class="auth-sidebar__feature">
                     <span class="auth-sidebar__feature-icon" aria-hidden="true">
@@ -65,7 +65,7 @@
                             <path d="M19 18v-6"></path>
                         </svg>
                     </span>
-                    Relatorios e dashboards inteligentes
+                    Relatórios e dashboards inteligentes
                 </div>
             </div>
         </aside>

@@ -29,7 +29,9 @@
                     </div>
                     <div>
                         <h4 class="contact-info-card__title">E-mail</h4>
-                        <p class="contact-info-card__text"><a class="contact-info-card__link" href="mailto:suporte@elo42.com.br">suporte@elo42.com.br</a></p>
+                        <p class="contact-info-card__text">
+                            <a class="contact-info-card__link" href="mailto:suporte@elo42.com.br">suporte@elo42.com.br</a>
+                        </p>
                     </div>
                 </div>
 
@@ -41,7 +43,9 @@
                     </div>
                     <div>
                         <h4 class="contact-info-card__title">WhatsApp</h4>
-                        <p class="contact-info-card__text"><a class="contact-info-card__link" href="https://wa.me/5513978008047" target="_blank" rel="noopener noreferrer">(13) 97800-8047</a></p>
+                        <p class="contact-info-card__text">
+                            <a class="contact-info-card__link" href="https://wa.me/5513978008047" target="_blank" rel="noopener noreferrer">(13) 97800-8047</a>
+                        </p>
                     </div>
                 </div>
 
@@ -54,7 +58,7 @@
                     </div>
                     <div>
                         <h4 class="contact-info-card__title">Horário de atendimento</h4>
-                        <p class="contact-info-card__text">Seg a Sex, 9h às 18h</p>
+                        <p class="contact-info-card__text">Segunda a sexta, das 9h às 18h</p>
                     </div>
                 </div>
             </div>

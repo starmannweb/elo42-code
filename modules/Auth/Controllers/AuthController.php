@@ -52,13 +52,12 @@ class AuthController extends Controller
 
         $offlineMode = (($result['offline'] ?? false) === true);
         if ($offlineMode) {
-            Session::flash('warning', 'Login realizado em modo de contingencia. Alguns dados podem nao estar sincronizados.');
+            Session::flash('warning', 'Login realizado em modo de contingência. Alguns dados podem não estar sincronizados.');
         }
 
         $intended = $this->resolvePostLoginRedirect(
             Session::getFlash('intended_url', '/hub'),
-            $offlineMode,
-            is_array(Session::get('organization')) ? Session::get('organization') : null
+            $offlineMode
         );
         redirect($intended);
     }
@@ -285,12 +284,12 @@ class AuthController extends Controller
             $userData['permissions'] = $userData['permissions'] ?? [];
             Session::set('user', $userData);
 
-            Session::flash('success', 'Organizacao registrada em modo de contingencia. Conecte o banco para persistir os dados.');
+            Session::flash('success', 'Organização registrada em modo de contingência. Conecte o banco para persistir os dados.');
             redirect('/hub');
         }
     }
 
-    private function resolvePostLoginRedirect(mixed $intended, bool $offlineMode = false, ?array $organization = null): string
+    private function resolvePostLoginRedirect(mixed $intended, bool $offlineMode = false): string
     {
         if ($offlineMode) {
             return '/hub';
@@ -310,7 +309,7 @@ class AuthController extends Controller
             return '/hub';
         }
 
-        if (str_starts_with($intended, '/gestao') && empty($organization['id'])) {
+        if (str_starts_with($intended, '/gestao')) {
             return '/hub';
         }
 

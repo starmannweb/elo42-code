@@ -49,6 +49,9 @@
         var cancelLabel = options.cancelLabel || 'Cancelar';
         var danger = options.danger !== false;
         var onConfirm = options.onConfirm;
+        var iconSvg = danger
+            ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 2 20h20Zm0 6.2a1 1 0 0 1 1 1v4.8a1 1 0 1 1-2 0V9.2a1 1 0 0 1 1-1Zm0 10.4a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Z"/></svg>'
+            : '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 10h2v7h-2zm0-3h2v2h-2z"/><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"/></svg>';
 
         var modal = document.createElement('div');
         modal.className = 'confirm-modal active';
@@ -56,7 +59,7 @@
         modal.setAttribute('aria-modal', 'true');
         modal.innerHTML =
             '<div class="confirm-modal__card">' +
-                '<div class="confirm-modal__icon">' + (danger ? '⚠️' : 'ℹ️') + '</div>' +
+                '<div class="confirm-modal__icon">' + iconSvg + '</div>' +
                 '<h3 class="confirm-modal__title">' + title + '</h3>' +
                 '<p class="confirm-modal__text">' + text + '</p>' +
                 '<div class="confirm-modal__actions">' +
@@ -189,6 +192,7 @@
         var sidebarToggle = document.getElementById('hub-sidebar-toggle');
         var sidebar = document.getElementById('hub-sidebar');
         var overlay = document.querySelector('.hub-sidebar-overlay');
+        var themeToggle = document.getElementById('hub-theme-toggle');
 
         if (sidebarToggle && sidebar) {
             sidebarToggle.addEventListener('click', function() {
@@ -206,6 +210,36 @@
                     document.body.style.overflow = '';
                 });
             }
+        }
+
+        // --- Hub theme toggle (dark/light) ---
+        if (themeToggle) {
+            var storageKey = 'elo42_hub_theme';
+            var applyTheme = function(theme) {
+                var normalized = theme === 'light' ? 'light' : 'dark';
+                document.body.setAttribute('data-hub-theme', normalized);
+                themeToggle.textContent = normalized === 'dark' ? 'Modo claro' : 'Modo escuro';
+                themeToggle.setAttribute('aria-pressed', normalized === 'dark' ? 'true' : 'false');
+            };
+
+            try {
+                var savedTheme = localStorage.getItem(storageKey);
+                applyTheme(savedTheme === 'light' ? 'light' : 'dark');
+            } catch (e) {
+                applyTheme('dark');
+            }
+
+            themeToggle.addEventListener('click', function() {
+                var current = document.body.getAttribute('data-hub-theme') === 'light' ? 'light' : 'dark';
+                var next = current === 'dark' ? 'light' : 'dark';
+                applyTheme(next);
+
+                try {
+                    localStorage.setItem(storageKey, next);
+                } catch (e) {
+                    // ignore localStorage failures
+                }
+            });
         }
 
         // --- Form loading state ---

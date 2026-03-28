@@ -26,7 +26,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 12px var(--space-4);
+    padding: 12px var(--space-6);
     background:
         radial-gradient(80% 140% at 50% -30%, rgba(255, 255, 255, 0.18), transparent 68%),
         linear-gradient(90deg, rgba(10, 34, 73, 0.84) 0%, rgba(12, 45, 92, 0.72) 52%, rgba(8, 26, 61, 0.84) 100%);
@@ -244,7 +244,7 @@
 .hero__electric-grid {
     position: absolute;
     inset: -8%;
-    display: block;
+    display: none;
     background-image:
         linear-gradient(rgba(132, 171, 246, 0.14) 1px, transparent 1px),
         linear-gradient(90deg, rgba(132, 171, 246, 0.14) 1px, transparent 1px);
@@ -347,7 +347,8 @@
     background: #9ecbff;
     box-shadow: 0 0 8px rgba(158, 203, 255, 0.8), 0 0 16px rgba(60, 144, 255, 0.55);
     opacity: 0;
-    animation: heroSparkRise 9s ease-in infinite;
+    animation: none;
+    display: none;
 }
 
 .hero__spark--1 { left: 7%; animation-delay: 0.2s; animation-duration: 8.1s; }
@@ -441,6 +442,11 @@
 .hero .glowbox-animations,
 .hero .glowbox-borders-masker {
     display: none;
+}
+
+.hero .glowbox-stars-masker,
+.hero .glowbox-stars {
+    display: none !important;
 }
 
 /* --- Glowbox CTA Button --- */

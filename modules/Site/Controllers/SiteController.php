@@ -161,7 +161,7 @@ class SiteController extends Controller
                 'badge' => 'Em breve',
             ],
             'sites-prontos' => [
-                'title' => 'Sites Prontos',
+                'title' => 'Site para Igrejas',
                 'subtitle' => 'Presença digital profissional em poucos cliques.',
                 'description' => 'Modelos profissionais de página de ministérios + integrações (WhatsApp, eventos, doações/PIX, SEO básico). Publique rápido, com padrão Elo 42.',
                 'features' => [
@@ -172,7 +172,7 @@ class SiteController extends Controller
                     'SEO básico configurado',
                     'Padrão visual Elo 42',
                 ],
-                'meta' => 'Sites Prontos Elo 42 — Modelos profissionais de sites para igrejas e ministérios.',
+                'meta' => 'Site para Igrejas Elo 42 — Modelos profissionais para igrejas e ministérios.',
                 'badge' => 'Em breve',
             ],
         ];

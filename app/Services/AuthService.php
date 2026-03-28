@@ -16,7 +16,7 @@ class AuthService
         try {
             $existing = User::findByEmail($data['email']);
             if ($existing) {
-                return ['success' => false, 'error' => 'Este e-mail ja esta cadastrado.'];
+                return ['success' => false, 'error' => 'Este e-mail já está cadastrado.'];
             }
 
             $userId = User::createAccount([
@@ -31,7 +31,7 @@ class AuthService
 
             $user = User::find((int) $userId);
             if (!$user) {
-                return ['success' => false, 'error' => 'Nao foi possivel concluir seu cadastro agora.'];
+                return ['success' => false, 'error' => 'Não foi possível concluir seu cadastro agora.'];
             }
 
             $this->loginUser($user);
@@ -67,7 +67,7 @@ class AuthService
 
             return [
                 'success' => false,
-                'error'   => 'Nao foi possivel concluir seu cadastro agora. Tente novamente em alguns instantes.',
+                'error'   => 'Não foi possível concluir seu cadastro agora. Tente novamente em alguns instantes.',
             ];
         }
     }
@@ -122,7 +122,7 @@ class AuthService
 
             return [
                 'success' => false,
-                'error'   => 'Nao foi possivel autenticar agora. Tente novamente em alguns instantes.',
+                'error'   => 'Não foi possível autenticar agora. Tente novamente em alguns instantes.',
             ];
         }
     }
@@ -141,7 +141,7 @@ class AuthService
         $user = User::findByEmail($email);
 
         if (!$user) {
-            return ['success' => true, 'message' => 'Se o e-mail estiver cadastrado, enviaremos as instrucoes de recuperacao.'];
+            return ['success' => true, 'message' => 'Se o e-mail estiver cadastrado, enviaremos as instruções de recuperação.'];
         }
 
         $token = bin2hex(random_bytes(32));
@@ -162,7 +162,7 @@ class AuthService
 
         $this->logAudit((int) $user['id'], 'password.reset_requested');
 
-        return ['success' => true, 'message' => 'Se o e-mail estiver cadastrado, enviaremos as instrucoes de recuperacao.'];
+        return ['success' => true, 'message' => 'Se o e-mail estiver cadastrado, enviaremos as instruções de recuperação.'];
     }
 
     public function resetPassword(string $token, string $password): array
@@ -179,12 +179,12 @@ class AuthService
         $reset = $stmt->fetch();
 
         if (!$reset) {
-            return ['success' => false, 'error' => 'Token invalido ou expirado. Solicite uma nova recuperacao de senha.'];
+            return ['success' => false, 'error' => 'Token inválido ou expirado. Solicite uma nova recuperação de senha.'];
         }
 
         $user = User::findByEmail($reset['email']);
         if (!$user) {
-            return ['success' => false, 'error' => 'Usuario nao encontrado.'];
+            return ['success' => false, 'error' => 'Usuário não encontrado.'];
         }
 
         User::update((int) $user['id'], [
@@ -196,7 +196,7 @@ class AuthService
 
         $this->logAudit((int) $user['id'], 'password.reset_completed');
 
-        return ['success' => true, 'message' => 'Senha alterada com sucesso. Faca login com sua nova senha.'];
+        return ['success' => true, 'message' => 'Senha alterada com sucesso. Faça login com sua nova senha.'];
     }
 
     public function verifyEmail(string $token): array
@@ -213,7 +213,7 @@ class AuthService
         $verification = $stmt->fetch();
 
         if (!$verification) {
-            return ['success' => false, 'error' => 'Link de verificacao invalido ou expirado.'];
+            return ['success' => false, 'error' => 'Link de verificação inválido ou expirado.'];
         }
 
         $pdo->prepare("UPDATE email_verifications SET verified_at = NOW() WHERE id = :id")
@@ -290,6 +290,7 @@ class AuthService
             'avatar'             => $user['avatar'] ?? null,
             'status'             => $user['status'],
             'email_verified_at'  => $user['email_verified_at'] ?? null,
+            'created_at'         => $user['created_at'] ?? null,
             'permissions'        => $permissions,
         ]);
 
@@ -359,12 +360,13 @@ class AuthService
 
         $offlineUser = [
             'id'                => $fallbackId,
-            'name'              => trim(($data['first_name'] ?? 'Usuario') . ' ' . ($data['last_name'] ?? 'Offline')),
+            'name'              => trim(($data['first_name'] ?? 'Usuário') . ' ' . ($data['last_name'] ?? 'Offline')),
             'email'             => (string) ($data['email'] ?? ''),
             'phone'             => $data['phone'] ?? null,
             'avatar'            => null,
             'status'            => 'active',
             'email_verified_at' => null,
+            'created_at'        => date('Y-m-d H:i:s'),
         ];
 
         $this->loginUser($offlineUser);
@@ -386,12 +388,13 @@ class AuthService
 
         $offlineUser = [
             'id'                => $fallbackId,
-            'name'              => $name !== '' ? $name : 'Usuario Offline',
+            'name'              => $name !== '' ? $name : 'Usuário Offline',
             'email'             => $normalizedEmail,
             'phone'             => null,
             'avatar'            => null,
             'status'            => 'active',
             'email_verified_at' => null,
+            'created_at'        => date('Y-m-d H:i:s'),
         ];
 
         $this->loginUser($offlineUser);
