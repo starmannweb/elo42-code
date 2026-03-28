@@ -39,7 +39,7 @@ class AuthService
 
             return ['success' => true, 'user_id' => $userId];
         } catch (\Throwable $e) {
-            if ($this->isDatabaseException($e)) {
+            try {
                 $offlineUserId = $this->bootstrapOfflineUser($data);
 
                 return [
@@ -47,6 +47,11 @@ class AuthService
                     'user_id' => $offlineUserId,
                     'offline' => true,
                 ];
+            } catch (\Throwable $fallbackError) {
+                $this->logNonCritical('auth.register_offline_bootstrap_failed', [
+                    'email' => $data['email'] ?? null,
+                    'error' => $fallbackError->getMessage(),
+                ]);
             }
 
             try {
@@ -332,15 +337,6 @@ class AuthService
         } catch (\Throwable $e) {
             // Ignore logger failures.
         }
-    }
-
-    private function isDatabaseException(\Throwable $e): bool
-    {
-        if ($e instanceof \PDOException) {
-            return true;
-        }
-
-        return str_contains($e->getMessage(), 'SQLSTATE');
     }
 
     private function bootstrapOfflineUser(array $data): int

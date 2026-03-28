@@ -257,42 +257,27 @@ class AuthController extends Controller
             redirect('/hub');
 
         } catch (\Throwable $e) {
-            if ($this->isDatabaseException($e)) {
-                $orgName = (string) $request->input('org_name');
-                $slugBase = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $orgName), '-'));
-                $slug = $slugBase !== '' ? $slugBase : ('org-' . substr((string) time(), -6));
+            $orgName = (string) $request->input('org_name');
+            $slugBase = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $orgName), '-'));
+            $slug = $slugBase !== '' ? $slugBase : ('org-' . substr((string) time(), -6));
 
-                Session::set('organization', [
-                    'id'        => 0,
-                    'name'      => $orgName,
-                    'slug'      => $slug,
-                    'type'      => (string) $request->input('org_type'),
-                    'plan'      => 'trial',
-                    'status'    => 'trial',
-                    'role_slug' => 'owner',
-                    'role_name' => 'Proprietario',
-                ]);
+            Session::set('organization', [
+                'id'        => 0,
+                'name'      => $orgName,
+                'slug'      => $slug,
+                'type'      => (string) $request->input('org_type'),
+                'plan'      => 'trial',
+                'status'    => 'trial',
+                'role_slug' => 'owner',
+                'role_name' => 'Proprietario',
+            ]);
 
-                $userData = Session::user();
-                $userData['permissions'] = $userData['permissions'] ?? [];
-                Session::set('user', $userData);
+            $userData = Session::user();
+            $userData['permissions'] = $userData['permissions'] ?? [];
+            Session::set('user', $userData);
 
-                Session::flash('success', 'Organizacao registrada em modo de contingencia. Conecte o banco para persistir os dados.');
-                redirect('/hub');
-            }
-
-            Session::flash('error', 'Erro ao criar organizacao. Tente novamente.');
-            Session::setOld($request->all());
-            redirect('/onboarding/organizacao');
+            Session::flash('success', 'Organizacao registrada em modo de contingencia. Conecte o banco para persistir os dados.');
+            redirect('/hub');
         }
-    }
-
-    private function isDatabaseException(\Throwable $e): bool
-    {
-        if ($e instanceof \PDOException) {
-            return true;
-        }
-
-        return str_contains($e->getMessage(), 'SQLSTATE');
     }
 }
