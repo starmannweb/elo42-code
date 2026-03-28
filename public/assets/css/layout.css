@@ -185,11 +185,11 @@
 .hero::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(circle at 82% 20%, rgba(214, 166, 70, 0.18) 0%, transparent 35%),
-        radial-gradient(circle at 16% 78%, rgba(10, 77, 255, 0.26) 0%, transparent 42%),
-        linear-gradient(112deg, #061935 0%, #0a2b59 52%, #071b3b 100%);
+    inset: -5%;
+    background-image: url('../img/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     z-index: 0;
 }
 
@@ -212,8 +212,11 @@
 
 .hero__overlay {
     position: absolute;
-    inset: 0;
-    background: linear-gradient(100deg, rgba(2, 10, 26, 0.75) 0%, rgba(2, 10, 26, 0.35) 50%, rgba(2, 10, 26, 0.72) 100%);
+    inset: -5%;
+    background:
+        radial-gradient(circle at 80% 24%, rgba(214, 166, 70, 0.18) 0%, transparent 36%),
+        radial-gradient(circle at 18% 72%, rgba(22, 124, 255, 0.22) 0%, transparent 44%),
+        linear-gradient(100deg, rgba(2, 10, 26, 0.86) 0%, rgba(2, 10, 26, 0.38) 52%, rgba(2, 10, 26, 0.84) 100%);
     pointer-events: none;
     z-index: 2;
 }

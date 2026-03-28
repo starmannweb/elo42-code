@@ -19,7 +19,8 @@
             <p class="hero__subtitle">
                 <strong>Plataformas para ONGs e organizações</strong> com
                 <strong>gestão de benefícios</strong>, <strong>implantação assistida</strong> e
-                <strong>organização operacional</strong> em um só lugar.
+                <strong>organização operacional</strong>, além de <strong>tráfego estratégico com ads</strong>
+                (Google Ad Grants e campanhas de performance) em um só lugar.
                 Estruture sua operação com clareza, controle e crescimento sustentável.
             </p>
 
