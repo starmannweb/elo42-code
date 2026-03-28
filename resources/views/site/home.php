@@ -14,31 +14,22 @@
         <span class="hero__light hero__light--one"></span>
         <span class="hero__light hero__light--two"></span>
         <span class="hero__light hero__light--three"></span>
-        <span class="hero__spark hero__spark--1"></span>
-        <span class="hero__spark hero__spark--2"></span>
-        <span class="hero__spark hero__spark--3"></span>
-        <span class="hero__spark hero__spark--4"></span>
-        <span class="hero__spark hero__spark--5"></span>
-        <span class="hero__spark hero__spark--6"></span>
-        <span class="hero__spark hero__spark--7"></span>
-        <span class="hero__spark hero__spark--8"></span>
-        <span class="hero__spark hero__spark--9"></span>
-        <span class="hero__spark hero__spark--10"></span>
-        <span class="hero__spark hero__spark--11"></span>
-        <span class="hero__spark hero__spark--12"></span>
     </div>
     <div class="container">
         <div class="hero__content">
             <div class="hero__badge">✦ Plataforma para igrejas e organizações</div>
 
             <h1 class="hero__title">
-                Menos improviso.<br>
-                Mais <span>gestão, tecnologia e impacto</span> para a sua missão.
+                Chega de improviso.<br>
+                Sua missão merece escala.<br>
+                Com <span>gestão, tecnologia e implantação</span> para gerar impacto real.
             </h1>
 
             <p class="hero__subtitle">
-                A Elo 42 reúne implantação, benefícios, suporte e gestão em uma plataforma feita
-                para igrejas e organizações que precisam operar com mais ordem, clareza e eficiência.
+                <strong>Plataformas para ONGs e organizações</strong> com
+                <strong>gestão de benefícios</strong>, <strong>implantação assistida</strong> e
+                <strong>organização operacional</strong> em um só lugar.
+                Estruture sua operação com clareza, controle e crescimento sustentável.
             </p>
 
             <div class="hero__actions">

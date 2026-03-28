@@ -249,13 +249,7 @@
 }
 
 .hero__fx::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px);
-    background-size: 3px 3px;
-    opacity: 0.14;
-    animation: heroDust 18s linear infinite;
+    display: none;
 }
 
 .hero__electric-grid {
@@ -423,13 +417,18 @@
 }
 
 .hero__subtitle {
-    font-size: var(--text-lg);
+    font-size: clamp(1.15rem, 1.5vw, 1.42rem);
     color: var(--color-text-on-dark-secondary);
-    line-height: 1.8;
+    line-height: 1.72;
     margin-bottom: var(--space-10);
-    max-width: 620px;
+    max-width: 700px;
     opacity: 0;
     animation: heroReveal 0.65s ease-out 0.5s forwards;
+}
+
+.hero__subtitle strong {
+    color: rgba(244, 250, 255, 0.95);
+    font-weight: 700;
 }
 
 .hero__description {
