@@ -103,7 +103,7 @@ Crie sua conta em menos de 2 minutos e tenha acesso a todas as ferramentas do ec
                     name="phone"
                     class="form-input"
                     value="<?= e(old('phone')) ?>"
-                    placeholder="(11) 99999-9999"
+                    placeholder="(13) 97800-8047"
                     required
                 >
                 <?php foreach ($errors['phone'] ?? [] as $err): ?>

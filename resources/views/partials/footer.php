@@ -26,9 +26,10 @@
                 <h4 class="footer__title">Navegação</h4>
                 <ul class="footer__links">
                     <li><a href="<?= url('/') ?>#sobre" class="footer__link">Sobre</a></li>
-                    <li><a href="<?= url('/') ?>#servicos" class="footer__link">Serviços</a></li>
                     <li><a href="<?= url('/') ?>#funcionalidades" class="footer__link">Funcionalidades</a></li>
+                    <li><a href="<?= url('/') ?>#projetos" class="footer__link">Como funciona</a></li>
                     <li><a href="<?= url('/') ?>#faq" class="footer__link">FAQ</a></li>
+                    <li><a href="<?= url('/contato') ?>" class="footer__link">Contato</a></li>
                 </ul>
             </div>
 

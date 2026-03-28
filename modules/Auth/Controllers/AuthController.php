@@ -50,7 +50,16 @@ class AuthController extends Controller
             redirect('/login');
         }
 
-        $intended = Session::getFlash('intended_url', '/hub');
+        $offlineMode = (($result['offline'] ?? false) === true);
+        if ($offlineMode) {
+            Session::flash('warning', 'Login realizado em modo de contingencia. Alguns dados podem nao estar sincronizados.');
+        }
+
+        $intended = $this->resolvePostLoginRedirect(
+            Session::getFlash('intended_url', '/hub'),
+            $offlineMode,
+            is_array(Session::get('organization')) ? Session::get('organization') : null
+        );
         redirect($intended);
     }
 
@@ -279,5 +288,32 @@ class AuthController extends Controller
             Session::flash('success', 'Organizacao registrada em modo de contingencia. Conecte o banco para persistir os dados.');
             redirect('/hub');
         }
+    }
+
+    private function resolvePostLoginRedirect(mixed $intended, bool $offlineMode = false, ?array $organization = null): string
+    {
+        if ($offlineMode) {
+            return '/hub';
+        }
+
+        if (!is_string($intended) || trim($intended) === '') {
+            return '/hub';
+        }
+
+        $intended = trim($intended);
+        if (!str_starts_with($intended, '/')) {
+            return '/hub';
+        }
+
+        $blocked = ['/login', '/logout', '/cadastro'];
+        if (in_array($intended, $blocked, true)) {
+            return '/hub';
+        }
+
+        if (str_starts_with($intended, '/gestao') && empty($organization['id'])) {
+            return '/hub';
+        }
+
+        return $intended;
     }
 }

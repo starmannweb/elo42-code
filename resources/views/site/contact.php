@@ -21,23 +21,37 @@
                 <h2 style="font-size: var(--text-2xl); margin-bottom: var(--space-6);">Fale conosco</h2>
 
                 <div class="contact-info-card">
-                    <div class="contact-info-card__icon">📧</div>
+                    <div class="contact-info-card__icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                            <path d="M3 7l9 6 9-6"></path>
+                        </svg>
+                    </div>
                     <div>
                         <h4 class="contact-info-card__title">E-mail</h4>
-                        <p class="contact-info-card__text">suporte@elo42.com.br</p>
+                        <p class="contact-info-card__text"><a class="contact-info-card__link" href="mailto:suporte@elo42.com.br">suporte@elo42.com.br</a></p>
                     </div>
                 </div>
 
                 <div class="contact-info-card">
-                    <div class="contact-info-card__icon">📱</div>
+                    <div class="contact-info-card__icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 13.2v3a2 2 0 0 1-2.2 2A17.6 17.6 0 0 1 6 6.2 2 2 0 0 1 8 4h3a2 2 0 0 1 2 1.7l.3 2a2 2 0 0 1-.6 1.8l-1.3 1.1a14 14 0 0 0 3.9 3.9l1.1-1.3a2 2 0 0 1 1.8-.6l2 .3a2 2 0 0 1 1.7 2z"></path>
+                        </svg>
+                    </div>
                     <div>
                         <h4 class="contact-info-card__title">WhatsApp</h4>
-                        <p class="contact-info-card__text">(11) 99999-0042</p>
+                        <p class="contact-info-card__text"><a class="contact-info-card__link" href="https://wa.me/5513978008047" target="_blank" rel="noopener noreferrer">(13) 97800-8047</a></p>
                     </div>
                 </div>
 
                 <div class="contact-info-card">
-                    <div class="contact-info-card__icon">🕐</div>
+                    <div class="contact-info-card__icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 3"></path>
+                        </svg>
+                    </div>
                     <div>
                         <h4 class="contact-info-card__title">Horário de atendimento</h4>
                         <p class="contact-info-card__text">Seg a Sex, 9h às 18h</p>

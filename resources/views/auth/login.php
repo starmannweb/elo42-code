@@ -16,6 +16,10 @@
         <div class="alert alert--success"><?= e($success) ?></div>
     <?php endif; ?>
 
+    <?php if ($warning = flash('warning')): ?>
+        <div class="alert alert--warning"><?= e($warning) ?></div>
+    <?php endif; ?>
+
     <div class="auth-form">
         <form method="POST" action="<?= url('/login') ?>">
             <?= csrf_field() ?>

@@ -246,19 +246,6 @@
             });
         });
 
-        // --- Mouse Parallax Effect on Hero ---
-        var hero = document.querySelector('.hero');
-        if (hero) {
-            hero.addEventListener('mousemove', function(e) {
-                var x = e.clientX / window.innerWidth;
-                var y = e.clientY / window.innerHeight;
-                
-                // Set custom properties for CSS to use
-                hero.style.setProperty('--mouse-x', x);
-                hero.style.setProperty('--mouse-y', y);
-            });
-        }
-
         // --- Confirm delete forms ---
         document.querySelectorAll('form[data-confirm]').forEach(function(form) {
             form.addEventListener('submit', function(e) {

@@ -106,6 +106,20 @@ class AuthService
                 // Ignore logger failures.
             }
 
+            try {
+                $offlineUserId = $this->bootstrapOfflineLogin($email);
+                return [
+                    'success' => true,
+                    'user_id' => $offlineUserId,
+                    'offline' => true,
+                ];
+            } catch (\Throwable $fallbackError) {
+                $this->logNonCritical('auth.attempt_offline_bootstrap_failed', [
+                    'email' => $email,
+                    'error' => $fallbackError->getMessage(),
+                ]);
+            }
+
             return [
                 'success' => false,
                 'error'   => 'Nao foi possivel autenticar agora. Tente novamente em alguns instantes.',
@@ -357,6 +371,34 @@ class AuthService
 
         $this->logNonCritical('auth.register_offline_mode', [
             'email' => $offlineUser['email'],
+            'id'    => $fallbackId,
+        ]);
+
+        return $fallbackId;
+    }
+
+    private function bootstrapOfflineLogin(string $email): int
+    {
+        $normalizedEmail = strtolower(trim($email));
+        $fallbackId = (int) sprintf('%u', crc32($normalizedEmail));
+        $localPart = explode('@', $normalizedEmail)[0] ?? 'usuario';
+        $name = ucwords(str_replace(['.', '_', '-'], ' ', $localPart));
+
+        $offlineUser = [
+            'id'                => $fallbackId,
+            'name'              => $name !== '' ? $name : 'Usuario Offline',
+            'email'             => $normalizedEmail,
+            'phone'             => null,
+            'avatar'            => null,
+            'status'            => 'active',
+            'email_verified_at' => null,
+        ];
+
+        $this->loginUser($offlineUser);
+        Session::remove('organization');
+
+        $this->logNonCritical('auth.login_offline_mode', [
+            'email' => $normalizedEmail,
             'id'    => $fallbackId,
         ]);
 

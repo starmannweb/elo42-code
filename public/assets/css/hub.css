@@ -127,6 +127,11 @@
     font-size: 0.875rem;
 }
 
+.hub-nav-link__icon svg {
+    display: block;
+    margin: 0 auto;
+}
+
 .hub-sidebar__footer {
     padding: var(--space-4);
     border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -405,6 +410,138 @@
     margin-top: 2px;
 }
 
+.dashboard-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.dashboard-section__link {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.dashboard-section--showcase {
+    margin-top: var(--space-10);
+}
+
+.showcase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space-5);
+}
+
+.showcase-card {
+    background: linear-gradient(165deg, #0b1f44 0%, #0a2b5b 100%);
+    border: 1px solid rgba(133, 170, 232, 0.22);
+    border-radius: 18px;
+    padding: var(--space-5);
+    color: #d6e3ff;
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.showcase-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(214, 166, 70, 0.38);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+}
+
+.showcase-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.showcase-card__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.07);
+    color: #f2f6ff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.showcase-card__badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 4px 9px;
+    border-radius: 999px;
+}
+
+.showcase-card__badge--new {
+    background: rgba(10, 77, 255, 0.26);
+    color: #b8d2ff;
+}
+
+.showcase-card__badge--hot {
+    background: rgba(214, 166, 70, 0.25);
+    color: #f1d38a;
+}
+
+.showcase-card__badge--coming {
+    background: rgba(124, 58, 237, 0.28);
+    color: #c7b4ff;
+}
+
+.showcase-card__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #ffffff;
+}
+
+.showcase-card__description {
+    font-size: 0.96rem;
+    line-height: 1.55;
+    color: #b7c8ed;
+    margin: 0;
+}
+
+.showcase-card__footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.showcase-card__price {
+    font-size: 1.05rem;
+    color: #f1c664;
+    letter-spacing: 0.01em;
+}
+
+.showcase-card__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 14px;
+    border: 1px solid rgba(214, 166, 70, 0.55);
+    border-radius: 12px;
+    color: #f4d48f;
+    font-size: 0.87rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.showcase-card__button:hover {
+    background: rgba(214, 166, 70, 0.12);
+}
+
 /* --- Next Steps --- */
 .next-steps {
     background: var(--color-white);
@@ -552,5 +689,10 @@
 
     .status-card {
         padding: var(--space-4);
+    }
+
+    .dashboard-section__header {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }

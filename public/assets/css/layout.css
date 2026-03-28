@@ -26,7 +26,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 12px var(--space-6);
+    padding: 12px var(--space-4);
     background:
         radial-gradient(80% 140% at 50% -30%, rgba(255, 255, 255, 0.18), transparent 68%),
         linear-gradient(90deg, rgba(10, 34, 73, 0.84) 0%, rgba(12, 45, 92, 0.72) 52%, rgba(8, 26, 61, 0.84) 100%);
@@ -180,21 +180,17 @@
     background-color: var(--color-deep-blue);
     overflow: hidden;
     padding-top: var(--header-height);
-    --mouse-x: 0.5;
-    --mouse-y: 0.5;
 }
 
 .hero::before {
     content: '';
     position: absolute;
-    inset: -5%;
-    background-image: url('../img/hero-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    inset: 0;
+    background:
+        radial-gradient(circle at 82% 20%, rgba(214, 166, 70, 0.18) 0%, transparent 35%),
+        radial-gradient(circle at 16% 78%, rgba(10, 77, 255, 0.26) 0%, transparent 42%),
+        linear-gradient(112deg, #061935 0%, #0a2b59 52%, #071b3b 100%);
     z-index: 0;
-    transition: transform 0.2s ease-out;
-    transform: translate(calc((var(--mouse-x) - 0.5) * -30px), calc((var(--mouse-y) - 0.5) * -30px));
 }
 
 .hero::after {
@@ -216,23 +212,14 @@
 
 .hero__overlay {
     position: absolute;
-    inset: -5%;
-    background:
-        radial-gradient(circle at 78% 24%, rgba(214, 166, 70, 0.14) 0%, transparent 36%),
-        radial-gradient(circle at 18% 72%, rgba(22, 124, 255, 0.25) 0%, transparent 44%),
-        linear-gradient(100deg, rgba(2, 10, 26, 0.9) 0%, rgba(2, 10, 26, 0.45) 52%, rgba(2, 10, 26, 0.88) 100%);
+    inset: 0;
+    background: linear-gradient(100deg, rgba(2, 10, 26, 0.75) 0%, rgba(2, 10, 26, 0.35) 50%, rgba(2, 10, 26, 0.72) 100%);
     pointer-events: none;
     z-index: 2;
-    transition: transform 0.2s ease-out;
-    transform: translate(calc((var(--mouse-x) - 0.5) * -15px), calc((var(--mouse-y) - 0.5) * -15px));
 }
 
 .hero__fx {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 3;
-    overflow: hidden;
+    display: none;
 }
 
 .hero__fx::before {
@@ -447,6 +434,10 @@
     align-items: center;
     opacity: 0;
     animation: heroReveal 0.65s ease-out 0.7s forwards;
+}
+.hero .glowbox-animations,
+.hero .glowbox-borders-masker {
+    display: none;
 }
 
 /* --- Glowbox CTA Button --- */
@@ -703,8 +694,8 @@
     display: flex;
     gap: var(--space-12);
     margin-top: var(--space-16);
-    padding-top: var(--space-8);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 0;
+    border-top: none;
     opacity: 0;
     animation: heroReveal 0.65s ease-out 0.88s forwards;
 }
@@ -1740,6 +1731,12 @@
     font-size: 1.1rem;
 }
 
+.contact-info-card__icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
 .contact-info-card__title {
     font-weight: 700;
     font-size: var(--text-sm);
@@ -1749,6 +1746,16 @@
 .contact-info-card__text {
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
+}
+
+.contact-info-card__link {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.contact-info-card__link:hover {
+    color: var(--color-primary);
 }
 
 /* --- Responsive Layout --- */
