@@ -453,7 +453,7 @@
                         </div>
                     </a>
                 </div>
-                <a href="https://wa.me/5513978008047" target="_blank" rel="noopener noreferrer" class="btn btn--outline-light btn--lg">Falar com um especialista</a>
+                <a href="<?= url('/contato') ?>" class="btn btn--outline-light btn--lg">Falar com um especialista</a>
             </div>
         </div>
     </div>

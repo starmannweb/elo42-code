@@ -11,19 +11,37 @@ use App\Models\Member;
 
 class MemberController extends Controller
 {
-    private function orgId(): int { return (int) Session::get('organization')['id']; }
+    private function orgId(): int
+    {
+        $organization = Session::get('organization');
+        if (!is_array($organization) || !isset($organization['id'])) {
+            return 0;
+        }
+
+        return (int) $organization['id'];
+    }
 
     public function index(Request $request): void
     {
+        $orgId = $this->orgId();
+        if ($orgId <= 0) {
+            Session::flash('warning', 'Complete o cadastro da organizacao para acessar os membros.');
+            redirect('/onboarding/organizacao');
+        }
+
         $page = (int) ($request->input('page', '1'));
         $filters = [
             'search' => $request->input('search', ''),
             'status' => $request->input('status', ''),
         ];
-        $result = Member::byOrg($this->orgId(), $filters, $page);
+
+        $result = Member::byOrg($orgId, $filters, $page);
+        if (($result['degraded'] ?? false) === true) {
+            Session::flash('warning', 'Membros indisponivel no momento. Exibindo modo de contingencia.');
+        }
 
         $this->view('management/members/index', [
-            'pageTitle'   => 'Membros — Gestão',
+            'pageTitle'   => 'Membros - Gestao',
             'breadcrumb'  => 'Membros',
             'members'     => $result['data'],
             'pagination'  => $result,
@@ -33,8 +51,13 @@ class MemberController extends Controller
 
     public function create(Request $request): void
     {
+        if ($this->orgId() <= 0) {
+            Session::flash('warning', 'Complete o cadastro da organizacao para adicionar membros.');
+            redirect('/onboarding/organizacao');
+        }
+
         $this->view('management/members/form', [
-            'pageTitle'  => 'Novo membro — Gestão',
+            'pageTitle'  => 'Novo membro - Gestao',
             'breadcrumb' => 'Membros / Novo',
             'member'     => null,
         ]);
@@ -42,18 +65,30 @@ class MemberController extends Controller
 
     public function store(Request $request): void
     {
+        $orgId = $this->orgId();
+        if ($orgId <= 0) {
+            Session::flash('warning', 'Complete o cadastro da organizacao para adicionar membros.');
+            redirect('/onboarding/organizacao');
+        }
+
         $this->validate($request, [
             'name'  => 'required|min:3',
             'email' => 'email',
         ]);
 
-        Member::create(array_merge($request->only([
-            'name','email','phone','birth_date','gender','marital_status',
-            'address','city','state','zip_code','membership_date','baptism_date','status','notes'
-        ]), [
-            'organization_id' => $this->orgId(),
-            'created_by'      => Session::user()['id'],
-        ]));
+        try {
+            Member::create(array_merge($request->only([
+                'name','email','phone','birth_date','gender','marital_status',
+                'address','city','state','zip_code','membership_date','baptism_date','status','notes'
+            ]), [
+                'organization_id' => $orgId,
+                'created_by'      => Session::user()['id'],
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel cadastrar membro agora. Tente novamente.');
+            Session::setOld($request->all());
+            redirect('/gestao/membros/novo');
+        }
 
         Session::flash('success', 'Membro cadastrado com sucesso.');
         redirect('/gestao/membros');
@@ -61,11 +96,19 @@ class MemberController extends Controller
 
     public function show(Request $request): void
     {
-        $member = Member::find((int) $request->param('id'));
-        if (!$member || (int)$member['organization_id'] !== $this->orgId()) { redirect('/gestao/membros'); }
+        try {
+            $member = Member::find((int) $request->param('id'));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel carregar membro agora.');
+            redirect('/gestao/membros');
+        }
+
+        if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
+            redirect('/gestao/membros');
+        }
 
         $this->view('management/members/show', [
-            'pageTitle'  => e($member['name']) . ' — Gestão',
+            'pageTitle'  => e($member['name']) . ' - Gestao',
             'breadcrumb' => 'Membros / ' . $member['name'],
             'member'     => $member,
         ]);
@@ -73,11 +116,19 @@ class MemberController extends Controller
 
     public function edit(Request $request): void
     {
-        $member = Member::find((int) $request->param('id'));
-        if (!$member || (int)$member['organization_id'] !== $this->orgId()) { redirect('/gestao/membros'); }
+        try {
+            $member = Member::find((int) $request->param('id'));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel carregar membro agora.');
+            redirect('/gestao/membros');
+        }
+
+        if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
+            redirect('/gestao/membros');
+        }
 
         $this->view('management/members/form', [
-            'pageTitle'  => 'Editar — ' . e($member['name']),
+            'pageTitle'  => 'Editar - ' . e($member['name']),
             'breadcrumb' => 'Membros / Editar',
             'member'     => $member,
         ]);
@@ -86,15 +137,30 @@ class MemberController extends Controller
     public function update(Request $request): void
     {
         $id = (int) $request->param('id');
-        $member = Member::find($id);
-        if (!$member || (int)$member['organization_id'] !== $this->orgId()) { redirect('/gestao/membros'); }
+
+        try {
+            $member = Member::find($id);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel atualizar membro agora.');
+            redirect('/gestao/membros');
+        }
+
+        if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
+            redirect('/gestao/membros');
+        }
 
         $this->validate($request, ['name' => 'required|min:3']);
 
-        Member::update($id, $request->only([
-            'name','email','phone','birth_date','gender','marital_status',
-            'address','city','state','zip_code','membership_date','baptism_date','status','notes'
-        ]));
+        try {
+            Member::update($id, $request->only([
+                'name','email','phone','birth_date','gender','marital_status',
+                'address','city','state','zip_code','membership_date','baptism_date','status','notes'
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel atualizar membro agora. Tente novamente.');
+            Session::setOld($request->all());
+            redirect('/gestao/membros/' . $id . '/editar');
+        }
 
         Session::flash('success', 'Membro atualizado com sucesso.');
         redirect('/gestao/membros/' . $id);
@@ -103,10 +169,25 @@ class MemberController extends Controller
     public function destroy(Request $request): void
     {
         $id = (int) $request->param('id');
-        $member = Member::find($id);
-        if (!$member || (int)$member['organization_id'] !== $this->orgId()) { redirect('/gestao/membros'); }
 
-        Member::delete($id);
+        try {
+            $member = Member::find($id);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel remover membro agora.');
+            redirect('/gestao/membros');
+        }
+
+        if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
+            redirect('/gestao/membros');
+        }
+
+        try {
+            Member::delete($id);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel remover membro agora. Tente novamente.');
+            redirect('/gestao/membros');
+        }
+
         Session::flash('success', 'Membro removido.');
         redirect('/gestao/membros');
     }

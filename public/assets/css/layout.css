@@ -1434,15 +1434,19 @@
     gap: var(--space-4);
     justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    max-width: 760px;
+    margin: 0 auto;
 }
 
 .cta-section__actions .glowbox {
-    flex: 1 1 420px;
-    max-width: 440px;
+    flex: 0 1 430px;
+    max-width: 430px;
 }
 
 .cta-section__actions .btn--outline-light {
+    flex: 0 0 auto;
+    min-width: 260px;
     min-height: 64px;
     display: inline-flex;
     align-items: center;
@@ -1890,6 +1894,10 @@
 
     .cta-section__title {
         font-size: var(--text-2xl);
+    }
+
+    .cta-section__actions {
+        flex-wrap: wrap;
     }
 
     .cta-section__actions .glowbox,

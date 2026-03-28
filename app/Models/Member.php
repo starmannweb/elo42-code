@@ -19,66 +19,86 @@ class Member extends Model
 
     public static function byOrg(int $orgId, array $filters = [], int $page = 1, int $perPage = 20): array
     {
-        $pdo = Database::connection();
-        $where = ['m.organization_id = :org_id'];
-        $params = ['org_id' => $orgId];
+        try {
+            $pdo = Database::connection();
+            $where = ['m.organization_id = :org_id'];
+            $params = ['org_id' => $orgId];
 
-        if (!empty($filters['search'])) {
-            $where[] = "(m.name LIKE :search OR m.email LIKE :search OR m.phone LIKE :search)";
-            $params['search'] = '%' . $filters['search'] . '%';
+            if (!empty($filters['search'])) {
+                $where[] = "(m.name LIKE :search OR m.email LIKE :search OR m.phone LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
+            if (!empty($filters['status'])) {
+                $where[] = "m.status = :status";
+                $params['status'] = $filters['status'];
+            }
+
+            $whereStr = implode(' AND ', $where);
+            $offset = ($page - 1) * $perPage;
+
+            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM members m WHERE {$whereStr}");
+            $countStmt->execute($params);
+            $total = (int) $countStmt->fetchColumn();
+
+            $stmt = $pdo->prepare("
+                SELECT m.* FROM members m
+                WHERE {$whereStr}
+                ORDER BY m.name ASC
+                LIMIT {$perPage} OFFSET {$offset}
+            ");
+            $stmt->execute($params);
+
+            return [
+                'data'       => $stmt->fetchAll(),
+                'total'      => $total,
+                'page'       => $page,
+                'perPage'    => $perPage,
+                'totalPages' => (int) ceil($total / $perPage),
+                'degraded'   => false,
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'data'       => [],
+                'total'      => 0,
+                'page'       => max(1, $page),
+                'perPage'    => $perPage,
+                'totalPages' => 1,
+                'degraded'   => true,
+            ];
         }
-        if (!empty($filters['status'])) {
-            $where[] = "m.status = :status";
-            $params['status'] = $filters['status'];
-        }
-
-        $whereStr = implode(' AND ', $where);
-        $offset = ($page - 1) * $perPage;
-
-        $countStmt = $pdo->prepare("SELECT COUNT(*) FROM members m WHERE {$whereStr}");
-        $countStmt->execute($params);
-        $total = (int) $countStmt->fetchColumn();
-
-        $stmt = $pdo->prepare("
-            SELECT m.* FROM members m
-            WHERE {$whereStr}
-            ORDER BY m.name ASC
-            LIMIT {$perPage} OFFSET {$offset}
-        ");
-        $stmt->execute($params);
-
-        return [
-            'data'       => $stmt->fetchAll(),
-            'total'      => $total,
-            'page'       => $page,
-            'perPage'    => $perPage,
-            'totalPages' => (int) ceil($total / $perPage),
-        ];
     }
 
     public static function countByOrg(int $orgId, ?string $status = null): int
     {
-        $pdo = Database::connection();
-        $sql = "SELECT COUNT(*) FROM members WHERE organization_id = :org";
-        $params = ['org' => $orgId];
-        if ($status) {
-            $sql .= " AND status = :status";
-            $params['status'] = $status;
+        try {
+            $pdo = Database::connection();
+            $sql = "SELECT COUNT(*) FROM members WHERE organization_id = :org";
+            $params = ['org' => $orgId];
+            if ($status) {
+                $sql .= " AND status = :status";
+                $params['status'] = $status;
+            }
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            return (int) $stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            return 0;
         }
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-        return (int) $stmt->fetchColumn();
     }
 
     public static function newThisMonth(int $orgId): int
     {
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*) FROM members
-            WHERE organization_id = :org
-            AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
-        ");
-        $stmt->execute(['org' => $orgId]);
-        return (int) $stmt->fetchColumn();
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("
+                SELECT COUNT(*) FROM members
+                WHERE organization_id = :org
+                AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+            ");
+            $stmt->execute(['org' => $orgId]);
+            return (int) $stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 }

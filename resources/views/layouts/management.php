@@ -21,6 +21,7 @@
         <?php
             $user = \App\Core\Session::user() ?? [];
             $organization = \App\Core\Session::get('organization');
+            $organization = is_array($organization) ? $organization : [];
             $parts = explode(' ', $user['name'] ?? '');
             $initials = strtoupper(substr($parts[0] ?? '', 0, 1) . substr(end($parts) ?: '', 0, 1));
             $uri = !empty($_GET['url']) ? '/' . trim($_GET['url'], '/') : (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/');
@@ -97,7 +98,7 @@
                 <div class="hub-topbar__left">
                     <button class="hub-topbar__mobile-toggle" id="hub-sidebar-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
                     <nav class="hub-topbar__breadcrumb" aria-label="Breadcrumb">
-                        <?php if ($organization): ?>
+                        <?php if (!empty($organization['name'])): ?>
                             <span><?= e($organization['name']) ?></span>
                             <span class="hub-topbar__breadcrumb-sep" aria-hidden="true">›</span>
                         <?php endif; ?>
@@ -116,6 +117,9 @@
                 <?php endif; ?>
                 <?php if ($alert = flash('error')): ?>
                     <div class="alert alert--error" role="alert"><?= e($alert) ?></div>
+                <?php endif; ?>
+                <?php if ($alert = flash('warning')): ?>
+                    <div class="alert alert--warning" role="alert"><?= e($alert) ?></div>
                 <?php endif; ?>
                 <?= $__view->yield('content') ?>
             </main>
