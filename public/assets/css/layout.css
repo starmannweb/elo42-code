@@ -14,6 +14,10 @@
 }
 
 .site-header--scrolled {
+    background: rgba(7, 27, 59, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(214, 166, 70, 0.1);
     padding: var(--space-2) 0;
 }
 
@@ -37,13 +41,12 @@
 }
 
 .site-header--scrolled .navbar {
-    background:
-        radial-gradient(85% 150% at 50% -35%, rgba(255, 255, 255, 0.12), transparent 70%),
-        linear-gradient(90deg, rgba(7, 27, 59, 0.95) 0%, rgba(9, 34, 73, 0.88) 50%, rgba(6, 24, 55, 0.95) 100%);
-    border-color: rgba(214, 166, 70, 0.35);
-    box-shadow:
-        0 10px 32px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    background: transparent;
+    border-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .navbar__logo {
@@ -199,7 +202,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(2, 10, 26, 0.4) 0%, rgba(2, 10, 26, 0.8) 100%);
+    background: linear-gradient(180deg, rgba(2, 10, 26, 0.25) 0%, rgba(2, 10, 26, 0.82) 100%);
     pointer-events: none;
     z-index: 1;
 }
@@ -222,9 +225,71 @@
     transform: translate(calc((var(--mouse-x) - 0.5) * -15px), calc((var(--mouse-y) - 0.5) * -15px));
 }
 
+.hero__fx {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    overflow: hidden;
+}
+
+.hero__fx::before {
+    content: '';
+    position: absolute;
+    inset: -25% -10%;
+    background:
+        radial-gradient(circle at 20% 70%, rgba(23, 144, 255, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 78% 28%, rgba(214, 166, 70, 0.16) 0%, transparent 35%),
+        radial-gradient(circle at 56% 88%, rgba(68, 128, 255, 0.14) 0%, transparent 38%);
+    mix-blend-mode: screen;
+    animation: heroPulse 9s ease-in-out infinite alternate;
+}
+
+.hero__fx::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.26) 1px, transparent 1px);
+    background-size: 4px 4px;
+    opacity: 0.12;
+    animation: heroDust 18s linear infinite;
+}
+
+.hero__light {
+    position: absolute;
+    top: -32%;
+    width: 48vw;
+    height: 170vh;
+    opacity: 0.22;
+    filter: blur(2px);
+    transform-origin: top center;
+    mix-blend-mode: screen;
+}
+
+.hero__light--one {
+    left: -8%;
+    background: linear-gradient(180deg, rgba(61, 146, 255, 0.52) 0%, rgba(61, 146, 255, 0) 70%);
+    transform: rotate(-7deg);
+    animation: heroSweepOne 12s ease-in-out infinite;
+}
+
+.hero__light--two {
+    left: 32%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 74%);
+    transform: rotate(4deg);
+    animation: heroSweepTwo 10s ease-in-out infinite;
+}
+
+.hero__light--three {
+    right: -12%;
+    background: linear-gradient(180deg, rgba(214, 166, 70, 0.35) 0%, rgba(214, 166, 70, 0) 68%);
+    transform: rotate(10deg);
+    animation: heroSweepThree 14s ease-in-out infinite;
+}
+
 .hero__content {
     position: relative;
-    z-index: 3;
+    z-index: 4;
     max-width: 760px;
     padding: var(--space-20) 0;
 }
@@ -554,6 +619,59 @@
     font-size: var(--text-sm);
     color: var(--color-text-on-dark-secondary);
     margin-top: var(--space-1);
+}
+
+@keyframes heroPulse {
+    0% {
+        transform: scale(1) translate3d(0, 0, 0);
+        opacity: 0.42;
+    }
+    100% {
+        transform: scale(1.1) translate3d(1.5%, -1.5%, 0);
+        opacity: 0.56;
+    }
+}
+
+@keyframes heroDust {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(24px);
+    }
+}
+
+@keyframes heroSweepOne {
+    0%, 100% {
+        transform: rotate(-8deg) translateX(0);
+        opacity: 0.2;
+    }
+    50% {
+        transform: rotate(-2deg) translateX(28px);
+        opacity: 0.33;
+    }
+}
+
+@keyframes heroSweepTwo {
+    0%, 100% {
+        transform: rotate(4deg) translateX(0);
+        opacity: 0.14;
+    }
+    50% {
+        transform: rotate(10deg) translateX(-24px);
+        opacity: 0.28;
+    }
+}
+
+@keyframes heroSweepThree {
+    0%, 100% {
+        transform: rotate(10deg) translateX(0);
+        opacity: 0.17;
+    }
+    50% {
+        transform: rotate(3deg) translateX(-20px);
+        opacity: 0.32;
+    }
 }
 
 /* --- Page Hero (internal pages) --- */
@@ -1489,6 +1607,20 @@
         padding: var(--space-12) 0;
     }
 
+    .hero__fx::after {
+        opacity: 0.08;
+    }
+
+    .hero__light {
+        width: 85vw;
+        opacity: 0.16;
+    }
+
+    .hero__light--two,
+    .hero__light--three {
+        display: none;
+    }
+
     .hero__stats {
         flex-direction: column;
         gap: var(--space-6);
@@ -1539,7 +1671,7 @@
 /* --- WhatsApp Floating Button --- */
 .whatsapp-float {
     position: fixed;
-    bottom: 84px;
+    bottom: 24px;
     right: 24px;
     z-index: 9999;
     width: 84px;
@@ -1564,7 +1696,7 @@
 
 @media (max-width: 768px) {
     .whatsapp-float {
-        bottom: 72px;
+        bottom: 16px;
         right: 16px;
         width: 74px;
         height: 74px;

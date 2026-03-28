@@ -246,18 +246,6 @@
             });
         });
 
-        // --- Scroll to Top ---
-        var scrollBtn = document.querySelector('.scroll-top');
-        if (scrollBtn) {
-            window.addEventListener('scroll', function() {
-                scrollBtn.classList.toggle('visible', window.scrollY > 400);
-            }, { passive: true });
-
-            scrollBtn.addEventListener('click', function() {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-
         // --- Mouse Parallax Effect on Hero ---
         var hero = document.querySelector('.hero');
         if (hero) {

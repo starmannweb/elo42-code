@@ -25,8 +25,6 @@
 
     <?= $__view->partial('footer') ?>
 
-    <button class="scroll-top" aria-label="Voltar ao topo">&uarr;</button>
-
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale conosco pelo WhatsApp">
         <div id="whatsapp-lottie"></div>

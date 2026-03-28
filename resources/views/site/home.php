@@ -6,6 +6,11 @@
 <section class="hero" id="inicio">
     <div class="hero__bg"></div>
     <div class="hero__overlay"></div>
+    <div class="hero__fx" aria-hidden="true">
+        <span class="hero__light hero__light--one"></span>
+        <span class="hero__light hero__light--two"></span>
+        <span class="hero__light hero__light--three"></span>
+    </div>
     <div class="container">
         <div class="hero__content">
             <div class="hero__badge">✦ Plataforma para igrejas e organizações</div>
