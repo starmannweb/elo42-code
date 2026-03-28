@@ -7,9 +7,25 @@
     <div class="hero__bg"></div>
     <div class="hero__overlay"></div>
     <div class="hero__fx" aria-hidden="true">
+        <span class="hero__electric-grid"></span>
+        <span class="hero__energy hero__energy--one"></span>
+        <span class="hero__energy hero__energy--two"></span>
+        <span class="hero__energy hero__energy--three"></span>
         <span class="hero__light hero__light--one"></span>
         <span class="hero__light hero__light--two"></span>
         <span class="hero__light hero__light--three"></span>
+        <span class="hero__spark hero__spark--1"></span>
+        <span class="hero__spark hero__spark--2"></span>
+        <span class="hero__spark hero__spark--3"></span>
+        <span class="hero__spark hero__spark--4"></span>
+        <span class="hero__spark hero__spark--5"></span>
+        <span class="hero__spark hero__spark--6"></span>
+        <span class="hero__spark hero__spark--7"></span>
+        <span class="hero__spark hero__spark--8"></span>
+        <span class="hero__spark hero__spark--9"></span>
+        <span class="hero__spark hero__spark--10"></span>
+        <span class="hero__spark hero__spark--11"></span>
+        <span class="hero__spark hero__spark--12"></span>
     </div>
     <div class="container">
         <div class="hero__content">
