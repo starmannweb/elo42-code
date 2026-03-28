@@ -14,7 +14,7 @@ return [
 
         INSERT IGNORE INTO platform_settings (setting_key, setting_value, setting_group, description) VALUES
         ('platform_name', 'Elo 42', 'general', 'Nome da plataforma'),
-        ('platform_email', 'contato@elo42.com.br', 'general', 'E-mail principal'),
+        ('platform_email', 'suporte@elo42.com.br', 'general', 'E-mail principal'),
         ('trial_days', '14', 'subscriptions', 'Dias de trial para novas organizações'),
         ('max_members_basic', '50', 'limits', 'Limite de membros no plano básico'),
         ('max_members_pro', '500', 'limits', 'Limite de membros no plano profissional'),

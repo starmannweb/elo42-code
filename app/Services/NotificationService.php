@@ -22,7 +22,7 @@ class NotificationService
             'mail_port'    => env('MAIL_PORT', 587),
             'mail_user'    => env('MAIL_USERNAME', ''),
             'mail_pass'    => env('MAIL_PASSWORD', ''),
-            'mail_from'    => env('MAIL_FROM_ADDRESS', 'noreply@elo42.com.br'),
+            'mail_from'    => env('MAIL_FROM_ADDRESS', 'suporte@elo42.com.br'),
             'mail_from_name' => env('MAIL_FROM_NAME', 'Elo 42'),
         ];
     }

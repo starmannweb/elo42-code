@@ -409,6 +409,12 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--color-primary);
 }
 
+.card__icon svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+}
+
 .card__title {
     font-size: var(--text-xl);
     font-weight: 700;

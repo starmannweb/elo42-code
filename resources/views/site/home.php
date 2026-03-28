@@ -54,7 +54,7 @@
                     </div>
                     <a href="#servicos">
                         <div class="btn-cta-box">
-                            <div class="btn-cta">Quero falar com um especialista</div>
+                            <div class="btn-cta">Quero conhecer o ecossistema</div>
                             <img src="https://zeph.com.br/wp-content/uploads/2023/12/seta-2.svg" class="arrow-icon" alt="Seta" />
                         </div>
                     </a>
@@ -94,21 +94,36 @@
 
         <div class="grid grid--3 animate-on-scroll">
             <div class="card">
-                <div class="card__icon">📋</div>
+                <div class="card__icon" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="3"></rect>
+                        <path d="M8 9h8M8 12h8M8 15h5"></path>
+                    </svg>
+                </div>
                 <h3 class="card__title">Gestão organizada</h3>
                 <p class="card__text">
                     Membros, finanças, eventos, grupos, comunicação e relatórios centralizados em um painel claro e funcional.
                 </p>
             </div>
             <div class="card">
-                <div class="card__icon">🚀</div>
+                <div class="card__icon" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 4l7 7-7 7-7-7 7-7z"></path>
+                        <path d="M12 16V8M9 11l3-3 3 3"></path>
+                    </svg>
+                </div>
                 <h3 class="card__title">Implantação assistida</h3>
                 <p class="card__text">
                     Sua organização não começa sozinha. O Elo 42 acompanha cada etapa, da configuração inicial à operação plena.
                 </p>
             </div>
             <div class="card">
-                <div class="card__icon">🤝</div>
+                <div class="card__icon" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3l8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7l8-4z"></path>
+                        <path d="M9 12l2 2 4-4"></path>
+                    </svg>
+                </div>
                 <h3 class="card__title">Suporte contínuo</h3>
                 <p class="card__text">
                     Acesso a suporte técnico, consultoria operacional e atualizações constantes sem custos extras.
@@ -262,7 +277,13 @@
 
         <div class="diff-grid animate-on-scroll">
             <div class="diff-card">
-                <div class="diff-card__icon">🎯</div>
+                <div class="diff-card__icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="8"></circle>
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 2v2M12 20v2M2 12h2M20 12h2"></path>
+                    </svg>
+                </div>
                 <div>
                     <h4 class="diff-card__title">Foco em operação real</h4>
                     <p class="diff-card__text">
@@ -273,7 +294,12 @@
             </div>
 
             <div class="diff-card">
-                <div class="diff-card__icon">🔗</div>
+                <div class="diff-card__icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 1 1 7 7l-1 1"></path>
+                        <path d="M14 11a5 5 0 0 1 0 7l-1 1a5 5 0 1 1-7-7l1-1"></path>
+                    </svg>
+                </div>
                 <div>
                     <h4 class="diff-card__title">Ecossistema integrado</h4>
                     <p class="diff-card__text">
@@ -284,7 +310,12 @@
             </div>
 
             <div class="diff-card">
-                <div class="diff-card__icon">🛡️</div>
+                <div class="diff-card__icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3l8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7l8-4z"></path>
+                        <path d="M9 12l2 2 4-4"></path>
+                    </svg>
+                </div>
                 <div>
                     <h4 class="diff-card__title">Segurança e confiança</h4>
                     <p class="diff-card__text">
@@ -295,7 +326,12 @@
             </div>
 
             <div class="diff-card">
-                <div class="diff-card__icon">📈</div>
+                <div class="diff-card__icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 16l6-6 4 4 6-6"></path>
+                        <path d="M14 8h6v6"></path>
+                    </svg>
+                </div>
                 <div>
                     <h4 class="diff-card__title">Cresce com você</h4>
                     <p class="diff-card__text">
@@ -410,14 +446,14 @@
                     <div class="glowbox-borders-masker">
                         <div class="glowbox-borders"></div>
                     </div>
-                    <a href="<?= url('/contato') ?>">
+                    <a href="<?= url('/cadastro') ?>">
                         <div class="btn-cta-box">
-                            <div class="btn-cta">Falar com um especialista</div>
+                            <div class="btn-cta">Criar a minha conta</div>
                             <img src="https://zeph.com.br/wp-content/uploads/2023/12/seta-2.svg" class="arrow-icon" alt="Seta" />
                         </div>
                     </a>
                 </div>
-                <a href="<?= url('/cadastro') ?>" class="btn btn--outline-light btn--lg">Criar minha conta</a>
+                <a href="https://wa.me/5513978008047" target="_blank" rel="noopener noreferrer" class="btn btn--outline-light btn--lg">Falar com um especialista</a>
             </div>
         </div>
     </div>

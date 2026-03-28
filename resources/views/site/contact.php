@@ -24,7 +24,7 @@
                     <div class="contact-info-card__icon">📧</div>
                     <div>
                         <h4 class="contact-info-card__title">E-mail</h4>
-                        <p class="contact-info-card__text">contato@elo42.com.br</p>
+                        <p class="contact-info-card__text">suporte@elo42.com.br</p>
                     </div>
                 </div>
 

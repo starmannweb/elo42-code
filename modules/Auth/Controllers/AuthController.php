@@ -83,7 +83,13 @@ class AuthController extends Controller
             redirect('/cadastro');
         }
 
-        $result = $this->auth->register($request->all());
+        try {
+            $result = $this->auth->register($request->all());
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel concluir seu cadastro agora. Tente novamente.');
+            Session::setOld($request->only(['first_name', 'last_name', 'email', 'phone']));
+            redirect('/cadastro');
+        }
 
         if (!$result['success']) {
             Session::flash('error', $result['error']);

@@ -122,6 +122,12 @@
     flex-shrink: 0;
 }
 
+.auth-sidebar__feature-icon svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
 /* --- Auth Form Area --- */
 .auth-page__content {
     flex: 1;

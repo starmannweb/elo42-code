@@ -193,7 +193,7 @@ Crie sua conta em menos de 2 minutos e tenha acesso a todas as ferramentas do ec
             <h3>8. Alterações</h3>
             <p>Reservamo-nos o direito de alterar estes Termos a qualquer momento. As alterações entram em vigor a partir da publicação na plataforma.</p>
             <h3>9. Contato</h3>
-            <p>Em caso de dúvidas, entre em contato: <strong>contato@elo42.com.br</strong></p>
+            <p>Em caso de dúvidas, entre em contato: <strong>suporte@elo42.com.br</strong></p>
         </div>
     </div>
 </div>
@@ -223,7 +223,7 @@ Crie sua conta em menos de 2 minutos e tenha acesso a todas as ferramentas do ec
             <h3>7. Retenção de Dados</h3>
             <p>Dados são mantidos pelo período necessário para prestação dos serviços. Após encerramento da conta, serão excluídos em até 90 dias.</p>
             <h3>8. Contato do Encarregado (DPO)</h3>
-            <p>Para exercer seus direitos: <strong>privacidade@elo42.com.br</strong></p>
+            <p>Para exercer seus direitos: <strong>suporte@elo42.com.br</strong></p>
         </div>
     </div>
 </div>

@@ -33,40 +33,52 @@ class User extends Model
 
     public static function hasOrganization(int $userId): bool
     {
-        $pdo = \App\Core\Database::connection();
-        $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM organization_users WHERE user_id = :uid AND status = 'active'");
-        $stmt->execute(['uid' => $userId]);
-        return (int) $stmt->fetch()['total'] > 0;
+        try {
+            $pdo = \App\Core\Database::connection();
+            $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM organization_users WHERE user_id = :uid AND status = 'active'");
+            $stmt->execute(['uid' => $userId]);
+            return (int) $stmt->fetch()['total'] > 0;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     public static function getOrganization(int $userId): ?array
     {
-        $pdo = \App\Core\Database::connection();
-        $stmt = $pdo->prepare("
-            SELECT o.*, ou.role_id, r.slug as role_slug, r.name as role_name
-            FROM organizations o
-            JOIN organization_users ou ON o.id = ou.organization_id
-            LEFT JOIN roles r ON ou.role_id = r.id
-            WHERE ou.user_id = :uid AND ou.status = 'active'
-            LIMIT 1
-        ");
-        $stmt->execute(['uid' => $userId]);
-        $result = $stmt->fetch();
-        return $result ?: null;
+        try {
+            $pdo = \App\Core\Database::connection();
+            $stmt = $pdo->prepare("
+                SELECT o.*, ou.role_id, r.slug as role_slug, r.name as role_name
+                FROM organizations o
+                JOIN organization_users ou ON o.id = ou.organization_id
+                LEFT JOIN roles r ON ou.role_id = r.id
+                WHERE ou.user_id = :uid AND ou.status = 'active'
+                LIMIT 1
+            ");
+            $stmt->execute(['uid' => $userId]);
+            $result = $stmt->fetch();
+            return $result ?: null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     public static function getPermissions(int $userId): array
     {
-        $pdo = \App\Core\Database::connection();
-        $stmt = $pdo->prepare("
-            SELECT DISTINCT p.slug
-            FROM permissions p
-            JOIN role_permissions rp ON p.id = rp.permission_id
-            JOIN roles r ON r.id = rp.role_id
-            JOIN organization_users ou ON ou.role_id = r.id
-            WHERE ou.user_id = :uid AND ou.status = 'active'
-        ");
-        $stmt->execute(['uid' => $userId]);
-        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        try {
+            $pdo = \App\Core\Database::connection();
+            $stmt = $pdo->prepare("
+                SELECT DISTINCT p.slug
+                FROM permissions p
+                JOIN role_permissions rp ON p.id = rp.permission_id
+                JOIN roles r ON r.id = rp.role_id
+                JOIN organization_users ou ON ou.role_id = r.id
+                WHERE ou.user_id = :uid AND ou.status = 'active'
+            ");
+            $stmt->execute(['uid' => $userId]);
+            return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 }

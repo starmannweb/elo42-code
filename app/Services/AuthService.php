@@ -13,27 +13,48 @@ class AuthService
 {
     public function register(array $data): array
     {
-        $existing = User::findByEmail($data['email']);
-        if ($existing) {
-            return ['success' => false, 'error' => 'Este e-mail já está cadastrado.'];
+        try {
+            $existing = User::findByEmail($data['email']);
+            if ($existing) {
+                return ['success' => false, 'error' => 'Este e-mail ja esta cadastrado.'];
+            }
+
+            $userId = User::createAccount([
+                'name'     => trim($data['first_name'] . ' ' . $data['last_name']),
+                'email'    => $data['email'],
+                'phone'    => $data['phone'] ?? null,
+                'password' => $data['password'],
+                'status'   => 'active',
+            ]);
+
+            $this->createEmailVerification((int) $userId);
+
+            $user = User::find((int) $userId);
+            if (!$user) {
+                return ['success' => false, 'error' => 'Nao foi possivel concluir seu cadastro agora.'];
+            }
+
+            $this->loginUser($user);
+            $this->logAudit((int) $userId, 'user.registered');
+
+            return ['success' => true, 'user_id' => $userId];
+        } catch (\Throwable $e) {
+            try {
+                (new Logger())->error('auth.register_failed', [
+                    'email' => $data['email'] ?? null,
+                    'error' => $e->getMessage(),
+                    'file'  => $e->getFile(),
+                    'line'  => $e->getLine(),
+                ]);
+            } catch (\Throwable $logError) {
+                // Ignore logger failures.
+            }
+
+            return [
+                'success' => false,
+                'error'   => 'Nao foi possivel concluir seu cadastro agora. Tente novamente em alguns instantes.',
+            ];
         }
-
-        $userId = User::createAccount([
-            'name'     => trim($data['first_name'] . ' ' . $data['last_name']),
-            'email'    => $data['email'],
-            'phone'    => $data['phone'] ?? null,
-            'password' => $data['password'],
-            'status'   => 'active',
-        ]);
-
-        $this->createEmailVerification((int) $userId);
-
-        $user = User::find((int) $userId);
-        $this->loginUser($user);
-
-        $this->logAudit((int) $userId, 'user.registered');
-
-        return ['success' => true, 'user_id' => $userId];
     }
 
     public function attempt(string $email, string $password): array
@@ -81,11 +102,7 @@ class AuthService
     {
         $user = Session::user();
         if ($user) {
-            try {
-                $this->logAudit((int) $user['id'], 'user.logout');
-            } catch (\Exception $e) {
-                // Ignore audit log error if database is not configured
-            }
+            $this->logAudit((int) $user['id'], 'user.logout');
         }
         Session::destroy();
     }
@@ -95,7 +112,7 @@ class AuthService
         $user = User::findByEmail($email);
 
         if (!$user) {
-            return ['success' => true, 'message' => 'Se o e-mail estiver cadastrado, enviaremos as instruções de recuperação.'];
+            return ['success' => true, 'message' => 'Se o e-mail estiver cadastrado, enviaremos as instrucoes de recuperacao.'];
         }
 
         $token = bin2hex(random_bytes(32));
@@ -116,7 +133,7 @@ class AuthService
 
         $this->logAudit((int) $user['id'], 'password.reset_requested');
 
-        return ['success' => true, 'message' => 'Se o e-mail estiver cadastrado, enviaremos as instruções de recuperação.'];
+        return ['success' => true, 'message' => 'Se o e-mail estiver cadastrado, enviaremos as instrucoes de recuperacao.'];
     }
 
     public function resetPassword(string $token, string $password): array
@@ -133,12 +150,12 @@ class AuthService
         $reset = $stmt->fetch();
 
         if (!$reset) {
-            return ['success' => false, 'error' => 'Token inválido ou expirado. Solicite uma nova recuperação de senha.'];
+            return ['success' => false, 'error' => 'Token invalido ou expirado. Solicite uma nova recuperacao de senha.'];
         }
 
         $user = User::findByEmail($reset['email']);
         if (!$user) {
-            return ['success' => false, 'error' => 'Usuário não encontrado.'];
+            return ['success' => false, 'error' => 'Usuario nao encontrado.'];
         }
 
         User::update((int) $user['id'], [
@@ -150,7 +167,7 @@ class AuthService
 
         $this->logAudit((int) $user['id'], 'password.reset_completed');
 
-        return ['success' => true, 'message' => 'Senha alterada com sucesso. Faça login com sua nova senha.'];
+        return ['success' => true, 'message' => 'Senha alterada com sucesso. Faca login com sua nova senha.'];
     }
 
     public function verifyEmail(string $token): array
@@ -167,7 +184,7 @@ class AuthService
         $verification = $stmt->fetch();
 
         if (!$verification) {
-            return ['success' => false, 'error' => 'Link de verificação inválido ou expirado.'];
+            return ['success' => false, 'error' => 'Link de verificacao invalido ou expirado.'];
         }
 
         $pdo->prepare("UPDATE email_verifications SET verified_at = NOW() WHERE id = :id")
@@ -188,27 +205,52 @@ class AuthService
 
     private function createEmailVerification(int $userId): void
     {
-        $token = bin2hex(random_bytes(32));
-        $expiresAt = date('Y-m-d H:i:s', strtotime('+24 hours'));
+        try {
+            $token = bin2hex(random_bytes(32));
+            $expiresAt = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("
-            INSERT INTO email_verifications (user_id, token, expires_at)
-            VALUES (:user_id, :token, :expires_at)
-        ");
-        $stmt->execute([
-            'user_id'    => $userId,
-            'token'      => hash('sha256', $token),
-            'expires_at' => $expiresAt,
-        ]);
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("
+                INSERT INTO email_verifications (user_id, token, expires_at)
+                VALUES (:user_id, :token, :expires_at)
+            ");
+            $stmt->execute([
+                'user_id'    => $userId,
+                'token'      => hash('sha256', $token),
+                'expires_at' => $expiresAt,
+            ]);
 
-        // TODO: Send verification email with link containing $token
+            // TODO: Send verification email with link containing $token
+        } catch (\Throwable $e) {
+            $this->logNonCritical('auth.email_verification_create_failed', [
+                'user_id' => $userId,
+                'error'   => $e->getMessage(),
+            ]);
+        }
     }
 
     private function loginUser(array $user): void
     {
-        $permissions = User::getPermissions((int) $user['id']);
-        $organization = User::getOrganization((int) $user['id']);
+        $permissions = [];
+        $organization = null;
+
+        try {
+            $permissions = User::getPermissions((int) $user['id']);
+        } catch (\Throwable $e) {
+            $this->logNonCritical('auth.permissions_lookup_failed', [
+                'user_id' => $user['id'] ?? null,
+                'error'   => $e->getMessage(),
+            ]);
+        }
+
+        try {
+            $organization = User::getOrganization((int) $user['id']);
+        } catch (\Throwable $e) {
+            $this->logNonCritical('auth.organization_lookup_failed', [
+                'user_id' => $user['id'] ?? null,
+                'error'   => $e->getMessage(),
+            ]);
+        }
 
         Session::regenerate();
         Session::set('user', [
@@ -238,23 +280,47 @@ class AuthService
 
     private function updateLastLogin(int $userId): void
     {
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("UPDATE users SET last_login_at = NOW() WHERE id = :id");
-        $stmt->execute(['id' => $userId]);
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("UPDATE users SET last_login_at = NOW() WHERE id = :id");
+            $stmt->execute(['id' => $userId]);
+        } catch (\Throwable $e) {
+            $this->logNonCritical('auth.update_last_login_failed', [
+                'user_id' => $userId,
+                'error'   => $e->getMessage(),
+            ]);
+        }
     }
 
     private function logAudit(int $userId, string $action): void
     {
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("
-            INSERT INTO audit_logs (user_id, action, ip_address, user_agent, created_at)
-            VALUES (:user_id, :action, :ip, :ua, NOW())
-        ");
-        $stmt->execute([
-            'user_id' => $userId,
-            'action'  => $action,
-            'ip'      => $_SERVER['REMOTE_ADDR'] ?? null,
-            'ua'      => $_SERVER['HTTP_USER_AGENT'] ?? null,
-        ]);
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("
+                INSERT INTO audit_logs (user_id, action, ip_address, user_agent, created_at)
+                VALUES (:user_id, :action, :ip, :ua, NOW())
+            ");
+            $stmt->execute([
+                'user_id' => $userId,
+                'action'  => $action,
+                'ip'      => $_SERVER['REMOTE_ADDR'] ?? null,
+                'ua'      => $_SERVER['HTTP_USER_AGENT'] ?? null,
+            ]);
+        } catch (\Throwable $e) {
+            $this->logNonCritical('auth.audit_log_failed', [
+                'user_id' => $userId,
+                'action'  => $action,
+                'error'   => $e->getMessage(),
+            ]);
+        }
+    }
+
+    private function logNonCritical(string $message, array $context = []): void
+    {
+        try {
+            (new Logger())->warning($message, $context);
+        } catch (\Throwable $e) {
+            // Ignore logger failures.
+        }
     }
 }
