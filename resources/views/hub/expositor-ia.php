@@ -1,4 +1,4 @@
-﻿<?php $__view->extends('hub'); ?>
+<?php $__view->extends('hub'); ?>
 
 <?php $__view->section('content'); ?>
 

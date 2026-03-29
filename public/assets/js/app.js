@@ -92,10 +92,12 @@
     // =========================================
     document.addEventListener('DOMContentLoaded', function() {
 
-        // --- Header behavior ---
+        // --- Header scroll behavior ---
         var header = document.querySelector('.site-header');
         if (header) {
-            header.classList.remove('site-header--scrolled');
+            window.addEventListener('scroll', function() {
+                header.classList.toggle('site-header--scrolled', window.scrollY > 30);
+            }, { passive: true });
         }
 
         // --- Mobile menu toggle ---
