@@ -14,10 +14,10 @@
 }
 
 .site-header--scrolled {
-    background: rgba(7, 27, 59, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(214, 166, 70, 0.1);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: none;
     padding: var(--space-2) 0;
 }
 
@@ -42,7 +42,7 @@
 .site-header--scrolled .navbar {
     background:
         radial-gradient(80% 140% at 50% -30%, rgba(255, 255, 255, 0.18), transparent 68%),
-        linear-gradient(90deg, rgba(10, 34, 73, 0.9) 0%, rgba(12, 45, 92, 0.78) 52%, rgba(8, 26, 61, 0.9) 100%);
+        linear-gradient(90deg, rgba(10, 34, 73, 0.84) 0%, rgba(12, 45, 92, 0.72) 52%, rgba(8, 26, 61, 0.84) 100%);
     border-color: rgba(214, 166, 70, 0.42);
     backdrop-filter: blur(22px) saturate(120%);
     -webkit-backdrop-filter: blur(22px) saturate(120%);
