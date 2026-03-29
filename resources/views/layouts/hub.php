@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -36,7 +36,7 @@
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu lateral">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="30" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="34" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
                 </a>
                 <p class="hub-sidebar__brand-subtitle">Hub de membros</p>
             </div>
@@ -49,7 +49,7 @@
                     </span>
                     Dashboard
                 </a>
-                <a href="<?= url('/hub/#vitrine') ?>" class="hub-nav-link <?= e($isMenuActive('vitrine', $activeMenu)) ?>">
+                <a href="<?= url('/hub/vitrine') ?>" class="hub-nav-link <?= e($isMenuActive('vitrine', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path></svg>
                     </span>
@@ -89,24 +89,12 @@
                 </a>
 
                 <?php if (!empty($organization['id'])): ?>
-                    <p class="hub-sidebar__section-title">Gestão</p>
+                    <p class="hub-sidebar__section-title">Igreja</p>
                     <a href="<?= url('/gestao') ?>" class="hub-nav-link">
                         <span class="hub-nav-link__icon" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"></path></svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg>
                         </span>
-                        Painel de gestão
-                    </a>
-                    <a href="<?= url('/gestao/membros') ?>" class="hub-nav-link">
-                        <span class="hub-nav-link__icon" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        </span>
-                        Membros
-                    </a>
-                    <a href="<?= url('/gestao/financeiro') ?>" class="hub-nav-link">
-                        <span class="hub-nav-link__icon" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"></rect><path d="M16 12h.01M2.5 9h19"></path></svg>
-                        </span>
-                        Financeiro
+                        Sistema da igreja
                     </a>
                 <?php endif; ?>
             </nav>

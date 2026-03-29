@@ -3,9 +3,10 @@
 <?php $__view->section('content'); ?>
 
 <!-- Hero -->
-<section class="hero" id="inicio">
+<section class="hero" id="inicio" data-hero-mouse>
     <div class="hero__bg"></div>
     <div class="hero__overlay"></div>
+    <div class="hero__mouse-light" aria-hidden="true"></div>
     <div class="container">
         <div class="hero__content">
             <div class="hero__badge">✦ Plataforma para igrejas e organizações</div>

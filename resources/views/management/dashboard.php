@@ -1,91 +1,130 @@
-<?php $__view->extends('management'); ?>
+﻿<?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
 
-<div class="mgmt-header">
-    <div>
-        <h1 class="mgmt-header__title">Dashboard da Gestão</h1>
-        <p class="mgmt-header__subtitle">Visão geral da sua organização</p>
-    </div>
-</div>
+<?php
+$income = (float) ($financial['income'] ?? 0);
+$expense = (float) ($financial['expense'] ?? 0);
+$balance = (float) ($financial['balance'] ?? 0);
+?>
 
-<div class="mgmt-stats-grid">
-    <div class="mgmt-stat">
-        <span class="mgmt-stat__icon mgmt-stat__icon--blue">👥</span>
+<section class="mgmt-dashboard">
+    <header class="mgmt-header">
         <div>
-            <div class="mgmt-stat__value"><?= $totalMembers ?></div>
-            <div class="mgmt-stat__label">Total de membros</div>
+            <h1 class="mgmt-header__title">Dashboard</h1>
+            <p class="mgmt-header__subtitle">Acompanhe os principais indicadores da operação da sua igreja.</p>
         </div>
-    </div>
+    </header>
 
-    <div class="mgmt-stat">
-        <span class="mgmt-stat__icon mgmt-stat__icon--green">🆕</span>
-        <div>
-            <div class="mgmt-stat__value"><?= $newMembers ?></div>
-            <div class="mgmt-stat__label">Novos este mês</div>
-        </div>
-    </div>
+    <section class="mgmt-kpi-grid" aria-label="Indicadores">
+        <article class="mgmt-kpi-card">
+            <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
+            </div>
+            <div>
+                <p class="mgmt-kpi-card__label">Membros</p>
+                <p class="mgmt-kpi-card__value"><?= e((string) $totalMembers) ?></p>
+            </div>
+        </article>
 
-    <div class="mgmt-stat">
-        <span class="mgmt-stat__icon mgmt-stat__icon--purple">📅</span>
-        <div>
-            <div class="mgmt-stat__value"><?= $activeEvents ?></div>
-            <div class="mgmt-stat__label">Eventos ativos</div>
-        </div>
-    </div>
+        <article class="mgmt-kpi-card">
+            <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--indigo" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
+            </div>
+            <div>
+                <p class="mgmt-kpi-card__label">Eventos</p>
+                <p class="mgmt-kpi-card__value"><?= e((string) $activeEvents) ?></p>
+            </div>
+        </article>
 
-    <div class="mgmt-stat">
-        <span class="mgmt-stat__icon mgmt-stat__icon--gold">⛪</span>
-        <div>
-            <div class="mgmt-stat__value"><?= $activeMinistries ?></div>
-            <div class="mgmt-stat__label">Ministérios ativos</div>
-        </div>
-    </div>
+        <article class="mgmt-kpi-card">
+            <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--gold" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M5 4h14"></path><path d="M17 4v5a5 5 0 0 1-10 0V4"></path></svg>
+            </div>
+            <div>
+                <p class="mgmt-kpi-card__label">Pedidos pendentes</p>
+                <p class="mgmt-kpi-card__value"><?= e((string) $openRequests) ?></p>
+            </div>
+        </article>
 
-    <div class="mgmt-stat">
-        <span class="mgmt-stat__icon mgmt-stat__icon--red">📝</span>
-        <div>
-            <div class="mgmt-stat__value"><?= $openRequests ?></div>
-            <div class="mgmt-stat__label">Solicitações abertas</div>
-        </div>
-    </div>
+        <article class="mgmt-kpi-card">
+            <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 8A2.5 2.5 0 0 1 5 5.5h14A2.5 2.5 0 0 1 21.5 8v8A2.5 2.5 0 0 1 19 18.5H5A2.5 2.5 0 0 1 2.5 16z"></path><path d="M15 12h.01"></path><path d="M2.5 9.5h19"></path></svg>
+            </div>
+            <div>
+                <p class="mgmt-kpi-card__label">Receita total</p>
+                <p class="mgmt-kpi-card__value">R$ <?= e(number_format($income, 2, ',', '.')) ?></p>
+            </div>
+        </article>
+    </section>
 
-    <div class="mgmt-stat">
-        <span class="mgmt-stat__icon mgmt-stat__icon--teal">🎯</span>
-        <div>
-            <div class="mgmt-stat__value"><?= $pendingTasks ?></div>
-            <div class="mgmt-stat__label">Tarefas pendentes</div>
-        </div>
-    </div>
-</div>
+    <section class="mgmt-dashboard-grid">
+        <article class="mgmt-dashboard-card">
+            <header class="mgmt-dashboard-card__header">
+                <h2>Crescimento de membros</h2>
+            </header>
+            <div class="mgmt-chart-placeholder">
+                <div class="mgmt-chart-placeholder__line"></div>
+                <div class="mgmt-chart-placeholder__axis">
+                    <span>Out</span><span>Nov</span><span>Dez</span><span>Jan</span><span>Fev</span><span>Mar</span>
+                </div>
+            </div>
+        </article>
 
-<div class="financial-summary">
-    <div class="financial-summary__card">
-        <div class="financial-summary__label">Entradas do mês</div>
-        <div class="financial-summary__value financial-summary__value--income">
-            R$ <?= number_format($financial['income'], 2, ',', '.') ?>
-        </div>
-    </div>
-    <div class="financial-summary__card">
-        <div class="financial-summary__label">Saídas do mês</div>
-        <div class="financial-summary__value financial-summary__value--expense">
-            R$ <?= number_format($financial['expense'], 2, ',', '.') ?>
-        </div>
-    </div>
-    <div class="financial-summary__card">
-        <div class="financial-summary__label">Saldo do mês</div>
-        <div class="financial-summary__value financial-summary__value--balance">
-            R$ <?= number_format($financial['balance'], 2, ',', '.') ?>
-        </div>
-    </div>
-</div>
+        <article class="mgmt-dashboard-card">
+            <header class="mgmt-dashboard-card__header">
+                <h2>Receitas vs despesas</h2>
+            </header>
+            <div class="mgmt-balance-cards">
+                <div>
+                    <span>Receitas</span>
+                    <strong>R$ <?= e(number_format($income, 2, ',', '.')) ?></strong>
+                </div>
+                <div>
+                    <span>Despesas</span>
+                    <strong>R$ <?= e(number_format($expense, 2, ',', '.')) ?></strong>
+                </div>
+                <div>
+                    <span>Saldo</span>
+                    <strong class="<?= $balance >= 0 ? 'is-positive' : 'is-negative' ?>">R$ <?= e(number_format($balance, 2, ',', '.')) ?></strong>
+                </div>
+            </div>
+        </article>
+    </section>
 
-<div class="mgmt-stat" style="margin-bottom: var(--space-6);">
-    <span class="mgmt-stat__icon mgmt-stat__icon--gold">🤝</span>
-    <div>
-        <div class="mgmt-stat__value">R$ <?= number_format($donationsMonth, 2, ',', '.') ?></div>
-        <div class="mgmt-stat__label">Doações recebidas este mês</div>
-    </div>
-</div>
+    <section class="mgmt-dashboard-grid">
+        <article class="mgmt-dashboard-card">
+            <header class="mgmt-dashboard-card__header">
+                <h2>Progresso das campanhas</h2>
+            </header>
+            <div class="mgmt-progress-list">
+                <div class="mgmt-progress-item">
+                    <div class="mgmt-progress-item__head"><span>Reforma do templo</span><strong>58%</strong></div>
+                    <div class="progress-bar"><div class="progress-bar__fill" style="width:58%"></div></div>
+                </div>
+                <div class="mgmt-progress-item">
+                    <div class="mgmt-progress-item__head"><span>Missões 2026</span><strong>64%</strong></div>
+                    <div class="progress-bar"><div class="progress-bar__fill progress-bar__fill--green" style="width:64%"></div></div>
+                </div>
+                <div class="mgmt-progress-item">
+                    <div class="mgmt-progress-item__head"><span>Cesta solidária</span><strong>85%</strong></div>
+                    <div class="progress-bar"><div class="progress-bar__fill progress-bar__fill--gold" style="width:85%"></div></div>
+                </div>
+            </div>
+        </article>
+
+        <article class="mgmt-dashboard-card">
+            <header class="mgmt-dashboard-card__header">
+                <h2>Atividade recente</h2>
+            </header>
+            <ul class="mgmt-activity-list">
+                <li><strong><?= e((string) ($newMembers ?? 0)) ?> novo(s) membro(s)</strong><span>Atualizado no mês atual.</span></li>
+                <li><strong><?= e((string) ($activeMinistries ?? 0)) ?> ministério(s) ativo(s)</strong><span>Acompanhamento pastoral em dia.</span></li>
+                <li><strong><?= e((string) ($pendingTasks ?? 0)) ?> tarefa(s) pendente(s)</strong><span>Plano de ação com itens para conclusão.</span></li>
+                <li><strong>Doações do mês: R$ <?= e(number_format((float) ($donationsMonth ?? 0), 2, ',', '.')) ?></strong><span>Captação em andamento.</span></li>
+            </ul>
+        </article>
+    </section>
+</section>
 
 <?php $__view->endSection(); ?>

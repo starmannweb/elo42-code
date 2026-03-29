@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 declare(strict_types=1);
 
@@ -20,34 +20,47 @@ class ManagementDashboardController extends Controller
     private function getOrg(): array
     {
         $org = Session::get('organization');
-        if (!$org) { redirect('/onboarding/organizacao'); }
-        return $org;
+        if (!$org) {
+            redirect('/onboarding/organizacao');
+        }
+
+        return is_array($org) ? $org : [];
     }
 
     public function index(Request $request): void
     {
         $org = $this->getOrg();
-        $orgId = (int) $org['id'];
-        $user = Session::user();
-        $firstName = explode(' ', $user['name'])[0];
+        $orgId = (int) ($org['id'] ?? 0);
+        $user = Session::user() ?? [];
+        $firstName = explode(' ', (string) ($user['name'] ?? 'Usuário'))[0] ?? 'Usuário';
+
+        $safe = static function (callable $resolver, mixed $default) {
+            try {
+                return $resolver();
+            } catch (\Throwable $e) {
+                return $default;
+            }
+        };
 
         $now = date('Y-m');
         $startOfMonth = $now . '-01';
         $endOfMonth = date('Y-m-t');
 
-        $financial = FinancialTransaction::summary($orgId, $startOfMonth, $endOfMonth);
+        $financial = $safe(static function () use ($orgId, $startOfMonth, $endOfMonth): array {
+            return FinancialTransaction::summary($orgId, $startOfMonth, $endOfMonth);
+        }, ['income' => 0, 'expense' => 0, 'balance' => 0]);
 
         $this->view('management/dashboard', [
             'pageTitle'      => 'Gestão — Elo 42',
             'breadcrumb'     => 'Gestão',
             'firstName'      => $firstName,
-            'totalMembers'   => Member::countByOrg($orgId),
-            'newMembers'     => Member::newThisMonth($orgId),
-            'activeEvents'   => Event::countActive($orgId),
-            'activeMinistries' => Ministry::countByOrg($orgId),
-            'openRequests'   => ChurchRequest::countOpen($orgId),
-            'pendingTasks'   => ActionPlan::pendingTasks($orgId),
-            'donationsMonth' => Donation::totalByOrg($orgId),
+            'totalMembers'   => $safe(static fn (): int => Member::countByOrg($orgId), 0),
+            'newMembers'     => $safe(static fn (): int => Member::newThisMonth($orgId), 0),
+            'activeEvents'   => $safe(static fn (): int => Event::countActive($orgId), 0),
+            'activeMinistries' => $safe(static fn (): int => Ministry::countByOrg($orgId), 0),
+            'openRequests'   => $safe(static fn (): int => ChurchRequest::countOpen($orgId), 0),
+            'pendingTasks'   => $safe(static fn (): int => ActionPlan::pendingTasks($orgId), 0),
+            'donationsMonth' => $safe(static fn (): float => Donation::totalByOrg($orgId), 0.0),
             'financial'      => $financial,
         ]);
     }

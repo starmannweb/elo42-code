@@ -280,6 +280,33 @@
             });
         });
 
+        // --- Hero mouse light effect ---
+        var hero = document.querySelector('.hero[data-hero-mouse]');
+        if (hero) {
+            var rafId = null;
+            var updateHeroMouse = function(clientX, clientY) {
+                var rect = hero.getBoundingClientRect();
+                var x = ((clientX - rect.left) / rect.width) * 100;
+                var y = ((clientY - rect.top) / rect.height) * 100;
+                hero.style.setProperty('--hero-mouse-x', Math.max(0, Math.min(100, x)).toFixed(2) + '%');
+                hero.style.setProperty('--hero-mouse-y', Math.max(0, Math.min(100, y)).toFixed(2) + '%');
+            };
+
+            hero.addEventListener('mousemove', function(e) {
+                if (rafId !== null) {
+                    cancelAnimationFrame(rafId);
+                }
+                rafId = requestAnimationFrame(function() {
+                    updateHeroMouse(e.clientX, e.clientY);
+                });
+            });
+
+            hero.addEventListener('mouseleave', function() {
+                hero.style.setProperty('--hero-mouse-x', '72%');
+                hero.style.setProperty('--hero-mouse-y', '30%');
+            });
+        }
+
         // --- Confirm delete forms ---
         document.querySelectorAll('form[data-confirm]').forEach(function(form) {
             form.addEventListener('submit', function(e) {

@@ -1,182 +1,171 @@
-<?php $__view->extends('hub'); ?>
+﻿<?php $__view->extends('hub'); ?>
 
 <?php $__view->section('content'); ?>
 
-<div class="dashboard-greeting">
-    <h1 class="dashboard-greeting__title">
-        <?= e((string) $greeting) ?>, <?= e((string) $firstName) ?>.
-    </h1>
-    <p class="dashboard-greeting__subtitle">
-        <?php if (!empty($organization['id'])): ?>
-            Acompanhe a operação da <?= e((string) ($organization['name'] ?? 'organização')) ?> e acesse todos os módulos do ecossistema.
-        <?php else: ?>
-            Bem-vindo ao Hub Elo 42. Cadastre sua organização para liberar todos os recursos.
-        <?php endif; ?>
-    </p>
-</div>
+<?php
+$metrics = is_array($churchMetrics ?? null) ? $churchMetrics : [];
+$membersTotal = (int) ($metrics['members_total'] ?? 0);
+$eventsActive = (int) ($metrics['events_active'] ?? 0);
+$pendingRequests = (int) ($metrics['pending_requests'] ?? 0);
+$revenueTotal = (float) ($metrics['revenue_total'] ?? 0.0);
+$expensesTotal = (float) ($metrics['expenses_total'] ?? 0.0);
+$balanceTotal = $revenueTotal - $expensesTotal;
 
-<?php if (($organizationDeadline['is_required'] ?? false) && empty($organization['id'])): ?>
-    <?php if (!empty($organizationDeadline['is_overdue'])): ?>
-        <div class="alert alert--error" role="alert">
-            O prazo de 7 dias para cadastrar a organização foi atingido. Para continuar, conclua o cadastro da organização.
+$activityItems = is_array($dashboardActivity ?? null) ? $dashboardActivity : [];
+$steps = is_array($setupSteps ?? null) ? $setupSteps : [];
+?>
+
+<section class="church-dashboard">
+    <header class="church-dashboard__header">
+        <div>
+            <h1 class="church-dashboard__title">Dashboard</h1>
+            <p class="church-dashboard__subtitle">
+                <?= !empty($organization['id'])
+                    ? 'Visão geral da operação da ' . e((string) ($organization['name'] ?? 'organização')) . '.'
+                    : 'Cadastre sua organização para liberar todos os módulos do sistema.' ?>
+            </p>
+        </div>
+        <div class="church-dashboard__actions">
+            <a href="<?= url('/hub/vitrine') ?>" class="btn btn--outline">Ver vitrine</a>
+            <a href="<?= url('/hub/configuracoes') ?>" class="btn btn--primary">Configurações</a>
+        </div>
+    </header>
+
+    <?php if (($organizationDeadline['is_required'] ?? false) && empty($organization['id'])): ?>
+        <div class="alert <?= !empty($organizationDeadline['is_overdue']) ? 'alert--error' : 'alert--warning' ?>" role="alert">
+            <?php if (!empty($organizationDeadline['is_overdue'])): ?>
+                O prazo de 7 dias para cadastrar a organização foi atingido. Conclua o cadastro para continuar usando todos os módulos.
+            <?php else: ?>
+                Você tem <?= e((string) ($organizationDeadline['days_left'] ?? 0)) ?> dia(s) para cadastrar sua organização e liberar o Hub completo.
+            <?php endif; ?>
             <a href="<?= url('/onboarding/organizacao') ?>" class="text-primary font-bold">Cadastrar organização</a>
         </div>
-    <?php elseif (($organizationDeadline['days_left'] ?? null) !== null): ?>
-        <div class="alert alert--warning" role="alert">
-            Você tem <?= e((string) $organizationDeadline['days_left']) ?> dia(s) para cadastrar sua organização e liberar o Hub completo.
-            <a href="<?= url('/onboarding/organizacao') ?>" class="text-primary font-bold">Concluir agora</a>
-        </div>
     <?php endif; ?>
-<?php endif; ?>
 
-<div class="dashboard-status-grid">
-    <article class="status-card status-card--blue">
-        <div class="status-card__header">
-            <span class="status-card__icon status-card__icon--solid" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.4 0-8 2-8 4.5V21h16v-2.5C20 16 16.4 14 12 14Z"/></svg>
-            </span>
-            <span class="status-card__badge status-card__badge--active">Ativa</span>
-        </div>
-        <div class="status-card__value"><?= e((string) ($user['name'] ?? 'Conta')) ?></div>
-        <div class="status-card__label">Sua conta</div>
-    </article>
-
-    <article class="status-card status-card--gold">
-        <div class="status-card__header">
-            <span class="status-card__icon status-card__icon--solid" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2Z"/></svg>
-            </span>
-            <?php if (!empty($organization['id'])): ?>
-                <span class="status-card__badge status-card__badge--active">Ativa</span>
-            <?php else: ?>
-                <span class="status-card__badge status-card__badge--pending">Pendente</span>
-            <?php endif; ?>
-        </div>
-        <div class="status-card__value"><?= e((string) ($organization['name'] ?? 'Sem organização')) ?></div>
-        <div class="status-card__label">
-            <?php if (empty($organization['id'])): ?>
-                <a href="<?= url('/onboarding/organizacao') ?>" class="text-primary font-semibold">Cadastrar organização</a>
-            <?php else: ?>
-                Organização ativa
-            <?php endif; ?>
-        </div>
-    </article>
-
-    <article class="status-card status-card--green">
-        <div class="status-card__header">
-            <span class="status-card__icon status-card__icon--solid" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 11V8a3 3 0 1 1 6 0v3h1a2 2 0 0 1 2 2v7H6v-7a2 2 0 0 1 2-2Zm2 0h2V8a1 1 0 1 0-2 0Z"/></svg>
-            </span>
-        </div>
-        <div class="status-card__value"><?= e((string) ($organization['role_name'] ?? 'Perfil padrão')) ?></div>
-        <div class="status-card__label">Perfil de acesso</div>
-    </article>
-
-    <article class="status-card status-card--purple">
-        <div class="status-card__header">
-            <span class="status-card__icon status-card__icon--solid" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v3H4zm0 5h10v3H4zm0 5h16v3H4z"/></svg>
-            </span>
-        </div>
-        <div class="status-card__value"><?= e((string) ($iaCredits ?? 0)) ?></div>
-        <div class="status-card__label">Créditos para Expositor IA</div>
-    </article>
-</div>
-
-<section class="dashboard-section" style="margin-bottom: var(--space-8);">
-    <h2 class="dashboard-section__title">Ações rápidas</h2>
-    <div class="quick-actions-grid">
-        <a href="<?= url('/hub/sites') ?>" class="quick-action">
-            <span class="quick-action__icon quick-action__icon--blue" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 2c.9 1 1.7 2.3 2.2 4H9.8C10.3 6.3 11.1 5 12 4Zm-5.9 6h2.1a17.6 17.6 0 0 0 0 4H6.1A8 8 0 0 1 6.1 10Zm.8 6h2.3A10.7 10.7 0 0 0 10.7 20a8 8 0 0 1-3.8-4Zm4.8 0h.6a15.5 15.5 0 0 1-.3 2.5A15.5 15.5 0 0 1 11.7 16Zm2.1 0h3.3A8 8 0 0 1 13.3 20a10.7 10.7 0 0 0 .5-4Zm4.1-2h-2.1a17.6 17.6 0 0 0 0-4h2.1a8 8 0 0 1 0 4Zm-4.2 0h-3.4a15.5 15.5 0 0 1 0-4h3.4a15.5 15.5 0 0 1 0 4Zm-.4-6A10.7 10.7 0 0 0 13.3 4a8 8 0 0 1 3.8 4Z"/></svg>
-            </span>
-            <div>
-                <div class="quick-action__text">Meus sites</div>
-                <div class="quick-action__desc">Construtor e publicação</div>
+    <section class="church-metrics-grid" aria-label="Indicadores principais">
+        <article class="church-metric-card">
+            <div class="church-metric-card__icon church-metric-card__icon--blue" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             </div>
-        </a>
-
-        <a href="<?= url('/hub/expositor-ia') ?>" class="quick-action">
-            <span class="quick-action__icon quick-action__icon--gold" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h10a3 3 0 0 1 3 3v15l-5-3-5 3V6a3 3 0 0 1 3-3Zm0 2a1 1 0 0 0-1 1v11.4l3-1.8 3 1.8V6a1 1 0 0 0-1-1Z"/></svg>
-            </span>
-            <div>
-                <div class="quick-action__text">Expositor IA</div>
-                <div class="quick-action__desc">Custo de <?= e((string) ($iaCreditCost ?? 1)) ?> crédito por geração</div>
+            <div class="church-metric-card__body">
+                <p class="church-metric-card__label">Membros</p>
+                <p class="church-metric-card__value"><?= e((string) $membersTotal) ?></p>
             </div>
-        </a>
+        </article>
 
-        <a href="<?= url('/hub/creditos') ?>" class="quick-action">
-            <span class="quick-action__icon quick-action__icon--green" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v12H3Zm2 2v8h14V8Zm5 2h4v4h-4Z"/></svg>
-            </span>
-            <div>
-                <div class="quick-action__text">Comprar créditos</div>
-                <div class="quick-action__desc">Pacotes para o Expositor IA</div>
+        <article class="church-metric-card">
+            <div class="church-metric-card__icon church-metric-card__icon--indigo" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 11h18"></path></svg>
             </div>
-        </a>
-
-        <a href="<?= url('/hub/suporte') ?>" class="quick-action">
-            <span class="quick-action__icon quick-action__icon--purple" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a8 8 0 0 0-8 8v4a3 3 0 0 0 3 3h2v-7H6v-1a6 6 0 1 1 12 0v1h-3v7h2a3 3 0 0 0 3-3v-4a8 8 0 0 0-8-8Z"/></svg>
-            </span>
-            <div>
-                <div class="quick-action__text">Suporte</div>
-                <div class="quick-action__desc">Falar com especialista</div>
+            <div class="church-metric-card__body">
+                <p class="church-metric-card__label">Eventos</p>
+                <p class="church-metric-card__value"><?= e((string) $eventsActive) ?></p>
             </div>
-        </a>
-    </div>
-</section>
+        </article>
 
-<section class="dashboard-section dashboard-section--showcase" id="vitrine">
-    <div class="dashboard-section__header">
-        <h2 class="dashboard-section__title">Vitrine de soluções</h2>
-        <a href="<?= url('/contato') ?>" class="dashboard-section__link">Falar com especialista</a>
-    </div>
+        <article class="church-metric-card">
+            <div class="church-metric-card__icon church-metric-card__icon--gold" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7v6c0 4.5 3 7.4 8 8 5-0.6 8-3.5 8-8V7l-8-4z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            </div>
+            <div class="church-metric-card__body">
+                <p class="church-metric-card__label">Pedidos pendentes</p>
+                <p class="church-metric-card__value"><?= e((string) $pendingRequests) ?></p>
+            </div>
+        </article>
 
-    <div class="showcase-grid">
-        <?php foreach (($showcaseItems ?? []) as $item): ?>
-            <article class="showcase-card">
-                <div class="showcase-card__head">
-                    <span class="showcase-card__icon showcase-card__icon--<?= e((string) ($item['icon'] ?? 'briefcase')) ?>" aria-hidden="true">
-                        <?php if (($item['icon'] ?? '') === 'book'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                        <?php elseif (($item['icon'] ?? '') === 'monitor'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"></rect><path d="M8 22h8M12 18v4"></path></svg>
-                        <?php elseif (($item['icon'] ?? '') === 'gift'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"></rect><path d="M12 8v13M3 12h18"></path><path d="M12 8c-1.8 0-3-1-3-2.4A2.4 2.4 0 0 1 11.4 3c1.3 0 2.2 1 2.6 2 .4-1 1.3-2 2.6-2A2.4 2.4 0 0 1 19 5.6C19 7 17.8 8 16 8z"></path></svg>
-                        <?php elseif (($item['icon'] ?? '') === 'calendar'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
-                        <?php elseif (($item['icon'] ?? '') === 'globe'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14.5 14.5 0 0 1 0 18M12 3a14.5 14.5 0 0 0 0 18"></path></svg>
-                        <?php elseif (($item['icon'] ?? '') === 'diagnostic'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"></path></svg>
-                        <?php elseif (($item['icon'] ?? '') === 'megaphone'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 13v-2z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
-                        <?php elseif (($item['icon'] ?? '') === 'hand'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V4a1.5 1.5 0 0 1 3 0v6"></path><path d="M11 10V3.5a1.5 1.5 0 0 1 3 0V10"></path><path d="M14 10V5a1.5 1.5 0 0 1 3 0v7"></path><path d="M5 14.5c0-1 .8-1.8 1.8-1.8H8v.3a8 8 0 0 0 8 8h.4a3.6 3.6 0 0 0 3.6-3.6V13"></path></svg>
-                        <?php else: ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path></svg>
-                        <?php endif; ?>
-                    </span>
+        <article class="church-metric-card">
+            <div class="church-metric-card__icon church-metric-card__icon--green" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8A2.5 2.5 0 0 1 5 5.5h14A2.5 2.5 0 0 1 21.5 8v8A2.5 2.5 0 0 1 19 18.5H5A2.5 2.5 0 0 1 2.5 16z"></path><path d="M15 12h.01"></path><path d="M2.5 9.5h19"></path></svg>
+            </div>
+            <div class="church-metric-card__body">
+                <p class="church-metric-card__label">Receita total</p>
+                <p class="church-metric-card__value">R$ <?= e(number_format($revenueTotal, 2, ',', '.')) ?></p>
+            </div>
+        </article>
+    </section>
 
-                    <?php if (!empty($item['badge'])): ?>
-                        <span class="showcase-card__badge showcase-card__badge--<?= e((string) (($item['badge_type'] ?? '') ?: 'new')) ?>">
-                            <?= e((string) $item['badge']) ?>
-                        </span>
-                    <?php endif; ?>
+    <section class="church-panels-grid">
+        <article class="church-panel">
+            <header class="church-panel__header">
+                <h2 class="church-panel__title">Receitas vs despesas</h2>
+                <span class="church-panel__hint">Resumo atual</span>
+            </header>
+            <div class="church-balance-grid">
+                <div class="church-balance-item">
+                    <span class="church-balance-item__label">Receitas</span>
+                    <strong class="church-balance-item__value">R$ <?= e(number_format($revenueTotal, 2, ',', '.')) ?></strong>
                 </div>
-
-                <h3 class="showcase-card__title"><?= e((string) ($item['title'] ?? '')) ?></h3>
-                <p class="showcase-card__description"><?= e((string) ($item['description'] ?? '')) ?></p>
-
-                <div class="showcase-card__footer">
-                    <strong class="showcase-card__price"><?= e((string) ($item['price'] ?? '')) ?></strong>
-                    <a href="<?= e((string) ($item['url'] ?? url('/contato'))) ?>" class="showcase-card__button"><?= e((string) ($item['cta'] ?? 'Ver detalhes')) ?></a>
+                <div class="church-balance-item">
+                    <span class="church-balance-item__label">Despesas</span>
+                    <strong class="church-balance-item__value">R$ <?= e(number_format($expensesTotal, 2, ',', '.')) ?></strong>
                 </div>
-            </article>
-        <?php endforeach; ?>
-    </div>
+                <div class="church-balance-item">
+                    <span class="church-balance-item__label">Saldo</span>
+                    <strong class="church-balance-item__value <?= $balanceTotal >= 0 ? 'is-positive' : 'is-negative' ?>">R$ <?= e(number_format($balanceTotal, 2, ',', '.')) ?></strong>
+                </div>
+            </div>
+        </article>
+
+        <article class="church-panel">
+            <header class="church-panel__header">
+                <h2 class="church-panel__title">Atividade recente</h2>
+            </header>
+            <?php if (!empty($activityItems)): ?>
+                <ul class="church-activity-list">
+                    <?php foreach ($activityItems as $item): ?>
+                        <li class="church-activity-item">
+                            <p class="church-activity-item__title"><?= e((string) ($item['title'] ?? 'Atualização')) ?></p>
+                            <p class="church-activity-item__meta"><?= e((string) ($item['meta'] ?? '')) ?></p>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <p class="church-empty-state">Sem atividade no momento.</p>
+            <?php endif; ?>
+        </article>
+    </section>
+
+    <section class="church-bottom-grid">
+        <article class="church-panel">
+            <header class="church-panel__header">
+                <h2 class="church-panel__title">Etapas pendentes</h2>
+            </header>
+            <?php if (!empty($steps)): ?>
+                <ol class="church-steps-list">
+                    <?php foreach ($steps as $step): ?>
+                        <li class="church-step-item <?= !empty($step['done']) ? 'is-done' : '' ?>">
+                            <span class="church-step-item__number"><?= e((string) ($step['number'] ?? '')) ?></span>
+                            <div class="church-step-item__content">
+                                <p class="church-step-item__title"><?= e((string) ($step['title'] ?? 'Etapa')) ?></p>
+                                <p class="church-step-item__desc"><?= e((string) ($step['description'] ?? '')) ?></p>
+                            </div>
+                            <?php if (empty($step['done']) && !empty($step['action'])): ?>
+                                <a href="<?= e((string) $step['action']) ?>" class="church-step-item__action">
+                                    <?= e((string) ($step['action_text'] ?? 'Resolver')) ?>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            <?php else: ?>
+                <p class="church-empty-state">Nenhuma etapa pendente.</p>
+            <?php endif; ?>
+        </article>
+
+        <article class="church-panel">
+            <header class="church-panel__header">
+                <h2 class="church-panel__title">Acessos rápidos</h2>
+            </header>
+            <div class="church-links-grid">
+                <a href="<?= url('/hub/vitrine') ?>" class="church-link-card">Abrir vitrine</a>
+                <a href="<?= url('/hub/sites') ?>" class="church-link-card">Meus sites</a>
+                <a href="<?= url('/hub/expositor-ia') ?>" class="church-link-card">Expositor IA</a>
+                <a href="<?= url('/hub/creditos') ?>" class="church-link-card">Créditos</a>
+                <a href="<?= url('/hub/suporte') ?>" class="church-link-card">Suporte</a>
+                <a href="<?= url('/hub/configuracoes') ?>" class="church-link-card">Configurações</a>
+            </div>
+        </article>
+    </section>
 </section>
 
 <?php $__view->endSection(); ?>

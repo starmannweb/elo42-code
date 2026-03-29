@@ -626,3 +626,277 @@
         padding: var(--space-10) var(--space-5);
     }
 }
+
+/* =============================================
+   Management Layout (Church Reference)
+   ============================================= */
+.mgmt-layout .hub-sidebar {
+    background: #f7f9fc;
+    border-right: 1px solid #e4e8f0;
+}
+
+.mgmt-layout .hub-sidebar__header {
+    border-bottom: 1px solid #e4e8f0;
+}
+
+.mgmt-layout .hub-sidebar__brand-subtitle {
+    color: #6d7890;
+}
+
+.mgmt-layout .hub-sidebar__section-title {
+    color: #8a95ac;
+}
+
+.mgmt-layout .hub-nav-link {
+    color: #3b4a65;
+}
+
+.mgmt-layout .hub-nav-link:hover {
+    background: #ecf2fb;
+    color: #11284f;
+}
+
+.mgmt-layout .hub-nav-link.active {
+    background: #dfeafb;
+    color: #0d3f8f;
+}
+
+.mgmt-layout .hub-nav-link.active::before {
+    background: #0a4dff;
+}
+
+.mgmt-layout .hub-sidebar__footer {
+    border-top: 1px solid #e4e8f0;
+}
+
+.mgmt-layout .hub-sidebar__user-avatar {
+    background: #e6eefc;
+    color: #1f3a68;
+}
+
+.mgmt-layout .hub-sidebar__user-name {
+    color: #1f3359;
+}
+
+.mgmt-layout .hub-sidebar__user-role {
+    color: #6c7b97;
+}
+
+.mgmt-layout .hub-main {
+    background: #f4f7fd;
+}
+
+.mgmt-layout .hub-topbar {
+    background: #ffffff;
+}
+
+.mgmt-layout .hub-topbar__breadcrumb,
+.mgmt-layout .hub-topbar__link {
+    color: #4f607e;
+}
+
+.mgmt-layout .hub-topbar__link:hover {
+    color: #0a4dff;
+}
+
+/* --- Dashboard Reference Blocks --- */
+.mgmt-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.mgmt-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+}
+
+.mgmt-kpi-card {
+    background: #ffffff;
+    border: 1px solid #e6eaf2;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mgmt-kpi-card__icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mgmt-kpi-card__icon--blue { background: rgba(10, 77, 255, 0.1); color: #0a4dff; }
+.mgmt-kpi-card__icon--indigo { background: rgba(67, 56, 202, 0.12); color: #4338ca; }
+.mgmt-kpi-card__icon--gold { background: rgba(214, 166, 70, 0.18); color: #b7791f; }
+.mgmt-kpi-card__icon--green { background: rgba(16, 185, 129, 0.15); color: #0e9f6e; }
+
+.mgmt-kpi-card__label {
+    margin: 0;
+    font-size: 0.86rem;
+    color: #687895;
+}
+
+.mgmt-kpi-card__value {
+    margin: 3px 0 0;
+    font-size: 1.9rem;
+    line-height: 1;
+    color: #12274e;
+    font-weight: 700;
+}
+
+.mgmt-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--space-4);
+}
+
+.mgmt-dashboard-card {
+    background: #ffffff;
+    border: 1px solid #e6eaf2;
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.mgmt-dashboard-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.mgmt-dashboard-card__header h2 {
+    margin: 0;
+    font-size: 1.24rem;
+    color: #132b53;
+}
+
+.mgmt-chart-placeholder {
+    border: 1px dashed #d8dfeb;
+    border-radius: 12px;
+    padding: 14px;
+    background: #f9fbff;
+}
+
+.mgmt-chart-placeholder__line {
+    height: 130px;
+    background:
+        linear-gradient(180deg, rgba(10, 77, 255, 0.06), rgba(10, 77, 255, 0)),
+        linear-gradient(120deg, transparent 0%, transparent 35%, rgba(214, 166, 70, 0.45) 35%, rgba(214, 166, 70, 0.45) 52%, transparent 52%, transparent 100%);
+    border-radius: 10px;
+    border: 1px solid #e4ebf8;
+}
+
+.mgmt-chart-placeholder__axis {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+    font-size: 0.75rem;
+    color: #7b89a3;
+    text-align: center;
+}
+
+.mgmt-balance-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.mgmt-balance-cards > div {
+    border: 1px solid #e6eaf2;
+    border-radius: 12px;
+    padding: 12px;
+    background: #f9fbff;
+}
+
+.mgmt-balance-cards span {
+    display: block;
+    font-size: 0.8rem;
+    color: #697a97;
+}
+
+.mgmt-balance-cards strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 1.05rem;
+    color: #13284f;
+}
+
+.mgmt-balance-cards strong.is-positive {
+    color: #0e9f6e;
+}
+
+.mgmt-balance-cards strong.is-negative {
+    color: #cf3b3b;
+}
+
+.mgmt-progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mgmt-progress-item__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+    color: #1f325a;
+    font-size: 0.9rem;
+}
+
+.mgmt-progress-item__head strong {
+    font-size: 0.86rem;
+    color: #a66f0f;
+}
+
+.mgmt-activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mgmt-activity-list li {
+    border: 1px solid #e6eaf2;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #f9fbff;
+}
+
+.mgmt-activity-list strong {
+    display: block;
+    font-size: 0.9rem;
+    color: #1b315a;
+}
+
+.mgmt-activity-list span {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.78rem;
+    color: #6f7f9a;
+}
+
+@media (max-width: 1200px) {
+    .mgmt-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mgmt-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .mgmt-kpi-grid,
+    .mgmt-balance-cards {
+        grid-template-columns: 1fr;
+    }
+}
