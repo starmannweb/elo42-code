@@ -218,11 +218,23 @@
     position: absolute;
     inset: -5%;
     background:
-        radial-gradient(circle at 80% 24%, rgba(214, 166, 70, 0.18) 0%, transparent 36%),
+        radial-gradient(circle at 82% 24%, rgba(226, 176, 76, 0.34) 0%, rgba(226, 176, 76, 0.16) 24%, transparent 48%),
         radial-gradient(circle at 18% 72%, rgba(22, 124, 255, 0.22) 0%, transparent 44%),
         linear-gradient(100deg, rgba(2, 10, 26, 0.86) 0%, rgba(2, 10, 26, 0.38) 52%, rgba(2, 10, 26, 0.84) 100%);
     pointer-events: none;
     z-index: 2;
+}
+
+.hero__overlay::before {
+    content: '';
+    position: absolute;
+    inset: -16% -8% -12% 50%;
+    background:
+        radial-gradient(78% 52% at 70% 20%, rgba(228, 179, 82, 0.44) 0%, rgba(228, 179, 82, 0.16) 40%, transparent 76%),
+        linear-gradient(118deg, rgba(228, 179, 82, 0.24) 0%, rgba(228, 179, 82, 0.04) 28%, rgba(228, 179, 82, 0) 64%);
+    mix-blend-mode: screen;
+    opacity: 0.92;
+    animation: heroGoldBreath 11s ease-in-out infinite alternate;
 }
 
 .hero__mouse-light {
@@ -862,6 +874,17 @@
     }
 }
 
+@keyframes heroGoldBreath {
+    0%, 100% {
+        opacity: 0.82;
+        transform: translateX(0) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(-1.8%) scale(1.03);
+    }
+}
+
 @keyframes heroSparkRise {
     0% {
         transform: translate3d(0, 0, 0) scale(0.7);
@@ -880,6 +903,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .hero__overlay::before,
     .hero__fx::before,
     .hero__fx::after,
     .hero__electric-grid,

@@ -92,12 +92,10 @@
     // =========================================
     document.addEventListener('DOMContentLoaded', function() {
 
-        // --- Header scroll behavior ---
+        // --- Header behavior (keep full style on scroll) ---
         var header = document.querySelector('.site-header');
         if (header) {
-            window.addEventListener('scroll', function() {
-                header.classList.toggle('site-header--scrolled', window.scrollY > 30);
-            }, { passive: true });
+            header.classList.remove('site-header--scrolled');
         }
 
         // --- Mobile menu toggle ---
