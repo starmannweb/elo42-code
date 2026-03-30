@@ -235,12 +235,14 @@
 .hero__overlay::before {
     content: '';
     position: absolute;
-    inset: -16% -8% -12% 50%;
+    inset: -18% -10% -14% -6%;
     background:
-        radial-gradient(78% 52% at 70% 20%, rgba(228, 179, 82, 0.44) 0%, rgba(228, 179, 82, 0.16) 40%, transparent 76%),
-        linear-gradient(118deg, rgba(228, 179, 82, 0.24) 0%, rgba(228, 179, 82, 0.04) 28%, rgba(228, 179, 82, 0) 64%);
+        radial-gradient(54% 44% at 82% 20%, rgba(228, 179, 82, 0.46) 0%, rgba(228, 179, 82, 0.2) 24%, rgba(228, 179, 82, 0.08) 42%, transparent 72%),
+        radial-gradient(34% 30% at 74% 58%, rgba(232, 194, 108, 0.18) 0%, transparent 74%),
+        linear-gradient(118deg, rgba(228, 179, 82, 0.12) 38%, rgba(228, 179, 82, 0.04) 56%, rgba(228, 179, 82, 0) 76%);
     mix-blend-mode: screen;
-    opacity: 0.92;
+    opacity: 0.88;
+    filter: blur(14px);
     animation: heroGoldBreath 11s ease-in-out infinite alternate;
 }
 
