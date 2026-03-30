@@ -8,8 +8,6 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Session;
-use App\Models\Product;
-use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\Ticket;
 use App\Models\User;
@@ -47,10 +45,15 @@ class DashboardController extends Controller
     public function vitrine(Request $request): void
     {
         $context = $this->buildBaseContext('Vitrine', 'vitrine');
+        $churchManagementAccess = is_array($context['churchManagementAccess'] ?? null)
+            ? $context['churchManagementAccess']
+            : ['can_access' => false, 'is_trial' => false, 'days_left' => 0];
 
         $this->view('hub/vitrine', array_merge($context, [
             'pageTitle'     => 'Vitrine — Hub Elo 42',
-            'showcaseItems' => $this->buildShowcaseItems(),
+            'showcaseItems'       => $this->buildShowcaseItems(),
+            'platformAccessItems' => $this->buildPlatformAccesses($churchManagementAccess),
+            'contractPackages'    => $this->buildContractPackages(),
         ]));
     }
 
@@ -422,6 +425,9 @@ class DashboardController extends Controller
             default               => 'Boa noite',
         };
 
+        $organizationDeadline = $this->resolveOrganizationDeadline($user, $organization);
+        $churchManagementAccess = $this->resolveChurchManagementAccess($organization, $organizationDeadline);
+
         return [
             'user'                 => $user,
             'organization'         => $organization,
@@ -429,11 +435,27 @@ class DashboardController extends Controller
             'greeting'             => $greeting,
             'breadcrumb'           => $breadcrumb,
             'activeMenu'           => $activeMenu,
-            'organizationDeadline' => $this->resolveOrganizationDeadline($user, $organization),
+            'organizationDeadline' => $organizationDeadline,
             'supportEmail'         => 'suporte@elo42.com.br',
             'supportWhatsapp'      => '(13) 97800-8047',
             'supportWhatsappUrl'   => 'https://wa.me/5513978008047',
             'accessMode'           => $this->resolveAccessMode($organization, $user),
+            'churchManagementAccess' => $churchManagementAccess,
+        ];
+    }
+
+    private function resolveChurchManagementAccess(?array $organization, array $organizationDeadline): array
+    {
+        $hasOrganization = !empty($organization['id']);
+        $trialAvailable = !empty($organizationDeadline['is_required']) && empty($organizationDeadline['is_overdue']);
+        $daysLeft = (int) ($organizationDeadline['days_left'] ?? 0);
+
+        return [
+            'has_organization' => $hasOrganization,
+            'is_trial'         => !$hasOrganization && $trialAvailable,
+            'days_left'        => !$hasOrganization ? $daysLeft : null,
+            'can_access'       => $hasOrganization || $trialAvailable,
+            'entry_url'        => $hasOrganization || $trialAvailable ? url('/gestao') : url('/onboarding/organizacao'),
         ];
     }
 
@@ -919,66 +941,99 @@ class DashboardController extends Controller
 
     private function buildShowcaseItems(): array
     {
-        $items = [
-            ['icon' => 'book', 'title' => 'Expositor IA (por créditos)', 'description' => 'Geração de esboços e estudos com IA mediante consumo de créditos por uso.', 'price' => 'A partir de R$ 49,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/hub/expositor-ia')],
-            ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Sistema completo de gestão para membros, eventos e financeiro.', 'price' => 'R$ 97,00/mês', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
+        return [
+            ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial com 7 dias gratuitos.', 'price' => 'R$ 97,00/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
+            ['icon' => 'book', 'title' => 'Expositor IA', 'description' => 'Geração de esboços e estudos bíblicos para apoio pastoral e ministerial.', 'price' => 'A partir de R$ 49,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/hub/expositor-ia')],
+            ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação para captar até US$ 10.000/mês em anúncios.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
             ['icon' => 'gift', 'title' => 'Google para ONGs', 'description' => 'Trilha guiada para aprovação e criação do Google Workspace gratuito.', 'price' => 'R$ 297,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação do edital para receber até US$ 10.000/mês.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'megaphone', 'title' => 'Gestão de Tráfego Pago', 'description' => 'Estratégia e operação de campanhas para ampliar alcance e resultados.', 'price' => 'Consulte', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'briefcase', 'title' => 'TechSoup Brasil', 'description' => 'Processo de registro e validação para filantropia digital.', 'price' => 'R$ 197,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'briefcase', 'title' => 'Microsoft, Canva e Slack para ONGs', 'description' => 'Liberação de contas premium e produtividade para sua equipe.', 'price' => 'R$ 147,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'diagnostic', 'title' => 'Diagnóstico Organizacional', 'description' => 'Análise completa da operação com recomendações práticas.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'hand', 'title' => 'Implantação Acompanhada', 'description' => 'Implementação do painel com acompanhamento personalizado.', 'price' => 'Em breve', 'badge' => '', 'badge_type' => '', 'cta' => 'Saber mais', 'url' => url('/contato')],
-            ['icon' => 'calendar', 'title' => 'Workshop: Gestão Eficiente para Igrejas', 'description' => 'Workshop ao vivo com boas práticas de gestão e operação.', 'price' => 'R$ 97,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
+            ['icon' => 'megaphone', 'title' => 'Gestão de Tráfego Pago', 'description' => 'Planejamento e operação de campanhas para ampliar alcance e resultados.', 'price' => 'Consulte', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
+            ['icon' => 'briefcase', 'title' => 'TechSoup Brasil', 'description' => 'Registro e validação para liberar benefícios de filantropia digital.', 'price' => 'R$ 197,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
+            ['icon' => 'briefcase', 'title' => 'Microsoft, Canva e Slack para ONGs', 'description' => 'Liberação de contas premium para ganho real de produtividade.', 'price' => 'R$ 147,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
             ['icon' => 'globe', 'title' => 'Site para Igrejas', 'description' => 'Sites profissionais para publicação com identidade visual da organização.', 'price' => 'R$ 67,00/mês', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/hub/sites')],
+            ['icon' => 'hand', 'title' => 'Implantação Acompanhada', 'description' => 'Implementação do painel com apoio personalizado da equipe Elo 42.', 'price' => 'Em breve', 'badge' => '', 'badge_type' => '', 'cta' => 'Saber mais', 'url' => url('/contato')],
+            ['icon' => 'diagnostic', 'title' => 'Diagnóstico Organizacional', 'description' => 'Análise completa da operação com recomendações práticas e plano de ação.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
+            ['icon' => 'calendar', 'title' => 'Workshop: Gestão Eficiente para Igrejas', 'description' => 'Formato em revisão no momento. O produto continua visível, mas temporariamente desativado.', 'price' => 'Temporariamente indisponível', 'badge' => 'Off', 'badge_type' => 'coming', 'cta' => 'Desativado', 'url' => '#', 'is_disabled' => true],
         ];
+    }
 
-        try {
-            $products = Product::allWithCategory();
-            foreach ($products as $product) {
-                if ((string) ($product['status'] ?? 'active') === 'inactive') {
-                    continue;
-                }
+    private function buildPlatformAccesses(array $churchManagementAccess): array
+    {
+        $canAccessChurch = !empty($churchManagementAccess['can_access']);
+        $isTrial = !empty($churchManagementAccess['is_trial']);
+        $daysLeft = (int) ($churchManagementAccess['days_left'] ?? 0);
 
-                $items[] = [
-                    'icon' => 'gift',
-                    'title' => (string) ($product['name'] ?? 'Produto'),
-                    'description' => (string) ($product['description'] ?? 'Solução para sua operação.'),
-                    'price' => isset($product['price']) ? $this->formatMoney((float) $product['price']) : 'Consulte',
-                    'badge' => !empty($product['is_featured']) ? 'Destaque' : '',
-                    'badge_type' => !empty($product['is_featured']) ? 'hot' : '',
-                    'cta' => 'Ver detalhes',
-                    'url' => url('/contato'),
-                ];
-            }
+        $churchDescription = $isTrial
+            ? 'Acesso em teste por 7 dias. Restam ' . $daysLeft . ' dia(s) para concluir a organização.'
+            : 'Acesse o painel completo de membros, eventos, financeiro e relatórios.';
 
-            $services = Service::all('sort_order');
-            foreach ($services as $service) {
-                if ((string) ($service['status'] ?? 'active') !== 'active') {
-                    continue;
-                }
+        return [
+            [
+                'title'       => 'Painel de Gestão de Igrejas',
+                'description' => $churchDescription,
+                'cta'         => $canAccessChurch ? 'Acessar painel' : 'Liberar acesso',
+                'url'         => $canAccessChurch ? url('/gestao') : url('/onboarding/organizacao'),
+                'highlight'   => true,
+            ],
+            [
+                'title'       => 'Expositor IA',
+                'description' => 'Abra o módulo, preencha a passagem bíblica e gere o esboço com consumo de crédito.',
+                'cta'         => 'Acessar Expositor IA',
+                'url'         => url('/hub/expositor-ia'),
+                'highlight'   => false,
+            ],
+            [
+                'title'       => 'Construtor de Sites',
+                'description' => 'Crie e teste modelos. A publicação fica liberada após ativar a mensalidade.',
+                'cta'         => 'Abrir Meus Sites',
+                'url'         => url('/hub/sites'),
+                'highlight'   => false,
+            ],
+            [
+                'title'       => 'Suporte e Implantação',
+                'description' => 'Fale com o time no Hub para acompanhamento técnico e operacional.',
+                'cta'         => 'Abrir Suporte',
+                'url'         => url('/hub/suporte'),
+                'highlight'   => false,
+            ],
+        ];
+    }
 
-                $priceLabel = isset($service['price']) ? $this->formatMoney((float) $service['price']) : 'Consulte';
-                if ((string) ($service['recurrence'] ?? '') === 'monthly') {
-                    $priceLabel .= '/mês';
-                }
-
-                $items[] = [
-                    'icon' => 'briefcase',
-                    'title' => (string) ($service['name'] ?? 'Serviço'),
-                    'description' => (string) ($service['description'] ?? 'Serviço especializado para sua organização.'),
-                    'price' => $priceLabel,
-                    'badge' => '',
-                    'badge_type' => '',
-                    'cta' => 'Ver detalhes',
-                    'url' => url('/contato'),
-                ];
-            }
-        } catch (\Throwable $e) {
-            // mantém fallback local
-        }
-
-        return array_slice($items, 0, 15);
+    private function buildContractPackages(): array
+    {
+        return [
+            [
+                'product'     => 'Painel de Gestão de Igrejas',
+                'package'     => 'Plano mensal com 7 dias grátis',
+                'price'       => 'R$ 97,00/mês',
+                'description' => 'Acesso ao sistema de gestão com suporte inicial para implantação.',
+                'cta'         => 'Solicitar contratação',
+                'url'         => url('/contato'),
+            ],
+            [
+                'product'     => 'Expositor IA',
+                'package'     => 'Pacote de entrada',
+                'price'       => '50 créditos por R$ 49,00',
+                'description' => 'Ideal para começar com esboços e estudos no ritmo da sua equipe.',
+                'cta'         => 'Comprar créditos',
+                'url'         => url('/hub/creditos'),
+            ],
+            [
+                'product'     => 'Google Ad Grants + Tráfego',
+                'package'     => 'Implantação completa',
+                'price'       => 'A partir de R$ 497,00',
+                'description' => 'Aprovação, estrutura de campanhas e acompanhamento de performance.',
+                'cta'         => 'Quero este pacote',
+                'url'         => url('/contato'),
+            ],
+            [
+                'product'     => 'Pacote Operacional para ONGs',
+                'package'     => 'Google para ONGs + TechSoup + Microsoft/Canva/Slack',
+                'price'       => 'Sob consulta',
+                'description' => 'Conjunto de benefícios para reduzir custo e aumentar produtividade.',
+                'cta'         => 'Solicitar proposta',
+                'url'         => url('/contato'),
+            ],
+        ];
     }
 
     private function formatSupportCategoryLabel(string $category): string

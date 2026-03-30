@@ -26,6 +26,14 @@
         $lastInitial = strtoupper(substr((string) (end($parts) ?: 'U'), 0, 1));
         $initials = trim($firstInitial . $lastInitial) !== '' ? $firstInitial . $lastInitial : 'U';
         $organizationName = (string) ($organization['name'] ?? 'Sem organização');
+        $churchAccess = is_array($churchManagementAccess ?? null) ? $churchManagementAccess : [
+            'can_access' => !empty($organization['id']),
+            'entry_url'  => !empty($organization['id']) ? url('/gestao') : url('/onboarding/organizacao'),
+            'is_trial'   => false,
+        ];
+        $canAccessChurch = !empty($churchAccess['can_access']);
+        $churchEntryUrl = (string) ($churchAccess['entry_url'] ?? url('/onboarding/organizacao'));
+        $churchIsTrial = !empty($churchAccess['is_trial']);
 
         $isMenuActive = static function (string $key, string $active): string {
             return $key === $active ? 'active' : '';
@@ -36,7 +44,7 @@
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu lateral">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="34" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="38" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
                 </a>
                 <p class="hub-sidebar__brand-subtitle">Hub de membros</p>
             </div>
@@ -88,13 +96,13 @@
                     Configurações
                 </a>
 
-                <?php if (!empty($organization['id'])): ?>
+                <?php if ($canAccessChurch): ?>
                     <p class="hub-sidebar__section-title">Igreja</p>
-                    <a href="<?= url('/gestao') ?>" class="hub-nav-link">
+                    <a href="<?= e($churchEntryUrl) ?>" class="hub-nav-link">
                         <span class="hub-nav-link__icon" aria-hidden="true">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg>
                         </span>
-                        Sistema da igreja
+                        Sistema da igreja<?= $churchIsTrial ? ' (teste)' : '' ?>
                     </a>
                 <?php endif; ?>
             </nav>

@@ -62,6 +62,41 @@ class AdminUserController extends Controller
         ]);
     }
 
+    public function create(Request $request): void
+    {
+        $this->view('admin/users/create', [
+            'pageTitle' => 'Novo Usuário',
+            'breadcrumb' => 'Usuários / Novo',
+        ]);
+    }
+
+    public function store(Request $request): void
+    {
+        $this->validate($request, [
+            'name' => 'required|min:3',
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
+
+        $email = $request->input('email');
+        if (User::findByEmail($email)) {
+            Session::flash('error', 'Este e-mail já está em uso.');
+            redirect('/admin/usuarios/novo');
+        }
+
+        $userId = User::createAccount([
+            'name' => $request->input('name'),
+            'email' => $email,
+            'password' => $request->input('password'),
+            'phone' => $request->input('phone', ''),
+            'status' => $request->input('status', 'active'),
+            'email_verified_at' => date('Y-m-d H:i:s')
+        ]);
+
+        Session::flash('success', 'Usuário criado com sucesso.');
+        redirect('/admin/usuarios/' . $userId);
+    }
+
     public function edit(Request $request): void
     {
         $user = User::find((int) $request->param('id'));
@@ -80,5 +115,31 @@ class AdminUserController extends Controller
         User::update($id, $request->only(['name', 'email', 'phone', 'status']));
         Session::flash('success', 'Usuário atualizado.');
         redirect('/admin/usuarios/' . $id);
+    }
+
+    public function destroy(Request $request): void
+    {
+        $id = (int) $request->param('id');
+        $user = User::find($id);
+
+        if (!$user) {
+            Session::flash('error', 'Usuário não encontrado.');
+            redirect('/admin/usuarios');
+        }
+
+        if ($user['id'] === (Session::user()['id'] ?? null)) {
+            Session::flash('error', 'Você não pode excluir a si mesmo.');
+            redirect('/admin/usuarios');
+        }
+
+        User::delete($id);
+        
+        // Remove also from organization_users
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare("DELETE FROM organization_users WHERE user_id = :uid");
+        $stmt->execute(['uid' => $id]);
+
+        Session::flash('success', 'Usuário removido com sucesso.');
+        redirect('/admin/usuarios');
     }
 }

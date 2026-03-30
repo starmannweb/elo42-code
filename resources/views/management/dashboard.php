@@ -16,6 +16,13 @@ $balance = (float) ($financial['balance'] ?? 0);
         </div>
     </header>
 
+    <?php if (!empty($isTrialMode)): ?>
+        <div class="alert alert--warning" role="alert">
+            Você está no período de teste da Gestão de Igrejas. Restam <?= e((string) ($trialDaysLeft ?? 0)) ?> dia(s) para cadastrar a organização.
+            <a href="<?= url('/onboarding/organizacao') ?>" class="text-primary font-bold">Concluir cadastro</a>
+        </div>
+    <?php endif; ?>
+
     <section class="mgmt-kpi-grid" aria-label="Indicadores">
         <article class="mgmt-kpi-card">
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue" aria-hidden="true">

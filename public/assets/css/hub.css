@@ -1,4 +1,4 @@
-﻿/* =============================================
+/* =============================================
    ELO 42 — Hub / Dashboard Styles
    ============================================= */
 
@@ -61,7 +61,7 @@
 }
 
 .hub-sidebar__logo img {
-    max-height: 34px;
+    max-height: 38px;
     width: auto;
     object-fit: contain;
 }
@@ -577,6 +577,18 @@
     box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
 }
 
+.showcase-card.is-disabled {
+    opacity: 0.78;
+    filter: saturate(0.6) brightness(0.86);
+    border-color: rgba(140, 156, 188, 0.4);
+}
+
+.showcase-card.is-disabled:hover {
+    transform: none;
+    border-color: rgba(140, 156, 188, 0.4);
+    box-shadow: none;
+}
+
 .showcase-card__head {
     display: flex;
     justify-content: space-between;
@@ -661,6 +673,70 @@
 
 .showcase-card__button:hover {
     background: rgba(214, 166, 70, 0.12);
+}
+
+.showcase-card__button.is-disabled {
+    border-color: rgba(188, 201, 228, 0.34);
+    color: rgba(220, 232, 255, 0.68);
+    background: rgba(255, 255, 255, 0.04);
+    cursor: not-allowed;
+}
+
+.platform-access-grid,
+.contract-packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+    gap: var(--space-4);
+}
+
+.platform-access-card,
+.contract-package-card {
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: #ffffff;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.platform-access-card.is-highlight {
+    border-color: rgba(214, 166, 70, 0.55);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(214, 166, 70, 0.14) 0%, transparent 36%),
+        #ffffff;
+}
+
+.platform-access-card__title,
+.contract-package-card__title {
+    margin: 0;
+    font-size: 1.04rem;
+    color: #102445;
+    font-weight: 700;
+}
+
+.platform-access-card__description,
+.contract-package-card__description {
+    margin: 0;
+    color: #5d6f8f;
+    line-height: 1.55;
+    font-size: 0.92rem;
+}
+
+.contract-package-card__product {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    color: #6680ab;
+    font-weight: 700;
+}
+
+.contract-package-card__price {
+    margin: 0;
+    color: #ba7d12;
+    font-size: 1.05rem;
+    font-weight: 700;
 }
 
 /* --- Church Dashboard (reference style) --- */
@@ -1140,6 +1216,34 @@ body[data-hub-theme="dark"] .hub-mini-card__badge {
 
 body[data-hub-theme="dark"] .hub-mini-card__price {
     color: #f5d27d;
+}
+
+body[data-hub-theme="dark"] .platform-access-card,
+body[data-hub-theme="dark"] .contract-package-card {
+    background: #122d59;
+    border-color: rgba(150, 183, 236, 0.28);
+}
+
+body[data-hub-theme="dark"] .platform-access-card.is-highlight {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(214, 166, 70, 0.18) 0%, transparent 32%),
+        #122d59;
+    border-color: rgba(214, 166, 70, 0.44);
+}
+
+body[data-hub-theme="dark"] .platform-access-card__title,
+body[data-hub-theme="dark"] .contract-package-card__title {
+    color: #f4f8ff;
+}
+
+body[data-hub-theme="dark"] .platform-access-card__description,
+body[data-hub-theme="dark"] .contract-package-card__description,
+body[data-hub-theme="dark"] .contract-package-card__product {
+    color: rgba(210, 224, 247, 0.92);
+}
+
+body[data-hub-theme="dark"] .contract-package-card__price {
+    color: #f6d48d;
 }
 
 body[data-hub-theme="dark"] .church-step-item__number {

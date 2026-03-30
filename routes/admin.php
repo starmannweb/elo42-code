@@ -9,9 +9,12 @@ $router->group(['middleware' => ['auth', 'csrf', 'admin']], function (Router $r)
 
     // Users
     $r->get('/admin/usuarios', [\Modules\Admin\Controllers\AdminUserController::class, 'index']);
+    $r->get('/admin/usuarios/novo', [\Modules\Admin\Controllers\AdminUserController::class, 'create']);
+    $r->post('/admin/usuarios', [\Modules\Admin\Controllers\AdminUserController::class, 'store']);
     $r->get('/admin/usuarios/{id}', [\Modules\Admin\Controllers\AdminUserController::class, 'show']);
     $r->get('/admin/usuarios/{id}/editar', [\Modules\Admin\Controllers\AdminUserController::class, 'edit']);
     $r->post('/admin/usuarios/{id}/editar', [\Modules\Admin\Controllers\AdminUserController::class, 'update']);
+    $r->post('/admin/usuarios/{id}/excluir', [\Modules\Admin\Controllers\AdminUserController::class, 'destroy']);
 
     // Organizations
     $r->get('/admin/organizacoes', [\Modules\Admin\Controllers\AdminOrganizationController::class, 'index']);

@@ -17,7 +17,8 @@
 
     <div class="showcase-grid">
         <?php foreach (($showcaseItems ?? []) as $item): ?>
-            <article class="showcase-card">
+            <?php $isDisabled = !empty($item['is_disabled']); ?>
+            <article class="showcase-card <?= $isDisabled ? 'is-disabled' : '' ?>">
                 <div class="showcase-card__head">
                     <span class="showcase-card__icon showcase-card__icon--<?= e((string) ($item['icon'] ?? 'briefcase')) ?>" aria-hidden="true">
                         <?php if (($item['icon'] ?? '') === 'book'): ?>
@@ -53,11 +54,59 @@
 
                 <div class="showcase-card__footer">
                     <strong class="showcase-card__price"><?= e((string) ($item['price'] ?? '')) ?></strong>
-                    <a href="<?= e((string) ($item['url'] ?? url('/contato'))) ?>" class="showcase-card__button"><?= e((string) ($item['cta'] ?? 'Ver detalhes')) ?></a>
+                    <?php if ($isDisabled): ?>
+                        <span class="showcase-card__button is-disabled" aria-disabled="true"><?= e((string) ($item['cta'] ?? 'Desativado')) ?></span>
+                    <?php else: ?>
+                        <a href="<?= e((string) ($item['url'] ?? url('/contato'))) ?>" class="showcase-card__button"><?= e((string) ($item['cta'] ?? 'Ver detalhes')) ?></a>
+                    <?php endif; ?>
                 </div>
             </article>
         <?php endforeach; ?>
     </div>
+
+    <section class="hub-panel hub-panel--platform-access" id="acessar-plataformas">
+        <header class="hub-panel__row" style="align-items:flex-start; gap: var(--space-3);">
+            <div>
+                <h2 class="hub-panel__title">Como acessar as plataformas</h2>
+                <p class="hub-panel__text">Acesse os módulos direto pelo Hub para operar no dia a dia e acelerar a implantação.</p>
+            </div>
+        </header>
+
+        <div class="platform-access-grid">
+            <?php foreach (($platformAccessItems ?? []) as $access): ?>
+                <article class="platform-access-card <?= !empty($access['highlight']) ? 'is-highlight' : '' ?>">
+                    <h3 class="platform-access-card__title"><?= e((string) ($access['title'] ?? 'Plataforma')) ?></h3>
+                    <p class="platform-access-card__description"><?= e((string) ($access['description'] ?? 'Acesse pelo Hub.')) ?></p>
+                    <a href="<?= e((string) ($access['url'] ?? url('/hub'))) ?>" class="btn <?= !empty($access['highlight']) ? 'btn--gold' : 'btn--outline' ?>">
+                        <?= e((string) ($access['cta'] ?? 'Acessar')) ?>
+                    </a>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
+
+    <section class="hub-panel hub-panel--contract-packages" id="pacotes-contratacao">
+        <header class="hub-panel__row" style="align-items:flex-start; gap: var(--space-3);">
+            <div>
+                <h2 class="hub-panel__title">Pacotes de contratação no Hub</h2>
+                <p class="hub-panel__text">Escolha o pacote ideal e solicite contratação sem sair da plataforma.</p>
+            </div>
+        </header>
+
+        <div class="contract-packages-grid">
+            <?php foreach (($contractPackages ?? []) as $package): ?>
+                <article class="contract-package-card">
+                    <p class="contract-package-card__product"><?= e((string) ($package['product'] ?? 'Produto')) ?></p>
+                    <h3 class="contract-package-card__title"><?= e((string) ($package['package'] ?? 'Pacote')) ?></h3>
+                    <p class="contract-package-card__price"><?= e((string) ($package['price'] ?? 'Consulte')) ?></p>
+                    <p class="contract-package-card__description"><?= e((string) ($package['description'] ?? 'Solicite uma proposta personalizada.')) ?></p>
+                    <a href="<?= e((string) ($package['url'] ?? url('/contato'))) ?>" class="btn btn--outline">
+                        <?= e((string) ($package['cta'] ?? 'Solicitar')) ?>
+                    </a>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
 </section>
 
 <?php $__view->endSection(); ?>
