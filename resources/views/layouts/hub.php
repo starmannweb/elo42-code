@@ -105,13 +105,6 @@
                     </a>
                 <?php endif; ?>
 
-                <div class="hub-sidebar__contact" style="margin-top: 1.5rem; padding: 0 1rem;">
-                    <p class="hub-sidebar__section-title" style="padding: 0;">Fale Conosco</p>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); padding-top: 0.5rem; line-height: 1.4;">
-                        <div style="margin-bottom: 0.25rem;"><strong>Comercial:</strong> (13) 97800-8047</div>
-                        <div><strong>Suporte:</strong> (11) 99177-5458</div>
-                    </div>
-                </div>
             </nav>
 
             <div class="hub-sidebar__footer">
@@ -162,6 +155,13 @@
                 <?php endif; ?>
 
                 <?= $__view->yield('content') ?>
+                <footer style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 0.875rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>&copy; <?= date('Y') ?> Elo 42. Todos os direitos reservados.</div>
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                        <span><strong>Comercial:</strong> <a href="https://wa.me/5513978008047" target="_blank" style="color:inherit;text-decoration:none;">(13) 97800-8047</a></span>
+                        <span><strong>Suporte:</strong> <a href="https://wa.me/5511991775458" target="_blank" style="color:inherit;text-decoration:none;">(11) 99177-5458</a></span>
+                    </div>
+                </footer>
             </main>
         </div>
     </div>
