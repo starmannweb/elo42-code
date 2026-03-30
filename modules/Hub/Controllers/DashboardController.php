@@ -44,13 +44,13 @@ class DashboardController extends Controller
 
     public function vitrine(Request $request): void
     {
-        $context = $this->buildBaseContext('Vitrine', 'vitrine');
+        $context = $this->buildBaseContext('Loja', 'vitrine');
         $churchManagementAccess = is_array($context['churchManagementAccess'] ?? null)
             ? $context['churchManagementAccess']
             : ['can_access' => false, 'is_trial' => false, 'days_left' => 0];
 
         $this->view('hub/vitrine', array_merge($context, [
-            'pageTitle'     => 'Vitrine — Hub Elo 42',
+            'pageTitle'     => 'Loja — Hub Elo 42',
             'showcaseItems'       => $this->buildShowcaseItems(),
             'platformAccessItems' => $this->buildPlatformAccesses($churchManagementAccess),
             'contractPackages'    => $this->buildContractPackages(),

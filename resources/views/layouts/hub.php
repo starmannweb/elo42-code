@@ -61,7 +61,7 @@
                     <span class="hub-nav-link__icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path></svg>
                     </span>
-                    Vitrine
+                    Loja
                 </a>
 
                 <p class="hub-sidebar__section-title">Ecossistema</p>
@@ -97,14 +97,21 @@
                 </a>
 
                 <?php if ($canAccessChurch): ?>
-                    <p class="hub-sidebar__section-title">Igreja</p>
-                    <a href="<?= e($churchEntryUrl) ?>" class="hub-nav-link">
+                    <a href="<?= e($churchEntryUrl) ?>" class="hub-nav-link" style="margin-top: 1rem;">
                         <span class="hub-nav-link__icon" aria-hidden="true">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg>
                         </span>
-                        Sistema da igreja<?= $churchIsTrial ? ' (teste)' : '' ?>
+                        Sistema<?= $churchIsTrial ? ' (Teste Grátis)' : '' ?>
                     </a>
                 <?php endif; ?>
+
+                <div class="hub-sidebar__contact" style="margin-top: 1.5rem; padding: 0 1rem;">
+                    <p class="hub-sidebar__section-title" style="padding: 0;">Fale Conosco</p>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); padding-top: 0.5rem; line-height: 1.4;">
+                        <div style="margin-bottom: 0.25rem;"><strong>Comercial:</strong> (13) 97800-8047</div>
+                        <div><strong>Suporte:</strong> (11) 99177-5458</div>
+                    </div>
+                </div>
             </nav>
 
             <div class="hub-sidebar__footer">

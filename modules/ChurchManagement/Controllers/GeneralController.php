@@ -259,6 +259,7 @@ class GeneralController extends Controller
         redirect('/gestao/doacoes');
     }
 
+    // --- Relatórios ---
     // --- Reports ---
     public function reports(Request $req): void
     {
@@ -278,6 +279,68 @@ class GeneralController extends Controller
             'pendingTasks'   => ActionPlan::pendingTasks($orgId),
             'filters'        => ['start_date' => $startDate, 'end_date' => $endDate],
         ]);
+    }
+
+    // --- Users ---
+    public function users(Request $req): void
+    {
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare("
+            SELECT u.*, ou.role_id, r.name as role_name, ou.id as org_user_id
+            FROM users u 
+            JOIN organization_users ou ON u.id = ou.user_id 
+            LEFT JOIN roles r ON ou.role_id = r.id
+            WHERE ou.organization_id = :org_id AND ou.status = 'active'
+        ");
+        $stmt->execute(['org_id' => $this->orgId()]);
+        
+        $this->view('management/users/index', [
+            'pageTitle' => 'Usuários — Gestão', 'breadcrumb' => 'Usuários',
+            'users' => $stmt->fetchAll(),
+        ]);
+    }
+
+    public function createUser(Request $req): void
+    {
+        $this->view('management/users/form', [
+            'pageTitle' => 'Novo Usuário', 'breadcrumb' => 'Usuários / Novo',
+        ]);
+    }
+
+    public function storeUser(Request $req): void
+    {
+        $this->validate($req, ['name' => 'required', 'email' => 'required', 'password' => 'required']);
+        $pdo = Database::connection();
+        $pdo->beginTransaction();
+        try {
+            $user = \App\Models\User::findByEmail($req->input('email'));
+            if (!$user) {
+                $uid = \App\Models\User::createAccount([
+                    'name' => $req->input('name'),
+                    'email' => $req->input('email'),
+                    'password' => $req->input('password')
+                ]);
+            } else {
+                $uid = $user['id'];
+            }
+            $pdo->prepare("INSERT INTO organization_users (organization_id, user_id, role_id, status) VALUES (?, ?, 3, 'active')")
+                ->execute([$this->orgId(), $uid]);
+            $pdo->commit();
+            Session::flash('success', 'Usuário criado/vinculado com sucesso.');
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            Session::flash('error', 'Erro ao processar usuário.');
+        }
+        redirect('/gestao/usuarios');
+    }
+
+    public function destroyUser(Request $req): void
+    {
+        $id = (int) $req->param('id');
+        $pdo = Database::connection();
+        $pdo->prepare("DELETE FROM organization_users WHERE id = ? AND organization_id = ?")->execute([$id, $this->orgId()]);
+        Session::flash('success', 'Usuário desvinculado.');
+        redirect('/gestao/usuarios');
     }
 
     // --- Settings ---

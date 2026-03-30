@@ -81,6 +81,12 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth']], functio
     // Reports
     $router->get('/relatorios', [GeneralController::class, 'reports']);
 
+    // Users
+    $router->get('/usuarios', [GeneralController::class, 'users']);
+    $router->get('/usuarios/novo', [GeneralController::class, 'createUser']);
+    $router->post('/usuarios', [GeneralController::class, 'storeUser']);
+    $router->post('/usuarios/{id}/excluir', [GeneralController::class, 'destroyUser']);
+
     // Settings
     $router->get('/configuracoes', [GeneralController::class, 'settings']);
 });

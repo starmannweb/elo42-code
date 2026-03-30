@@ -49,7 +49,7 @@
                     Dashboard
                 </a>
                 <a href="<?= url('/gestao/membros') ?>" class="hub-nav-link <?= $linkClass('/gestao/membros', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/membros') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg></span>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></span>
                     Membros
                 </a>
                 <a href="<?= url('/gestao/financeiro') ?>" class="hub-nav-link <?= $linkClass('/gestao/financeiro', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/financeiro') ? 'aria-current="page"' : '' ?>>
@@ -60,22 +60,50 @@
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-8-4.5-8-11a4 4 0 0 1 7-2.6A4 4 0 0 1 18 10c0 6.5-6 11-6 11z"></path></svg></span>
                     Doações PIX
                 </a>
+                <a href="<?= url('/gestao/agenda') ?>" class="hub-nav-link <?= $linkClass('/gestao/agenda', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/agenda') ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
+                    Agenda
+                </a>
                 <a href="<?= url('/gestao/eventos') ?>" class="hub-nav-link <?= $linkClass('/gestao/eventos', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/eventos') ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg></span>
                     Eventos
                 </a>
                 <a href="<?= url('/gestao/planos') ?>" class="hub-nav-link <?= $linkClass('/gestao/planos', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/planos') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18"></path><path d="M8 7V3"></path><path d="M16 7V3"></path><rect x="3" y="7" width="18" height="14" rx="2"></rect></svg></span>
-                    Plano de ação
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></span>
+                    Plano de Ação
                 </a>
                 <a href="<?= url('/gestao/relatorios') ?>" class="hub-nav-link <?= $linkClass('/gestao/relatorios', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/relatorios') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"></path></svg></span>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg></span>
                     Relatórios
+                </a>
+                <a href="<?= url('/gestao/aconselhamento') ?>" class="hub-nav-link <?= $linkClass('/gestao/aconselhamento', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/aconselhamento') ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                    Cuidado Pastoral
                 </a>
 
                 <p class="hub-sidebar__section-title">Conteúdo</p>
-                <a href="<?= url('/gestao/sermoes') ?>" class="hub-nav-link <?= $linkClass('/gestao/sermoes', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/sermoes') ? 'aria-current="page"' : '' ?>>
+                <a href="<?= url('/gestao/cursos') ?>" class="hub-nav-link <?= $linkClass('/gestao/cursos', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/cursos') ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M4 4.5A2.5 2.5 0 0 1 6.5 7H20"></path><path d="M6.5 7v10"></path></svg></span>
+                    Cursos
+                </a>
+                <a href="<?= url('/gestao/campanhas') ?>" class="hub-nav-link <?= $linkClass('/gestao/campanhas', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/campanhas') ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></span>
+                    Campanhas
+                </a>
+                <a href="<?= url('/gestao/ministerios') ?>" class="hub-nav-link <?= $linkClass('/gestao/ministerios', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/ministerios') ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+                    Ministérios
+                </a>
+                <a href="<?= url('/gestao/planos-leitura') ?>" class="hub-nav-link <?= $linkClass('/gestao/planos-leitura', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/planos-leitura') ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></span>
+                    Planos de Leitura
+                </a>
+                <a href="<?= url('/gestao/conquistas') ?>" class="hub-nav-link <?= $linkClass('/gestao/conquistas', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/conquistas') ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg></span>
+                    Conquistas
+                </a>
+                <a href="<?= url('/gestao/sermoes') ?>" class="hub-nav-link <?= $linkClass('/gestao/sermoes', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/sermoes') ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></span>
                     Sermões
                 </a>
                 <a href="<?= url('/hub/expositor-ia') ?>" class="hub-nav-link">
@@ -83,24 +111,10 @@
                     Expositor IA
                 </a>
 
-                <p class="hub-sidebar__section-title">Pastoral</p>
-                <a href="<?= url('/gestao/solicitacoes') ?>" class="hub-nav-link <?= $linkClass('/gestao/solicitacoes', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/solicitacoes') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M5 4h14"></path><path d="M17 4v5a5 5 0 0 1-10 0V4"></path></svg></span>
-                    Solicitações
-                </a>
-                <a href="<?= url('/gestao/visitas') ?>" class="hub-nav-link <?= $linkClass('/gestao/visitas', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/visitas') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path></svg></span>
-                    Visitas
-                </a>
-                <a href="<?= url('/gestao/aconselhamento') ?>" class="hub-nav-link <?= $linkClass('/gestao/aconselhamento', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/aconselhamento') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
-                    Cuidado pastoral
-                </a>
-
-                <p class="hub-sidebar__section-title">Conta</p>
-                <a href="<?= url('/gestao/configuracoes') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/configuracoes') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33"></path><path d="M4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33"></path><path d="M9 3h6M9 21h6M3 9v6M21 9v6"></path></svg></span>
-                    Configurações
+                <p class="hub-sidebar__section-title">Usuários</p>
+                <a href="<?= url('/gestao/usuarios') ?>" class="hub-nav-link <?= $linkClass('/gestao/usuarios', $uri, true) ?>" <?= str_starts_with($uri, '/gestao/usuarios') ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+                    Controle de Usuários
                 </a>
             </nav>
 
@@ -129,10 +143,11 @@
                         <span aria-current="page"><?= e((string) ($breadcrumb ?? 'Gestão')) ?></span>
                     </nav>
                 </div>
-                <div class="hub-topbar__right">
-                    <a href="<?= url('/hub/suporte') ?>" class="hub-topbar__link">Suporte</a>
-                    <a href="<?= url('/hub') ?>" class="hub-topbar__link">Hub</a>
-                    <a href="<?= url('/logout') ?>" class="hub-topbar__link hub-topbar__link--danger">Sair</a>
+                <div class="hub-topbar__right" style="display:flex;align-items:center;gap:1rem;">
+                    <button type="button" class="hub-theme-toggle hub-topbar__link" id="hub-theme-toggle" aria-label="Alternar modo claro e escuro" data-theme-toggle style="background:transparent;border:none;padding:0.5rem;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="theme-icon-moon" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                    <a href="<?= url('/hub') ?>" class="hub-topbar__link" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--surface-color);border:1px solid var(--border-color);color:var(--text-color);font-weight:600;font-size:0.875rem;" title="Hub"><?= e($initials) ?></a>
                 </div>
             </header>
 
