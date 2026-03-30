@@ -398,6 +398,11 @@
     gap: var(--space-4);
 }
 
+.hub-panel form,
+.hub-mini-card form {
+    width: 100%;
+}
+
 .hub-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -413,6 +418,46 @@
     flex-direction: column;
     gap: var(--space-3);
     position: relative;
+}
+
+.hub-panel .form-group,
+.hub-mini-card .form-group {
+    margin-bottom: var(--space-4);
+}
+
+.hub-panel .form-label,
+.hub-mini-card .form-label {
+    color: #17305d;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.hub-panel .form-input,
+.hub-panel .form-select,
+.hub-panel .form-textarea,
+.hub-mini-card .form-input,
+.hub-mini-card .form-select,
+.hub-mini-card .form-textarea {
+    min-height: 54px;
+    border-color: #c7d5ec;
+    background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);
+    color: #15305f;
+    box-shadow: inset 0 1px 2px rgba(15, 35, 76, 0.04);
+}
+
+.hub-panel .form-input:focus,
+.hub-panel .form-select:focus,
+.hub-panel .form-textarea:focus,
+.hub-mini-card .form-input:focus,
+.hub-mini-card .form-select:focus,
+.hub-mini-card .form-textarea:focus {
+    border-color: rgba(10, 77, 255, 0.68);
+    box-shadow: 0 0 0 4px rgba(10, 77, 255, 0.12);
+}
+
+.hub-panel .form-textarea,
+.hub-mini-card .form-textarea {
+    min-height: 148px;
 }
 
 .hub-mini-card__title {
@@ -461,10 +506,16 @@
     padding: 10px 12px;
     margin-bottom: 10px;
     cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .access-option input {
     margin-top: 4px;
+}
+
+.access-option:hover {
+    border-color: rgba(10, 77, 255, 0.32);
+    box-shadow: 0 10px 24px rgba(10, 77, 255, 0.06);
 }
 
 .access-option strong {
@@ -824,6 +875,12 @@
     padding: 10px 12px;
 }
 
+.church-step-item.is-pending {
+    border-color: rgba(214, 166, 70, 0.45);
+    background: linear-gradient(180deg, rgba(255, 248, 231, 0.98) 0%, rgba(255, 243, 213, 0.88) 100%);
+    box-shadow: 0 14px 28px rgba(214, 166, 70, 0.12);
+}
+
 .church-step-item__number {
     width: 30px;
     height: 30px;
@@ -835,6 +892,11 @@
     justify-content: center;
     font-size: 0.8rem;
     font-weight: 700;
+}
+
+.church-step-item.is-pending .church-step-item__number {
+    background: linear-gradient(135deg, rgba(214, 166, 70, 0.22) 0%, rgba(242, 214, 144, 0.42) 100%);
+    color: #8b5c06;
 }
 
 .church-step-item__title {
@@ -854,6 +916,18 @@
     font-size: 0.82rem;
     font-weight: 700;
     text-decoration: none;
+}
+
+.church-step-item.is-pending .church-step-item__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 132px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-light) 100%);
+    color: #0c1f44;
+    box-shadow: 0 8px 22px rgba(214, 166, 70, 0.18);
 }
 
 .church-step-item.is-done {
@@ -883,6 +957,44 @@
 
 .church-link-card:hover {
     border-color: rgba(10, 77, 255, 0.4);
+}
+
+.church-pending-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 18px 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(214, 166, 70, 0.42);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(214, 166, 70, 0.22) 0%, transparent 36%),
+        linear-gradient(135deg, rgba(255, 248, 229, 0.98) 0%, rgba(255, 242, 209, 0.94) 100%);
+    box-shadow: 0 18px 36px rgba(214, 166, 70, 0.12);
+}
+
+.church-pending-banner__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #8d5f08;
+}
+
+.church-pending-banner__title {
+    margin: 0 0 6px;
+    color: #102445;
+    font-size: 1.08rem;
+}
+
+.church-pending-banner__text {
+    margin: 0;
+    color: #556683;
+    max-width: 760px;
 }
 
 /* --- Expositor --- */
@@ -959,6 +1071,14 @@ body[data-hub-theme="dark"] .hub-topbar__mobile-toggle {
     color: rgba(235, 242, 255, 0.9);
 }
 
+body[data-hub-theme="dark"] .hub-topbar__breadcrumb-sep {
+    color: rgba(196, 214, 244, 0.58);
+}
+
+body[data-hub-theme="dark"] .hub-topbar__link--danger {
+    color: #ff9a9a;
+}
+
 body[data-hub-theme="dark"] .hub-page__title,
 body[data-hub-theme="dark"] .church-dashboard__title,
 body[data-hub-theme="dark"] .dashboard-section__title,
@@ -1003,6 +1123,21 @@ body[data-hub-theme="dark"] .access-option {
     border-color: rgba(150, 183, 236, 0.28);
 }
 
+body[data-hub-theme="dark"] .hub-badge--warning {
+    background: rgba(214, 166, 70, 0.18);
+    color: #ffd996;
+}
+
+body[data-hub-theme="dark"] .hub-badge--success {
+    background: rgba(16, 185, 129, 0.16);
+    color: #abffde;
+}
+
+body[data-hub-theme="dark"] .hub-mini-card__badge {
+    background: rgba(214, 166, 70, 0.22);
+    color: #ffe0a1;
+}
+
 body[data-hub-theme="dark"] .hub-mini-card__price {
     color: #f5d27d;
 }
@@ -1021,6 +1156,33 @@ body[data-hub-theme="dark"] .church-link-card {
     color: #e7f0ff;
 }
 
+body[data-hub-theme="dark"] .btn--outline {
+    color: #dce9ff;
+    border-color: rgba(95, 151, 255, 0.78);
+    background: rgba(10, 77, 255, 0.08);
+}
+
+body[data-hub-theme="dark"] .btn--outline:hover {
+    background: rgba(10, 77, 255, 0.22);
+    color: #ffffff;
+}
+
+body[data-hub-theme="dark"] .btn--ghost {
+    color: #eef4ff;
+    border-color: rgba(182, 201, 236, 0.28);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+body[data-hub-theme="dark"] .btn--ghost:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+body[data-hub-theme="dark"] .btn--gold {
+    color: #081c3e;
+}
+
 body[data-hub-theme="dark"] .table th,
 body[data-hub-theme="dark"] .table td {
     border-color: rgba(150, 183, 236, 0.22);
@@ -1033,9 +1195,10 @@ body[data-hub-theme="dark"] .table--hub tbody tr:hover {
 body[data-hub-theme="dark"] .form-input,
 body[data-hub-theme="dark"] .form-select,
 body[data-hub-theme="dark"] .form-textarea {
-    background: #1a355f;
-    border-color: rgba(150, 183, 236, 0.35);
+    background: linear-gradient(180deg, #173463 0%, #122a4d 100%);
+    border-color: rgba(150, 183, 236, 0.38);
     color: #f5f9ff;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.03);
 }
 
 body[data-hub-theme="dark"] .form-input::placeholder,
@@ -1045,6 +1208,53 @@ body[data-hub-theme="dark"] .form-textarea::placeholder {
 
 body[data-hub-theme="dark"] .form-label {
     color: #e5eeff;
+}
+
+body[data-hub-theme="dark"] .form-input:focus,
+body[data-hub-theme="dark"] .form-select:focus,
+body[data-hub-theme="dark"] .form-textarea:focus {
+    border-color: rgba(95, 151, 255, 0.86);
+    box-shadow: 0 0 0 4px rgba(95, 151, 255, 0.14);
+}
+
+body[data-hub-theme="dark"] .form-select option {
+    color: #102445;
+}
+
+body[data-hub-theme="dark"] .church-step-item.is-pending {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(214, 166, 70, 0.14) 0%, transparent 28%),
+        linear-gradient(180deg, rgba(32, 55, 94, 0.98) 0%, rgba(25, 47, 83, 0.98) 100%);
+    border-color: rgba(214, 166, 70, 0.42);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+}
+
+body[data-hub-theme="dark"] .church-step-item.is-pending .church-step-item__title {
+    color: #fff3d2;
+}
+
+body[data-hub-theme="dark"] .church-step-item.is-pending .church-step-item__desc {
+    color: rgba(226, 234, 249, 0.9);
+}
+
+body[data-hub-theme="dark"] .church-pending-banner {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(214, 166, 70, 0.18) 0%, transparent 30%),
+        linear-gradient(135deg, rgba(25, 47, 83, 0.98) 0%, rgba(18, 39, 72, 0.98) 100%);
+    border-color: rgba(214, 166, 70, 0.42);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+body[data-hub-theme="dark"] .church-pending-banner__eyebrow {
+    color: #ffd88e;
+}
+
+body[data-hub-theme="dark"] .church-pending-banner__title {
+    color: #ffffff;
+}
+
+body[data-hub-theme="dark"] .church-pending-banner__text {
+    color: rgba(221, 231, 247, 0.92);
 }
 
 body[data-hub-theme="dark"] .alert--success {
@@ -1136,6 +1346,11 @@ body[data-hub-theme="light"] .hub-topbar {
 
     .church-links-grid {
         grid-template-columns: 1fr;
+    }
+
+    .church-pending-banner {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .church-step-item {

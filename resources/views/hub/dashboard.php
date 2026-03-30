@@ -13,6 +13,8 @@ $balanceTotal = $revenueTotal - $expensesTotal;
 
 $activityItems = is_array($dashboardActivity ?? null) ? $dashboardActivity : [];
 $steps = is_array($setupSteps ?? null) ? $setupSteps : [];
+$pendingSteps = array_values(array_filter($steps, static fn ($step) => empty($step['done'])));
+$nextPendingStep = $pendingSteps[0] ?? null;
 ?>
 
 <section class="church-dashboard">
@@ -130,10 +132,24 @@ $steps = is_array($setupSteps ?? null) ? $setupSteps : [];
             <header class="church-panel__header">
                 <h2 class="church-panel__title">Etapas pendentes</h2>
             </header>
+            <?php if (!empty($nextPendingStep)): ?>
+                <div class="church-pending-banner">
+                    <div>
+                        <p class="church-pending-banner__eyebrow">Acao recomendada agora</p>
+                        <h3 class="church-pending-banner__title"><?= e((string) ($nextPendingStep['title'] ?? 'Concluir etapa pendente')) ?></h3>
+                        <p class="church-pending-banner__text"><?= e((string) ($nextPendingStep['description'] ?? 'Finalize esta etapa para liberar melhor o ecossistema.')) ?></p>
+                    </div>
+                    <?php if (!empty($nextPendingStep['action'])): ?>
+                        <a href="<?= e((string) $nextPendingStep['action']) ?>" class="btn btn--gold">
+                            <?= e((string) ($nextPendingStep['action_text'] ?? 'Resolver agora')) ?>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
             <?php if (!empty($steps)): ?>
                 <ol class="church-steps-list">
                     <?php foreach ($steps as $step): ?>
-                        <li class="church-step-item <?= !empty($step['done']) ? 'is-done' : '' ?>">
+                        <li class="church-step-item <?= !empty($step['done']) ? 'is-done' : 'is-pending' ?>">
                             <span class="church-step-item__number"><?= e((string) ($step['number'] ?? '')) ?></span>
                             <div class="church-step-item__content">
                                 <p class="church-step-item__title"><?= e((string) ($step['title'] ?? 'Etapa')) ?></p>

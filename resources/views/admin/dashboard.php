@@ -6,6 +6,10 @@
         <h1 class="mgmt-header__title">Painel Administrativo</h1>
         <p class="mgmt-header__subtitle">Visão geral da plataforma Elo 42</p>
     </div>
+    <div class="mgmt-header__actions">
+        <a href="<?= url('/admin/usuarios') ?>" class="btn btn--primary">Gestao de usuarios</a>
+        <a href="<?= url('/admin/organizacoes') ?>" class="btn btn--outline">Organizacoes</a>
+    </div>
 </div>
 
 <div class="mgmt-stats-grid">
