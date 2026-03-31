@@ -32,7 +32,7 @@
 
         <div class="hub-page__actions" style="align-items:center;">
             <form action="<?= url('/hub/sites/gerar') ?>" method="POST" style="margin: 0;">
-                <input type="hidden" name="csrf_token" value="<?= e((string) csrf_token()) ?>">
+                <?= csrf_field() ?>
                 <button class="btn btn--gold btn--lg" type="submit" onclick="this.classList.add('btn--loading');">
                     Gerar meu site
                 </button>
@@ -51,7 +51,7 @@
                     <div class="hub-page__actions" style="margin-top:auto;">
                         <button type="button" class="btn btn--ghost">Ver preview</button>
                         <form action="<?= url('/hub/sites/gerar') ?>" method="POST" style="margin: 0;">
-                            <input type="hidden" name="csrf_token" value="<?= e((string) csrf_token()) ?>">
+                            <?= csrf_field() ?>
                             <input type="hidden" name="template" value="<?= e((string) ($template['name'] ?? '')) ?>">
                             <button type="submit" class="btn btn--primary" onclick="this.classList.add('btn--loading');">Utilizar este modelo</button>
                         </form>
