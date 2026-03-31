@@ -5,7 +5,7 @@
 <section class="hub-page">
     <header class="hub-page__header">
         <h1 class="hub-page__title">Meus sites</h1>
-        <p class="hub-page__subtitle">Crie, personalize e teste modelos no construtor Elo 42. A publicação só é liberada com mensalidade ativa.</p>
+        <p class="hub-page__subtitle">Seu site é gerado integralmente com os dados do cadastro da sua organização. A publicação no seu domínio só é liberada com a mensalidade ativa.</p>
     </header>
 
     <div class="hub-panel">
@@ -14,7 +14,7 @@
                 <h2 class="hub-panel__title">Status de publicação</h2>
                 <p class="hub-panel__text">
                     Plano atual: <strong><?= e((string) ($siteBuilderAccess['plan_name'] ?? 'Sem assinatura')) ?></strong><br>
-                    Status: <strong><?= e((string) ($siteBuilderAccess['status_label'] ?? 'Inativo')) ?></strong><br>
+                    Status: <strong><?= e((string) ($siteBuilderAccess['status_label'] ?? 'Pendente de organização')) ?></strong><br>
                     Mensalidade: <strong><?= e((string) ($siteBuilderAccess['monthly_fee_label'] ?? 'Consulte valores')) ?></strong>
                 </p>
             </div>
@@ -32,7 +32,7 @@
 
         <div class="hub-page__actions" style="align-items:center;">
             <button class="btn btn--gold btn--lg" type="button">
-                Iniciar criação de site
+                Gerar meu site
             </button>
             <a href="<?= url('/contato') ?>" class="btn btn--outline btn--lg">Ativar mensalidade</a>
         </div>
@@ -46,8 +46,8 @@
                     <h3 class="hub-mini-card__title"><?= e((string) ($template['name'] ?? 'Modelo')) ?></h3>
                     <p class="hub-mini-card__text"><?= e((string) ($template['description'] ?? '')) ?></p>
                     <div class="hub-page__actions" style="margin-top:auto;">
-                        <button type="button" class="btn btn--ghost">Ver modelo</button>
-                        <button type="button" class="btn btn--primary">Criar com este modelo</button>
+                        <button type="button" class="btn btn--ghost">Ver preview</button>
+                        <button type="button" class="btn btn--primary">Utilizar este modelo</button>
                     </div>
                 </article>
             <?php endforeach; ?>

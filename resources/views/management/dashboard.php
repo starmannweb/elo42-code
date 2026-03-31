@@ -1,13 +1,10 @@
 <?php $__view->extends('management'); ?>
-
 <?php $__view->section('content'); ?>
-
 <?php
 $income = (float) ($financial['income'] ?? 0);
 $expense = (float) ($financial['expense'] ?? 0);
 $balance = (float) ($financial['balance'] ?? 0);
 ?>
-
 <section class="mgmt-dashboard">
     <header class="mgmt-header">
         <div>
@@ -26,40 +23,37 @@ $balance = (float) ($financial['balance'] ?? 0);
     <section class="mgmt-kpi-grid" aria-label="Indicadores">
         <article class="mgmt-kpi-card">
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
             </div>
             <div>
                 <p class="mgmt-kpi-card__label">Membros</p>
                 <p class="mgmt-kpi-card__value"><?= e((string) $totalMembers) ?></p>
             </div>
         </article>
-
         <article class="mgmt-kpi-card">
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--indigo" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
             </div>
             <div>
                 <p class="mgmt-kpi-card__label">Eventos</p>
                 <p class="mgmt-kpi-card__value"><?= e((string) $activeEvents) ?></p>
             </div>
         </article>
-
         <article class="mgmt-kpi-card">
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--gold" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M5 4h14"></path><path d="M17 4v5a5 5 0 0 1-10 0V4"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M5 4h14"></path><path d="M17 4v5a5 5 0 0 1-10 0V4"></path></svg>
             </div>
             <div>
-                <p class="mgmt-kpi-card__label">Pedidos pendentes</p>
+                <p class="mgmt-kpi-card__label">Pedidos Pendentes</p>
                 <p class="mgmt-kpi-card__value"><?= e((string) $openRequests) ?></p>
             </div>
         </article>
-
         <article class="mgmt-kpi-card">
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 8A2.5 2.5 0 0 1 5 5.5h14A2.5 2.5 0 0 1 21.5 8v8A2.5 2.5 0 0 1 19 18.5H5A2.5 2.5 0 0 1 2.5 16z"></path><path d="M15 12h.01"></path><path d="M2.5 9.5h19"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 8A2.5 2.5 0 0 1 5 5.5h14A2.5 2.5 0 0 1 21.5 8v8A2.5 2.5 0 0 1 19 18.5H5A2.5 2.5 0 0 1 2.5 16z"></path><path d="M15 12h.01"></path><path d="M2.5 9.5h19"></path></svg>
             </div>
             <div>
-                <p class="mgmt-kpi-card__label">Receita total</p>
+                <p class="mgmt-kpi-card__label">Receita Total</p>
                 <p class="mgmt-kpi-card__value">R$ <?= e(number_format($income, 2, ',', '.')) ?></p>
             </div>
         </article>
@@ -68,70 +62,149 @@ $balance = (float) ($financial['balance'] ?? 0);
     <section class="mgmt-dashboard-grid">
         <article class="mgmt-dashboard-card">
             <header class="mgmt-dashboard-card__header">
-                <h2>Crescimento de membros</h2>
+                <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--color-text-muted)"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg> Crescimento de Membros</h2>
             </header>
-            <div class="mgmt-chart-placeholder">
-                <div class="mgmt-chart-placeholder__line"></div>
-                <div class="mgmt-chart-placeholder__axis">
-                    <span>Out</span><span>Nov</span><span>Dez</span><span>Jan</span><span>Fev</span><span>Mar</span>
+            <div class="mgmt-chart-placeholder-svg" style="height:200px; position:relative;">
+                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <line x1="0" y1="20" x2="100" y2="20" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
+                    <line x1="0" y1="40" x2="100" y2="40" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
+                    <line x1="0" y1="60" x2="100" y2="60" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
+                    <line x1="0" y1="80" x2="100" y2="80" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
+                    <line x1="0" y1="100" x2="100" y2="100" stroke="var(--color-border-light)" stroke-width="1"/>
+                    
+                    <path d="M 0 100 C 20 100, 30 20, 50 20 C 70 20, 80 80, 100 20" fill="none" stroke="#eab308" stroke-width="1.5" />
+                    <circle cx="0" cy="100" r="1.5" fill="#eab308" />
+                    <circle cx="50" cy="20" r="1.5" fill="#eab308" />
+                    <circle cx="100" cy="20" r="1.5" fill="#eab308" />
+                </svg>
+                <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:11px; color:var(--text-muted); padding: 0 4px;">
+                    <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
+                </div>
+                <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin-top:12px; font-size:11px; color:var(--text-muted);">
+                    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:#1e293b;"></span> Membros</span>
+                    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:#eab308;"></span> Visitantes</span>
                 </div>
             </div>
         </article>
 
         <article class="mgmt-dashboard-card">
             <header class="mgmt-dashboard-card__header">
-                <h2>Receitas vs despesas</h2>
+                <h2 style="display:flex;align-items:center;gap:8px;"><span style="color:var(--text-muted); font-weight:600;">$</span> Receitas vs Despesas</h2>
             </header>
-            <div class="mgmt-balance-cards">
-                <div>
-                    <span>Receitas</span>
-                    <strong>R$ <?= e(number_format($income, 2, ',', '.')) ?></strong>
+            <div class="mgmt-chart-placeholder-svg" style="height:200px; position:relative;">
+                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <line x1="0" y1="20" x2="100" y2="20" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
+                    <line x1="0" y1="40" x2="100" y2="40" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
+                    <line x1="0" y1="60" x2="100" y2="60" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
+                    <line x1="0" y1="80" x2="100" y2="80" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
+                    <line x1="0" y1="100" x2="100" y2="100" stroke="var(--color-border-light)" stroke-width="1"/>
+                </svg>
+                <div style="display:flex; flex-direction:column; justify-content:space-between; position:absolute; top:0; left:0; height:calc(100% - 40px); font-size:10px; color:var(--text-muted); z-index:2; align-items:flex-end; transform: translateX(-110%); padding-right: 4px;">
+                    <span>R$ 1</span><span>R$ 0.8</span><span>R$ 0.6</span><span>R$ 0.4</span><span>R$ 0.2</span><span>R$ 0</span>
                 </div>
-                <div>
-                    <span>Despesas</span>
-                    <strong>R$ <?= e(number_format($expense, 2, ',', '.')) ?></strong>
+                <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:11px; color:var(--text-muted); padding: 0 4px;">
+                    <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
                 </div>
-                <div>
-                    <span>Saldo</span>
-                    <strong class="<?= $balance >= 0 ? 'is-positive' : 'is-negative' ?>">R$ <?= e(number_format($balance, 2, ',', '.')) ?></strong>
+                <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin-top:12px; font-size:11px; color:var(--text-muted);">
+                    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:#10b981;"></span> Receitas</span>
+                    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span> Despesas</span>
                 </div>
             </div>
         </article>
     </section>
 
     <section class="mgmt-dashboard-grid">
-        <article class="mgmt-dashboard-card">
+        <article class="mgmt-dashboard-card" style="display:flex; flex-direction:column;">
             <header class="mgmt-dashboard-card__header">
-                <h2>Progresso das campanhas</h2>
+                <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--color-text-muted)"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg> Progresso das Campanhas</h2>
             </header>
-            <div class="mgmt-progress-list">
+            <div class="mgmt-progress-list" style="margin-top:8px; gap:20px;">
                 <div class="mgmt-progress-item">
-                    <div class="mgmt-progress-item__head"><span>Reforma do templo</span><strong>58%</strong></div>
-                    <div class="progress-bar"><div class="progress-bar__fill" style="width:58%"></div></div>
+                    <div class="mgmt-progress-item__head" style="margin-bottom:8px;">
+                        <span style="font-weight:700; color:var(--color-text-primary);">Reforma do Templo</span>
+                        <strong style="color:var(--text-muted);">58%</strong>
+                    </div>
+                    <div class="progress-bar" style="height:8px; background:var(--color-bg-light);"><div class="progress-bar__fill" style="width:58%; background:#0ea5e9; border-radius:4px;"></div></div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">R$ 87.500,00 de R$ 150.000,00</div>
                 </div>
                 <div class="mgmt-progress-item">
-                    <div class="mgmt-progress-item__head"><span>Missões 2026</span><strong>64%</strong></div>
-                    <div class="progress-bar"><div class="progress-bar__fill progress-bar__fill--green" style="width:64%"></div></div>
+                    <div class="mgmt-progress-item__head" style="margin-bottom:8px;">
+                        <span style="font-weight:700; color:var(--color-text-primary);">Missões 2026</span>
+                        <strong style="color:var(--text-muted);">64%</strong>
+                    </div>
+                    <div class="progress-bar" style="height:8px; background:var(--color-bg-light);"><div class="progress-bar__fill" style="width:64%; background:#0f172a; border-radius:4px;"></div></div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">R$ 32.000,00 de R$ 50.000,00</div>
                 </div>
                 <div class="mgmt-progress-item">
-                    <div class="mgmt-progress-item__head"><span>Cesta solidária</span><strong>85%</strong></div>
-                    <div class="progress-bar"><div class="progress-bar__fill progress-bar__fill--gold" style="width:85%"></div></div>
+                    <div class="mgmt-progress-item__head" style="margin-bottom:8px;">
+                        <span style="font-weight:700; color:var(--color-text-primary);">Cesta Solidária</span>
+                        <strong style="color:var(--text-muted);">85%</strong>
+                    </div>
+                    <div class="progress-bar" style="height:8px; background:var(--color-bg-light);"><div class="progress-bar__fill" style="width:85%; background:#1e3a8a; border-radius:4px;"></div></div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">R$ 8.500,00 de R$ 10.000,00</div>
                 </div>
             </div>
         </article>
 
-        <article class="mgmt-dashboard-card">
+        <article class="mgmt-dashboard-card" style="display:flex; flex-direction:column;">
             <header class="mgmt-dashboard-card__header">
-                <h2>Atividade recente</h2>
+                <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--color-primary)"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> Atividade Recente</h2>
             </header>
-            <ul class="mgmt-activity-list">
-                <li><strong><?= e((string) ($newMembers ?? 0)) ?> novo(s) membro(s)</strong><span>Atualizado no mês atual.</span></li>
-                <li><strong><?= e((string) ($activeMinistries ?? 0)) ?> ministério(s) ativo(s)</strong><span>Acompanhamento pastoral em dia.</span></li>
-                <li><strong><?= e((string) ($pendingTasks ?? 0)) ?> tarefa(s) pendente(s)</strong><span>Plano de ação com itens para conclusão.</span></li>
-                <li><strong>Doações do mês: R$ <?= e(number_format((float) ($donationsMonth ?? 0), 2, ',', '.')) ?></strong><span>Captação em andamento.</span></li>
+            <ul class="mgmt-activity-list-new" style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+                <li style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:var(--color-bg-light); display:flex; align-items:center; justify-content:center; color:var(--text-muted);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                    <div>
+                        <strong style="display:block; font-size:13px; color:var(--color-text-primary);">John@mail.coma</strong>
+                        <span style="font-size:11px; color:var(--text-muted);">Novo visitante • há 18 dias</span>
+                    </div>
+                </li>
+                <li style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:var(--color-bg-light); display:flex; align-items:center; justify-content:center; color:var(--text-muted);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                    <div>
+                        <strong style="display:block; font-size:13px; color:var(--color-text-primary);">sdfddsfsdf</strong>
+                        <span style="font-size:11px; color:var(--text-muted);">Novo visitante • há 18 dias</span>
+                    </div>
+                </li>
+                <li style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:rgba(214,166,70,0.1); color:var(--color-gold); display:flex; align-items:center; justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+                    <div>
+                        <strong style="display:block; font-size:13px; color:var(--color-text-primary);">O Poder da Fé</strong>
+                        <span style="font-size:11px; color:var(--text-muted);">Ministração publicada • há 2 meses</span>
+                    </div>
+                </li>
+                <li style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:rgba(214,166,70,0.1); color:var(--color-gold); display:flex; align-items:center; justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+                    <div>
+                        <strong style="display:block; font-size:13px; color:var(--color-text-primary);">Fundação: Projeto de Deus</strong>
+                        <span style="font-size:11px; color:var(--text-muted);">Ministração publicada • há 2 meses</span>
+                    </div>
+                </li>
             </ul>
         </article>
     </section>
-</section>
 
+    <section class="mgmt-dashboard-grid" style="margin-top:var(--space-4);">
+        <article class="mgmt-dashboard-card" style="display:flex; flex-direction:column; justify-content:space-between; min-height:180px;">
+            <header class="mgmt-dashboard-card__header">
+                <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--color-text-muted)"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Próximos Eventos</h2>
+                <a href="#" style="font-size:12px; color:var(--text-muted); text-decoration:none;">Ver todos ›</a>
+            </header>
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; color:var(--text-muted); font-size:13px;">
+                <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                Nenhum evento programado
+            </div>
+        </article>
+
+        <article class="mgmt-dashboard-card" style="display:flex; flex-direction:column; justify-content:space-between; min-height:180px;">
+            <header class="mgmt-dashboard-card__header">
+                <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--color-gold)"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Solicitações Recentes</h2>
+                <a href="#" style="font-size:12px; color:var(--text-muted); text-decoration:none;">Ver todas ›</a>
+            </header>
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; color:var(--text-muted); font-size:13px;">
+                <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                Nenhuma solicitação
+            </div>
+        </article>
+    </section>
+</section>
 <?php $__view->endSection(); ?>
