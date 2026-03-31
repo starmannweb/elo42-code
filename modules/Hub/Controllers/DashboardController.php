@@ -1102,4 +1102,105 @@ class DashboardController extends Controller
             'value' => $value,
         ]);
     }
+    public function usuarios(Request $request): void
+    {
+        $context = $this->buildBaseContext('Minha Equipe', 'usuarios');
+        $organization = $context['organization'];
+
+        // Buscar membros da equipe
+        $teamMembers = \App\Models\Organization::getUsers((int) $organization['id']);
+
+        // Buscar papéis disponíveis
+        $pdo = \App\Core\Database::connection();
+        $stmt = $pdo->prepare("SELECT id, name FROM roles WHERE slug LIKE 'org-%' ORDER BY name ASC");
+        $stmt->execute();
+        $availableRoles = $stmt->fetchAll();
+
+        $this->view('hub/usuarios', array_merge($context, [
+            'pageTitle'      => 'Minha Equipe — Hub Elo 42',
+            'teamMembers'    => $teamMembers,
+            'availableRoles' => $availableRoles,
+        ]));
+    }
+
+    public function adicionarUsuario(Request $request): void
+    {
+        $context = $this->buildBaseContext('Minha Equipe', 'usuarios');
+        $organization = $context['organization'];
+
+        $name = trim((string) $request->input('name'));
+        $email = trim((string) $request->input('email'));
+        $roleId = (int) $request->input('role_id');
+
+        if (empty($name) || empty($email)) {
+            \App\Core\Session::flash('error', 'Preencha o nome e o e-mail do novo membro.');
+            $this->redirect('/hub/usuarios');
+        }
+
+        $pdo = \App\Core\Database::connection();
+        
+        try {
+            $pdo->beginTransaction();
+
+            $existingUser = \App\Models\User::findByEmail($email);
+            
+            if ($existingUser) {
+                $userId = $existingUser['id'];
+                
+                // Verificar se já está na organização
+                $check = $pdo->prepare("SELECT COUNT(*) FROM organization_users WHERE organization_id = :org_id AND user_id = :u_id");
+                $check->execute(['org_id' => $organization['id'], 'u_id' => $userId]);
+                if ($check->fetchColumn() > 0) {
+                    throw new \Exception("Este usuário já faz parte da sua organização.");
+                }
+            } else {
+                // Criar novo usuário com senha padrão
+                $userId = \App\Models\User::createAccount([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => 'elo42@2026',
+                    'status' => 'active',
+                ]);
+            }
+
+            // Vincular à organização
+            $stmt = $pdo->prepare("INSERT INTO organization_users (organization_id, user_id, role_id, status, joined_at) VALUES (:org_id, :u_id, :role_id, 'active', NOW())");
+            $stmt->execute([
+                'org_id' => $organization['id'],
+                'u_id' => $userId,
+                'role_id' => $roleId
+            ]);
+
+            $pdo->commit();
+            \App\Core\Session::flash('success', 'Membro adicionado com sucesso!');
+        } catch (\Exception $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            \App\Core\Session::flash('error', 'Erro ao adicionar membro: ' . $e->getMessage());
+        }
+
+        $this->redirect('/hub/usuarios');
+    }
+
+    public function removerUsuario(Request $request): void
+    {
+        $context = $this->buildBaseContext('Minha Equipe', 'usuarios');
+        $organization = $context['organization'];
+        $memberId = (int) $request->param('id');
+        $currentUser = $context['user'];
+
+        if ($memberId === (int) $currentUser['id']) {
+            \App\Core\Session::flash('error', 'Você não pode remover a si mesmo da organização.');
+            $this->redirect('/hub/usuarios');
+        }
+
+        $pdo = \App\Core\Database::connection();
+        $stmt = $pdo->prepare("DELETE FROM organization_users WHERE organization_id = :org_id AND user_id = :u_id");
+        $stmt->execute([
+            'org_id' => $organization['id'],
+            'u_id' => $memberId
+        ]);
+
+        \App\Core\Session::flash('success', 'Acesso removido com sucesso.');
+        $this->redirect('/hub/usuarios');
+    }
 }

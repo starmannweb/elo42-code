@@ -68,4 +68,21 @@ class Organization extends Model
 
         return $slug;
     }
+
+    public static function getUsers(int $orgId): array
+    {
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare("
+            SELECT u.id, u.name, u.email, u.phone, u.avatar, u.status as user_status, 
+                   ou.status as org_status, ou.role_id, ou.joined_at, 
+                   r.name as role_name, r.slug as role_slug
+            FROM organization_users ou
+            JOIN users u ON ou.user_id = u.id
+            LEFT JOIN roles r ON ou.role_id = r.id
+            WHERE ou.organization_id = :org_id
+            ORDER BY u.name ASC
+        ");
+        $stmt->execute(['org_id' => $orgId]);
+        return $stmt->fetchAll();
+    }
 }

@@ -17,4 +17,11 @@ $router->group(['prefix' => 'hub', 'middleware' => ['csrf', 'auth']], function($
     $router->post('/configuracoes/conta', [DashboardController::class, 'atualizarConta']);
     $router->post('/configuracoes/organizacao', [DashboardController::class, 'atualizarOrganizacao']);
     $router->post('/configuracoes/perfil-acesso', [DashboardController::class, 'atualizarPerfilAcesso']);
+
+    // Gestão de Equipe (Usuários)
+    $router->get('/usuarios', [DashboardController::class, 'usuarios']);
+    $router->get('/usuarios/buscar', [DashboardController::class, 'buscarUsuarios']);
+    $router->post('/usuarios/adicionar', [DashboardController::class, 'adicionarUsuario']);
+    $router->post('/usuarios/editar/{id}', [DashboardController::class, 'editarUsuario']);
+    $router->post('/usuarios/remover/{id}', [DashboardController::class, 'removerUsuario']);
 });
