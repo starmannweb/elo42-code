@@ -31,9 +31,12 @@
         <?php endif; ?>
 
         <div class="hub-page__actions" style="align-items:center;">
-            <button class="btn btn--gold btn--lg" type="button">
-                Gerar meu site
-            </button>
+            <form action="<?= url('/hub/sites/gerar') ?>" method="POST" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="<?= e((string) csrf_token()) ?>">
+                <button class="btn btn--gold btn--lg" type="submit" onclick="this.classList.add('btn--loading');">
+                    Gerar meu site
+                </button>
+            </form>
             <a href="<?= url('/contato') ?>" class="btn btn--outline btn--lg">Ativar mensalidade</a>
         </div>
     </div>
@@ -47,7 +50,11 @@
                     <p class="hub-mini-card__text"><?= e((string) ($template['description'] ?? '')) ?></p>
                     <div class="hub-page__actions" style="margin-top:auto;">
                         <button type="button" class="btn btn--ghost">Ver preview</button>
-                        <button type="button" class="btn btn--primary">Utilizar este modelo</button>
+                        <form action="<?= url('/hub/sites/gerar') ?>" method="POST" style="margin: 0;">
+                            <input type="hidden" name="csrf_token" value="<?= e((string) csrf_token()) ?>">
+                            <input type="hidden" name="template" value="<?= e((string) ($template['name'] ?? '')) ?>">
+                            <button type="submit" class="btn btn--primary" onclick="this.classList.add('btn--loading');">Utilizar este modelo</button>
+                        </form>
                     </div>
                 </article>
             <?php endforeach; ?>

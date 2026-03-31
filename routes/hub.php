@@ -6,6 +6,7 @@ $router->group(['prefix' => 'hub', 'middleware' => ['csrf', 'auth']], function($
     $router->get('/', [DashboardController::class, 'index']);
     $router->get('/vitrine', [DashboardController::class, 'vitrine']);
     $router->get('/sites', [DashboardController::class, 'sites']);
+    $router->post('/sites/gerar', [DashboardController::class, 'gerarSite']);
     $router->get('/expositor-ia', [DashboardController::class, 'expositorIa']);
     $router->post('/expositor-ia/gerar', [DashboardController::class, 'gerarExpositorIa']);
     $router->get('/creditos', [DashboardController::class, 'creditos']);

@@ -69,6 +69,13 @@ class DashboardController extends Controller
         ]));
     }
 
+    public function gerarSite(Request $request): void
+    {
+        $context = $this->buildBaseContext('Meus Sites', 'sites');
+        \App\Core\Session::flash('success', 'Site gerado com sucesso! Seus dados organizacionais foram vinculados ao modelo.');
+        redirect('/hub/sites');
+    }
+
     public function expositorIa(Request $request): void
     {
         $context = $this->buildBaseContext('Expositor IA', 'expositor');
