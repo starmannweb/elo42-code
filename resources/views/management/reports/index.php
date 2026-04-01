@@ -20,44 +20,44 @@ $taxaCativante = $totalMembers > 0 ? round(($activeMembers / $totalMembers) * 10
 ?>
 
 <div class="mgmt-kpi-grid" style="grid-template-columns: repeat(4, 1fr);">
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">TOTAL MEMBROS</div>
             <div class="mgmt-kpi-card__value"><?= $totalMembers ?></div>
-            <div style="font-size: 11px; color: #10b981; margin-top: 2px;">▲ 12% vs período anterior</div>
+            <div style="font-size: 11px; color: #10b981; margin-top: 2px;">+12% vs período anterior</div>
+        </div>
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
         </div>
     </div>
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><polyline points="7 17 12 22 17 17"></polyline></svg>
-        </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">RECEITAS TOTAIS</div>
             <div class="mgmt-kpi-card__value" style="color: #10b981;">R$ <?= number_format($financial['income'] ?? 0, 2, ',', '.') ?></div>
             <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Acumulado do ano</div>
         </div>
-    </div>
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><polyline points="7 7 12 2 17 7"></polyline></svg>
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
         </div>
+    </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between; border-color: rgba(239, 68, 68, 0.2);">
         <div>
             <div class="mgmt-kpi-card__label">DESPESAS TOTAIS</div>
             <div class="mgmt-kpi-card__value" style="color: #ef4444;">R$ <?= number_format($financial['expense'] ?? 0, 2, ',', '.') ?></div>
             <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Acumulado do ano</div>
         </div>
-    </div>
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--indigo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <div class="mgmt-kpi-card__icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
         </div>
+    </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">TAXA CATIVANTE</div>
             <div class="mgmt-kpi-card__value"><?= $taxaCativante ?>%</div>
             <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Frequência média em eventos</div>
+        </div>
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--indigo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
         </div>
     </div>
 </div>

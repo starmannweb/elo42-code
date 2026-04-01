@@ -6,7 +6,7 @@
         <p class="mgmt-header__subtitle">Gerencie pagamentos e doações recebidas via PIX integrado</p>
     </div>
     <div class="mgmt-header__actions">
-        <button type="button" class="btn btn--primary" onclick="window.location.href='<?= url('/gestao/doacoes/nova') ?>'">💳 Gerar Cobrança PIX</button>
+        <button type="button" class="btn btn--primary" onclick="window.location.href='<?= url('/gestao/doacoes/nova') ?>'">Gerar Cobrança PIX</button>
     </div>
 </div>
 
@@ -26,48 +26,46 @@ foreach ($donations ?? [] as $d) {
 ?>
 
 <div class="mgmt-kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--gold">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><polyline points="7 17 12 22 17 17"></polyline></svg>
-        </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">Arrecadado (mês)</div>
             <div class="mgmt-kpi-card__value" style="color: #d6a646;">R$ <?= number_format($totalArrecadado, 2, ',', '.') ?></div>
             <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Neste mês</div>
         </div>
-    </div>
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--gold">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
         </div>
+    </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">Doações Recebidas</div>
             <div class="mgmt-kpi-card__value"><?= $totalRecebidas ?></div>
             <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Transações concluídas</div>
         </div>
-    </div>
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon" style="background: rgba(107, 114, 128, 0.1); color: #6b7280;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
         </div>
+    </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">Pagamentos Pendentes</div>
-            <div class="mgmt-kpi-card__value"><?= $totalPendentes ?></div>
+            <div class="mgmt-kpi-card__value" style="color: #d6a646;"><?= $totalPendentes ?></div>
             <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Aguardando pagamento</div>
+        </div>
+        <div class="mgmt-kpi-card__icon" style="background: rgba(107, 114, 128, 0.1); color: #6b7280;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         </div>
     </div>
 </div>
 
-<form method="GET" action="<?= url('/gestao/doacoes') ?>" class="mgmt-filters">
-    <select name="type" class="form-select"><option value="">Todos os tipos</option><option value="tithe" <?= ($filters['type']??'') === 'tithe' ? 'selected' : '' ?>>Dízimo</option><option value="offering" <?= ($filters['type']??'') === 'offering' ? 'selected' : '' ?>>Oferta</option><option value="special" <?= ($filters['type']??'') === 'special' ? 'selected' : '' ?>>Especial</option><option value="campaign" <?= ($filters['type']??'') === 'campaign' ? 'selected' : '' ?>>Campanha</option></select>
-    <input type="date" name="start_date" class="form-input" value="<?= e($filters['start_date'] ?? '') ?>"><input type="date" name="end_date" class="form-input" value="<?= e($filters['end_date'] ?? '') ?>">
-    <button type="submit" class="btn btn--ghost">Filtrar</button>
-</form>
-
-<?php if (empty($donations)): ?>
-<div class="mgmt-empty"><div class="mgmt-empty__icon">💳</div><h3 class="mgmt-empty__title">Nenhuma doação PIX</h3><p class="mgmt-empty__text">Gere uma cobrança PIX para começar a receber doações.</p></div>
-<?php else: ?>
 <div class="mgmt-table-container">
+<?php if (empty($donations)): ?>
+    <div style="text-align:center; padding: var(--space-10); color: var(--text-muted);">
+        <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-8-4.5-8-11a4 4 0 0 1 7-2.6A4 4 0 0 1 18 10c0 6.5-6 11-6 11z"></path></svg></div>
+        <h3 style="font-weight:700; margin-bottom:4px;">Nenhuma doação PIX</h3>
+        <p style="font-size:13px;">Gere uma cobrança PIX para começar a receber doações.</p>
+    </div>
+<?php else: ?>
     <table class="mgmt-table">
         <thead>
             <tr>
@@ -82,13 +80,16 @@ foreach ($donations ?? [] as $d) {
             <?php foreach ($donations as $d): ?>
             <tr>
                 <td><div class="mgmt-table__name"><?= e($d['member_name'] ?? $d['donor_name'] ?? 'Anônimo') ?></div></td>
-                <td class="font-bold" style="color: #d6a646;">R$ <?= number_format((float)$d['amount'], 2, ',', '.') ?></td>
+                <td style="font-weight:700;">R$ <?= number_format((float)$d['amount'], 2, ',', '.') ?></td>
                 <td>
                     <?php $status = $d['status'] ?? 'paid'; ?>
                     <span class="badge badge--<?= $status === 'paid' ? 'active' : 'pending' ?>"><?= $status === 'paid' ? 'PAGO' : 'PENDENTE' ?></span>
                 </td>
-                <td style="color: var(--text-muted);">⏱ <?= date('d/m/Y, H:i', strtotime($d['donation_date'] ?? $d['created_at'] ?? 'now')) ?></td>
-                <td style="color: var(--text-muted);"><?= ($d['status'] ?? 'paid') === 'paid' ? '⏱ ' . date('d/m/Y', strtotime($d['paid_at'] ?? $d['donation_date'] ?? 'now')) : '—' ?></td>
+                <td style="color: var(--text-muted); display:flex; align-items:center; gap:4px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <?= date('d/m/Y', strtotime($d['donation_date'] ?? $d['created_at'] ?? 'now')) ?>
+                </td>
+                <td style="color: var(--text-muted);"><?= ($d['status'] ?? 'paid') === 'paid' ? date('d/m/Y', strtotime($d['paid_at'] ?? $d['donation_date'] ?? 'now')) : '—' ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>
@@ -101,6 +102,6 @@ foreach ($donations ?? [] as $d) {
         <?php endfor; ?>
     </div>
     <?php endif; ?>
-</div>
 <?php endif; ?>
+</div>
 <?php $__view->endSection(); ?>

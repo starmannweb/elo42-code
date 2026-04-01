@@ -19,31 +19,31 @@ foreach ($sessions ?? [] as $s) {
 ?>
 
 <div class="mgmt-kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon" style="background: rgba(107, 114, 128, 0.1); color: #6b7280;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">Pendentes</div>
             <div class="mgmt-kpi-card__value"><?= $pendentes ?></div>
         </div>
-    </div>
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--gold">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
         </div>
+    </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">Em Andamento</div>
             <div class="mgmt-kpi-card__value"><?= $emAndamento ?></div>
         </div>
-    </div>
-    <div class="mgmt-kpi-card">
-        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
         </div>
+    </div>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">Concluídos</div>
             <div class="mgmt-kpi-card__value"><?= $concluidos ?></div>
+        </div>
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
         </div>
     </div>
 </div>
@@ -61,7 +61,7 @@ foreach ($sessions ?? [] as $s) {
     <?php foreach ($sessions as $s): ?>
     <div class="mgmt-dashboard-card" style="padding: var(--space-4); display: flex; align-items: center; gap: var(--space-4);">
         <div style="width: 40px; height: 40px; border-radius: 50%; background: <?= match($s['type'] ?? 'prayer') { 'prayer' => 'rgba(239, 68, 68, 0.1)', 'baptism' => 'rgba(59, 130, 246, 0.1)', 'counseling' => 'rgba(124, 58, 237, 0.1)', default => 'rgba(214, 166, 70, 0.1)' } ?>; display: flex; align-items: center; justify-content: center; color: <?= match($s['type'] ?? 'prayer') { 'prayer' => '#ef4444', 'baptism' => '#3b82f6', 'counseling' => '#7c3aed', default => '#d6a646' } ?>;">
-            <?= match($s['type'] ?? 'prayer') { 'prayer' => '❤️', 'baptism' => '💧', 'counseling' => '💬', default => '🙏' } ?>
+            <?= match($s['type'] ?? 'prayer') { 'prayer' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>', 'baptism' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>', 'counseling' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>', default => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>' } ?>
         </div>
         <div style="flex: 1;">
             <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: 4px;">
