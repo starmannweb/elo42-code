@@ -50,7 +50,7 @@
 }
 
 .hub-sidebar__header {
-    padding: var(--space-5) var(--space-6);
+    padding: var(--space-4) var(--space-5);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -61,7 +61,7 @@
 }
 
 .hub-sidebar__logo img {
-    max-height: 48px;
+    max-height: 54px;
     width: auto;
     object-fit: contain;
 }
@@ -83,14 +83,14 @@
 }
 
 .hub-sidebar__brand-subtitle {
-    margin-top: var(--space-2);
+    margin-top: var(--space-1);
     font-size: 0.78rem;
     color: rgba(255, 255, 255, 0.62);
 }
 
 .hub-sidebar__nav {
     flex: 1;
-    padding: var(--space-4);
+    padding: var(--space-3) var(--space-4);
     overflow-y: auto;
 }
 
@@ -107,13 +107,13 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    padding: var(--space-3);
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     color: rgba(255, 255, 255, 0.72);
     text-decoration: none;
     transition: all 0.2s ease;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
     position: relative;
 }
 
@@ -152,7 +152,7 @@
 }
 
 .hub-sidebar__footer {
-    padding: var(--space-4);
+    padding: var(--space-3);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 

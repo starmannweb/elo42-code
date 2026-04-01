@@ -44,14 +44,13 @@
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu lateral">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo-color.png') ?>" alt="Elo 42" height="48" class="logo-light" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
-                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="48" class="logo-dark" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
+                    <img src="<?= url('/assets/img/logo-color.png') ?>" alt="Elo 42" height="54" class="logo-light" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="54" class="logo-dark" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
                 </a>
                 <p class="hub-sidebar__brand-subtitle">Hub de membros</p>
             </div>
 
             <nav class="hub-sidebar__nav" aria-label="Navegação principal">
-                <p class="hub-sidebar__section-title">Principal</p>
                 <a href="<?= url('/hub') ?>" class="hub-nav-link <?= e($isMenuActive('dashboard', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"></path></svg>
