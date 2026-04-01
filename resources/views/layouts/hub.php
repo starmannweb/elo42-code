@@ -64,7 +64,6 @@
                     Loja
                 </a>
 
-                <p class="hub-sidebar__section-title">Ecossistema</p>
                 <a href="<?= url('/hub/sites') ?>" class="hub-nav-link <?= e($isMenuActive('sites', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14.5 14.5 0 0 1 0 18M12 3a14.5 14.5 0 0 0 0 18"></path></svg>
@@ -103,11 +102,11 @@
                 </a>
 
                 <?php if ($canAccessChurch): ?>
-                    <a href="<?= e($churchEntryUrl) ?>" class="hub-nav-link" style="margin-top: 1rem;">
+                    <a href="<?= e($churchEntryUrl) ?>" class="hub-nav-link" style="margin-top: 1rem;" target="_blank" rel="noopener noreferrer">
                         <span class="hub-nav-link__icon" aria-hidden="true">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg>
                         </span>
-                        Sistema<?= $churchIsTrial ? ' (Teste Grátis)' : '' ?>
+                        Gestão para Igrejas<?= $churchIsTrial ? ' (Teste Grátis)' : '' ?>
                     </a>
                 <?php endif; ?>
 

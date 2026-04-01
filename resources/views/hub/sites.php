@@ -30,7 +30,7 @@
             </div>
         <?php endif; ?>
 
-        <div class="hub-page__actions" style="align-items:center;">
+        <div class="hub-page__actions" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
             <form action="<?= url('/hub/sites/gerar') ?>" method="POST" style="margin: 0;">
                 <?= csrf_field() ?>
                 <button class="btn btn--gold btn--lg" type="submit" onclick="this.classList.add('btn--loading');">

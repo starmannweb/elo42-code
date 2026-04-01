@@ -72,14 +72,81 @@ class DashboardController extends Controller
     public function gerarSite(Request $request): void
     {
         $context = $this->buildBaseContext('Meus Sites', 'sites');
-        \App\Core\Session::flash('success', 'Site gerado com sucesso! Seus dados organizacionais foram vinculados ao modelo.');
+        $organization = $context['organization'];
+        
+        if (empty($organization['id'])) {
+            \App\Core\Session::flash('warning', 'Cadastre sua organização antes de gerar o site.');
+            redirect('/onboarding/organizacao');
+        }
+
+        $template = trim((string) $request->input('template'));
+        if ($template === '') {
+            $template = 'Institucional Clássico';
+        }
+
+        // Simulação de geração do site
+        try {
+            $pdo = Database::connection();
+            
+            // Check if site already exists
+            $stmt = $pdo->prepare("SELECT id FROM organization_sites WHERE organization_id = :org_id LIMIT 1");
+            $stmt->execute(['org_id' => (int) $organization['id']]);
+            $existingSite = $stmt->fetch();
+
+            if ($existingSite) {
+                // Update existing site
+                $stmt = $pdo->prepare("UPDATE organization_sites SET template = :template, updated_at = NOW() WHERE organization_id = :org_id");
+                $stmt->execute([
+                    'template' => $template,
+                    'org_id' => (int) $organization['id']
+                ]);
+                \App\Core\Session::flash('success', 'Site atualizado com sucesso! Modelo: ' . $template);
+            } else {
+                // Create new site
+                $stmt = $pdo->prepare("INSERT INTO organization_sites (organization_id, template, status, created_at, updated_at) VALUES (:org_id, :template, 'draft', NOW(), NOW())");
+                $stmt->execute([
+                    'org_id' => (int) $organization['id'],
+                    'template' => $template
+                ]);
+                \App\Core\Session::flash('success', 'Site gerado com sucesso! Modelo: ' . $template . '. Seus dados organizacionais foram vinculados ao modelo.');
+            }
+        } catch (\Throwable $e) {
+            // Fallback to session if database not ready
+            \App\Core\Session::set('hub_generated_site', [
+                'template' => $template,
+                'organization_name' => $organization['name'] ?? 'Sua Organização',
+                'generated_at' => date('Y-m-d H:i:s')
+            ]);
+            \App\Core\Session::flash('success', 'Site gerado com sucesso! Modelo: ' . $template . '. Seus dados organizacionais foram vinculados ao modelo.');
+        }
+        
         redirect('/hub/sites');
     }
 
     public function expositorIa(Request $request): void
     {
         $context = $this->buildBaseContext('Expositor IA', 'expositor');
-        $credits = $this->resolveIaCredits($context['organization'], $context['user']);
+        $organization = $context['organization'];
+        $user = $context['user'];
+        
+        // Give bonus credits for first-time users
+        $credits = $this->resolveIaCredits($organization, $user);
+        $hasUsedBefore = Session::get('hub_expositor_bonus_given', false);
+        
+        if ($credits === 0 && !$hasUsedBefore) {
+            $bonusCredits = 5;
+            $this->setIaCredits($organization, $user, $bonusCredits);
+            $this->appendCreditHistory($organization, $user, [
+                'date'        => date('d/m/Y H:i'),
+                'description' => 'Créditos bônus de boas-vindas',
+                'type'        => 'Bônus',
+                'qty'         => $bonusCredits,
+                'price'       => null,
+            ]);
+            Session::set('hub_expositor_bonus_given', true);
+            Session::flash('success', 'Bem-vindo ao Expositor IA! Você ganhou ' . $bonusCredits . ' créditos bônus para testar.');
+            $credits = $bonusCredits;
+        }
 
         $form = Session::getFlash('hub_expositor_form', [
             'passage'      => '',
@@ -444,8 +511,8 @@ class DashboardController extends Controller
             'activeMenu'           => $activeMenu,
             'organizationDeadline' => $organizationDeadline,
             'supportEmail'         => 'suporte@elo42.com.br',
-            'supportWhatsapp'      => '(13) 97800-8047',
-            'supportWhatsappUrl'   => 'https://wa.me/5513978008047',
+            'supportWhatsapp'      => '(11) 99177-5458',
+            'supportWhatsappUrl'   => 'https://wa.me/5511991775458',
             'accessMode'           => $this->resolveAccessMode($organization, $user),
             'churchManagementAccess' => $churchManagementAccess,
         ];
@@ -1106,6 +1173,11 @@ class DashboardController extends Controller
     {
         $context = $this->buildBaseContext('Minha Equipe', 'usuarios');
         $organization = $context['organization'];
+
+        if (empty($organization['id'])) {
+            \App\Core\Session::flash('warning', 'Cadastre sua organização para gerenciar a equipe.');
+            redirect('/onboarding/organizacao');
+        }
 
         // Buscar membros da equipe
         $teamMembers = \App\Models\Organization::getUsers((int) $organization['id']);

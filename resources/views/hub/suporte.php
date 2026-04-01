@@ -12,9 +12,9 @@
         <div class="hub-panel__row">
             <div>
                 <h2 class="hub-panel__title">Atendimento rápido</h2>
-                <p class="hub-panel__text">WhatsApp oficial: <a href="<?= e((string) ($supportWhatsappUrl ?? 'https://wa.me/5513978008047')) ?>" target="_blank" rel="noopener noreferrer" class="text-primary font-bold"><?= e((string) ($supportWhatsapp ?? '(13) 97800-8047')) ?></a></p>
+                <p class="hub-panel__text">WhatsApp oficial: <a href="<?= e((string) ($supportWhatsappUrl ?? 'https://wa.me/5511991775458')) ?>" target="_blank" rel="noopener noreferrer" class="text-primary font-bold"><?= e((string) ($supportWhatsapp ?? '(11) 99177-5458')) ?></a></p>
             </div>
-            <a href="<?= e((string) ($supportWhatsappUrl ?? 'https://wa.me/5513978008047')) ?>" target="_blank" rel="noopener noreferrer" class="btn btn--gold">Conversar no WhatsApp</a>
+            <a href="<?= e((string) ($supportWhatsappUrl ?? 'https://wa.me/5511991775458')) ?>" target="_blank" rel="noopener noreferrer" class="btn btn--gold">Conversar no WhatsApp</a>
         </div>
 
         <form method="POST" action="<?= url('/hub/suporte/tickets') ?>" data-loading>
