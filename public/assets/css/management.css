@@ -4,19 +4,19 @@
 
 /* --- Logo theme switcher --- */
 .hub-sidebar__logo .logo-dark {
-    display: inline-block;
+    display: none;
 }
 
 .hub-sidebar__logo .logo-light {
-    display: none;
+    display: inline-block;
 }
 
 [data-hub-theme="light"] .hub-sidebar__logo .logo-dark {
-    display: none;
+    display: inline-block;
 }
 
 [data-hub-theme="light"] .hub-sidebar__logo .logo-light {
-    display: inline-block;
+    display: none;
 }
 
 /* --- Management header --- */
@@ -39,7 +39,93 @@
 .mgmt-header__subtitle {
     font-size: var(--text-sm);
     color: var(--color-text-muted);
-    margin-top: 2px;
+    margin-top: 4px;
+}
+
+/* --- Dashboard KPI Grid --- */
+.mgmt-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.mgmt-kpi-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    transition: all 0.2s ease;
+}
+
+.mgmt-kpi-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transform: translateY(-2px);
+}
+
+.mgmt-kpi-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mgmt-kpi-card__icon--blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.mgmt-kpi-card__icon--indigo { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+.mgmt-kpi-card__icon--gold { background: rgba(214, 166, 70, 0.1); color: #d6a646; }
+.mgmt-kpi-card__icon--green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+.mgmt-kpi-card__label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 4px;
+}
+
+.mgmt-kpi-card__value {
+    font-family: 'Inter', sans-serif;
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--color-text-primary);
+}
+
+/* --- Dashboard Grid --- */
+.mgmt-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.mgmt-dashboard-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+}
+
+.mgmt-dashboard-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.mgmt-dashboard-card__header h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-text-primary);
 }
 
 .mgmt-header__actions {
