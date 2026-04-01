@@ -54,10 +54,10 @@ $balance = (float) ($financial['balance'] ?? 0);
 
     <section class="mgmt-dashboard-grid">
         <article class="mgmt-dashboard-card">
-            <header class="mgmt-dashboard-card__header">
+            <header class="mgmt-dashboard-card__header" style="margin-bottom: 24px;">
                 <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg> Crescimento de Membros</h2>
             </header>
-            <div class="mgmt-chart-placeholder-svg" style="height:200px; position:relative; display:flex; gap:12px; margin-top:20px;">
+            <div class="mgmt-chart-placeholder-svg" style="height:220px; position:relative; display:flex; gap:12px; padding-right:12px;">
                 <div style="display:flex; flex-direction:column; justify-content:space-between; font-size:11px; color:var(--text-muted); padding-bottom:24px; align-items:flex-end; width: 24px;">
                     <span>2,0</span><span>1,8</span><span>1,6</span><span>1,4</span><span>1,2</span><span>1,0</span><span>0,8</span><span>0,6</span><span>0,4</span><span>0,2</span><span>0</span>
                 </div>
@@ -73,25 +73,26 @@ $balance = (float) ($financial['balance'] ?? 0);
                         <line x1="0" y1="70" x2="100" y2="70" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
                         <line x1="0" y1="80" x2="100" y2="80" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
                         <line x1="0" y1="90" x2="100" y2="90" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                        <line x1="0" y1="100" x2="100" y2="100" stroke="var(--color-border-light)" stroke-width="1.5"/>
+                        
+                        <!-- Base line X axis -->
+                        <line x1="0" y1="100" x2="100" y2="100" stroke="#1e293b" stroke-width="1"/>
                         
                         <!-- Membros Line (Dark) -->
-                        <line x1="0" y1="100" x2="100" y2="100" stroke="#1e293b" stroke-width="1.5" />
                         <?php foreach ([0, 20, 40, 60, 80, 100] as $x): ?>
-                        <circle cx="<?= $x ?>" cy="100" r="1.2" fill="#1e293b"/>
+                        <circle cx="<?= $x ?>" cy="100" r="1.5" fill="#1e293b"/>
                         <?php endforeach; ?>
 
                         <!-- Visitantes Line (Yellow/Orange) -->
                         <path d="M 0 100 L 20 100 L 40 100 C 45 100, 50 10, 60 10 C 70 10, 75 100, 80 100 C 85 100, 90 10, 100 10" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         
-                        <circle cx="0" cy="100" r="1.2" fill="#f59e0b"/>
-                        <circle cx="20" cy="100" r="1.2" fill="#f59e0b"/>
-                        <circle cx="40" cy="100" r="1.2" fill="#f59e0b"/>
-                        <circle cx="60" cy="10" r="1.2" fill="#f59e0b"/>
-                        <circle cx="80" cy="100" r="1.2" fill="#f59e0b"/>
-                        <circle cx="100" cy="10" r="1.2" fill="#f59e0b"/>
+                        <circle cx="0" cy="100" r="1.5" fill="#f59e0b"/>
+                        <circle cx="20" cy="100" r="1.5" fill="#f59e0b"/>
+                        <circle cx="40" cy="100" r="1.5" fill="#f59e0b"/>
+                        <circle cx="60" cy="10" r="1.5" fill="#f59e0b"/>
+                        <circle cx="80" cy="100" r="1.5" fill="#f59e0b"/>
+                        <circle cx="100" cy="10" r="1.5" fill="#f59e0b"/>
                     </svg>
-                    <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:11px; color:var(--text-muted); position:absolute; width:100%; left:0; bottom:0;">
+                    <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:11px; color:var(--text-muted); position:absolute; width:100%; left:0; bottom:0;">
                         <span style="transform:translateX(-50%);">Oct</span>
                         <span style="transform:translateX(-50%); position:absolute; left:20%;">Nov</span>
                         <span style="transform:translateX(-50%); position:absolute; left:40%;">Dec</span>
@@ -101,9 +102,9 @@ $balance = (float) ($financial['balance'] ?? 0);
                     </div>
                 </div>
             </div>
-            <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin-top:20px; font-size:12px; color:var(--text-muted);">
-                <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:50%;background:#1e293b;"></span> Membros</span>
-                <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:50%;background:#f59e0b;"></span> Visitantes</span>
+            <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin-top:32px; font-size:12px; color:var(--text-muted);">
+                <span style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:50%;background:#1e293b;"></span> Membros</span>
+                <span style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:50%;background:#f59e0b;"></span> Visitantes</span>
             </div>
         </article>
 
