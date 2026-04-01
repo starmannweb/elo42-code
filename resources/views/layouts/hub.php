@@ -44,7 +44,8 @@
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu lateral">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="38" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
+                    <img src="<?= url('/assets/img/logo-color.png') ?>" alt="Elo 42" height="48" class="logo-light" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="48" class="logo-dark" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
                 </a>
                 <p class="hub-sidebar__brand-subtitle">Hub de membros</p>
             </div>
@@ -63,6 +64,15 @@
                     </span>
                     Loja
                 </a>
+
+                <?php if ($canAccessChurch): ?>
+                    <a href="<?= e($churchEntryUrl) ?>" class="hub-nav-link" target="_blank" rel="noopener noreferrer">
+                        <span class="hub-nav-link__icon" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg>
+                        </span>
+                        Gestão para Igrejas<?= $churchIsTrial ? ' (Teste Grátis)' : '' ?>
+                    </a>
+                <?php endif; ?>
 
                 <a href="<?= url('/hub/sites') ?>" class="hub-nav-link <?= e($isMenuActive('sites', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">
@@ -101,20 +111,12 @@
                     Configurações
                 </a>
 
-                <?php if ($canAccessChurch): ?>
-                    <a href="<?= e($churchEntryUrl) ?>" class="hub-nav-link" style="margin-top: 1rem;" target="_blank" rel="noopener noreferrer">
-                        <span class="hub-nav-link__icon" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg>
-                        </span>
-                        Gestão para Igrejas<?= $churchIsTrial ? ' (Teste Grátis)' : '' ?>
-                    </a>
-                <?php endif; ?>
-
             </nav>
 
             <div class="hub-sidebar__footer">
                 <button type="button" class="hub-theme-toggle" id="hub-theme-toggle" aria-label="Alternar modo claro e escuro" data-theme-toggle>
-                    Modo claro
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon theme-icon--light"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon theme-icon--dark"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
 
                 <div class="hub-sidebar__user">

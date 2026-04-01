@@ -28,7 +28,7 @@ $nextPendingStep = $pendingSteps[0] ?? null;
             </p>
         </div>
         <div class="church-dashboard__actions">
-            <a href="<?= url('/hub/vitrine') ?>" class="btn btn--outline">Ver vitrine</a>
+            <a href="<?= url('/hub/vitrine') ?>" class="btn btn--outline">Ver a loja</a>
             <a href="<?= url('/hub/configuracoes') ?>" class="btn btn--primary">Configurações</a>
         </div>
     </header>

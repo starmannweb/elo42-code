@@ -150,36 +150,10 @@ $balance = (float) ($financial['balance'] ?? 0);
             <header class="mgmt-dashboard-card__header">
                 <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--color-primary)"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> Atividade Recente</h2>
             </header>
-            <ul class="mgmt-activity-list-new" style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px; margin-top:8px;">
-                <li style="display:flex; align-items:center; gap:12px;">
-                    <div style="width:36px; height:36px; border-radius:50%; background:var(--color-bg-light); display:flex; align-items:center; justify-content:center; color:var(--text-muted);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
-                    <div>
-                        <strong style="display:block; font-size:13px; color:var(--color-text-primary);">John@mail.coma</strong>
-                        <span style="font-size:11px; color:var(--text-muted);">Novo visitante • há 18 dias</span>
-                    </div>
-                </li>
-                <li style="display:flex; align-items:center; gap:12px;">
-                    <div style="width:36px; height:36px; border-radius:50%; background:var(--color-bg-light); display:flex; align-items:center; justify-content:center; color:var(--text-muted);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
-                    <div>
-                        <strong style="display:block; font-size:13px; color:var(--color-text-primary);">sdfddsfsdf</strong>
-                        <span style="font-size:11px; color:var(--text-muted);">Novo visitante • há 18 dias</span>
-                    </div>
-                </li>
-                <li style="display:flex; align-items:center; gap:12px;">
-                    <div style="width:36px; height:36px; border-radius:50%; background:rgba(214,166,70,0.1); color:var(--color-gold); display:flex; align-items:center; justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
-                    <div>
-                        <strong style="display:block; font-size:13px; color:var(--color-text-primary);">O Poder da Fé</strong>
-                        <span style="font-size:11px; color:var(--text-muted);">Ministração publicada • há 2 meses</span>
-                    </div>
-                </li>
-                <li style="display:flex; align-items:center; gap:12px;">
-                    <div style="width:36px; height:36px; border-radius:50%; background:rgba(214,166,70,0.1); color:var(--color-gold); display:flex; align-items:center; justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
-                    <div>
-                        <strong style="display:block; font-size:13px; color:var(--color-text-primary);">Fundação: Projeto de Deus</strong>
-                        <span style="font-size:11px; color:var(--text-muted);">Ministração publicada • há 2 meses</span>
-                    </div>
-                </li>
-            </ul>
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; color:var(--text-muted); font-size:13px; margin-top:8px;">
+                <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg></div>
+                Nenhuma atividade recente
+            </div>
         </article>
     </section>
 

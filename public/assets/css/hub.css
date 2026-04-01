@@ -66,6 +66,22 @@
     object-fit: contain;
 }
 
+.hub-sidebar__logo .logo-dark {
+    display: inline-block;
+}
+
+.hub-sidebar__logo .logo-light {
+    display: none;
+}
+
+[data-hub-theme="light"] .hub-sidebar__logo .logo-dark {
+    display: none;
+}
+
+[data-hub-theme="light"] .hub-sidebar__logo .logo-light {
+    display: inline-block;
+}
+
 .hub-sidebar__brand-subtitle {
     margin-top: var(--space-2);
     font-size: 0.78rem;
@@ -138,6 +154,46 @@
 .hub-sidebar__footer {
     padding: var(--space-4);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hub-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: var(--space-2);
+    margin-bottom: var(--space-4);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--color-white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.hub-theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-icon {
+    display: inline-block;
+}
+
+.theme-icon--light {
+    display: none;
+}
+
+.theme-icon--dark {
+    display: inline-block;
+}
+
+[data-hub-theme="light"] .theme-icon--light {
+    display: inline-block;
+}
+
+[data-hub-theme="light"] .theme-icon--dark {
+    display: none;
 }
 
 .hub-theme-toggle {
