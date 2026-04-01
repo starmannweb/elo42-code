@@ -28,6 +28,9 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth']], functio
     $router->get('/ministerios/{id}/editar', [MinistryController::class, 'edit']);
     $router->post('/ministerios/{id}/editar', [MinistryController::class, 'update']);
 
+    // Agenda (Calendar)
+    $router->get('/agenda', [EventController::class, 'agenda']);
+
     // Events
     $router->get('/eventos', [EventController::class, 'index']);
     $router->get('/eventos/novo', [EventController::class, 'create']);

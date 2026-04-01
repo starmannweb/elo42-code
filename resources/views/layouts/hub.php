@@ -93,9 +93,9 @@
                 </a>
                 <a href="<?= url('/hub/suporte') ?>" class="hub-nav-link <?= e($isMenuActive('suporte', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0v7a3 3 0 0 0 3 3h1"></path><path d="M14 19h2a3 3 0 0 0 3-3V8"></path><path d="M18 16h2"></path></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     </span>
-                    Suporte
+                    Ajuda
                 </a>
                 <a href="<?= url('/hub/usuarios') ?>" class="hub-nav-link <?= e($isMenuActive('usuarios', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">
@@ -136,7 +136,10 @@
                     </nav>
                 </div>
                 <div class="hub-topbar__right">
-                    <a href="<?= url('/hub/suporte') ?>" class="hub-topbar__link">Suporte</a>
+                    <a href="<?= url('/hub/suporte') ?>" class="hub-topbar__link" style="display: flex; align-items: center; gap: 4px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Ajuda
+                    </a>
                     <a href="<?= url('/') ?>" class="hub-topbar__link">Site</a>
                     <button type="button" class="hub-topbar__theme-toggle" id="hub-theme-toggle-top" aria-label="Alternar modo claro e escuro" data-theme-toggle>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon theme-icon--light"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>

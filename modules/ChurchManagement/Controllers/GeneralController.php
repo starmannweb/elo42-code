@@ -20,7 +20,14 @@ use App\Models\FinancialTransaction;
 
 class GeneralController extends Controller
 {
-    private function orgId(): int { return (int) Session::get('organization')['id']; }
+    private function orgId(): int { 
+        $org = Session::get('organization');
+        if (!$org) {
+            redirect('/hub');
+            exit;
+        }
+        return (int) $org['id']; 
+    }
 
     // --- Requests ---
     public function requests(Request $req): void

@@ -215,13 +215,18 @@
         }
 
         // --- Hub theme toggle (dark/light) ---
-        if (themeToggle) {
+        var themeToggles = document.querySelectorAll('[data-theme-toggle], #hub-theme-toggle, #hub-theme-toggle-top');
+        if (themeToggles.length > 0) {
             var storageKey = 'elo42_hub_theme';
             var applyTheme = function(theme) {
                 var normalized = theme === 'light' ? 'light' : 'dark';
                 document.body.setAttribute('data-hub-theme', normalized);
-                themeToggle.textContent = normalized === 'dark' ? 'Modo claro' : 'Modo escuro';
-                themeToggle.setAttribute('aria-pressed', normalized === 'dark' ? 'true' : 'false');
+                themeToggles.forEach(function(btn) {
+                    if (btn.textContent && !btn.querySelector('svg')) {
+                        btn.textContent = normalized === 'dark' ? 'Modo claro' : 'Modo escuro';
+                    }
+                    btn.setAttribute('aria-pressed', normalized === 'dark' ? 'true' : 'false');
+                });
             };
 
             try {
@@ -231,16 +236,18 @@
                 applyTheme('dark');
             }
 
-            themeToggle.addEventListener('click', function() {
-                var current = document.body.getAttribute('data-hub-theme') === 'light' ? 'light' : 'dark';
-                var next = current === 'dark' ? 'light' : 'dark';
-                applyTheme(next);
+            themeToggles.forEach(function(toggle) {
+                toggle.addEventListener('click', function() {
+                    var current = document.body.getAttribute('data-hub-theme') === 'light' ? 'light' : 'dark';
+                    var next = current === 'dark' ? 'light' : 'dark';
+                    applyTheme(next);
 
-                try {
-                    localStorage.setItem(storageKey, next);
-                } catch (e) {
-                    // ignore localStorage failures
-                }
+                    try {
+                        localStorage.setItem(storageKey, next);
+                    } catch (e) {
+                        // ignore localStorage failures
+                    }
+                });
             });
         }
 

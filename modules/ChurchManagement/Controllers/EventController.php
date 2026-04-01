@@ -11,7 +11,14 @@ use App\Models\Event;
 
 class EventController extends Controller
 {
-    private function orgId(): int { return (int) Session::get('organization')['id']; }
+    private function orgId(): int { 
+        $org = Session::get('organization');
+        if (!$org) {
+            redirect('/hub');
+            exit;
+        }
+        return (int) $org['id']; 
+    }
 
     public function index(Request $request): void
     {
@@ -76,5 +83,14 @@ class EventController extends Controller
         Event::update($id, $request->only(['title','description','location','start_date','end_date','max_registrations','status']));
         Session::flash('success', 'Evento atualizado.');
         redirect('/gestao/eventos');
+    }
+
+    public function agenda(Request $request): void
+    {
+        $this->view('management/agenda/index', [
+            'pageTitle'  => 'Agenda — Gestão',
+            'breadcrumb' => 'Agenda',
+            'events'     => Event::byOrg($this->orgId()),
+        ]);
     }
 }
