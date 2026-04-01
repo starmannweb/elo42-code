@@ -64,33 +64,34 @@ $balance = (float) ($financial['balance'] ?? 0);
                 <div style="flex:1; position:relative;">
                     <svg width="100%" height="calc(100% - 24px)" preserveAspectRatio="none" viewBox="0 0 100 100" style="overflow:visible; display:block;">
                         <!-- Grid lines -->
-                        <line x1="0" y1="10" x2="100" y2="10" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                        <line x1="0" y1="20" x2="100" y2="20" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                        <line x1="0" y1="30" x2="100" y2="30" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                        <line x1="0" y1="40" x2="100" y2="40" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                        <line x1="0" y1="50" x2="100" y2="50" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                        <line x1="0" y1="60" x2="100" y2="60" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                        <line x1="0" y1="70" x2="100" y2="70" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                        <line x1="0" y1="80" x2="100" y2="80" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                        <line x1="0" y1="90" x2="100" y2="90" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="10" x2="100" y2="10" stroke="var(--color-border-light)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>
+                        <line x1="0" y1="20" x2="100" y2="20" stroke="var(--color-border-light)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>
+                        <line x1="0" y1="30" x2="100" y2="30" stroke="var(--color-border-light)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>
+                        <line x1="0" y1="40" x2="100" y2="40" stroke="var(--color-border-light)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>
+                        <line x1="0" y1="50" x2="100" y2="50" stroke="var(--color-border-light)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>
+                        <line x1="0" y1="60" x2="100" y2="60" stroke="var(--color-border-light)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>
+                        <line x1="0" y1="70" x2="100" y2="70" stroke="var(--color-border-light)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>
+                        <line x1="0" y1="80" x2="100" y2="80" stroke="var(--color-border-light)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>
+                        <line x1="0" y1="90" x2="100" y2="90" stroke="var(--color-border-light)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>
                         
                         <!-- Base line X axis -->
-                        <line x1="0" y1="100" x2="100" y2="100" stroke="#1e293b" stroke-width="1"/>
+                        <line x1="0" y1="100" x2="100" y2="100" stroke="#1e293b" stroke-width="2" vector-effect="non-scaling-stroke"/>
                         
-                        <!-- Membros Line (Dark) -->
-                        <?php foreach ([0, 20, 40, 60, 80, 100] as $x): ?>
-                        <circle cx="<?= $x ?>" cy="100" r="1.5" fill="#1e293b"/>
-                        <?php endforeach; ?>
-
                         <!-- Visitantes Line (Yellow/Orange) -->
-                        <path d="M 0 100 L 20 100 L 40 100 C 45 100, 50 10, 60 10 C 70 10, 75 100, 80 100 C 85 100, 90 10, 100 10" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M 0 100 L 20 100 L 40 100 C 45 100, 50 10, 60 10 C 70 10, 75 100, 80 100 C 85 100, 90 10, 100 10" fill="none" stroke="#f59e0b" stroke-width="4" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" />
                         
-                        <circle cx="0" cy="100" r="1.5" fill="#f59e0b"/>
-                        <circle cx="20" cy="100" r="1.5" fill="#f59e0b"/>
-                        <circle cx="40" cy="100" r="1.5" fill="#f59e0b"/>
-                        <circle cx="60" cy="10" r="1.5" fill="#f59e0b"/>
-                        <circle cx="80" cy="100" r="1.5" fill="#f59e0b"/>
-                        <circle cx="100" cy="10" r="1.5" fill="#f59e0b"/>
+                        <!-- Membros Line Dots (Dark) -->
+                        <?php foreach ([0, 20, 40, 60, 80, 100] as $x): ?>
+                        <circle cx="<?= $x ?>" cy="100" r="1.5" fill="#1e293b" stroke="#1e293b" stroke-width="4" vector-effect="non-scaling-stroke"/>
+                        <?php endforeach; ?>
+                        
+                        <!-- Visitantes Line Dots -->
+                        <circle cx="0" cy="100" r="1.5" fill="#f59e0b" stroke="#f59e0b" stroke-width="4" vector-effect="non-scaling-stroke"/>
+                        <circle cx="20" cy="100" r="1.5" fill="#f59e0b" stroke="#f59e0b" stroke-width="4" vector-effect="non-scaling-stroke"/>
+                        <circle cx="40" cy="100" r="1.5" fill="#f59e0b" stroke="#f59e0b" stroke-width="4" vector-effect="non-scaling-stroke"/>
+                        <circle cx="60" cy="10" r="1.5" fill="#f59e0b" stroke="#f59e0b" stroke-width="4" vector-effect="non-scaling-stroke"/>
+                        <circle cx="80" cy="100" r="1.5" fill="#f59e0b" stroke="#f59e0b" stroke-width="4" vector-effect="non-scaling-stroke"/>
+                        <circle cx="100" cy="10" r="1.5" fill="#f59e0b" stroke="#f59e0b" stroke-width="4" vector-effect="non-scaling-stroke"/>
                     </svg>
                     <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:11px; color:var(--text-muted); position:absolute; width:100%; left:0; bottom:0;">
                         <span style="transform:translateX(-50%);">Oct</span>
