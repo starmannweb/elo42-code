@@ -125,9 +125,12 @@
                         <div class="hub-sidebar__user-name" title="<?= e((string) ($user['email'] ?? '')) ?>"><?= e((string) ($user['email'] ?? $user['name'] ?? 'Usuário')) ?></div>
                         <div class="hub-sidebar__user-role"><?= e((string) ($organization['role_name'] ?? 'Conta ativa')) ?></div>
                     </div>
-                    <a href="<?= url('/logout') ?>" aria-label="Sair" title="Sair" style="color:rgba(255,255,255,0.4); margin-left:auto; display:flex;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                    </a>
+                    <form method="POST" action="<?= url('/logout') ?>" style="margin-left:auto; display:flex;">
+                        <?= csrf_field() ?>
+                        <button type="submit" aria-label="Sair" title="Sair" style="background:none;border:none;color:rgba(255,255,255,0.4);padding:0;display:flex;cursor:pointer;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        </button>
+                    </form>
                 </div>
             </div>
         </aside>

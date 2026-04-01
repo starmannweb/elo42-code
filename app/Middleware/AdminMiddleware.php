@@ -4,40 +4,42 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use App\Core\MiddlewareInterface;
+use App\Core\Request;
 use App\Core\Session;
 
-class AdminMiddleware
+class AdminMiddleware implements MiddlewareInterface
 {
-    public function handle(): void
+    public function handle(Request $request, callable $next, string ...$params): void
     {
         if (!Session::isAuthenticated()) {
-            Session::set('intended_url', $_SERVER['REQUEST_URI'] ?? '/');
+            Session::flash('intended_url', $request->uri());
             redirect('/login');
-            exit;
         }
 
-        $permissions = Session::get('permissions') ?? [];
+        $user = Session::user() ?? [];
+        $permissions = $user['permissions'] ?? [];
         $allowedPerms = ['admin.access', 'admin.users', 'admin.organizations'];
         $isAdmin = false;
 
         foreach ($allowedPerms as $perm) {
-            if (in_array($perm, $permissions)) {
+            if (in_array($perm, $permissions, true)) {
                 $isAdmin = true;
                 break;
             }
         }
 
-        // Also check role slug
         $org = Session::get('organization');
-        $roleSlug = $org['role_slug'] ?? '';
-        if (in_array($roleSlug, ['super-admin', 'admin-elo42'])) {
+        $roleSlug = is_array($org) ? (string) ($org['role_slug'] ?? '') : '';
+        if (in_array($roleSlug, ['super-admin', 'admin-elo42'], true)) {
             $isAdmin = true;
         }
 
         if (!$isAdmin) {
             Session::flash('error', 'Acesso restrito à administração.');
             redirect('/hub');
-            exit;
         }
+
+        $next();
     }
 }

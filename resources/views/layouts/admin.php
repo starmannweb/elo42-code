@@ -98,7 +98,10 @@
                 </div>
                 <div class="hub-topbar__right">
                     <a href="<?= url('/hub') ?>" class="hub-topbar__link">← Hub</a>
-                    <a href="<?= url('/logout') ?>" class="hub-topbar__link">Sair</a>
+                    <form method="POST" action="<?= url('/logout') ?>" style="margin:0;">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="hub-topbar__link" style="background:none;border:none;cursor:pointer;font:inherit;">Sair</button>
+                    </form>
                 </div>
             </header>
 
