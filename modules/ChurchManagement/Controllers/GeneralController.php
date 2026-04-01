@@ -17,16 +17,40 @@ use App\Models\Donation;
 use App\Models\Member;
 use App\Models\Event;
 use App\Models\FinancialTransaction;
+use App\Models\User;
 
 class GeneralController extends Controller
 {
-    private function orgId(): int { 
+    private function orgId(): int 
+    { 
         $org = Session::get('organization');
-        if (!$org) {
-            redirect('/hub');
-            exit;
+        if (is_array($org) && !empty($org['id'])) {
+            return (int) $org['id'];
         }
-        return (int) $org['id']; 
+
+        $user = Session::user() ?? [];
+        $userId = (int) ($user['id'] ?? 0);
+        if ($userId > 0) {
+            try {
+                $dbOrg = User::getOrganization($userId);
+                if ($dbOrg) {
+                    Session::set('organization', [
+                        'id'        => $dbOrg['id'],
+                        'name'      => $dbOrg['name'],
+                        'slug'      => $dbOrg['slug'] ?? '',
+                        'type'      => $dbOrg['type'] ?? '',
+                        'plan'      => $dbOrg['plan'] ?? 'trial',
+                        'status'    => $dbOrg['status'] ?? 'trial',
+                        'role_slug' => $dbOrg['role_slug'] ?? null,
+                        'role_name' => $dbOrg['role_name'] ?? null,
+                    ]);
+                    return (int) $dbOrg['id'];
+                }
+            } catch (\Throwable $e) {}
+        }
+
+        redirect('/hub');
+        exit;
     }
 
     // --- Requests ---

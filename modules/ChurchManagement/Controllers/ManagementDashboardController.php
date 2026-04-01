@@ -25,6 +25,29 @@ class ManagementDashboardController extends Controller
             return $org;
         }
 
+        // Try to reload organization from DB
+        $user = Session::user() ?? [];
+        $userId = (int) ($user['id'] ?? 0);
+        if ($userId > 0) {
+            try {
+                $dbOrg = \App\Models\User::getOrganization($userId);
+                if ($dbOrg) {
+                    $orgData = [
+                        'id'        => $dbOrg['id'],
+                        'name'      => $dbOrg['name'],
+                        'slug'      => $dbOrg['slug'] ?? '',
+                        'type'      => $dbOrg['type'] ?? '',
+                        'plan'      => $dbOrg['plan'] ?? 'trial',
+                        'status'    => $dbOrg['status'] ?? 'trial',
+                        'role_slug' => $dbOrg['role_slug'] ?? null,
+                        'role_name' => $dbOrg['role_name'] ?? null,
+                    ];
+                    Session::set('organization', $orgData);
+                    return $orgData;
+                }
+            } catch (\Throwable $e) {}
+        }
+
         $trial = $this->resolveTrialAccess();
         if (!empty($trial['can_access'])) {
             return [

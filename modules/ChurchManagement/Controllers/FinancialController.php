@@ -9,13 +9,40 @@ use App\Core\Request;
 use App\Core\Session;
 use App\Core\Database;
 use App\Models\FinancialTransaction;
+use App\Models\User;
 
 class FinancialController extends Controller
 {
     private function orgId(): int 
     { 
         $org = Session::get('organization');
-        return (int) ($org['id'] ?? 0);
+        if (is_array($org) && !empty($org['id'])) {
+            return (int) $org['id'];
+        }
+
+        $user = Session::user() ?? [];
+        $userId = (int) ($user['id'] ?? 0);
+        if ($userId > 0) {
+            try {
+                $dbOrg = User::getOrganization($userId);
+                if ($dbOrg) {
+                    Session::set('organization', [
+                        'id'        => $dbOrg['id'],
+                        'name'      => $dbOrg['name'],
+                        'slug'      => $dbOrg['slug'] ?? '',
+                        'type'      => $dbOrg['type'] ?? '',
+                        'plan'      => $dbOrg['plan'] ?? 'trial',
+                        'status'    => $dbOrg['status'] ?? 'trial',
+                        'role_slug' => $dbOrg['role_slug'] ?? null,
+                        'role_name' => $dbOrg['role_name'] ?? null,
+                    ]);
+                    return (int) $dbOrg['id'];
+                }
+            } catch (\Throwable $e) {}
+        }
+
+        redirect('/hub');
+        exit;
     }
 
     public function index(Request $request): void
