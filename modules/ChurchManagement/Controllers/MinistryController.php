@@ -41,8 +41,7 @@ class MinistryController extends Controller
             } catch (\Throwable $e) {}
         }
 
-        redirect('/hub');
-        exit;
+        return 0;
     }
 
     public function index(Request $request): void

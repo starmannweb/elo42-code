@@ -49,8 +49,7 @@ class GeneralController extends Controller
             } catch (\Throwable $e) {}
         }
 
-        redirect('/hub');
-        exit;
+        return 0;
     }
 
     // --- Requests ---
