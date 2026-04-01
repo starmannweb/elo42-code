@@ -1,11 +1,48 @@
 <?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
-<div class="mgmt-header"><div><h1 class="mgmt-header__title">Financeiro</h1></div><div class="mgmt-header__actions"><a href="<?= url('/gestao/financeiro/novo') ?>" class="btn btn--primary">+ Nova transação</a></div></div>
+<div class="mgmt-header">
+    <div>
+        <h1 class="mgmt-header__title">Financeiro</h1>
+        <p class="mgmt-header__subtitle">Controle de receitas e despesas da igreja</p>
+    </div>
+    <div class="mgmt-header__actions">
+        <button type="button" class="btn btn--outline" onclick="window.location.href='<?= url('/gestao/financeiro/novo') ?>'">📤 Exportar</button>
+        <button type="button" class="btn btn--success" onclick="window.location.href='<?= url('/gestao/financeiro/novo') ?>'">✅ Receita</button>
+        <button type="button" class="btn btn--danger" onclick="window.location.href='<?= url('/gestao/financeiro/novo') ?>'">❌ Despesa</button>
+    </div>
+</div>
 
-<div class="financial-summary">
-    <div class="financial-summary__card"><div class="financial-summary__label">Entradas</div><div class="financial-summary__value financial-summary__value--income">R$ <?= number_format($summary['income'], 2, ',', '.') ?></div></div>
-    <div class="financial-summary__card"><div class="financial-summary__label">Saídas</div><div class="financial-summary__value financial-summary__value--expense">R$ <?= number_format($summary['expense'], 2, ',', '.') ?></div></div>
-    <div class="financial-summary__card"><div class="financial-summary__label">Saldo</div><div class="financial-summary__value financial-summary__value--balance">R$ <?= number_format($summary['balance'], 2, ',', '.') ?></div></div>
+<div class="mgmt-kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="mgmt-kpi-card">
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green" style="background: rgba(16, 185, 129, 0.1);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><polyline points="7 17 12 22 17 17" stroke="#10b981"></polyline></svg>
+        </div>
+        <div>
+            <div class="mgmt-kpi-card__label">Receitas</div>
+            <div class="mgmt-kpi-card__value" style="color: #10b981;">R$ <?= number_format($summary['income'], 2, ',', '.') ?></div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Este mês</div>
+        </div>
+    </div>
+    <div class="mgmt-kpi-card">
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--red" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><polyline points="7 7 12 2 17 7" stroke="#ef4444"></polyline></svg>
+        </div>
+        <div>
+            <div class="mgmt-kpi-card__label">Despesas</div>
+            <div class="mgmt-kpi-card__value" style="color: #ef4444;">R$ <?= number_format($summary['expense'], 2, ',', '.') ?></div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Este mês</div>
+        </div>
+    </div>
+    <div class="mgmt-kpi-card">
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--gold">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </div>
+        <div>
+            <div class="mgmt-kpi-card__label">Saldo</div>
+            <div class="mgmt-kpi-card__value">R$ <?= number_format($summary['balance'], 2, ',', '.') ?></div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Resultado do mês</div>
+        </div>
+    </div>
 </div>
 
 <form method="GET" action="<?= url('/gestao/financeiro') ?>" class="mgmt-filters">

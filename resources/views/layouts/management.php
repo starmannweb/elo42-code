@@ -40,7 +40,6 @@
                     <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="48" class="logo-light" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
                     <img src="<?= url('/assets/img/logo-color.png') ?>" alt="Elo 42" height="48" class="logo-dark" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
                 </a>
-                <p class="hub-sidebar__brand-subtitle">Sistema da igreja</p>
             </div>
 
             <nav class="hub-sidebar__nav" aria-label="Navegação da gestão">

@@ -12,7 +12,6 @@
 
     <div class="dashboard-section__header">
         <h2 class="dashboard-section__title" style="margin-bottom:0;">Produtos e serviços</h2>
-        <a href="<?= url('/contato') ?>" class="dashboard-section__link">Falar com especialista</a>
     </div>
 
     <div class="showcase-grid">
