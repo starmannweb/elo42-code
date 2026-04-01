@@ -55,27 +55,55 @@ $balance = (float) ($financial['balance'] ?? 0);
     <section class="mgmt-dashboard-grid">
         <article class="mgmt-dashboard-card">
             <header class="mgmt-dashboard-card__header">
-                <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg> Crescimento de Membros</h2>
+                <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg> Crescimento de Membros</h2>
             </header>
-            <div class="mgmt-chart-placeholder-svg" style="height:200px; position:relative;">
-                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <line x1="0" y1="20" x2="100" y2="20" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
-                    <line x1="0" y1="40" x2="100" y2="40" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
-                    <line x1="0" y1="60" x2="100" y2="60" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
-                    <line x1="0" y1="80" x2="100" y2="80" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="1 2"/>
-                    <line x1="0" y1="100" x2="100" y2="100" stroke="var(--color-border-light)" stroke-width="1"/>
-                    <path d="M 0 85 L 17 80 L 33 75 L 50 40 L 67 30 L 83 60 L 100 20" fill="none" stroke="#eab308" stroke-width="1.5" />
-                    <?php foreach ([[0,85],[17,80],[33,75],[50,40],[67,30],[83,60],[100,20]] as $p): ?>
-                    <circle cx="<?= $p[0] ?>" cy="<?= $p[1] ?>" r="2" fill="#0f172a" stroke="#fff" stroke-width="0.5"/>
-                    <?php endforeach; ?>
-                </svg>
-                <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:11px; color:var(--text-muted); padding: 0 4px;">
-                    <span>Out</span><span>Nov</span><span>Dez</span><span>Jan</span><span>Fev</span><span>Mar</span>
+            <div class="mgmt-chart-placeholder-svg" style="height:200px; position:relative; display:flex; gap:12px; margin-top:20px;">
+                <div style="display:flex; flex-direction:column; justify-content:space-between; font-size:11px; color:var(--text-muted); padding-bottom:24px; align-items:flex-end; width: 24px;">
+                    <span>2,0</span><span>1,8</span><span>1,6</span><span>1,4</span><span>1,2</span><span>1,0</span><span>0,8</span><span>0,6</span><span>0,4</span><span>0,2</span><span>0</span>
                 </div>
-                <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin-top:12px; font-size:11px; color:var(--text-muted);">
-                    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:#1e293b;"></span> Membros</span>
-                    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:#eab308;"></span> Visitantes</span>
+                <div style="flex:1; position:relative;">
+                    <svg width="100%" height="calc(100% - 24px)" preserveAspectRatio="none" viewBox="0 0 100 100" style="overflow:visible; display:block;">
+                        <!-- Grid lines -->
+                        <line x1="0" y1="10" x2="100" y2="10" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="20" x2="100" y2="20" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="30" x2="100" y2="30" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="40" x2="100" y2="40" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="50" x2="100" y2="50" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="60" x2="100" y2="60" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="70" x2="100" y2="70" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="80" x2="100" y2="80" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="90" x2="100" y2="90" stroke="var(--color-border-light)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                        <line x1="0" y1="100" x2="100" y2="100" stroke="var(--color-border-light)" stroke-width="1.5"/>
+                        
+                        <!-- Membros Line (Dark) -->
+                        <line x1="0" y1="100" x2="100" y2="100" stroke="#1e293b" stroke-width="1.5" />
+                        <?php foreach ([0, 20, 40, 60, 80, 100] as $x): ?>
+                        <circle cx="<?= $x ?>" cy="100" r="1.2" fill="#1e293b"/>
+                        <?php endforeach; ?>
+
+                        <!-- Visitantes Line (Yellow/Orange) -->
+                        <path d="M 0 100 L 20 100 L 40 100 C 45 100, 50 10, 60 10 C 70 10, 75 100, 80 100 C 85 100, 90 10, 100 10" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        
+                        <circle cx="0" cy="100" r="1.2" fill="#f59e0b"/>
+                        <circle cx="20" cy="100" r="1.2" fill="#f59e0b"/>
+                        <circle cx="40" cy="100" r="1.2" fill="#f59e0b"/>
+                        <circle cx="60" cy="10" r="1.2" fill="#f59e0b"/>
+                        <circle cx="80" cy="100" r="1.2" fill="#f59e0b"/>
+                        <circle cx="100" cy="10" r="1.2" fill="#f59e0b"/>
+                    </svg>
+                    <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:11px; color:var(--text-muted); position:absolute; width:100%; left:0; bottom:0;">
+                        <span style="transform:translateX(-50%);">Oct</span>
+                        <span style="transform:translateX(-50%); position:absolute; left:20%;">Nov</span>
+                        <span style="transform:translateX(-50%); position:absolute; left:40%;">Dec</span>
+                        <span style="transform:translateX(-50%); position:absolute; left:60%;">Jan</span>
+                        <span style="transform:translateX(-50%); position:absolute; left:80%;">Feb</span>
+                        <span style="transform:translateX(-50%); position:absolute; left:100%;">Mar</span>
+                    </div>
                 </div>
+            </div>
+            <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin-top:20px; font-size:12px; color:var(--text-muted);">
+                <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:50%;background:#1e293b;"></span> Membros</span>
+                <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:50%;background:#f59e0b;"></span> Visitantes</span>
             </div>
         </article>
 
