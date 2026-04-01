@@ -1,9 +1,54 @@
 <?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
-<div class="mgmt-header"><div><h1 class="mgmt-header__title">Configurações</h1><p class="mgmt-header__subtitle">Configurações do módulo de gestão</p></div></div>
 
-<div class="mgmt-info-card" style="max-width:720px;">
-    <h3 class="mgmt-info-card__title">Categorias financeiras</h3>
+<!-- Tabs de navegação -->
+<div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-6); border-bottom: 1px solid var(--color-border); padding-bottom: 0;">
+    <button class="btn btn--ghost" style="border-bottom: 2px solid var(--color-gold); border-radius: 0; padding-bottom: var(--space-3); color: var(--color-gold); display: flex; align-items: center; gap: 6px;">⛪ Igreja</button>
+    <button class="btn btn--ghost" style="border-radius: 0; padding-bottom: var(--space-3); color: var(--text-muted); display: flex; align-items: center; gap: 6px;">🔍 SEO e Metatags</button>
+    <button class="btn btn--ghost" style="border-radius: 0; padding-bottom: var(--space-3); color: var(--text-muted); display: flex; align-items: center; gap: 6px;">📱 App PWA</button>
+    <button class="btn btn--ghost" style="border-radius: 0; padding-bottom: var(--space-3); color: var(--text-muted); display: flex; align-items: center; gap: 6px;">🔗 Redes</button>
+    <button class="btn btn--ghost" style="border-radius: 0; padding-bottom: var(--space-3); color: var(--text-muted); display: flex; align-items: center; gap: 6px;">🎨 Tema</button>
+    <button class="btn btn--ghost" style="border-radius: 0; padding-bottom: var(--space-3); color: var(--text-muted); display: flex; align-items: center; gap: 6px;">⚡ Integrações</button>
+</div>
+
+<!-- Formulário de configurações da Igreja -->
+<div class="mgmt-dashboard-card" style="max-width: 100%;">
+    <form method="POST" action="<?= url('/gestao/configuracoes') ?>">
+        <?= csrf_field() ?>
+        
+        <div style="margin-bottom: var(--space-5);">
+            <label style="font-size: var(--text-sm); font-weight: 600; display: block; margin-bottom: var(--space-2);">Nome da Igreja</label>
+            <input type="text" name="church_name" class="form-input" value="<?= e($settings['church_name'] ?? 'Minha Igreja') ?>" style="width: 100%;">
+        </div>
+
+        <div style="margin-bottom: var(--space-5);">
+            <label style="font-size: var(--text-sm); font-weight: 600; display: block; margin-bottom: var(--space-2);">Slogan</label>
+            <input type="text" name="slogan" class="form-input" value="<?= e($settings['slogan'] ?? '') ?>" placeholder="Ex: Conectando vidas ao propósito de Deus" style="width: 100%;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-5);">
+            <div>
+                <label style="font-size: var(--text-sm); font-weight: 600; display: block; margin-bottom: var(--space-2);">E-mail</label>
+                <input type="email" name="email" class="form-input" value="<?= e($settings['email'] ?? '') ?>" placeholder="contato@suaigreja.com" style="width: 100%;">
+            </div>
+            <div>
+                <label style="font-size: var(--text-sm); font-weight: 600; display: block; margin-bottom: var(--space-2);">Telefone</label>
+                <input type="tel" name="phone" class="form-input" value="<?= e($settings['phone'] ?? '') ?>" placeholder="(00) 00000-0000" style="width: 100%;">
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn--primary">✓ Salvar</button>
+        </div>
+    </form>
+</div>
+
+<!-- Categorias Financeiras (seção adicional) -->
+<div class="mgmt-dashboard-card" style="margin-top: var(--space-6);">
+    <header class="mgmt-dashboard-card__header">
+        <h2>Categorias Financeiras</h2>
+    </header>
+    
     <?php if (empty($categories)): ?>
         <p style="font-size:var(--text-sm);color:var(--color-text-muted);text-align:center;padding:var(--space-4);">Nenhuma categoria cadastrada.</p>
     <?php else: ?>
@@ -26,11 +71,5 @@
             <button type="submit" class="btn btn--primary">Adicionar</button>
         </div>
     </form>
-</div>
-
-<div class="mgmt-info-card" style="max-width:720px;margin-top:var(--space-5);">
-    <h3 class="mgmt-info-card__title">Sobre o módulo</h3>
-    <div class="mgmt-info-row"><span class="mgmt-info-row__label">Versão</span><span class="mgmt-info-row__value">1.0.0</span></div>
-    <div class="mgmt-info-row"><span class="mgmt-info-row__label">Módulos ativos</span><span class="mgmt-info-row__value">Membros, Ministérios, Eventos, Financeiro, Solicitações, Visitas, Aconselhamento, Sermões, Planos, Doações, Relatórios</span></div>
 </div>
 <?php $__view->endSection(); ?>
