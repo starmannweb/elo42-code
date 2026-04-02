@@ -4,6 +4,7 @@
 /storage/uploads/*
 /storage/cache/*
 /storage/sessions/*
+/public/storage/
 !storage/logs/.gitkeep
 !storage/uploads/.gitkeep
 !storage/cache/.gitkeep

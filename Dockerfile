@@ -6,6 +6,8 @@ RUN docker-php-ext-install pdo pdo_mysql
 
 COPY . .
 
+RUN chmod +x /var/www/html/docker-entrypoint.sh
+
 RUN mkdir -p storage/logs storage/cache storage/uploads storage/sessions \
     && chmod -R 775 storage
 
@@ -15,4 +17,4 @@ ENV APP_ENV=production \
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "php -S 0.0.0.0:${PORT:-8080} -t public"]
+CMD ["/var/www/html/docker-entrypoint.sh"]
