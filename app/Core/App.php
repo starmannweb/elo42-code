@@ -105,14 +105,22 @@ class App
         }
 
         $debug = (bool) config('app.debug', false);
-        // Temporary: enable debug for management routes to diagnose 500 errors
-        if (str_contains($_SERVER['REQUEST_URI'] ?? '', '/gestao/')) {
-            $debug = true;
+
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $isManagement = str_starts_with($uri, '/gestao');
+
+        // For management routes, try to gracefully redirect to dashboard instead of showing 500
+        if ($isManagement && $uri !== '/gestao' && $uri !== '/gestao/') {
+            // Clean any partial output
+            while (ob_get_level() > 0) { ob_end_clean(); }
+            Session::flash('error', 'Erro ao carregar a página: ' . $e->getMessage());
+            header('Location: ' . url('/gestao'));
+            exit;
         }
 
         http_response_code(500);
 
-        if ($debug) {
+        if ($debug || $isManagement) {
             echo '<h1>Error Debug</h1>';
             echo '<p><strong>Message:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
             echo '<p><strong>File:</strong> ' . htmlspecialchars($e->getFile()) . '</p>';

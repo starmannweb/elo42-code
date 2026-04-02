@@ -45,22 +45,32 @@ class EventController extends Controller
 
     public function index(Request $request): void
     {
-        $status = $request->input('status');
-        $this->view('management/events/index', [
-            'pageTitle'  => 'Eventos — Gestão',
-            'breadcrumb' => 'Eventos',
-            'events'     => Event::byOrg($this->orgId(), $status),
-            'filter_status' => $status,
-        ]);
+        try {
+            $status = $request->input('status');
+            $this->view('management/events/index', [
+                'pageTitle'  => 'Eventos — Gestão',
+                'breadcrumb' => 'Eventos',
+                'events'     => Event::byOrg($this->orgId(), $status),
+                'filter_status' => $status,
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar eventos: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 
     public function create(Request $request): void
     {
-        $this->view('management/events/form', [
-            'pageTitle'  => 'Novo evento — Gestão',
-            'breadcrumb' => 'Eventos / Novo',
-            'event'      => null,
-        ]);
+        try {
+            $this->view('management/events/form', [
+                'pageTitle'  => 'Novo evento — Gestão',
+                'breadcrumb' => 'Eventos / Novo',
+                'event'      => null,
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/eventos');
+        }
     }
 
     public function store(Request $request): void
@@ -78,35 +88,33 @@ class EventController extends Controller
     {
         try {
             $event = Event::find((int) $request->param('id'));
+            if (!$event || (int)$event['organization_id'] !== $this->orgId()) { redirect('/gestao/eventos'); }
+            $this->view('management/events/show', [
+                'pageTitle'     => e($event['title']) . ' — Gestão',
+                'breadcrumb'    => 'Eventos / ' . $event['title'],
+                'event'         => $event,
+                'registrations' => Event::getRegistrations((int) $event['id']),
+            ]);
         } catch (\Throwable $e) {
-            Session::flash('error', 'Nao foi possivel carregar evento agora.');
+            Session::flash('error', 'Erro ao carregar evento: ' . $e->getMessage());
             redirect('/gestao/eventos');
         }
-
-        if (!$event || (int)$event['organization_id'] !== $this->orgId()) { redirect('/gestao/eventos'); }
-        $this->view('management/events/show', [
-            'pageTitle'     => e($event['title']) . ' — Gestão',
-            'breadcrumb'    => 'Eventos / ' . $event['title'],
-            'event'         => $event,
-            'registrations' => Event::getRegistrations((int) $event['id']),
-        ]);
     }
 
     public function edit(Request $request): void
     {
         try {
             $event = Event::find((int) $request->param('id'));
+            if (!$event || (int)$event['organization_id'] !== $this->orgId()) { redirect('/gestao/eventos'); }
+            $this->view('management/events/form', [
+                'pageTitle'  => 'Editar — ' . e($event['title']),
+                'breadcrumb' => 'Eventos / Editar',
+                'event'      => $event,
+            ]);
         } catch (\Throwable $e) {
-            Session::flash('error', 'Nao foi possivel carregar evento agora.');
+            Session::flash('error', 'Erro ao carregar evento: ' . $e->getMessage());
             redirect('/gestao/eventos');
         }
-
-        if (!$event || (int)$event['organization_id'] !== $this->orgId()) { redirect('/gestao/eventos'); }
-        $this->view('management/events/form', [
-            'pageTitle'  => 'Editar — ' . e($event['title']),
-            'breadcrumb' => 'Eventos / Editar',
-            'event'      => $event,
-        ]);
     }
 
     public function update(Request $request): void
@@ -129,10 +137,15 @@ class EventController extends Controller
 
     public function agenda(Request $request): void
     {
-        $this->view('management/agenda/index', [
-            'pageTitle'  => 'Agenda — Gestão',
-            'breadcrumb' => 'Agenda',
-            'events'     => Event::byOrg($this->orgId()),
-        ]);
+        try {
+            $this->view('management/agenda/index', [
+                'pageTitle'  => 'Agenda — Gestão',
+                'breadcrumb' => 'Agenda',
+                'events'     => Event::byOrg($this->orgId()),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar agenda: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 }

@@ -45,44 +45,54 @@ class MemberController extends Controller
 
     public function index(Request $request): void
     {
-        $orgId = $this->orgId();
-        if ($orgId <= 0) {
-            Session::flash('warning', 'Complete o cadastro da organizacao para acessar os membros.');
-            redirect('/onboarding/organizacao');
+        try {
+            $orgId = $this->orgId();
+            if ($orgId <= 0) {
+                Session::flash('warning', 'Complete o cadastro da organizacao para acessar os membros.');
+                redirect('/onboarding/organizacao');
+            }
+
+            $page = (int) ($request->input('page', '1'));
+            $filters = [
+                'search' => $request->input('search', ''),
+                'status' => $request->input('status', ''),
+            ];
+
+            $result = Member::byOrg($orgId, $filters, $page);
+            if (($result['degraded'] ?? false) === true) {
+                Session::flash('warning', 'Membros indisponivel no momento. Exibindo modo de contingencia.');
+            }
+
+            $this->view('management/members/index', [
+                'pageTitle'   => 'Membros - Gestao',
+                'breadcrumb'  => 'Membros',
+                'members'     => $result['data'],
+                'pagination'  => $result,
+                'filters'     => $filters,
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar membros: ' . $e->getMessage());
+            redirect('/gestao');
         }
-
-        $page = (int) ($request->input('page', '1'));
-        $filters = [
-            'search' => $request->input('search', ''),
-            'status' => $request->input('status', ''),
-        ];
-
-        $result = Member::byOrg($orgId, $filters, $page);
-        if (($result['degraded'] ?? false) === true) {
-            Session::flash('warning', 'Membros indisponivel no momento. Exibindo modo de contingencia.');
-        }
-
-        $this->view('management/members/index', [
-            'pageTitle'   => 'Membros - Gestao',
-            'breadcrumb'  => 'Membros',
-            'members'     => $result['data'],
-            'pagination'  => $result,
-            'filters'     => $filters,
-        ]);
     }
 
     public function create(Request $request): void
     {
-        if ($this->orgId() <= 0) {
-            Session::flash('warning', 'Complete o cadastro da organizacao para adicionar membros.');
-            redirect('/onboarding/organizacao');
-        }
+        try {
+            if ($this->orgId() <= 0) {
+                Session::flash('warning', 'Complete o cadastro da organizacao para adicionar membros.');
+                redirect('/onboarding/organizacao');
+            }
 
-        $this->view('management/members/form', [
-            'pageTitle'  => 'Novo membro - Gestao',
-            'breadcrumb' => 'Membros / Novo',
-            'member'     => null,
-        ]);
+            $this->view('management/members/form', [
+                'pageTitle'  => 'Novo membro - Gestao',
+                'breadcrumb' => 'Membros / Novo',
+                'member'     => null,
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/membros');
+        }
     }
 
     public function store(Request $request): void
@@ -120,40 +130,36 @@ class MemberController extends Controller
     {
         try {
             $member = Member::find((int) $request->param('id'));
+            if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
+                redirect('/gestao/membros');
+            }
+            $this->view('management/members/show', [
+                'pageTitle'  => e($member['name']) . ' - Gestao',
+                'breadcrumb' => 'Membros / ' . $member['name'],
+                'member'     => $member,
+            ]);
         } catch (\Throwable $e) {
-            Session::flash('error', 'Nao foi possivel carregar membro agora.');
+            Session::flash('error', 'Erro ao carregar membro: ' . $e->getMessage());
             redirect('/gestao/membros');
         }
-
-        if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
-            redirect('/gestao/membros');
-        }
-
-        $this->view('management/members/show', [
-            'pageTitle'  => e($member['name']) . ' - Gestao',
-            'breadcrumb' => 'Membros / ' . $member['name'],
-            'member'     => $member,
-        ]);
     }
 
     public function edit(Request $request): void
     {
         try {
             $member = Member::find((int) $request->param('id'));
+            if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
+                redirect('/gestao/membros');
+            }
+            $this->view('management/members/form', [
+                'pageTitle'  => 'Editar - ' . e($member['name']),
+                'breadcrumb' => 'Membros / Editar',
+                'member'     => $member,
+            ]);
         } catch (\Throwable $e) {
-            Session::flash('error', 'Nao foi possivel carregar membro agora.');
+            Session::flash('error', 'Erro ao carregar membro: ' . $e->getMessage());
             redirect('/gestao/membros');
         }
-
-        if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
-            redirect('/gestao/membros');
-        }
-
-        $this->view('management/members/form', [
-            'pageTitle'  => 'Editar - ' . e($member['name']),
-            'breadcrumb' => 'Membros / Editar',
-            'member'     => $member,
-        ]);
     }
 
     public function update(Request $request): void

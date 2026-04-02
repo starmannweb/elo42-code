@@ -55,18 +55,28 @@ class GeneralController extends Controller
     // --- Requests ---
     public function requests(Request $req): void
     {
-        $this->view('management/requests/index', [
-            'pageTitle' => 'Solicitações — Gestão', 'breadcrumb' => 'Solicitações',
-            'requests' => ChurchRequest::byOrg($this->orgId()),
-        ]);
+        try {
+            $this->view('management/requests/index', [
+                'pageTitle' => 'Solicitações — Gestão', 'breadcrumb' => 'Solicitações',
+                'requests' => ChurchRequest::byOrg($this->orgId()),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar solicitações: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 
     public function createRequest(Request $req): void
     {
-        $this->view('management/requests/form', [
-            'pageTitle' => 'Nova solicitação', 'breadcrumb' => 'Solicitações / Nova',
-            'item' => null, 'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
-        ]);
+        try {
+            $this->view('management/requests/form', [
+                'pageTitle' => 'Nova solicitação', 'breadcrumb' => 'Solicitações / Nova',
+                'item' => null, 'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/solicitacoes');
+        }
     }
 
     public function storeRequest(Request $req): void
@@ -94,18 +104,28 @@ class GeneralController extends Controller
     // --- Visits ---
     public function visits(Request $req): void
     {
-        $this->view('management/visits/index', [
-            'pageTitle' => 'Visitas — Gestão', 'breadcrumb' => 'Visitas',
-            'visits' => Visit::byOrg($this->orgId()),
-        ]);
+        try {
+            $this->view('management/visits/index', [
+                'pageTitle' => 'Visitas — Gestão', 'breadcrumb' => 'Visitas',
+                'visits' => Visit::byOrg($this->orgId()),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar visitas: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 
     public function createVisit(Request $req): void
     {
-        $this->view('management/visits/form', [
-            'pageTitle' => 'Nova visita', 'breadcrumb' => 'Visitas / Nova', 'item' => null,
-            'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
-        ]);
+        try {
+            $this->view('management/visits/form', [
+                'pageTitle' => 'Nova visita', 'breadcrumb' => 'Visitas / Nova', 'item' => null,
+                'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/visitas');
+        }
     }
 
     public function storeVisit(Request $req): void
@@ -131,18 +151,28 @@ class GeneralController extends Controller
     // --- Counseling ---
     public function counseling(Request $req): void
     {
-        $this->view('management/counseling/index', [
-            'pageTitle' => 'Aconselhamento — Gestão', 'breadcrumb' => 'Aconselhamento',
-            'sessions' => CounselingSession::byOrg($this->orgId()),
-        ]);
+        try {
+            $this->view('management/counseling/index', [
+                'pageTitle' => 'Aconselhamento — Gestão', 'breadcrumb' => 'Aconselhamento',
+                'sessions' => CounselingSession::byOrg($this->orgId()),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar aconselhamento: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 
     public function createCounseling(Request $req): void
     {
-        $this->view('management/counseling/form', [
-            'pageTitle' => 'Novo atendimento', 'breadcrumb' => 'Aconselhamento / Novo', 'item' => null,
-            'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
-        ]);
+        try {
+            $this->view('management/counseling/form', [
+                'pageTitle' => 'Novo atendimento', 'breadcrumb' => 'Aconselhamento / Novo', 'item' => null,
+                'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/aconselhamento');
+        }
     }
 
     public function storeCounseling(Request $req): void
@@ -158,17 +188,27 @@ class GeneralController extends Controller
     // --- Sermons ---
     public function sermons(Request $req): void
     {
-        $this->view('management/sermons/index', [
-            'pageTitle' => 'Sermões — Gestão', 'breadcrumb' => 'Sermões',
-            'sermons' => Sermon::byOrg($this->orgId(), $req->input('search')),
-        ]);
+        try {
+            $this->view('management/sermons/index', [
+                'pageTitle' => 'Sermões — Gestão', 'breadcrumb' => 'Sermões',
+                'sermons' => Sermon::byOrg($this->orgId(), $req->input('search')),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar sermões: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 
     public function createSermon(Request $req): void
     {
-        $this->view('management/sermons/form', [
-            'pageTitle' => 'Novo sermão', 'breadcrumb' => 'Sermões / Novo', 'item' => null,
-        ]);
+        try {
+            $this->view('management/sermons/form', [
+                'pageTitle' => 'Novo sermão', 'breadcrumb' => 'Sermões / Novo', 'item' => null,
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/sermoes');
+        }
     }
 
     public function storeSermon(Request $req): void
@@ -184,17 +224,27 @@ class GeneralController extends Controller
     // --- Action Plans ---
     public function plans(Request $req): void
     {
-        $this->view('management/plans/index', [
-            'pageTitle' => 'Plano de Ação — Gestão', 'breadcrumb' => 'Plano de Ação',
-            'plans' => ActionPlan::byOrg($this->orgId()),
-        ]);
+        try {
+            $this->view('management/plans/index', [
+                'pageTitle' => 'Plano de Ação — Gestão', 'breadcrumb' => 'Plano de Ação',
+                'plans' => ActionPlan::byOrg($this->orgId()),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar planos: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 
     public function createPlan(Request $req): void
     {
-        $this->view('management/plans/form', [
-            'pageTitle' => 'Novo plano', 'breadcrumb' => 'Plano de Ação / Novo', 'item' => null,
-        ]);
+        try {
+            $this->view('management/plans/form', [
+                'pageTitle' => 'Novo plano', 'breadcrumb' => 'Plano de Ação / Novo', 'item' => null,
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/planos');
+        }
     }
 
     public function storePlan(Request $req): void
@@ -209,12 +259,17 @@ class GeneralController extends Controller
 
     public function showPlan(Request $req): void
     {
-        $plan = ActionPlan::getWithDetails((int) $req->param('id'));
-        if (!$plan) { redirect('/gestao/planos'); }
-        $this->view('management/plans/show', [
-            'pageTitle' => e($plan['title']) . ' — Gestão', 'breadcrumb' => 'Planos / ' . $plan['title'],
-            'plan' => $plan, 'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
-        ]);
+        try {
+            $plan = ActionPlan::getWithDetails((int) $req->param('id'));
+            if (!$plan) { redirect('/gestao/planos'); }
+            $this->view('management/plans/show', [
+                'pageTitle' => e($plan['title']) . ' — Gestão', 'breadcrumb' => 'Planos / ' . $plan['title'],
+                'plan' => $plan, 'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar plano: ' . $e->getMessage());
+            redirect('/gestao/planos');
+        }
     }
 
     public function storeObjective(Request $req): void
@@ -261,32 +316,43 @@ class GeneralController extends Controller
     // --- Donations ---
     public function donations(Request $req): void
     {
-        $page = (int) ($req->input('page', '1'));
-        $filters = [
-            'type'       => $req->input('type', ''),
-            'start_date' => $req->input('start_date', date('Y-m-01')),
-            'end_date'   => $req->input('end_date', date('Y-m-t')),
-        ];
-        $result = Donation::byOrg($this->orgId(), $filters, $page);
-        $summary = Donation::summaryByType($this->orgId(), $filters['start_date'], $filters['end_date']);
+        try {
+            $orgId = $this->orgId();
+            $page = (int) ($req->input('page', '1'));
+            $filters = [
+                'type'       => $req->input('type', ''),
+                'start_date' => $req->input('start_date', date('Y-m-01')),
+                'end_date'   => $req->input('end_date', date('Y-m-t')),
+            ];
+            $result = Donation::byOrg($orgId, $filters, $page);
+            $summary = Donation::summaryByType($orgId, $filters['start_date'], $filters['end_date']);
 
-        if (($result['degraded'] ?? false) === true) {
-            Session::flash('warning', 'Doacoes indisponiveis no momento. Exibindo modo de contingencia.');
+            if (($result['degraded'] ?? false) === true) {
+                Session::flash('warning', 'Doacoes indisponiveis no momento. Exibindo modo de contingencia.');
+            }
+
+            $this->view('management/donations/index', [
+                'pageTitle'  => 'Doações — Gestão', 'breadcrumb' => 'Doações',
+                'donations'  => $result['data'], 'pagination' => $result,
+                'summary'    => $summary, 'filters' => $filters,
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar doações: ' . $e->getMessage());
+            redirect('/gestao');
         }
-
-        $this->view('management/donations/index', [
-            'pageTitle'  => 'Doações — Gestão', 'breadcrumb' => 'Doações',
-            'donations'  => $result['data'], 'pagination' => $result,
-            'summary'    => $summary, 'filters' => $filters,
-        ]);
     }
 
     public function createDonation(Request $req): void
     {
-        $this->view('management/donations/form', [
-            'pageTitle' => 'Nova doação', 'breadcrumb' => 'Doações / Nova', 'item' => null,
-            'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
-        ]);
+        try {
+            $this->view('management/donations/form', [
+                'pageTitle' => 'Nova doação', 'breadcrumb' => 'Doações / Nova', 'item' => null,
+                'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/doacoes');
+        }
     }
 
     public function storeDonation(Request $req): void
@@ -303,27 +369,32 @@ class GeneralController extends Controller
     // --- Reports ---
     public function reports(Request $req): void
     {
-        $orgId = $this->orgId();
-        $startDate = $req->input('start_date', date('Y-m-01'));
-        $endDate = $req->input('end_date', date('Y-m-t'));
-        $financial = FinancialTransaction::summary($orgId, $startDate, $endDate);
+        try {
+            $orgId = $this->orgId();
+            $startDate = $req->input('start_date', date('Y-m-01'));
+            $endDate = $req->input('end_date', date('Y-m-t'));
+            $financial = FinancialTransaction::summary($orgId, $startDate, $endDate);
 
-        if (($financial['degraded'] ?? false) === true) {
-            Session::flash('warning', 'Relatorios com dados parciais no momento. Exibindo modo de contingencia.');
+            if (($financial['degraded'] ?? false) === true) {
+                Session::flash('warning', 'Relatorios com dados parciais no momento. Exibindo modo de contingencia.');
+            }
+
+            $this->view('management/reports/index', [
+                'pageTitle'      => 'Relatórios — Gestão', 'breadcrumb' => 'Relatórios',
+                'totalMembers'   => Member::countByOrg($orgId),
+                'activeMembers'  => Member::countByOrg($orgId, 'active'),
+                'newMembers'     => Member::newThisMonth($orgId),
+                'activeEvents'   => Event::countActive($orgId),
+                'financial'      => $financial,
+                'donationSummary' => Donation::summaryByType($orgId, $startDate, $endDate),
+                'openRequests'   => ChurchRequest::countOpen($orgId),
+                'pendingTasks'   => ActionPlan::pendingTasks($orgId),
+                'filters'        => ['start_date' => $startDate, 'end_date' => $endDate],
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar relatórios: ' . $e->getMessage());
+            redirect('/gestao');
         }
-
-        $this->view('management/reports/index', [
-            'pageTitle'      => 'Relatórios — Gestão', 'breadcrumb' => 'Relatórios',
-            'totalMembers'   => Member::countByOrg($orgId),
-            'activeMembers'  => Member::countByOrg($orgId, 'active'),
-            'newMembers'     => Member::newThisMonth($orgId),
-            'activeEvents'   => Event::countActive($orgId),
-            'financial'      => $financial,
-            'donationSummary' => Donation::summaryByType($orgId, $startDate, $endDate),
-            'openRequests'   => ChurchRequest::countOpen($orgId),
-            'pendingTasks'   => ActionPlan::pendingTasks($orgId),
-            'filters'        => ['start_date' => $startDate, 'end_date' => $endDate],
-        ]);
     }
 
     // --- Users ---
@@ -398,9 +469,14 @@ class GeneralController extends Controller
     // --- Settings ---
     public function settings(Request $req): void
     {
-        $this->view('management/settings/index', [
-            'pageTitle' => 'Configurações — Gestão', 'breadcrumb' => 'Configurações',
-            'categories' => FinancialTransaction::getCategories($this->orgId()),
-        ]);
+        try {
+            $this->view('management/settings/index', [
+                'pageTitle' => 'Configurações — Gestão', 'breadcrumb' => 'Configurações',
+                'categories' => FinancialTransaction::getCategories($this->orgId()),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 }

@@ -46,21 +46,31 @@ class MinistryController extends Controller
 
     public function index(Request $request): void
     {
-        $this->view('management/ministries/index', [
-            'pageTitle'   => 'Ministérios — Gestão',
-            'breadcrumb'  => 'Ministérios',
-            'ministries'  => Ministry::byOrg($this->orgId()),
-        ]);
+        try {
+            $this->view('management/ministries/index', [
+                'pageTitle'   => 'Ministérios — Gestão',
+                'breadcrumb'  => 'Ministérios',
+                'ministries'  => Ministry::byOrg($this->orgId()),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar ministérios: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 
     public function create(Request $request): void
     {
-        $this->view('management/ministries/form', [
-            'pageTitle'  => 'Novo ministério — Gestão',
-            'breadcrumb' => 'Ministérios / Novo',
-            'ministry'   => null,
-            'members'    => Member::byOrg($this->orgId(), [], 1, 500)['data'],
-        ]);
+        try {
+            $this->view('management/ministries/form', [
+                'pageTitle'  => 'Novo ministério — Gestão',
+                'breadcrumb' => 'Ministérios / Novo',
+                'ministry'   => null,
+                'members'    => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/ministerios');
+        }
     }
 
     public function store(Request $request): void
@@ -77,19 +87,18 @@ class MinistryController extends Controller
     {
         try {
             $ministry = Ministry::find((int) $request->param('id'));
+            if (!$ministry || (int)$ministry['organization_id'] !== $this->orgId()) { redirect('/gestao/ministerios'); }
+            $this->view('management/ministries/form', [
+                'pageTitle'  => 'Editar — ' . e($ministry['name']),
+                'breadcrumb' => 'Ministérios / Editar',
+                'ministry'   => $ministry,
+                'members'    => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+                'current_members' => Ministry::getMembers((int) $ministry['id']),
+            ]);
         } catch (\Throwable $e) {
-            Session::flash('error', 'Nao foi possivel carregar ministerio agora.');
+            Session::flash('error', 'Erro ao carregar ministério: ' . $e->getMessage());
             redirect('/gestao/ministerios');
         }
-
-        if (!$ministry || (int)$ministry['organization_id'] !== $this->orgId()) { redirect('/gestao/ministerios'); }
-        $this->view('management/ministries/form', [
-            'pageTitle'  => 'Editar — ' . e($ministry['name']),
-            'breadcrumb' => 'Ministérios / Editar',
-            'ministry'   => $ministry,
-            'members'    => Member::byOrg($this->orgId(), [], 1, 500)['data'],
-            'current_members' => Ministry::getMembers((int) $ministry['id']),
-        ]);
     }
 
     public function update(Request $request): void

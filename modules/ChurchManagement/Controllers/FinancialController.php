@@ -46,39 +46,50 @@ class FinancialController extends Controller
 
     public function index(Request $request): void
     {
-        $page = (int) ($request->input('page', '1'));
-        $filters = [
-            'type'       => $request->input('type', ''),
-            'start_date' => $request->input('start_date', date('Y-m-01')),
-            'end_date'   => $request->input('end_date', date('Y-m-t')),
-        ];
-        $result = FinancialTransaction::byOrg($this->orgId(), $filters, $page);
-        $summary = FinancialTransaction::summary($this->orgId(), $filters['start_date'], $filters['end_date']);
-        $categories = FinancialTransaction::getCategories($this->orgId());
+        try {
+            $orgId = $this->orgId();
+            $page = (int) ($request->input('page', '1'));
+            $filters = [
+                'type'       => $request->input('type', ''),
+                'start_date' => $request->input('start_date', date('Y-m-01')),
+                'end_date'   => $request->input('end_date', date('Y-m-t')),
+            ];
+            $result = FinancialTransaction::byOrg($orgId, $filters, $page);
+            $summary = FinancialTransaction::summary($orgId, $filters['start_date'], $filters['end_date']);
+            $categories = FinancialTransaction::getCategories($orgId);
 
-        if (($result['degraded'] ?? false) === true || ($summary['degraded'] ?? false) === true) {
-            Session::flash('warning', 'Financeiro indisponivel no momento. Exibindo modo de contingencia.');
+            if (($result['degraded'] ?? false) === true || ($summary['degraded'] ?? false) === true) {
+                Session::flash('warning', 'Financeiro indisponivel no momento. Exibindo modo de contingencia.');
+            }
+
+            $this->view('management/financial/index', [
+                'pageTitle'    => 'Financeiro — Gestão',
+                'breadcrumb'   => 'Financeiro',
+                'transactions' => $result['data'],
+                'pagination'   => $result,
+                'summary'      => $summary,
+                'categories'   => $categories,
+                'filters'      => $filters,
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar financeiro: ' . $e->getMessage());
+            redirect('/gestao');
         }
-
-        $this->view('management/financial/index', [
-            'pageTitle'    => 'Financeiro — Gestão',
-            'breadcrumb'   => 'Financeiro',
-            'transactions' => $result['data'],
-            'pagination'   => $result,
-            'summary'      => $summary,
-            'categories'   => $categories,
-            'filters'      => $filters,
-        ]);
     }
 
     public function create(Request $request): void
     {
-        $this->view('management/financial/form', [
-            'pageTitle'   => 'Nova transação — Gestão',
-            'breadcrumb'  => 'Financeiro / Nova',
-            'transaction' => null,
-            'categories'  => FinancialTransaction::getCategories($this->orgId()),
-        ]);
+        try {
+            $this->view('management/financial/form', [
+                'pageTitle'   => 'Nova transação — Gestão',
+                'breadcrumb'  => 'Financeiro / Nova',
+                'transaction' => null,
+                'categories'  => FinancialTransaction::getCategories($this->orgId()),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
+            redirect('/gestao/financeiro');
+        }
     }
 
     public function store(Request $request): void
