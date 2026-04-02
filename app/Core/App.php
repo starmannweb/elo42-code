@@ -94,30 +94,29 @@ class App
         // Clean any partial output first
         while (ob_get_level() > 0) { @ob_end_clean(); }
 
-        $uri = $_SERVER['REQUEST_URI'] ?? '';
-
-        // DIAGNOSTIC: For /gestao routes, dump raw error immediately (no external deps)
-        if (str_contains($uri, '/gestao')) {
-            http_response_code(500);
-            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Debug</title></head>';
-            echo '<body style="font-family:monospace;padding:2rem;background:#111;color:#0f0;white-space:pre-wrap">';
-            echo '<h2>GESTAO ERROR DEBUG</h2>';
-            echo '<b>URI:</b> ' . htmlspecialchars($uri) . "\n";
-            echo '<b>Message:</b> ' . htmlspecialchars($e->getMessage()) . "\n";
-            echo '<b>File:</b> ' . htmlspecialchars($e->getFile()) . ':' . $e->getLine() . "\n\n";
-            echo '<b>Stack Trace:</b>' . "\n" . htmlspecialchars($e->getTraceAsString());
-            echo '</body></html>';
-            return;
-        }
-
-        // Log error for non-management routes
+        // Log error
         try {
             (new Logger())->error('app.unhandled_exception', [
                 'message' => $e->getMessage(),
                 'file'    => $e->getFile(),
                 'line'    => $e->getLine(),
+                'trace'   => $e->getTraceAsString(),
+                'uri'     => $_SERVER['REQUEST_URI'] ?? null,
             ]);
         } catch (\Throwable $logError) {}
+
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+
+        // For management sub-pages, redirect to dashboard with error message
+        if (str_contains($uri, '/gestao') && $uri !== '/gestao' && $uri !== '/gestao/') {
+            try {
+                Session::flash('error', 'Erro ao carregar a pagina. Tente novamente.');
+            } catch (\Throwable $ignored) {}
+            if (!headers_sent()) {
+                header('Location: /gestao', true, 302);
+            }
+            exit;
+        }
 
         http_response_code(500);
 
