@@ -45,6 +45,9 @@ class Logger
 
         $line = "[{$timestamp}] [{$level}] {$message}{$contextStr}" . PHP_EOL;
 
+        // Surface logs in container/runtime output as well as on disk.
+        error_log(rtrim($line));
+
         file_put_contents(
             $this->logPath . "/{$date}.log",
             $line,

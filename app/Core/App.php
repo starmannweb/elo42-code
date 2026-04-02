@@ -96,6 +96,8 @@ class App
                 'message' => $e->getMessage(),
                 'file'    => $e->getFile(),
                 'line'    => $e->getLine(),
+                'uri'     => $_SERVER['REQUEST_URI'] ?? null,
+                'method'  => $_SERVER['REQUEST_METHOD'] ?? null,
             ]);
         } catch (\Throwable $logError) {
             // Ignore logger failures.
