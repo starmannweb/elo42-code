@@ -56,6 +56,10 @@ class FinancialController extends Controller
         $summary = FinancialTransaction::summary($this->orgId(), $filters['start_date'], $filters['end_date']);
         $categories = FinancialTransaction::getCategories($this->orgId());
 
+        if (($result['degraded'] ?? false) === true || ($summary['degraded'] ?? false) === true) {
+            Session::flash('warning', 'Financeiro indisponivel no momento. Exibindo modo de contingencia.');
+        }
+
         $this->view('management/financial/index', [
             'pageTitle'    => 'Financeiro — Gestão',
             'breadcrumb'   => 'Financeiro',

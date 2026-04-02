@@ -75,7 +75,13 @@ class MinistryController extends Controller
 
     public function edit(Request $request): void
     {
-        $ministry = Ministry::find((int) $request->param('id'));
+        try {
+            $ministry = Ministry::find((int) $request->param('id'));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel carregar ministerio agora.');
+            redirect('/gestao/ministerios');
+        }
+
         if (!$ministry || (int)$ministry['organization_id'] !== $this->orgId()) { redirect('/gestao/ministerios'); }
         $this->view('management/ministries/form', [
             'pageTitle'  => 'Editar — ' . e($ministry['name']),
@@ -89,7 +95,14 @@ class MinistryController extends Controller
     public function update(Request $request): void
     {
         $id = (int) $request->param('id');
-        $ministry = Ministry::find($id);
+
+        try {
+            $ministry = Ministry::find($id);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel atualizar ministerio agora.');
+            redirect('/gestao/ministerios');
+        }
+
         if (!$ministry || (int)$ministry['organization_id'] !== $this->orgId()) { redirect('/gestao/ministerios'); }
         $this->validate($request, ['name' => 'required|min:3']);
         Ministry::update($id, $request->only(['name','description','leader_member_id','color','status']));

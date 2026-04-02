@@ -221,10 +221,16 @@ class GeneralController extends Controller
     {
         $planId = (int) $req->param('id');
         $this->validate($req, ['title' => 'required']);
-        $pdo = Database::connection();
-        $pdo->prepare("INSERT INTO action_plan_objectives (plan_id, title, description) VALUES (:pid, :title, :desc)")
-            ->execute(['pid' => $planId, 'title' => $req->input('title'), 'desc' => $req->input('description')]);
-        Session::flash('success', 'Objetivo adicionado.');
+
+        try {
+            $pdo = Database::connection();
+            $pdo->prepare("INSERT INTO action_plan_objectives (plan_id, title, description) VALUES (:pid, :title, :desc)")
+                ->execute(['pid' => $planId, 'title' => $req->input('title'), 'desc' => $req->input('description')]);
+            Session::flash('success', 'Objetivo adicionado.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel adicionar objetivo agora.');
+        }
+
         redirect('/gestao/planos/' . $planId);
     }
 
@@ -264,6 +270,10 @@ class GeneralController extends Controller
         $result = Donation::byOrg($this->orgId(), $filters, $page);
         $summary = Donation::summaryByType($this->orgId(), $filters['start_date'], $filters['end_date']);
 
+        if (($result['degraded'] ?? false) === true) {
+            Session::flash('warning', 'Doacoes indisponiveis no momento. Exibindo modo de contingencia.');
+        }
+
         $this->view('management/donations/index', [
             'pageTitle'  => 'Doações — Gestão', 'breadcrumb' => 'Doações',
             'donations'  => $result['data'], 'pagination' => $result,
@@ -296,6 +306,11 @@ class GeneralController extends Controller
         $orgId = $this->orgId();
         $startDate = $req->input('start_date', date('Y-m-01'));
         $endDate = $req->input('end_date', date('Y-m-t'));
+        $financial = FinancialTransaction::summary($orgId, $startDate, $endDate);
+
+        if (($financial['degraded'] ?? false) === true) {
+            Session::flash('warning', 'Relatorios com dados parciais no momento. Exibindo modo de contingencia.');
+        }
 
         $this->view('management/reports/index', [
             'pageTitle'      => 'Relatórios — Gestão', 'breadcrumb' => 'Relatórios',
@@ -303,7 +318,7 @@ class GeneralController extends Controller
             'activeMembers'  => Member::countByOrg($orgId, 'active'),
             'newMembers'     => Member::newThisMonth($orgId),
             'activeEvents'   => Event::countActive($orgId),
-            'financial'      => FinancialTransaction::summary($orgId, $startDate, $endDate),
+            'financial'      => $financial,
             'donationSummary' => Donation::summaryByType($orgId, $startDate, $endDate),
             'openRequests'   => ChurchRequest::countOpen($orgId),
             'pendingTasks'   => ActionPlan::pendingTasks($orgId),
@@ -314,19 +329,26 @@ class GeneralController extends Controller
     // --- Users ---
     public function users(Request $req): void
     {
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("
+        $users = [];
+
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("
             SELECT u.*, ou.role_id, r.name as role_name, ou.id as org_user_id
             FROM users u 
             JOIN organization_users ou ON u.id = ou.user_id 
             LEFT JOIN roles r ON ou.role_id = r.id
             WHERE ou.organization_id = :org_id AND ou.status = 'active'
         ");
-        $stmt->execute(['org_id' => $this->orgId()]);
-        
+            $stmt->execute(['org_id' => $this->orgId()]);
+            $users = $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            Session::flash('warning', 'Usuarios indisponiveis no momento. Exibindo modo de contingencia.');
+        }
+
         $this->view('management/users/index', [
             'pageTitle' => 'Usuários — Gestão', 'breadcrumb' => 'Usuários',
-            'users' => $stmt->fetchAll(),
+            'users' => $users,
         ]);
     }
 

@@ -14,9 +14,14 @@ class Visit extends Model
 
     public static function byOrg(int $orgId): array
     {
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("SELECT v.*, m.name as assigned_name FROM visits v LEFT JOIN members m ON v.assigned_to = m.id WHERE v.organization_id = :org ORDER BY v.visit_date DESC");
-        $stmt->execute(['org' => $orgId]);
-        return $stmt->fetchAll();
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("SELECT v.*, m.name as assigned_name FROM visits v LEFT JOIN members m ON v.assigned_to = m.id WHERE v.organization_id = :org ORDER BY v.visit_date DESC");
+            $stmt->execute(['org' => $orgId]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            static::logModelFailure('byOrg', $e, ['organization_id' => $orgId]);
+            return [];
+        }
     }
 }

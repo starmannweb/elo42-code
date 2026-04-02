@@ -39,19 +39,21 @@ class AuthService
 
             return ['success' => true, 'user_id' => $userId];
         } catch (\Throwable $e) {
-            try {
-                $offlineUserId = $this->bootstrapOfflineUser($data);
+            if ($this->shouldUseOfflineFallback()) {
+                try {
+                    $offlineUserId = $this->bootstrapOfflineUser($data);
 
-                return [
-                    'success' => true,
-                    'user_id' => $offlineUserId,
-                    'offline' => true,
-                ];
-            } catch (\Throwable $fallbackError) {
-                $this->logNonCritical('auth.register_offline_bootstrap_failed', [
-                    'email' => $data['email'] ?? null,
-                    'error' => $fallbackError->getMessage(),
-                ]);
+                    return [
+                        'success' => true,
+                        'user_id' => $offlineUserId,
+                        'offline' => true,
+                    ];
+                } catch (\Throwable $fallbackError) {
+                    $this->logNonCritical('auth.register_offline_bootstrap_failed', [
+                        'email' => $data['email'] ?? null,
+                        'error' => $fallbackError->getMessage(),
+                    ]);
+                }
             }
 
             try {
@@ -106,18 +108,20 @@ class AuthService
                 // Ignore logger failures.
             }
 
-            try {
-                $offlineUserId = $this->bootstrapOfflineLogin($email);
-                return [
-                    'success' => true,
-                    'user_id' => $offlineUserId,
-                    'offline' => true,
-                ];
-            } catch (\Throwable $fallbackError) {
-                $this->logNonCritical('auth.attempt_offline_bootstrap_failed', [
-                    'email' => $email,
-                    'error' => $fallbackError->getMessage(),
-                ]);
+            if ($this->shouldUseOfflineFallback()) {
+                try {
+                    $offlineUserId = $this->bootstrapOfflineLogin($email);
+                    return [
+                        'success' => true,
+                        'user_id' => $offlineUserId,
+                        'offline' => true,
+                    ];
+                } catch (\Throwable $fallbackError) {
+                    $this->logNonCritical('auth.attempt_offline_bootstrap_failed', [
+                        'email' => $email,
+                        'error' => $fallbackError->getMessage(),
+                    ]);
+                }
             }
 
             return [
@@ -352,6 +356,11 @@ class AuthService
         } catch (\Throwable $e) {
             // Ignore logger failures.
         }
+    }
+
+    private function shouldUseOfflineFallback(): bool
+    {
+        return (bool) env('AUTH_ALLOW_OFFLINE', config('app.env', 'production') === 'local');
     }
 
     private function bootstrapOfflineUser(array $data): int

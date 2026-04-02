@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Support\Logger;
+
 abstract class Model
 {
     protected static string $table = '';
@@ -146,5 +148,19 @@ abstract class Model
             return $data;
         }
         return array_intersect_key($data, array_flip(static::$fillable));
+    }
+
+    protected static function logModelFailure(string $operation, \Throwable $e, array $context = []): void
+    {
+        try {
+            (new Logger())->warning('model.operation_failed', array_merge([
+                'model' => static::class,
+                'table' => static::$table,
+                'operation' => $operation,
+                'error' => $e->getMessage(),
+            ], $context));
+        } catch (\Throwable $ignored) {
+            // Ignore logger failures in fail-safe mode.
+        }
     }
 }

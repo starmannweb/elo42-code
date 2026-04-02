@@ -14,9 +14,14 @@ class CounselingSession extends Model
 
     public static function byOrg(int $orgId): array
     {
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("SELECT cs.*, m.name as member_name FROM counseling_sessions cs LEFT JOIN members m ON cs.member_id = m.id WHERE cs.organization_id = :org ORDER BY cs.session_date DESC");
-        $stmt->execute(['org' => $orgId]);
-        return $stmt->fetchAll();
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("SELECT cs.*, m.name as member_name FROM counseling_sessions cs LEFT JOIN members m ON cs.member_id = m.id WHERE cs.organization_id = :org ORDER BY cs.session_date DESC");
+            $stmt->execute(['org' => $orgId]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            static::logModelFailure('byOrg', $e, ['organization_id' => $orgId]);
+            return [];
+        }
     }
 }

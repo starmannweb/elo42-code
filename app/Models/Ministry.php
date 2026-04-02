@@ -14,36 +14,51 @@ class Ministry extends Model
 
     public static function byOrg(int $orgId): array
     {
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("
-            SELECT mi.*, m.name as leader_name,
-            (SELECT COUNT(*) FROM ministry_members mm WHERE mm.ministry_id = mi.id) as member_count
-            FROM ministries mi
-            LEFT JOIN members m ON mi.leader_member_id = m.id
-            WHERE mi.organization_id = :org ORDER BY mi.name
-        ");
-        $stmt->execute(['org' => $orgId]);
-        return $stmt->fetchAll();
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("
+                SELECT mi.*, m.name as leader_name,
+                (SELECT COUNT(*) FROM ministry_members mm WHERE mm.ministry_id = mi.id) as member_count
+                FROM ministries mi
+                LEFT JOIN members m ON mi.leader_member_id = m.id
+                WHERE mi.organization_id = :org ORDER BY mi.name
+            ");
+            $stmt->execute(['org' => $orgId]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            static::logModelFailure('byOrg', $e, ['organization_id' => $orgId]);
+            return [];
+        }
     }
 
     public static function countByOrg(int $orgId): int
     {
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM ministries WHERE organization_id = :org AND status = 'active'");
-        $stmt->execute(['org' => $orgId]);
-        return (int) $stmt->fetchColumn();
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM ministries WHERE organization_id = :org AND status = 'active'");
+            $stmt->execute(['org' => $orgId]);
+            return (int) $stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            static::logModelFailure('countByOrg', $e, ['organization_id' => $orgId]);
+            return 0;
+        }
     }
 
     public static function getMembers(int $ministryId): array
     {
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("
-            SELECT m.*, mm.role, mm.joined_at FROM members m
-            JOIN ministry_members mm ON m.id = mm.member_id
-            WHERE mm.ministry_id = :mid ORDER BY m.name
-        ");
-        $stmt->execute(['mid' => $ministryId]);
-        return $stmt->fetchAll();
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("
+                SELECT m.*, mm.role, mm.joined_at FROM members m
+                JOIN ministry_members mm ON m.id = mm.member_id
+                WHERE mm.ministry_id = :mid ORDER BY m.name
+            ");
+            $stmt->execute(['mid' => $ministryId]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            static::logModelFailure('getMembers', $e, ['ministry_id' => $ministryId]);
+            return [];
+        }
     }
 
     public static function syncMembers(int $ministryId, array $memberIds): void

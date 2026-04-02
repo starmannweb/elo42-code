@@ -76,7 +76,13 @@ class EventController extends Controller
 
     public function show(Request $request): void
     {
-        $event = Event::find((int) $request->param('id'));
+        try {
+            $event = Event::find((int) $request->param('id'));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel carregar evento agora.');
+            redirect('/gestao/eventos');
+        }
+
         if (!$event || (int)$event['organization_id'] !== $this->orgId()) { redirect('/gestao/eventos'); }
         $this->view('management/events/show', [
             'pageTitle'     => e($event['title']) . ' — Gestão',
@@ -88,7 +94,13 @@ class EventController extends Controller
 
     public function edit(Request $request): void
     {
-        $event = Event::find((int) $request->param('id'));
+        try {
+            $event = Event::find((int) $request->param('id'));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel carregar evento agora.');
+            redirect('/gestao/eventos');
+        }
+
         if (!$event || (int)$event['organization_id'] !== $this->orgId()) { redirect('/gestao/eventos'); }
         $this->view('management/events/form', [
             'pageTitle'  => 'Editar — ' . e($event['title']),
@@ -100,7 +112,14 @@ class EventController extends Controller
     public function update(Request $request): void
     {
         $id = (int) $request->param('id');
-        $event = Event::find($id);
+
+        try {
+            $event = Event::find($id);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel atualizar evento agora.');
+            redirect('/gestao/eventos');
+        }
+
         if (!$event || (int)$event['organization_id'] !== $this->orgId()) { redirect('/gestao/eventos'); }
         $this->validate($request, ['title' => 'required|min:3']);
         Event::update($id, $request->only(['title','description','location','start_date','end_date','max_registrations','status']));
