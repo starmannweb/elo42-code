@@ -96,6 +96,7 @@ class App
                 'message' => $e->getMessage(),
                 'file'    => $e->getFile(),
                 'line'    => $e->getLine(),
+                'trace'   => $e->getTraceAsString(),
                 'uri'     => $_SERVER['REQUEST_URI'] ?? null,
                 'method'  => $_SERVER['REQUEST_METHOD'] ?? null,
             ]);
@@ -104,6 +105,10 @@ class App
         }
 
         $debug = (bool) config('app.debug', false);
+        // Temporary: enable debug for management routes to diagnose 500 errors
+        if (str_contains($_SERVER['REQUEST_URI'] ?? '', '/gestao/')) {
+            $debug = true;
+        }
 
         http_response_code(500);
 
