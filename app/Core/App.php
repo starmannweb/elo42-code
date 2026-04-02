@@ -91,49 +91,41 @@ class App
 
     private function handleException(\Throwable $e): void
     {
+        // Clean any partial output first
+        while (ob_get_level() > 0) { @ob_end_clean(); }
+
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+
+        // DIAGNOSTIC: For /gestao routes, dump raw error immediately (no external deps)
+        if (str_contains($uri, '/gestao')) {
+            http_response_code(500);
+            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Debug</title></head>';
+            echo '<body style="font-family:monospace;padding:2rem;background:#111;color:#0f0;white-space:pre-wrap">';
+            echo '<h2>GESTAO ERROR DEBUG</h2>';
+            echo '<b>URI:</b> ' . htmlspecialchars($uri) . "\n";
+            echo '<b>Message:</b> ' . htmlspecialchars($e->getMessage()) . "\n";
+            echo '<b>File:</b> ' . htmlspecialchars($e->getFile()) . ':' . $e->getLine() . "\n\n";
+            echo '<b>Stack Trace:</b>' . "\n" . htmlspecialchars($e->getTraceAsString());
+            echo '</body></html>';
+            return;
+        }
+
+        // Log error for non-management routes
         try {
             (new Logger())->error('app.unhandled_exception', [
                 'message' => $e->getMessage(),
                 'file'    => $e->getFile(),
                 'line'    => $e->getLine(),
-                'trace'   => $e->getTraceAsString(),
-                'uri'     => $_SERVER['REQUEST_URI'] ?? null,
-                'method'  => $_SERVER['REQUEST_METHOD'] ?? null,
             ]);
-        } catch (\Throwable $logError) {
-            // Ignore logger failures.
-        }
-
-        $debug = (bool) config('app.debug', false);
-
-        $uri = $_SERVER['REQUEST_URI'] ?? '';
-        $isManagement = str_starts_with($uri, '/gestao');
-
-        // For management routes, try to gracefully redirect to dashboard instead of showing 500
-        if ($isManagement && $uri !== '/gestao' && $uri !== '/gestao/') {
-            // Clean any partial output
-            while (ob_get_level() > 0) { ob_end_clean(); }
-            Session::flash('error', 'Erro ao carregar a página: ' . $e->getMessage());
-            header('Location: ' . url('/gestao'));
-            exit;
-        }
+        } catch (\Throwable $logError) {}
 
         http_response_code(500);
-
-        if ($debug || $isManagement) {
-            echo '<h1>Error Debug</h1>';
-            echo '<p><strong>Message:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
-            echo '<p><strong>File:</strong> ' . htmlspecialchars($e->getFile()) . '</p>';
-            echo '<p><strong>Line:</strong> ' . $e->getLine() . '</p>';
-            echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
-            return;
-        }
 
         echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Erro interno</title>';
         echo '<style>body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#061a3a;color:#e7edf7;display:grid;place-items:center;min-height:100vh;padding:24px}';
         echo '.card{max-width:680px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:28px;box-shadow:0 14px 44px rgba(0,0,0,.35)}';
         echo 'h1{margin:0 0 12px;font-size:28px}p{margin:0;color:#b7c6df;line-height:1.6}a{color:#8ec1ff;text-decoration:none;font-weight:600}</style></head><body>';
         echo '<div class="card"><h1>Ops, tivemos um problema temporario.</h1><p>Nossa equipe ja foi notificada e estamos trabalhando para normalizar o sistema. Tente novamente em alguns instantes.</p>';
-        echo '<p style="margin-top:14px;"><a href="' . htmlspecialchars(url('/')) . '">Voltar para a pagina inicial</a></p></div></body></html>';
+        echo '<p style="margin-top:14px;"><a href="/">Voltar para a pagina inicial</a></p></div></body></html>';
     }
 }
