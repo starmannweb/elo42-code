@@ -1,8 +1,9 @@
-﻿FROM php:8.2-cli-alpine
+FROM php:8.2-cli-alpine
 
 WORKDIR /var/www/html
 
-RUN docker-php-ext-install pdo pdo_mysql
+RUN apk add --no-cache postgresql-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql
 
 COPY . .
 

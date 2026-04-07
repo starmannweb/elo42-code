@@ -1,4 +1,4 @@
-﻿services:
+services:
   - type: web
     name: elo42-code
     env: docker
@@ -12,3 +12,9 @@
         value: "false"
       - key: APP_URL
         value: https://elo42-code.onrender.com
+      - key: SESSION_SECURE
+        value: "true"
+      - key: SESSION_LIFETIME
+        value: "240"
+      - key: SESSION_NAME
+        value: elo42_session

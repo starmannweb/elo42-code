@@ -360,7 +360,23 @@ class AuthService
 
     private function shouldUseOfflineFallback(): bool
     {
-        return (bool) env('AUTH_ALLOW_OFFLINE', config('app.env', 'production') === 'local');
+        // Explicitly enabled via env
+        $explicit = env('AUTH_ALLOW_OFFLINE', null);
+        if ($explicit !== null) {
+            return (bool) $explicit;
+        }
+
+        // In local environment, always allow offline
+        if (config('app.env', 'production') === 'local') {
+            return true;
+        }
+
+        // If database is not available, allow offline fallback
+        if (!\App\Core\Database::isAvailable()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function bootstrapOfflineUser(array $data): int

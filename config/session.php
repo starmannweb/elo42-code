@@ -3,7 +3,7 @@
 $sessionPath = env('SESSION_PATH', BASE_PATH . '/storage/sessions');
 
 if (is_string($sessionPath) && $sessionPath !== '') {
-    $isAbsoluteWindows = preg_match('/^[A-Za-z]:[\\\\\\/]/', $sessionPath) === 1;
+    $isAbsoluteWindows = preg_match('/^[A-Za-z]:[\\\\\/]/', $sessionPath) === 1;
     $isAbsoluteUnix = str_starts_with($sessionPath, DIRECTORY_SEPARATOR);
 
     if (!$isAbsoluteWindows && !$isAbsoluteUnix) {
@@ -15,7 +15,7 @@ if (is_string($sessionPath) && $sessionPath !== '') {
 return [
     'name'      => env('SESSION_NAME', 'elo42_session'),
     'lifetime'  => (int) env('SESSION_LIFETIME', 120),
-    'secure'    => (bool) env('SESSION_SECURE', false),
-    'httponly'  => (bool) env('SESSION_HTTPONLY', true),
+    'secure'    => env('SESSION_SECURE', 'auto'), // 'auto' = detect from request
+    'httponly'   => (bool) env('SESSION_HTTPONLY', true),
     'path'      => $sessionPath,
 ];
