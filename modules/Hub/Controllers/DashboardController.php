@@ -1016,7 +1016,7 @@ class DashboardController extends Controller
     private function buildShowcaseItems(): array
     {
         return [
-            ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial com 7 dias gratuitos.', 'price' => 'R$ 97,00/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
+            ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial com 7 dias gratuitos.', 'price' => 'R$ 49,90/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
             ['icon' => 'book', 'title' => 'Expositor IA', 'description' => 'Geração de esboços e estudos bíblicos para apoio pastoral e ministerial.', 'price' => 'A partir de R$ 49,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/hub/expositor-ia')],
             ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação para captar até US$ 10.000/mês em anúncios.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
             ['icon' => 'gift', 'title' => 'Google para ONGs', 'description' => 'Trilha guiada para aprovação e criação do Google Workspace gratuito.', 'price' => 'R$ 297,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
@@ -1026,7 +1026,7 @@ class DashboardController extends Controller
             ['icon' => 'globe', 'title' => 'Site para Igrejas', 'description' => 'Sites profissionais para publicação com identidade visual da organização.', 'price' => 'R$ 67,00/mês', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/hub/sites')],
             ['icon' => 'hand', 'title' => 'Implantação Acompanhada', 'description' => 'Implementação do painel com apoio personalizado da equipe Elo 42.', 'price' => 'Em breve', 'badge' => '', 'badge_type' => '', 'cta' => 'Saber mais', 'url' => url('/contato')],
             ['icon' => 'diagnostic', 'title' => 'Diagnóstico Organizacional', 'description' => 'Análise completa da operação com recomendações práticas e plano de ação.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'calendar', 'title' => 'Workshop: Gestão Eficiente para Igrejas', 'description' => 'Formato em revisão no momento. O produto continua visível, mas temporariamente desativado.', 'price' => 'Temporariamente indisponível', 'badge' => 'Off', 'badge_type' => 'coming', 'cta' => 'Desativado', 'url' => '#', 'is_disabled' => true],
+            ['icon' => 'calendar', 'title' => 'Workshop: Gestão Eficiente para Igrejas', 'description' => 'Treinamento prático para líderes e equipes de gestão eclesiástica.', 'price' => 'Em breve', 'badge' => 'Em breve', 'badge_type' => 'coming', 'cta' => 'Em breve', 'url' => '#', 'is_disabled' => true],
         ];
     }
 
@@ -1078,7 +1078,7 @@ class DashboardController extends Controller
             [
                 'product'     => 'Painel de Gestão de Igrejas',
                 'package'     => 'Plano mensal com 7 dias grátis',
-                'price'       => 'R$ 97,00/mês',
+                'price'       => 'R$ 49,90/mês',
                 'description' => 'Acesso ao sistema de gestão com suporte inicial para implantação.',
                 'cta'         => 'Solicitar contratação',
                 'url'         => url('/contato'),

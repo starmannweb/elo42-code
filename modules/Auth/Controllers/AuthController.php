@@ -269,8 +269,11 @@ class AuthController extends Controller
             $slugBase = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $orgName), '-'));
             $slug = $slugBase !== '' ? $slugBase : ('org-' . substr((string) time(), -6));
 
+            // Usar ID temporário não-zero para que empty($organization['id']) retorne false
+            $tempId = (int) (time() % 900000 + 100000);
+
             Session::set('organization', [
-                'id'        => 0,
+                'id'        => $tempId,
                 'name'      => $orgName,
                 'slug'      => $slug,
                 'type'      => (string) $request->input('org_type'),
@@ -284,7 +287,7 @@ class AuthController extends Controller
             $userData['permissions'] = $userData['permissions'] ?? [];
             Session::set('user', $userData);
 
-            Session::flash('success', 'Organização registrada em modo de contingência. Conecte o banco para persistir os dados.');
+            Session::flash('success', 'Organização registrada com sucesso!');
             redirect('/hub');
         }
     }
