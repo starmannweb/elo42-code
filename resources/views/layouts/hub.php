@@ -21,6 +21,20 @@
         $organization = \App\Core\Session::get('organization');
         $organization = is_array($organization) ? $organization : null;
         $activeMenu = (string) ($activeMenu ?? 'dashboard');
+        $currentPlan = $organization['plan'] ?? 'free';
+        $isTrialActive = false;
+        $trialDaysLeft = 0;
+        if ($currentPlan === 'free' && !empty($user['created_at'])) {
+            try {
+                $created = new \DateTimeImmutable($user['created_at']);
+                $deadline = $created->modify('+7 days');
+                $now = new \DateTimeImmutable('now');
+                if ($now < $deadline) {
+                    $isTrialActive = true;
+                    $trialDaysLeft = (int) ceil(($deadline->getTimestamp() - $now->getTimestamp()) / 86400);
+                }
+            } catch (\Throwable $e) {}
+        }
         $parts = preg_split('/\s+/', trim((string) ($user['name'] ?? '')));
         $firstInitial = strtoupper(substr((string) ($parts[0] ?? 'U'), 0, 1));
         $lastInitial = strtoupper(substr((string) (end($parts) ?: 'U'), 0, 1));
@@ -31,7 +45,7 @@
             'entry_url'  => !empty($organization['id']) ? url('/gestao') : url('/onboarding/organizacao'),
             'is_trial'   => false,
         ];
-        $canAccessChurch = !empty($churchAccess['can_access']);
+        $canAccessChurch = !empty($churchAccess['can_access']) && ($organization['role_slug'] ?? '') !== 'member';
         $churchEntryUrl = (string) ($churchAccess['entry_url'] ?? url('/onboarding/organizacao'));
         $churchIsTrial = !empty($churchAccess['is_trial']);
 
@@ -44,7 +58,7 @@
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu lateral">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo-color.png') ?>" alt="Elo 42" height="54" class="logo-light" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
+                    <img src="<?= url('/assets/img/logo-color-new.png') ?>" alt="Elo 42" height="54" class="logo-light" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
                     <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="54" class="logo-dark" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
                 </a>
                 <p class="hub-sidebar__brand-subtitle">Hub de membros</p>
@@ -83,7 +97,7 @@
                     <span class="hub-nav-link__icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                     </span>
-                    Expositor IA
+                    Expositor IA <?php if ($currentPlan === 'free' && !$isTrialActive): ?><span style="margin-left:auto; font-size: 0.75rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-secondary);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span><?php endif; ?>
                 </a>
                 <a href="<?= url('/hub/creditos') ?>" class="hub-nav-link <?= e($isMenuActive('creditos', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">

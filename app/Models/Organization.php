@@ -24,8 +24,9 @@ class Organization extends Model
 
         try {
             $orgData['slug'] = static::generateSlug($orgData['name']);
-            $orgData['status'] = 'trial';
-            $orgData['trial_ends_at'] = date('Y-m-d H:i:s', strtotime('+30 days'));
+            $orgData['status'] = 'active';
+            $orgData['plan'] = 'free';
+            $orgData['trial_ends_at'] = null;
 
             $orgId = static::create($orgData);
 

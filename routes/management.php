@@ -7,7 +7,7 @@ use Modules\ChurchManagement\Controllers\EventController;
 use Modules\ChurchManagement\Controllers\FinancialController;
 use Modules\ChurchManagement\Controllers\GeneralController;
 
-$router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth']], function($router) {
+$router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organization', 'church_gestao']], function($router) {
 
     // Dashboard
     $router->get('/', [ManagementDashboardController::class, 'index']);
@@ -39,11 +39,13 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth']], functio
     $router->get('/eventos/{id}/editar', [EventController::class, 'edit']);
     $router->post('/eventos/{id}/editar', [EventController::class, 'update']);
 
-    // Financial
-    $router->get('/financeiro', [FinancialController::class, 'index']);
-    $router->get('/financeiro/novo', [FinancialController::class, 'create']);
-    $router->post('/financeiro', [FinancialController::class, 'store']);
-    $router->post('/financeiro/categoria', [FinancialController::class, 'createCategory']);
+    // Financial (Premium)
+    $router->group(['middleware' => ['plan:premium']], function($router) {
+        $router->get('/financeiro', [FinancialController::class, 'index']);
+        $router->get('/financeiro/novo', [FinancialController::class, 'create']);
+        $router->post('/financeiro', [FinancialController::class, 'store']);
+        $router->post('/financeiro/categoria', [FinancialController::class, 'createCategory']);
+    });
 
     // Requests
     $router->get('/solicitacoes', [GeneralController::class, 'requests']);
@@ -76,10 +78,12 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth']], functio
     $router->post('/planos/{id}/objetivo/{objective_id}/tarefa', [GeneralController::class, 'storeTask']);
     $router->post('/planos/{id}/tarefa/{task_id}/status', [GeneralController::class, 'updateTaskStatus']);
 
-    // Donations
-    $router->get('/doacoes', [GeneralController::class, 'donations']);
-    $router->get('/doacoes/nova', [GeneralController::class, 'createDonation']);
-    $router->post('/doacoes', [GeneralController::class, 'storeDonation']);
+    // Donations (Premium)
+    $router->group(['middleware' => ['plan:premium']], function($router) {
+        $router->get('/doacoes', [GeneralController::class, 'donations']);
+        $router->get('/doacoes/nova', [GeneralController::class, 'createDonation']);
+        $router->post('/doacoes', [GeneralController::class, 'storeDonation']);
+    });
 
     // Reports
     $router->get('/relatorios', [GeneralController::class, 'reports']);
@@ -90,6 +94,7 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth']], functio
     $router->post('/usuarios', [GeneralController::class, 'storeUser']);
     $router->post('/usuarios/{id}/excluir', [GeneralController::class, 'destroyUser']);
 
-    // Settings
+    // Settings and Billing
     $router->get('/configuracoes', [GeneralController::class, 'settings']);
+    $router->get('/assinatura', [\Modules\ChurchManagement\Controllers\BillingController::class, 'upgradePage']);
 });

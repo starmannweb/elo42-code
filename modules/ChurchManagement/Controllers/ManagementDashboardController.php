@@ -48,42 +48,9 @@ class ManagementDashboardController extends Controller
             } catch (\Throwable $e) {}
         }
 
-        $trial = $this->resolveTrialAccess();
-        if (!empty($trial['can_access'])) {
-            return [
-                'id'              => 0,
-                'name'            => 'Período de teste',
-                'is_trial'        => true,
-                'trial_days_left' => (int) ($trial['days_left'] ?? 0),
-            ];
-        }
-
         Session::flash('warning', 'Conclua o cadastro da organização para acessar o sistema da igreja.');
         redirect('/onboarding/organizacao');
-    }
-
-    private function resolveTrialAccess(): array
-    {
-        $user = Session::user() ?? [];
-        $createdAt = (string) ($user['created_at'] ?? '');
-        if ($createdAt === '') {
-            return ['can_access' => false, 'days_left' => 0];
-        }
-
-        try {
-            $created = new DateTimeImmutable($createdAt);
-            $deadline = $created->modify('+7 days');
-            $now = new DateTimeImmutable('now');
-            $diffSeconds = $deadline->getTimestamp() - $now->getTimestamp();
-            $daysLeft = (int) ceil($diffSeconds / 86400);
-
-            return [
-                'can_access' => $diffSeconds > 0,
-                'days_left'  => max(0, $daysLeft),
-            ];
-        } catch (\Throwable $e) {
-            return ['can_access' => false, 'days_left' => 0];
-        }
+        return [];
     }
 
     public function index(Request $request): void

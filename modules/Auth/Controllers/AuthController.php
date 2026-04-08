@@ -274,8 +274,8 @@ class AuthController extends Controller
                 'name'      => $orgName,
                 'slug'      => $slug,
                 'type'      => (string) $request->input('org_type'),
-                'plan'      => 'trial',
-                'status'    => 'trial',
+                'plan'      => 'free',
+                'status'    => 'active',
                 'role_slug' => 'owner',
                 'role_name' => 'Proprietario',
             ]);

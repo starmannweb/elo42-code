@@ -521,60 +521,24 @@ class DashboardController extends Controller
     private function resolveChurchManagementAccess(?array $organization, array $organizationDeadline): array
     {
         $hasOrganization = !empty($organization['id']);
-        $trialAvailable = !empty($organizationDeadline['is_required']) && empty($organizationDeadline['is_overdue']);
-        $daysLeft = (int) ($organizationDeadline['days_left'] ?? 0);
 
         return [
             'has_organization' => $hasOrganization,
-            'is_trial'         => !$hasOrganization && $trialAvailable,
-            'days_left'        => !$hasOrganization ? $daysLeft : null,
-            'can_access'       => $hasOrganization || $trialAvailable,
-            'entry_url'        => $hasOrganization || $trialAvailable ? url('/gestao') : url('/onboarding/organizacao'),
+            'is_trial'         => false,
+            'days_left'        => null,
+            'can_access'       => $hasOrganization,
+            'entry_url'        => $hasOrganization ? url('/gestao') : url('/onboarding/organizacao'),
         ];
     }
 
     private function resolveOrganizationDeadline(array $user, ?array $organization): array
     {
-        if (!empty($organization['id'])) {
-            return [
-                'is_required' => false,
-                'is_overdue'  => false,
-                'days_left'   => null,
-                'deadline_at' => null,
-            ];
-        }
-
-        $createdAt = (string) ($user['created_at'] ?? '');
-        if ($createdAt === '') {
-            return [
-                'is_required' => true,
-                'is_overdue'  => false,
-                'days_left'   => null,
-                'deadline_at' => null,
-            ];
-        }
-
-        try {
-            $created = new DateTimeImmutable($createdAt);
-            $deadline = $created->modify('+7 days');
-            $now = new DateTimeImmutable('now');
-            $diffSeconds = $deadline->getTimestamp() - $now->getTimestamp();
-            $daysLeft = (int) ceil($diffSeconds / 86400);
-
-            return [
-                'is_required' => true,
-                'is_overdue'  => $diffSeconds <= 0,
-                'days_left'   => max(0, $daysLeft),
-                'deadline_at' => $deadline->format('Y-m-d H:i:s'),
-            ];
-        } catch (\Throwable $e) {
-            return [
-                'is_required' => true,
-                'is_overdue'  => false,
-                'days_left'   => null,
-                'deadline_at' => null,
-            ];
-        }
+        return [
+            'is_required' => empty($organization['id']),
+            'is_overdue'  => false,
+            'days_left'   => null,
+            'deadline_at' => null,
+        ];
     }
 
     private function resolveSiteBuilderAccess(?array $organization): array
