@@ -58,8 +58,8 @@
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu lateral">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo-color-new.png') ?>" alt="Elo 42" height="54" class="logo-light" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
-                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="54" class="logo-dark" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="54">
+
                 </a>
                 <p class="hub-sidebar__brand-subtitle">Hub de membros</p>
             </div>
@@ -78,7 +78,7 @@
                     Loja
                 </a>
 
-                <?php if ($canAccessChurch): ?>
+                <?php if (($organization['role_slug'] ?? '') !== 'member'): ?>
                     <a href="<?= e($churchEntryUrl) ?>" class="hub-nav-link" target="_blank" rel="noopener noreferrer">
                         <span class="hub-nav-link__icon" aria-hidden="true">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg>
