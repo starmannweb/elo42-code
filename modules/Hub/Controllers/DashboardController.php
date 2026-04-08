@@ -480,8 +480,8 @@ class DashboardController extends Controller
                             'name'      => $organization['name'],
                             'slug'      => $organization['slug'] ?? '',
                             'type'      => $organization['type'] ?? '',
-                            'plan'      => $organization['plan'] ?? 'trial',
-                            'status'    => $organization['status'] ?? 'trial',
+                            'plan'      => $organization['plan'] ?? 'free',
+                            'status'    => $organization['status'] ?? 'active',
                             'role_slug' => $organization['role_slug'] ?? null,
                             'role_name' => $organization['role_name'] ?? null,
                         ]);
@@ -524,8 +524,8 @@ class DashboardController extends Controller
 
         return [
             'has_organization' => $hasOrganization,
-            'is_trial'         => false,
-            'days_left'        => null,
+            'is_trial'         => !$hasOrganization && !($organizationDeadline['is_overdue'] ?? false),
+            'days_left'        => $organizationDeadline['days_left'] ?? null,
             'can_access'       => $hasOrganization,
             'entry_url'        => $hasOrganization ? url('/gestao') : url('/onboarding/organizacao'),
         ];
@@ -533,12 +533,48 @@ class DashboardController extends Controller
 
     private function resolveOrganizationDeadline(array $user, ?array $organization): array
     {
-        return [
-            'is_required' => empty($organization['id']),
-            'is_overdue'  => false,
-            'days_left'   => null,
-            'deadline_at' => null,
-        ];
+        // Se já tem organização cadastrada, não há prazo pendente
+        if (!empty($organization['id'])) {
+            return [
+                'is_required' => false,
+                'is_overdue'  => false,
+                'days_left'   => null,
+                'deadline_at' => null,
+            ];
+        }
+
+        // Sem organização: calcular prazo de 7 dias a partir da criação
+        $createdAt = (string) ($user['created_at'] ?? '');
+        if ($createdAt === '') {
+            return [
+                'is_required' => true,
+                'is_overdue'  => false,
+                'days_left'   => 7,
+                'deadline_at' => null,
+            ];
+        }
+
+        try {
+            $created  = new DateTimeImmutable($createdAt);
+            $deadline = $created->modify('+7 days');
+            $now      = new DateTimeImmutable('now');
+            $isOverdue = $now >= $deadline;
+            $daysLeft  = $isOverdue ? 0 : (int) ceil(($deadline->getTimestamp() - $now->getTimestamp()) / 86400);
+
+            return [
+                'is_required' => true,
+                'is_overdue'  => $isOverdue,
+                'days_left'   => $daysLeft,
+                'deadline_at' => $deadline->format('Y-m-d H:i:s'),
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'is_required' => true,
+                'is_overdue'  => false,
+                'days_left'   => 7,
+                'deadline_at' => null,
+            ];
+        }
     }
 
     private function resolveSiteBuilderAccess(?array $organization): array

@@ -5,6 +5,7 @@ use Modules\Hub\Controllers\DashboardController;
 $router->group(['prefix' => 'hub', 'middleware' => ['csrf', 'auth']], function($router) {
     // Rotas liberadas sem organização
     $router->get('/', [DashboardController::class, 'index']);
+    $router->get('/vitrine', [DashboardController::class, 'vitrine']);
     $router->get('/suporte', [DashboardController::class, 'suporte']);
     $router->post('/suporte/tickets', [DashboardController::class, 'criarTicketSuporte']);
     $router->get('/configuracoes', [DashboardController::class, 'configuracoes']);
@@ -13,7 +14,6 @@ $router->group(['prefix' => 'hub', 'middleware' => ['csrf', 'auth']], function($
 
     // Funcionalidades restritas (exigem organização)
     $router->group(['middleware' => ['organization']], function($router) {
-        $router->get('/vitrine', [DashboardController::class, 'vitrine']);
         $router->get('/sites', [DashboardController::class, 'sites']);
         $router->post('/sites/gerar', [DashboardController::class, 'gerarSite']);
         $router->group(['middleware' => ['plan:premium']], function($router) {
