@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Session;
 use Modules\ChurchManagement\Models\Member;
+use Modules\ChurchManagement\Models\Donation;
 
 class ModuleController extends Controller
 {
@@ -149,12 +150,49 @@ class ModuleController extends Controller
     public function tithesOfferings(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Dizimos & Ofertas',
-                'dizimos-ofertas',
-                'Gerencie dizimos, ofertas e contribuicoes. Acompanhe entradas com QR Code PIX e relatorios detalhados.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>'
-            );
+            $orgId = $this->orgId();
+            $org = Session::get('organization');
+            $orgName = is_array($org) ? ($org['name'] ?? 'Igreja') : 'Igreja';
+
+            $donations = [];
+            $summary = ['total' => 0, 'tithe' => 0, 'offering' => 0, 'donors' => 0];
+            $pixKey = '';
+            $pixWarning = true;
+
+            if ($orgId > 0) {
+                try {
+                    $filters = [
+                        'start_date' => date('Y-m-01'),
+                        'end_date'   => date('Y-m-t'),
+                    ];
+                    $result = Donation::byOrg($orgId, $filters, 1, 30);
+                    $donations = $result['data'] ?? [];
+                    $summaryData = Donation::summaryByType($orgId, $filters['start_date'], $filters['end_date']);
+                    $summary = is_array($summaryData) ? $summaryData : $summary;
+                } catch (\Throwable $e) {}
+
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT value FROM settings WHERE organization_id = :oid AND `key` = 'pix_key' LIMIT 1");
+                    $stmt->execute(['oid' => $orgId]);
+                    $row = $stmt->fetch();
+                    if ($row && !empty($row['value'])) {
+                        $pixKey = $row['value'];
+                        $pixWarning = false;
+                    }
+                } catch (\Throwable $e) {}
+            }
+
+            $this->view('management/modules/tithes', [
+                'pageTitle'  => 'Dizimos & Ofertas — Gestao',
+                'breadcrumb' => 'Dizimos & Ofertas',
+                'activeMenu' => 'dizimos-ofertas',
+                'donations'  => $donations,
+                'summary'    => $summary,
+                'pixKey'     => $pixKey,
+                'pixWarning' => $pixWarning,
+                'orgName'    => $orgName,
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar dizimos & ofertas.');
             redirect('/gestao');
