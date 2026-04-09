@@ -29,44 +29,43 @@
             $organization = \App\Core\Session::get('organization');
             $organization = is_array($organization) ? $organization : [];
             $activeMenu = (string) ($activeMenu ?? 'dashboard');
-        $currentPlan = $organization['plan'] ?? 'free';
+        $currentPlan = is_array($organization) ? (string) ($organization['plan'] ?? 'free') : 'free';
+        
+        // Trial grace period
         $isTrialActive = false;
-        $trialDaysLeft = 0;
         if ($currentPlan === 'free' && !empty($user['created_at'])) {
             try {
                 $created = new \DateTimeImmutable($user['created_at']);
-                $deadline = $created->modify('+7 days');
-                $now = new \DateTimeImmutable('now');
-                if ($now < $deadline) {
+                if (new \DateTimeImmutable('now') < $created->modify('+7 days')) {
                     $isTrialActive = true;
-                    $trialDaysLeft = (int) ceil(($deadline->getTimestamp() - $now->getTimestamp()) / 86400);
                 }
             } catch (\Throwable $e) {}
         }
-            $parts = explode(' ', (string) ($user['name'] ?? ''));
-            $initials = strtoupper(substr((string) ($parts[0] ?? 'U'), 0, 1) . substr((string) (end($parts) ?: 'U'), 0, 1));
-            $uri = !empty($_GET['url']) ? '/' . trim((string) $_GET['url'], '/') : (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?? '/');
 
-            $linkClass = static function(string $path, string $uri, bool $startsWith = false): string {
-                if ($startsWith) {
-                    return str_starts_with($uri, $path) ? 'active' : '';
-                }
-                return $uri === $path ? 'active' : '';
-            };
+        $parts = explode(' ', (string) ($user['name'] ?? ''));
+        $initials = strtoupper(substr((string) ($parts[0] ?? 'U'), 0, 1) . substr((string) (end($parts) ?: 'U'), 0, 1));
+        $uri = !empty($_GET['url']) ? '/' . trim((string) $_GET['url'], '/') : (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?? '/');
 
-            $proLock = static function() use ($currentPlan, $isTrialActive): string {
-                if ($currentPlan === 'free' && !$isTrialActive) {
-                    return '<span style="margin-left:auto; font-size: 0.75rem;" title="Recurso Premium"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="color:#f59e0b;"><path d="M6 3h12l4 6-10 12L2 9l4-6z"></path></svg></span>';
-                }
-                return '';
-            };
+        $linkClass = static function(string $path, string $uri, bool $startsWith = false): string {
+            if ($startsWith) {
+                return str_starts_with($uri, $path) ? 'active' : '';
+            }
+            return $uri === $path ? 'active' : '';
+        };
+
+        $proLock = static function() use ($currentPlan): string {
+            if ($currentPlan === 'free') {
+                return '<span style="margin-left:auto; font-size: 0.75rem;" title="Recurso Premium"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="color:#f59e0b;"><path d="M6 3h12l4 6-10 12L2 9l4-6z"></path></svg></span>';
+            }
+            return '';
+        };
         ?>
 
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu do sistema da igreja">
             <div class="hub-sidebar__header">
-                <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo-color-new.png') ?>" alt="Elo 42" height="48" class="logo-light" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
-                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="48" class="logo-dark" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
+                <a href="<?= url('/hub') ?>" class="hub-sidebar__logo" style="display:flex; align-items:center; justify-content:center; height:48px;">
+                    <img src="<?= url('/assets/img/logo-color-new.png') ?>" alt="Elo 42" style="height:36px; width:auto; object-fit:contain;" class="logo-light" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" style="height:36px; width:auto; object-fit:contain;" class="logo-dark" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.svg') ?>'">
                 </a>
             </div>
 
@@ -113,12 +112,16 @@
                 </a>
 
                 <p class="hub-sidebar__section-title">Financeiro</p>
-                <a href="<?= url('/gestao/dizimos-ofertas') ?>" class="hub-nav-link <?= $linkClass('/gestao/dizimos-ofertas', $uri, true) ?>">
+                <a href="<?= url('/gestao/receitas') ?>" class="hub-nav-link <?= $linkClass('/gestao/receitas', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></span>
-                    Dízimos & Ofertas
+                    Receitas
                 </a>
                 <a href="<?= url('/gestao/despesas') ?>" class="hub-nav-link <?= $linkClass('/gestao/despesas', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l6-6"></path><circle cx="9.5" cy="8.5" r="1.5"></circle><circle cx="14.5" cy="13.5" r="1.5"></circle><rect x="2" y="2" width="20" height="20" rx="2.5"></rect></svg></span>
+                    Despesas
+                </a>
+                <a href="<?= url('/gestao/aprovacoes-despesas') ?>" class="hub-nav-link <?= $linkClass('/gestao/aprovacoes-despesas', $uri, true) ?>">
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></span>
                     Aprovações de Despesas <?= $proLock() ?>
                 </a>
                 <a href="<?= url('/gestao/auditoria') ?>" class="hub-nav-link <?= $linkClass('/gestao/auditoria', $uri, true) ?>">
@@ -127,7 +130,7 @@
                 </a>
                 <a href="<?= url('/gestao/contas') ?>" class="hub-nav-link <?= $linkClass('/gestao/contas', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14" rx="2"></rect><path d="M16 12h.01"></path><path d="M2.5 9h19"></path></svg></span>
-                    Contas / Caixa
+                    Contas / Caixa <?= $proLock() ?>
                 </a>
                 <a href="<?= url('/gestao/categorias-financeiras') ?>" class="hub-nav-link <?= $linkClass('/gestao/categorias-financeiras', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></span>
@@ -141,33 +144,41 @@
                 </a>
                 <a href="<?= url('/gestao/agenda') ?>" class="hub-nav-link <?= $linkClass('/gestao/agenda', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
-                    Agenda / Eventos <?= $proLock() ?>
+                    Agenda / Eventos
                 </a>
                 <a href="<?= url('/gestao/cursos') ?>" class="hub-nav-link <?= $linkClass('/gestao/cursos', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M4 4.5A2.5 2.5 0 0 1 6.5 7H20"></path><path d="M6.5 7v10"></path></svg></span>
                     Cursos <?= $proLock() ?>
                 </a>
+                <a href="<?= url('/gestao/campanhas') ?>" class="hub-nav-link <?= $linkClass('/gestao/campanhas', $uri, true) ?>">
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></span>
+                    Campanhas <?= $proLock() ?>
+                </a>
                 <a href="<?= url('/gestao/conquistas') ?>" class="hub-nav-link <?= $linkClass('/gestao/conquistas', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg></span>
                     Conquistas <?= $proLock() ?>
                 </a>
-                <a href="<?= url('/gestao/sermoes') ?>" class="hub-nav-link <?= $linkClass('/gestao/sermoes', $uri, true) ?>">
+                <a href="<?= url('/gestao/plano-leitura') ?>" class="hub-nav-link <?= $linkClass('/gestao/plano-leitura', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span>
-                    Sermões
+                    Plano de Leitura
+                </a>
+                <a href="<?= url('/gestao/sermoes') ?>" class="hub-nav-link <?= $linkClass('/gestao/sermoes', $uri, true) ?>">
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20v-6M6 20V10M18 20V4"></path></svg></span>
+                    Sermões & IA
+                </a>
+                <a href="<?= url('/gestao/ministracoes') ?>" class="hub-nav-link <?= $linkClass('/gestao/ministracoes', $uri, true) ?>">
+                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></span>
+                    Ministrações
                 </a>
 
                 <p class="hub-sidebar__section-title">Administração</p>
                 <a href="<?= url('/gestao/solicitacoes') ?>" class="hub-nav-link <?= $linkClass('/gestao/solicitacoes', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
-                    Pedidos
+                    Pedidos / Solicitações
                 </a>
-                <a href="<?= url('/gestao/aconselhamento') ?>" class="hub-nav-link <?= $linkClass('/gestao/aconselhamento', $uri, true) ?>">
+                <a href="<?= url('/gestao/atendimento-pastoral') ?>" class="hub-nav-link <?= $linkClass('/gestao/atendimento-pastoral', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
-                    Cuidado Pastoral
-                </a>
-                <a href="<?= url('/gestao/planos') ?>" class="hub-nav-link <?= $linkClass('/gestao/planos', $uri, true) ?>">
-                    <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></span>
-                    Plano de Ação <?= $proLock() ?>
+                    Atendimento Pastoral
                 </a>
                 <a href="<?= url('/gestao/relatorios') ?>" class="hub-nav-link <?= $linkClass('/gestao/relatorios', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg></span>
@@ -175,7 +186,7 @@
                 </a>
                 <a href="<?= url('/gestao/usuarios') ?>" class="hub-nav-link <?= $linkClass('/gestao/usuarios', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
-                    Controle de Usuários
+                    Controle de Usuários <?= $proLock() ?>
                 </a>
                 <a href="<?= url('/gestao/configuracoes') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes', $uri, true) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.17.42.26.86.26 1.31 0 .45-.09.89-.26 1.31"></path></svg></span>

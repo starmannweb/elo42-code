@@ -308,6 +308,48 @@ class ModuleController extends Controller
 
     // ── Administracao ────────────────────────────────────────
 
+    public function campaigns(Request $request): void
+    {
+        try {
+            $this->renderModule(
+                'Campanhas',
+                'campanhas',
+                'Gerencie as campanhas da sua igreja, acompanhe metas e engajamento.'
+            );
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar campanhas.');
+            redirect('/gestao');
+        }
+    }
+
+    public function readingPlan(Request $request): void
+    {
+        try {
+            $this->renderModule(
+                'Plano de Leitura',
+                'plano-leitura',
+                'Crie e acompanhe planos de leitura bíblica para engajar seus membros.'
+            );
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar plano de leitura.');
+            redirect('/gestao');
+        }
+    }
+
+    public function expensesApprovals(Request $request): void
+    {
+        try {
+            $this->renderModule(
+                'Aprovações de Despesas',
+                'aprovacoes-despesas',
+                'Revise e aprove as despesas lançadas pela equipe financeira.'
+            );
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar aprovações de despesas.');
+            redirect('/gestao');
+        }
+    }
+
     public function ai(Request $request): void
     {
         try {
