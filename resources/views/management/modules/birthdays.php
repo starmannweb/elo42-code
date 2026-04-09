@@ -20,10 +20,17 @@
             <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; background: var(--color-primary-soft, rgba(30,58,138,0.08)); color: var(--color-primary, #1e3a8a); margin-bottom: 1rem;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-3-3.87"></path><path d="M4 21v-2a4 4 0 0 1 3-3.87"></path><circle cx="12" cy="7" r="4"></circle><path d="M12 3v1"></path></svg>
             </div>
-            <h2 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 0.5rem;">Nenhum aniversariante este mes</h2>
+            <h2 style="font-size: 1.1rem; font-weight: 600; margin: 0 0 0.5rem;">Nenhum aniversariante este mês</h2>
             <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">Cadastre membros com data de nascimento para visualizar os aniversariantes.</p>
         </div>
     <?php else: ?>
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+            <div style="font-size: 0.875rem; color: var(--text-primary); line-height: 1.5;">
+                <strong style="color: #d97706;">Lembrete pastoral:</strong> Não se esqueça de parabenizar os aniversariantes do mês! Um pequeno gesto de carinho e uma oração podem fazer toda a diferença na vida dos membros da sua igreja.
+            </div>
+        </div>
+        
         <div style="display: grid; gap: 0.75rem;">
             <?php foreach ($members as $m): ?>
                 <?php

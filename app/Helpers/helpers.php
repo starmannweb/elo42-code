@@ -47,9 +47,9 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('e')) {
-    function e(?string $value): string
+    function e(mixed $value): string
     {
-        return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8', true);
+        return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES, 'UTF-8', true);
     }
 }
 

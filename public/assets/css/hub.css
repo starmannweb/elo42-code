@@ -681,8 +681,6 @@
 }
 
 .showcase-card.is-disabled {
-    opacity: 0.78;
-    filter: saturate(0.6) brightness(0.86);
     border-color: rgba(140, 156, 188, 0.4);
 }
 
