@@ -56,7 +56,7 @@
 
             $proLock = static function() use ($currentPlan, $isTrialActive): string {
                 if ($currentPlan === 'free' && !$isTrialActive) {
-                    return '<span style="margin-left:auto; font-size: 0.75rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-secondary);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>';
+                    return '<span style="margin-left:auto; font-size: 0.75rem;" title="Recurso Premium"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="color:#f59e0b;"><path d="M6 3h12l4 6-10 12L2 9l4-6z"></path></svg></span>';
                 }
                 return '';
             };

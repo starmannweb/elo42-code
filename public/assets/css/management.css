@@ -4,19 +4,19 @@
 
 /* --- Logo theme switcher --- */
 .hub-sidebar__logo .logo-dark {
-    display: none;
+    display: inline-block;
 }
 
 .hub-sidebar__logo .logo-light {
-    display: inline-block;
+    display: none;
 }
 
 [data-hub-theme="light"] .hub-sidebar__logo .logo-dark {
-    display: inline-block;
+    display: none;
 }
 
 [data-hub-theme="light"] .hub-sidebar__logo .logo-light {
-    display: none;
+    display: inline-block;
 }
 
 /* --- Management header --- */

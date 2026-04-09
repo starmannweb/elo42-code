@@ -94,6 +94,11 @@ class App
         // Clean any partial output first
         while (ob_get_level() > 0) { @ob_end_clean(); }
 
+        // Print error directly to browser to debug the print screen error
+        if (str_contains($_SERVER['REQUEST_URI'] ?? '', '/hub/usuarios')) {
+            die("Debug Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+        }
+
         // Log error
         try {
             (new Logger())->error('app.unhandled_exception', [
@@ -126,5 +131,10 @@ class App
         echo 'h1{margin:0 0 12px;font-size:28px}p{margin:0;color:#b7c6df;line-height:1.6}a{color:#8ec1ff;text-decoration:none;font-weight:600}</style></head><body>';
         echo '<div class="card"><h1>Ops, tivemos um problema temporario.</h1><p>Nossa equipe ja foi notificada e estamos trabalhando para normalizar o sistema. Tente novamente em alguns instantes.</p>';
         echo '<p style="margin-top:14px;"><a href="/">Voltar para a pagina inicial</a></p></div></body></html>';
+        
+        // Em caso de debug temporário, imprime o erro no final escondido no HTML
+        if (isset($_GET['debug_error'])) {
+            echo "<!-- \n" . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString() . "\n-->";
+        }
     }
 }
