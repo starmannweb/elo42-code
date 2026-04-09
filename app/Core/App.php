@@ -76,6 +76,7 @@ class App
             'auth',
             'hub',
             'management',
+            'portal',
             'admin',
             'api',
         ];

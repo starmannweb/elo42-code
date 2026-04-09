@@ -173,7 +173,15 @@ $balance = (float) ($financial['balance'] ?? 0);
         </article>
     </section>
 
-    <section class="mgmt-dashboard-grid" style="margin-top:var(--space-4);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 class="mgmt-section-title" style="margin-bottom: 0;">Visão Geral</h2>
+        <a href="<?= url('/membro') ?>" target="_blank" class="btn btn--ghost btn--sm" style="display:inline-flex; align-items:center; gap:0.5rem; color:var(--color-primary); font-weight:600;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            Acessar Portal do Membro
+        </a>
+    </div>
+
+    <section class="mgmt-dashboard-grid" style="grid-template-columns: repeat(4, 1fr);">
         <article class="mgmt-dashboard-card" style="display:flex; flex-direction:column; justify-content:space-between; min-height:180px;">
             <header class="mgmt-dashboard-card__header">
                 <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Próximos Eventos</h2>
