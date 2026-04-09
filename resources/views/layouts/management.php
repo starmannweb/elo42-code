@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Elo 42">
+    <link rel="manifest" href="<?= url('/manifest.json') ?>">
+    <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
     <title><?= e($pageTitle ?? 'Gestão — Elo 42') ?></title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -233,5 +239,14 @@
     </div>
 
     <script src="<?= asset('js/app.js') ?>"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('<?= url('/sw.js') ?>')
+                    .then(reg => console.log('ServiceWorker registered:', reg.scope))
+                    .catch(err => console.log('ServiceWorker registration failed:', err));
+            });
+        }
+    </script>
 </body>
 </html>
