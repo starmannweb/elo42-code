@@ -1,19 +1,42 @@
-<?php $__view->extends('management'); ?>
+<?php $__view->extends('layouts/management'); ?>
+
 <?php $__view->section('content'); ?>
+<div class="mgmt-header">
+    <div>
+        <h1 class="mgmt-title">Configurações</h1>
+        <p class="mgmt-subtitle">Gerencie as informações principais da sua organização</p>
+    </div>
+    <div class="mgmt-actions">
+        <a href="<?= url('/gestao') ?>" class="btn btn--ghost">Voltar</a>
+        <button type="submit" form="form-settings" class="btn btn--primary">Salvar Alterações</button>
+    </div>
+</div>
 
 <!-- Tabs de navegação -->
-<div style="display: flex; gap: var(--space-1); margin-bottom: var(--space-6); flex-wrap: wrap;">
-    <a href="<?= url('/gestao/configuracoes?tab=church') ?>" style="padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 8px; text-decoration:none; display:flex; align-items:center; gap:6px; background: var(--color-primary); color: white;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> Igreja</a>
-    <a href="<?= url('/gestao/configuracoes?tab=seo') ?>" style="padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 8px; text-decoration:none; display:flex; align-items:center; gap:6px; color: var(--text-muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> SEO e Metatags</a>
-    <a href="<?= url('/gestao/configuracoes?tab=pwa') ?>" style="padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 8px; text-decoration:none; display:flex; align-items:center; gap:6px; color: var(--text-muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> App PWA</a>
-    <a href="<?= url('/gestao/configuracoes?tab=social') ?>" style="padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 8px; text-decoration:none; display:flex; align-items:center; gap:6px; color: var(--text-muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> Redes</a>
-    <a href="<?= url('/gestao/configuracoes?tab=theme') ?>" style="padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 8px; text-decoration:none; display:flex; align-items:center; gap:6px; color: var(--text-muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="0.5"></circle><circle cx="17.5" cy="10.5" r="0.5"></circle><circle cx="8.5" cy="7.5" r="0.5"></circle><circle cx="6.5" cy="12.5" r="0.5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg> Tema</a>
-    <a href="<?= url('/gestao/configuracoes?tab=integrations') ?>" style="padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 8px; text-decoration:none; display:flex; align-items:center; gap:6px; color: var(--text-muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Integrações</a>
+<div style="border-bottom: 1px solid var(--color-border-light); margin-bottom: 1.5rem; display: flex; gap: 1.5rem; overflow-x: auto;">
+    <a href="<?= url('/gestao/configuracoes') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'igreja' ? '600' : '500' ?>; white-space: nowrap;">
+        Igreja
+    </a>
+    <a href="<?= url('/gestao/configuracoes/pix') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pix' ? '600' : '500' ?>; white-space: nowrap;">
+        PIX / Ofertas
+    </a>
+    <a href="<?= url('/gestao/configuracoes/ia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'ia' ? '600' : '500' ?>; white-space: nowrap;">
+        Inteligência Artificial
+    </a>
+    <a href="<?= url('/gestao/configuracoes/aparencia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'aparencia' ? '600' : '500' ?>; white-space: nowrap;">
+        Aparência
+    </a>
+    <a href="<?= url('/gestao/configuracoes/seo') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'seo' ? '600' : '500' ?>; white-space: nowrap;">
+        SEO
+    </a>
+    <a href="<?= url('/gestao/configuracoes/pwa') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pwa' ? '600' : '500' ?>; white-space: nowrap;">
+        PWA
+    </a>
 </div>
 
 <!-- Formulário de configurações da Igreja -->
 <div class="mgmt-dashboard-card" style="max-width: 100%;">
-    <form method="POST" action="<?= url('/gestao/configuracoes') ?>">
+    <form id="form-settings" method="POST" action="<?= url('/gestao/configuracoes') ?>">
         <?= csrf_field() ?>
         
         <div style="margin-bottom: var(--space-5);">
