@@ -204,27 +204,27 @@
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></span>
                     Igreja
                 </a>
-                <a href="<?= url('/gestao/categorias-financeiras') ?>" class="hub-nav-link <?= $linkClass('/gestao/categorias-financeiras', $uri) ?>">
+                <a href="<?= url('/gestao/categorias-financeiras') ?>" class="hub-nav-link <?= $linkClass('/gestao/categorias-financeiras', $uri) ?>" <?= $uri === '/gestao/categorias-financeiras' ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></span>
                     Categorias
                 </a>
-                <a href="<?= url('/gestao/configuracoes/pix') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/pix', $uri) ?>">
+                <a href="<?= url('/gestao/configuracoes/pix') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/pix', $uri) ?>" <?= $uri === '/gestao/configuracoes/pix' ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></span>
                     PIX/Ofertas
                 </a>
-                <a href="<?= url('/gestao/configuracoes/ia') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/ia', $uri) ?>">
+                <a href="<?= url('/gestao/configuracoes/ia') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/ia', $uri) ?>" <?= $uri === '/gestao/configuracoes/ia' ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1a7 7 0 0 1-7 7h-2a7 7 0 0 1-7-7H3a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"></path><circle cx="10" cy="13" r="1"></circle><circle cx="14" cy="13" r="1"></circle></svg></span>
                     Inteligência Artificial
                 </a>
-                <a href="<?= url('/gestao/configuracoes/aparencia') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/aparencia', $uri) ?>">
+                <a href="<?= url('/gestao/configuracoes/aparencia') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/aparencia', $uri) ?>" <?= $uri === '/gestao/configuracoes/aparencia' ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"></circle><path d="M14.5 14.5l-6-6M9.5 17.5l-6-6"></path><path d="M17 19.5c-2.8-2.8-6.2-1.5-8-1 1.8 1.8 4.2 3.5 7 2.5 1.2-.5 1.5-1 1-1.5z"></path></svg></span>
                     Aparência
                 </a>
-                <a href="<?= url('/gestao/configuracoes/seo') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/seo', $uri) ?>">
+                <a href="<?= url('/gestao/configuracoes/seo') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/seo', $uri) ?>" <?= $uri === '/gestao/configuracoes/seo' ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
                     SEO
                 </a>
-                <a href="<?= url('/gestao/configuracoes/pwa') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/pwa', $uri) ?>">
+                <a href="<?= url('/gestao/configuracoes/pwa') ?>" class="hub-nav-link <?= $linkClass('/gestao/configuracoes/pwa', $uri) ?>" <?= $uri === '/gestao/configuracoes/pwa' ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></span>
                     PWA
                 </a>
