@@ -56,8 +56,8 @@ class ModuleController extends Controller
             $this->renderModule(
                 'Novos Convertidos',
                 'novos-convertidos',
-                'Acompanhe os novos convertidos, registre decisoes de fe e gerencie o processo de discipulado.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11a4 4 0 0 1 7-2.6A4 4 0 0 1 18 10c0 6.5-6 11-6 11z"></path></svg>'
+                'Acompanhe os novos convertidos, registre decisões de fé e gerencie o processo de discipulado.',
+                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>'
             );
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar novos convertidos.');
@@ -256,69 +256,19 @@ class ModuleController extends Controller
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar categorias.');
             redirect('/gestao');
-        }
-    }
-
     // ── Comunicacao ──────────────────────────────────────────
-
-    public function banners(Request $request): void
-    {
-        try {
-            $this->renderModule(
-                'Gerenciador de Banners',
-                'banners',
-                'Crie e gerencie banners para comunicacao visual da igreja, avisos e campanhas.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>'
-            );
-        } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar banners.');
-            redirect('/gestao');
-        }
-    }
-
-    public function courses(Request $request): void
-    {
-        try {
-            $this->renderModule(
-                'Cursos',
-                'cursos',
-                'Crie e gerencie cursos e classes para formacao de membros e lideranca.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M4 4.5A2.5 2.5 0 0 1 6.5 7H20"></path><path d="M6.5 7v10"></path></svg>'
-            );
-        } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar cursos.');
-            redirect('/gestao');
-        }
-    }
-
-    public function achievements(Request $request): void
-    {
-        try {
-            $this->renderModule(
-                'Conquistas',
-                'conquistas',
-                'Gerencie conquistas e marcos importantes dos membros da sua igreja.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>'
-            );
-        } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar conquistas.');
-            redirect('/gestao');
-        }
-    }
-
-    // ── Administracao ────────────────────────────────────────
 
     public function campaigns(Request $request): void
     {
         try {
             $this->renderModule(
-                'Campanhas',
+                'Campanhas de Arrecadação',
                 'campanhas',
-                'Gerencie as campanhas da sua igreja, acompanhe metas e engajamento.'
+                'Crie campanhas de arrecadação e acompanhe o progresso das doações.',
+                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>'
             );
         } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar campanhas.');
-            redirect('/gestao');
+            $this->handleError($e);
         }
     }
 
@@ -326,13 +276,13 @@ class ModuleController extends Controller
     {
         try {
             $this->renderModule(
-                'Plano de Leitura',
+                'Planos de Leitura',
                 'plano-leitura',
-                'Crie e acompanhe planos de leitura bíblica para engajar seus membros.'
+                'Gerencie planos de leitura bíblica para engajar a igreja.',
+                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>'
             );
         } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar plano de leitura.');
-            redirect('/gestao');
+            $this->handleError($e);
         }
     }
 
@@ -342,26 +292,18 @@ class ModuleController extends Controller
             $this->renderModule(
                 'Aprovações de Despesas',
                 'aprovacoes-despesas',
-                'Revise e aprove as despesas lançadas pela equipe financeira.'
+                'Gerencie as requisições de compra e aprovações de gastos da igreja.',
+                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
             );
         } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar aprovações de despesas.');
-            redirect('/gestao');
+            $this->handleError($e);
         }
     }
 
-    public function ai(Request $request): void
+    protected function handleError(\Throwable $e): void
     {
-        try {
-            $this->renderModule(
-                'Inteligencia Artificial',
-                'ia',
-                'Utilize IA para gerar insights, sermoes, estudos biblicos e auxiliar na gestao pastoral.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1a7 7 0 0 1-7 7h-2a7 7 0 0 1-7-7H3a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"></path><circle cx="10" cy="13" r="1"></circle><circle cx="14" cy="13" r="1"></circle></svg>'
-            );
-        } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar IA.');
-            redirect('/gestao');
-        }
+        Session::flash('error', 'Ocorreu um erro ao carregar a página: ' . $e->getMessage());
+        redirect('/gestao');
     }
 }
+
