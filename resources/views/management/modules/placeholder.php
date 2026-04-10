@@ -1,28 +1,33 @@
-<?php $__view->extends('management', ['pageTitle' => $pageTitle ?? 'Gestao', 'breadcrumb' => $breadcrumb ?? '', 'activeMenu' => $activeMenu ?? '']); ?>
+<?php $__view->extends('layouts/management'); ?>
 
 <?php $__view->section('content'); ?>
-<div style="max-width: 720px; margin: 2rem auto; text-align: center;">
-    <div style="display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 16px; background: var(--color-primary-soft, rgba(30,58,138,0.08)); color: var(--color-primary, #1e3a8a); margin-bottom: 1.5rem;">
-        <?= $moduleIcon ?? '' ?>
+<div class="mgmt-header">
+    <div>
+        <h1 class="mgmt-title"><?= e($moduleTitle) ?></h1>
+        <p class="mgmt-subtitle"><?= e($moduleDescription) ?></p>
     </div>
-    <h1 style="font-size: 1.75rem; font-weight: 700; margin: 0 0 0.75rem; color: var(--text-primary);"><?= htmlspecialchars($moduleTitle ?? 'Modulo') ?></h1>
-    <p style="font-size: 1rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 2rem;">
-        <?= htmlspecialchars($moduleDescription ?? '') ?>
+    <div class="mgmt-actions">
+        <button class="btn btn--outline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Exportar
+        </button>
+        <button class="btn btn--primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Novo Registro
+        </button>
+    </div>
+</div>
+
+<div class="mgmt-dashboard-card" style="margin-top: 1.5rem; text-align: center; padding: 4rem 2rem;">
+    <div style="width: 80px; height: 80px; background: rgba(30, 58, 138, 0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--color-primary);">
+        <?= $moduleIcon ?>
+    </div>
+    <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--color-text-primary); margin-bottom: 0.5rem;">
+        <?= e($moduleTitle) ?> em breve!
+    </h2>
+    <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 2rem;">
+        Estamos finalizando os últimos detalhes deste módulo para tornar a gestão da sua igreja ainda mais completa.
     </p>
-
-    <div style="background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e5e7eb); border-radius: 12px; padding: 2.5rem 2rem; margin-bottom: 1.5rem;">
-        <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; margin-bottom: 1rem;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
-        </div>
-        <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0 0 0.5rem; color: var(--text-primary);">Em desenvolvimento</h2>
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0;">
-            Este modulo esta sendo construido e estara disponivel em breve. Fique atento as atualizacoes!
-        </p>
-    </div>
-
-    <a href="<?= url('/gestao') ?>" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: var(--color-primary, #1e3a8a); color: #fff; border-radius: 8px; text-decoration: none; font-size: 0.875rem; font-weight: 500;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>
-        Voltar ao Dashboard
-    </a>
+    <button class="btn btn--outline" style="min-width: 200px;">Me avise quando lançar</button>
 </div>
 <?php $__view->endSection(); ?>
