@@ -77,6 +77,22 @@ class FinancialController extends Controller
         }
     }
 
+    public function categories(Request $request): void
+    {
+        try {
+            $context = $this->buildBaseContext('Categorias Financeiras', 'categorias-financeiras');
+            
+            $categories = FinancialTransaction::getCategories($this->orgId());
+
+            $this->view('management/financial/categories', array_merge($context, [
+                'pageTitle' => 'Categorias Financeiras — Gestão',
+                'categories' => $categories
+            ]));
+        } catch (\Throwable $e) {
+            $this->handleError($e);
+        }
+    }
+
     public function create(Request $request): void
     {
         try {
