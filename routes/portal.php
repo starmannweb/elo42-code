@@ -15,4 +15,5 @@ $router->group(['prefix' => 'membro', 'middleware' => ['csrf', 'auth', 'organiza
     $router->get('/pedidos', [MemberPortalController::class, 'requests']);
     $router->get('/ofertas', [MemberPortalController::class, 'offerings']);
     $router->get('/configuracoes', [MemberPortalController::class, 'settings']);
+    $router->post('/configuracoes/salvar', [MemberPortalController::class, 'saveSettings']);
 });

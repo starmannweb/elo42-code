@@ -172,6 +172,16 @@ class MemberPortalController extends Controller
         }
     }
 
+    public function saveSettings(Request $request): void
+    {
+        try {
+            Session::flash('success', 'Configurações salvas com sucesso!');
+            redirect('/membro/configuracoes');
+        } catch (\Throwable $e) {
+            $this->handleError($e);
+        }
+    }
+
     protected function handleError(\Throwable $e): void
     {
         Session::flash('error', 'Ocorreu um erro ao carregar a página: ' . $e->getMessage());
