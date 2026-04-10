@@ -470,10 +470,81 @@ class GeneralController extends Controller
     public function settings(Request $req): void
     {
         try {
-            $this->view('management/settings/index', [
-                'pageTitle' => 'Configurações — Gestão', 'breadcrumb' => 'Configurações',
-                'categories' => FinancialTransaction::getCategories($this->orgId()),
-            ]);
+            $context = $this->buildBaseContext('Configurações da Igreja', 'configuracoes');
+            $this->view('management/settings/index', array_merge($context, [
+                'pageTitle' => 'Configurações da Igreja — Gestão',
+                'activeTab' => 'igreja'
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function settingsPix(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Configurações PIX / Ofertas', 'configuracoes/pix');
+            $this->view('management/settings/pix', array_merge($context, [
+                'pageTitle' => 'PIX / Ofertas — Gestão',
+                'activeTab' => 'pix'
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function settingsAi(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Inteligência Artificial', 'configuracoes/ia');
+            $this->view('management/settings/ia', array_merge($context, [
+                'pageTitle' => 'IA — Gestão',
+                'activeTab' => 'ia'
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function settingsAppearance(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Aparência', 'configuracoes/aparencia');
+            $this->view('management/settings/appearance', array_merge($context, [
+                'pageTitle' => 'Aparência — Gestão',
+                'activeTab' => 'aparencia'
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function settingsSeo(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('SEO & Meta Tags', 'configuracoes/seo');
+            $this->view('management/settings/seo', array_merge($context, [
+                'pageTitle' => 'SEO — Gestão',
+                'activeTab' => 'seo'
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function settingsPwa(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Configurações PWA', 'configuracoes/pwa');
+            $this->view('management/settings/pwa', array_merge($context, [
+                'pageTitle' => 'PWA — Gestão',
+                'activeTab' => 'pwa'
+            ]));
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
             redirect('/gestao');

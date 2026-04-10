@@ -32,6 +32,29 @@ class MemberPortalController extends Controller
         ];
     }
 
+    public function demoAccess(Request $request): void
+    {
+        // Força criação temporária na sessão para simular membro (Apenas demonstração)
+        Session::set('user', [
+            'id' => 9999,
+            'name' => 'Membro de Demonstração',
+            'email' => 'membro@demo.elo42.com',
+            'phone' => '(11) 98765-4321',
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+        
+        Session::set('organization', [
+            'id' => 9999,
+            'name' => 'Igreja Alpha Demonstração',
+            'slug' => 'igreja-alpha-demonstracao',
+            'plan' => 'premium',
+            'role_name' => 'Membro'
+        ]);
+
+        Session::flash('success', 'Acesso Demo do Membro criado com sucesso!');
+        redirect('/membro');
+    }
+
     public function index(Request $request): void
     {
         try {

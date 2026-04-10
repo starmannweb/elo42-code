@@ -92,5 +92,12 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
     $router->get('/relatorios', [GeneralController::class, 'reports']);
 
     $router->get('/configuracoes', [GeneralController::class, 'settings']);
+    $router->post('/configuracoes', [GeneralController::class, 'saveSettings']);
+    $router->get('/configuracoes/pix', [GeneralController::class, 'settingsPix']);
+    $router->get('/configuracoes/ia', [GeneralController::class, 'settingsAi']);
+    $router->get('/configuracoes/aparencia', [GeneralController::class, 'settingsAppearance']);
+    $router->get('/configuracoes/seo', [GeneralController::class, 'settingsSeo']);
+    $router->get('/configuracoes/pwa', [GeneralController::class, 'settingsPwa']);
+
     $router->get('/assinatura', [\Modules\ChurchManagement\Controllers\BillingController::class, 'upgradePage']);
 });

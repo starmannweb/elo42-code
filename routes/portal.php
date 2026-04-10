@@ -2,6 +2,9 @@
 
 use Modules\Portal\Controllers\MemberPortalController;
 
+// Rota para acesso demo sem verificação de autenticação completa (somente para testes)
+$router->get('/demo/membro', [MemberPortalController::class, 'demoAccess']);
+
 $router->group(['prefix' => 'membro', 'middleware' => ['csrf', 'auth', 'organization', 'plan:premium']], function($router) {
     $router->get('/', [MemberPortalController::class, 'index']);
     $router->get('/biblia', [MemberPortalController::class, 'bible']);
