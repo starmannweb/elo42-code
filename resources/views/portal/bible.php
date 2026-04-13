@@ -1,4 +1,4 @@
-<?php $__view->extends('layouts/portal'); ?>
+<?php $__view->extends('portal'); ?>
 
 <?php $__view->section('content'); ?>
 <div style="max-width: 800px; margin: 0 auto; padding-top: 1rem;">

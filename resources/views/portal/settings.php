@@ -1,4 +1,4 @@
-<?php $__view->extends('layouts/portal'); ?>
+<?php $__view->extends('portal'); ?>
 
 <?php $__view->section('content'); ?>
 <div class="portal-header">
