@@ -361,12 +361,46 @@ class ModuleController extends Controller
     public function expenses(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Aprovacoes de Despesas',
-                'despesas',
-                'Controle e aprove despesas da igreja com fluxo de aprovacao e historico completo.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l6-6"></path><circle cx="9.5" cy="8.5" r="1.5"></circle><circle cx="14.5" cy="13.5" r="1.5"></circle><rect x="2" y="2" width="20" height="20" rx="2.5"></rect></svg>'
-            );
+            $orgId = $this->orgId();
+            $search = $request->query('search', '');
+            $month = $request->query('month', date('Y-m'));
+            
+            $expenses = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $sql = "SELECT * FROM expenses WHERE organization_id = :org_id";
+                    $params = ['org_id' => $orgId];
+                    
+                    if (!empty($search)) {
+                        $sql .= " AND (description LIKE :search OR category LIKE :search)";
+                        $params['search'] = '%' . $search . '%';
+                    }
+                    
+                    if (!empty($month)) {
+                        $sql .= " AND DATE_FORMAT(expense_date, '%Y-%m') = :month";
+                        $params['month'] = $month;
+                    }
+                    
+                    $sql .= " ORDER BY expense_date DESC";
+                    
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $expenses = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching expenses: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/financial/index', [
+                'pageTitle' => 'Despesas — Gestão',
+                'breadcrumb' => 'Despesas',
+                'activeMenu' => 'despesas',
+                'expenses' => $expenses,
+                'search' => $search,
+                'month' => $month,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar despesas.');
             redirect('/gestao');
@@ -490,15 +524,33 @@ class ModuleController extends Controller
     public function financialCategories(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Categorias Financeiras',
-                'categorias-financeiras',
-                'Organize receitas e despesas em categorias para melhor controle e relatorios.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>'
-            );
+            $orgId = $this->orgId();
+            
+            $categories = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT * FROM financial_categories WHERE organization_id = :org_id ORDER BY name ASC");
+                    $stmt->execute(['org_id' => $orgId]);
+                    $categories = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching financial categories: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/financial/categories', [
+                'pageTitle' => 'Categorias Financeiras — Gestão',
+                'breadcrumb' => 'Categorias',
+                'activeMenu' => 'categorias-financeiras',
+                'categories' => $categories,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar categorias.');
             redirect('/gestao');
+        }
+    }
+
     // ── Comunicacao ──────────────────────────────────────────
 
     public function campaigns(Request $request): void
@@ -607,6 +659,93 @@ class ModuleController extends Controller
                 'search' => $search,
                 'status' => $status,
                 'month' => $month,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleError($e);
+        }
+    }
+
+    public function banners(Request $request): void
+    {
+        try {
+            $orgId = $this->orgId();
+            
+            $banners = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT * FROM banners WHERE organization_id = :org_id ORDER BY display_order ASC, created_at DESC");
+                    $stmt->execute(['org_id' => $orgId]);
+                    $banners = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching banners: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/banners', [
+                'pageTitle' => 'Banners — Gestão',
+                'breadcrumb' => 'Banners',
+                'activeMenu' => 'banners',
+                'banners' => $banners,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleError($e);
+        }
+    }
+
+    public function courses(Request $request): void
+    {
+        try {
+            $orgId = $this->orgId();
+            
+            $courses = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT * FROM courses WHERE organization_id = :org_id ORDER BY created_at DESC");
+                    $stmt->execute(['org_id' => $orgId]);
+                    $courses = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching courses: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/courses', [
+                'pageTitle' => 'Cursos — Gestão',
+                'breadcrumb' => 'Cursos',
+                'activeMenu' => 'cursos',
+                'courses' => $courses,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleError($e);
+        }
+    }
+
+    public function achievements(Request $request): void
+    {
+        try {
+            $orgId = $this->orgId();
+            
+            $achievements = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT * FROM achievements WHERE organization_id = :org_id ORDER BY created_at DESC");
+                    $stmt->execute(['org_id' => $orgId]);
+                    $achievements = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching achievements: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/achievements', [
+                'pageTitle' => 'Conquistas — Gestão',
+                'breadcrumb' => 'Conquistas',
+                'activeMenu' => 'conquistas',
+                'achievements' => $achievements,
                 'csrf' => Session::get('csrf_token', ''),
             ]);
         } catch (\Throwable $e) {
