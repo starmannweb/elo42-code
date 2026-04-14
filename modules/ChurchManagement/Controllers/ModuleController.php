@@ -38,12 +38,53 @@ class ModuleController extends Controller
     public function visitors(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Visitantes',
-                'visitantes',
-                'Gerencie os visitantes da sua igreja, acompanhe frequencia e faca o acompanhamento pastoral.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle><line x1="12" y1="11" x2="12" y2="17"></line><line x1="9" y1="14" x2="15" y2="14"></line></svg>'
-            );
+            $orgId = $this->orgId();
+            $search = $request->query('search', '');
+            $status = $request->query('status', '');
+            $month = $request->query('month', date('Y-m'));
+            
+            $visitors = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $sql = "SELECT * FROM visitors WHERE organization_id = :org_id";
+                    $params = ['org_id' => $orgId];
+                    
+                    if (!empty($search)) {
+                        $sql .= " AND (name LIKE :search OR phone LIKE :search OR email LIKE :search)";
+                        $params['search'] = '%' . $search . '%';
+                    }
+                    
+                    if (!empty($status)) {
+                        $sql .= " AND status = :status";
+                        $params['status'] = $status;
+                    }
+                    
+                    if (!empty($month)) {
+                        $sql .= " AND DATE_FORMAT(visit_date, '%Y-%m') = :month";
+                        $params['month'] = $month;
+                    }
+                    
+                    $sql .= " ORDER BY visit_date DESC";
+                    
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $visitors = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching visitors: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/visitors', [
+                'pageTitle' => 'Visitantes — Gestão',
+                'breadcrumb' => 'Visitantes',
+                'activeMenu' => 'visitantes',
+                'visitors' => $visitors,
+                'search' => $search,
+                'status' => $status,
+                'month' => $month,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar visitantes.');
             redirect('/gestao');
@@ -53,12 +94,53 @@ class ModuleController extends Controller
     public function newConverts(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Novos Convertidos',
-                'novos-convertidos',
-                'Acompanhe os novos convertidos, registre decisões de fé e gerencie o processo de discipulado.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>'
-            );
+            $orgId = $this->orgId();
+            $search = $request->query('search', '');
+            $status = $request->query('status', '');
+            $month = $request->query('month', date('Y-m'));
+            
+            $converts = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $sql = "SELECT * FROM new_converts WHERE organization_id = :org_id";
+                    $params = ['org_id' => $orgId];
+                    
+                    if (!empty($search)) {
+                        $sql .= " AND (name LIKE :search OR phone LIKE :search)";
+                        $params['search'] = '%' . $search . '%';
+                    }
+                    
+                    if (!empty($status)) {
+                        $sql .= " AND status = :status";
+                        $params['status'] = $status;
+                    }
+                    
+                    if (!empty($month)) {
+                        $sql .= " AND DATE_FORMAT(decision_date, '%Y-%m') = :month";
+                        $params['month'] = $month;
+                    }
+                    
+                    $sql .= " ORDER BY decision_date DESC";
+                    
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $converts = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching new converts: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/new-converts', [
+                'pageTitle' => 'Novos Convertidos — Gestão',
+                'breadcrumb' => 'Novos Convertidos',
+                'activeMenu' => 'novos-convertidos',
+                'converts' => $converts,
+                'search' => $search,
+                'status' => $status,
+                'month' => $month,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar novos convertidos.');
             redirect('/gestao');
@@ -103,12 +185,27 @@ class ModuleController extends Controller
     public function smallGroups(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Grupos Pequenos',
-                'celulas',
-                'Gerencie os grupos pequenos (celulas) da sua igreja, lideres, membros e encontros semanais.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><circle cx="5" cy="7" r="2"></circle><circle cx="19" cy="7" r="2"></circle><circle cx="5" cy="17" r="2"></circle><circle cx="19" cy="17" r="2"></circle></svg>'
-            );
+            $orgId = $this->orgId();
+            
+            $groups = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT * FROM small_groups WHERE organization_id = :org_id ORDER BY name ASC");
+                    $stmt->execute(['org_id' => $orgId]);
+                    $groups = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching small groups: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/small-groups', [
+                'pageTitle' => 'Grupos Pequenos — Gestão',
+                'breadcrumb' => 'Grupos Pequenos',
+                'activeMenu' => 'celulas',
+                'groups' => $groups,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar grupos pequenos.');
             redirect('/gestao');
@@ -118,12 +215,27 @@ class ModuleController extends Controller
     public function journeys(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Jornadas',
-                'jornadas',
-                'Crie e gerencie trilhas de crescimento espiritual para os membros da sua igreja.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>'
-            );
+            $orgId = $this->orgId();
+            
+            $journeys = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT * FROM journeys WHERE organization_id = :org_id ORDER BY created_at DESC");
+                    $stmt->execute(['org_id' => $orgId]);
+                    $journeys = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching journeys: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/journeys', [
+                'pageTitle' => 'Jornadas — Gestão',
+                'breadcrumb' => 'Jornadas',
+                'activeMenu' => 'jornadas',
+                'journeys' => $journeys,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar jornadas.');
             redirect('/gestao');
@@ -133,12 +245,59 @@ class ModuleController extends Controller
     public function history(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Historico',
-                'historico',
-                'Visualize o historico completo de atividades, eventos e movimentacoes da sua igreja.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>'
-            );
+            $orgId = $this->orgId();
+            $search = $request->query('search', '');
+            $type = $request->query('type', '');
+            $startDate = $request->query('start_date', date('Y-m-01'));
+            $endDate = $request->query('end_date', date('Y-m-d'));
+            
+            $activities = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $sql = "SELECT * FROM activity_history WHERE organization_id = :org_id";
+                    $params = ['org_id' => $orgId];
+                    
+                    if (!empty($search)) {
+                        $sql .= " AND (title LIKE :search OR description LIKE :search OR user_name LIKE :search)";
+                        $params['search'] = '%' . $search . '%';
+                    }
+                    
+                    if (!empty($type)) {
+                        $sql .= " AND type = :type";
+                        $params['type'] = $type;
+                    }
+                    
+                    if (!empty($startDate)) {
+                        $sql .= " AND DATE(created_at) >= :start_date";
+                        $params['start_date'] = $startDate;
+                    }
+                    
+                    if (!empty($endDate)) {
+                        $sql .= " AND DATE(created_at) <= :end_date";
+                        $params['end_date'] = $endDate;
+                    }
+                    
+                    $sql .= " ORDER BY created_at DESC LIMIT 100";
+                    
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $activities = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching activity history: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/history', [
+                'pageTitle' => 'Histórico — Gestão',
+                'breadcrumb' => 'Histórico',
+                'activeMenu' => 'historico',
+                'activities' => $activities,
+                'search' => $search,
+                'type' => $type,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar historico.');
             redirect('/gestao');
@@ -217,12 +376,72 @@ class ModuleController extends Controller
     public function auditing(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Auditoria',
-                'auditoria',
-                'Acompanhe todas as movimentacoes financeiras com trilha de auditoria completa.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>'
-            );
+            $orgId = $this->orgId();
+            $search = $request->query('search', '');
+            $type = $request->query('type', '');
+            $startDate = $request->query('start_date', date('Y-m-01'));
+            $endDate = $request->query('end_date', date('Y-m-d'));
+            
+            $transactions = [];
+            $totalRevenue = 0;
+            $totalExpenses = 0;
+            
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $sql = "SELECT * FROM financial_audit WHERE organization_id = :org_id";
+                    $params = ['org_id' => $orgId];
+                    
+                    if (!empty($search)) {
+                        $sql .= " AND (description LIKE :search OR user_name LIKE :search)";
+                        $params['search'] = '%' . $search . '%';
+                    }
+                    
+                    if (!empty($type)) {
+                        $sql .= " AND type = :type";
+                        $params['type'] = $type;
+                    }
+                    
+                    if (!empty($startDate)) {
+                        $sql .= " AND DATE(created_at) >= :start_date";
+                        $params['start_date'] = $startDate;
+                    }
+                    
+                    if (!empty($endDate)) {
+                        $sql .= " AND DATE(created_at) <= :end_date";
+                        $params['end_date'] = $endDate;
+                    }
+                    
+                    $sql .= " ORDER BY created_at DESC";
+                    
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $transactions = $stmt->fetchAll();
+                    
+                    foreach ($transactions as $tx) {
+                        if (($tx['type'] ?? '') === 'receita') {
+                            $totalRevenue += (float)($tx['amount'] ?? 0);
+                        } elseif (($tx['type'] ?? '') === 'despesa') {
+                            $totalExpenses += (float)($tx['amount'] ?? 0);
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    error_log('Error fetching audit data: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/auditing', [
+                'pageTitle' => 'Auditoria — Gestão',
+                'breadcrumb' => 'Auditoria',
+                'activeMenu' => 'auditoria',
+                'transactions' => $transactions,
+                'totalRevenue' => $totalRevenue,
+                'totalExpenses' => $totalExpenses,
+                'search' => $search,
+                'type' => $type,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar auditoria.');
             redirect('/gestao');
@@ -232,12 +451,36 @@ class ModuleController extends Controller
     public function accounts(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Contas / Caixa',
-                'contas',
-                'Gerencie contas bancarias, caixas e saldos da organizacao.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14" rx="2"></rect><path d="M16 12h.01"></path><path d="M2.5 9h19"></path></svg>'
-            );
+            $orgId = $this->orgId();
+            
+            $accounts = [];
+            $totalBalance = 0;
+            
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT * FROM financial_accounts WHERE organization_id = :org_id ORDER BY name ASC");
+                    $stmt->execute(['org_id' => $orgId]);
+                    $accounts = $stmt->fetchAll();
+                    
+                    foreach ($accounts as $account) {
+                        if (($account['status'] ?? '') === 'active') {
+                            $totalBalance += (float)($account['balance'] ?? 0);
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    error_log('Error fetching accounts: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/accounts', [
+                'pageTitle' => 'Contas e Caixa — Gestão',
+                'breadcrumb' => 'Contas e Caixa',
+                'activeMenu' => 'contas',
+                'accounts' => $accounts,
+                'totalBalance' => $totalBalance,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar contas.');
             redirect('/gestao');
@@ -261,12 +504,27 @@ class ModuleController extends Controller
     public function campaigns(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Campanhas de Arrecadação',
-                'campanhas',
-                'Crie campanhas de arrecadação e acompanhe o progresso das doações.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>'
-            );
+            $orgId = $this->orgId();
+            
+            $campaigns = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT * FROM campaigns WHERE organization_id = :org_id ORDER BY created_at DESC");
+                    $stmt->execute(['org_id' => $orgId]);
+                    $campaigns = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching campaigns: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/campaigns', [
+                'pageTitle' => 'Campanhas de Arrecadação — Gestão',
+                'breadcrumb' => 'Campanhas',
+                'activeMenu' => 'campanhas',
+                'campaigns' => $campaigns,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             $this->handleError($e);
         }
@@ -275,12 +533,27 @@ class ModuleController extends Controller
     public function readingPlan(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Planos de Leitura',
-                'plano-leitura',
-                'Gerencie planos de leitura bíblica para engajar a igreja.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>'
-            );
+            $orgId = $this->orgId();
+            
+            $plans = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $stmt = $pdo->prepare("SELECT * FROM reading_plans WHERE organization_id = :org_id ORDER BY created_at DESC");
+                    $stmt->execute(['org_id' => $orgId]);
+                    $plans = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching reading plans: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/reading-plan', [
+                'pageTitle' => 'Planos de Leitura — Gestão',
+                'breadcrumb' => 'Planos de Leitura',
+                'activeMenu' => 'plano-leitura',
+                'plans' => $plans,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             $this->handleError($e);
         }
@@ -289,12 +562,53 @@ class ModuleController extends Controller
     public function expensesApprovals(Request $request): void
     {
         try {
-            $this->renderModule(
-                'Aprovações de Despesas',
-                'aprovacoes-despesas',
-                'Gerencie as requisições de compra e aprovações de gastos da igreja.',
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
-            );
+            $orgId = $this->orgId();
+            $search = $request->query('search', '');
+            $status = $request->query('status', '');
+            $month = $request->query('month', date('Y-m'));
+            
+            $expenses = [];
+            if ($orgId > 0) {
+                try {
+                    $pdo = \App\Core\Database::connection();
+                    $sql = "SELECT * FROM expense_approvals WHERE organization_id = :org_id";
+                    $params = ['org_id' => $orgId];
+                    
+                    if (!empty($search)) {
+                        $sql .= " AND (description LIKE :search OR supplier LIKE :search)";
+                        $params['search'] = '%' . $search . '%';
+                    }
+                    
+                    if (!empty($status)) {
+                        $sql .= " AND status = :status";
+                        $params['status'] = $status;
+                    }
+                    
+                    if (!empty($month)) {
+                        $sql .= " AND DATE_FORMAT(expense_date, '%Y-%m') = :month";
+                        $params['month'] = $month;
+                    }
+                    
+                    $sql .= " ORDER BY expense_date DESC";
+                    
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $expenses = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching expenses: ' . $e->getMessage());
+                }
+            }
+            
+            $this->view('management/modules/expenses', [
+                'pageTitle' => 'Aprovações de Despesas — Gestão',
+                'breadcrumb' => 'Aprovações de Despesas',
+                'activeMenu' => 'aprovacoes-despesas',
+                'expenses' => $expenses,
+                'search' => $search,
+                'status' => $status,
+                'month' => $month,
+                'csrf' => Session::get('csrf_token', ''),
+            ]);
         } catch (\Throwable $e) {
             $this->handleError($e);
         }
