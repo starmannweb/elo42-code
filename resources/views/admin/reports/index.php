@@ -10,7 +10,7 @@
 <div class="mgmt-stats-grid" style="margin-top:var(--space-5);">
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--blue">👤</span><div><div class="mgmt-stat__value"><?= $totalUsers ?></div><div class="mgmt-stat__label">Total de usuários</div></div></div>
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--green">👤</span><div><div class="mgmt-stat__value"><?= $newUsers ?></div><div class="mgmt-stat__label">Novos no período</div></div></div>
-    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--gold">🏢</span><div><div class="mgmt-stat__value"><?= $totalOrgs ?></div><div class="mgmt-stat__label">Total de organizações</div></div></div>
+    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--gold">🏢</span><div><div class="mgmt-stat__value"><?= $totalOrgs ?></div><div class="mgmt-stat__label">Total de instituições</div></div></div>
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--teal">🏢</span><div><div class="mgmt-stat__value"><?= $newOrgs ?></div><div class="mgmt-stat__label">Novas no período</div></div></div>
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--purple">💳</span><div><div class="mgmt-stat__value"><?= $activeSubs ?></div><div class="mgmt-stat__label">Assinaturas ativas</div></div></div>
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--red">🎫</span><div><div class="mgmt-stat__value"><?= $openTickets ?></div><div class="mgmt-stat__label">Tickets abertos</div></div></div>

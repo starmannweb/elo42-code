@@ -1,7 +1,7 @@
 <header class="site-header" id="site-header" role="banner">
     <nav class="navbar container" aria-label="Navegação principal">
         <a href="<?= url('/') ?>" class="navbar__logo" aria-label="Elo 42 — Página inicial">
-            <img src="<?= url('/assets/img/logo-color-new.png') ?>" alt="Elo 42" height="48" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo.png') ?>'">
+            <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="48" onerror="this.onerror=null;this.src='<?= url('/assets/img/logo-color-new.png') ?>'">
         </a>
 
         <ul class="navbar__menu" id="nav-menu" role="menubar">

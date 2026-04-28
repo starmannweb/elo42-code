@@ -10,7 +10,7 @@ use App\Core\Database;
 class Donation extends Model
 {
     protected static string $table = 'donations';
-    protected static array $fillable = ['organization_id','member_id','donor_name','type','amount','donation_date','payment_method','reference','notes'];
+    protected static array $fillable = ['organization_id','church_unit_id','member_id','donor_name','type','amount','donation_date','payment_method','reference','notes'];
 
     public static function byOrg(int $orgId, array $filters = [], int $page = 1, int $perPage = 20): array
     {
@@ -28,7 +28,15 @@ class Donation extends Model
             $cStmt->execute($params);
             $total = (int) $cStmt->fetchColumn();
 
-            $stmt = $pdo->prepare("SELECT d.*, m.name as member_name FROM donations d LEFT JOIN members m ON d.member_id = m.id WHERE {$whereStr} ORDER BY d.donation_date DESC LIMIT {$perPage} OFFSET {$offset}");
+            $stmt = $pdo->prepare("
+                SELECT d.*, m.name as member_name, u.name as unit_name
+                FROM donations d
+                LEFT JOIN members m ON d.member_id = m.id
+                LEFT JOIN church_units u ON u.id = d.church_unit_id
+                WHERE {$whereStr}
+                ORDER BY d.donation_date DESC
+                LIMIT {$perPage} OFFSET {$offset}
+            ");
             $stmt->execute($params);
             return [
                 'data' => $stmt->fetchAll(),

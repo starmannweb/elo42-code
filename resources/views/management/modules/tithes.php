@@ -1,106 +1,93 @@
-<?php $__view->extends('management', ['pageTitle' => $pageTitle ?? 'Dizimos & Ofertas', 'breadcrumb' => $breadcrumb ?? 'Dizimos & Ofertas', 'activeMenu' => 'dizimos-ofertas']); ?>
+<?php $__view->extends('management', ['pageTitle' => $pageTitle ?? 'Dízimos & Ofertas', 'breadcrumb' => $breadcrumb ?? 'Dízimos & Ofertas', 'activeMenu' => 'dizimos-ofertas']); ?>
 
 <?php $__view->section('content'); ?>
-<div style="max-width: 960px; margin: 0 auto;">
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        <div>
-            <h1 style="font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text-primary);">Dizimos & Ofertas</h1>
-            <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0.25rem 0 0;">Gerencie contribuicoes via PIX com QR Code</p>
-        </div>
-        <a href="<?= url('/gestao/doacoes/nova') ?>" class="btn btn--primary" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:var(--color-primary,#1e3a8a);color:#fff;border-radius:8px;text-decoration:none;font-size:0.875rem;font-weight:500;">
-            + Registrar contribuicao
-        </a>
+<?php
+    $members = is_array($members ?? null) ? $members : [];
+    $units = is_array($units ?? null) ? $units : [];
+    $pixKey = $pixKey ?? '';
+    $orgName = $orgName ?? 'Igreja';
+?>
+<div class="mgmt-header">
+    <div>
+        <h1 class="mgmt-header__title">Dízimos & Ofertas</h1>
+        <p class="mgmt-header__subtitle">Gerencie contribuições via PIX, dinheiro, cartão e transferência.</p>
     </div>
-
-    <?php if (!empty($pixWarning)): ?>
-        <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:1rem 1.25rem;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;margin-bottom:1.5rem;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-            <div style="font-size:0.875rem;color:var(--text-primary);line-height:1.5;">
-                <strong>Configure sua chave PIX</strong> — Acesse <a href="<?= url('/gestao/configuracoes') ?>" style="color:#d97706;font-weight:600;">Configuracoes</a> para cadastrar a chave PIX da igreja e gerar o QR Code automaticamente.
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <?php
-        $pixKey = $pixKey ?? '';
-        $orgName = $orgName ?? 'Igreja';
-    ?>
-
-    <?php if (!empty($pixKey)): ?>
-    <div style="background:var(--card-bg,#fff);border:1px solid var(--border-color,#e5e7eb);border-radius:12px;padding:2rem;margin-bottom:1.5rem;text-align:center;">
-        <h2 style="font-size:1.1rem;font-weight:600;margin:0 0 0.5rem;color:var(--text-primary);">QR Code PIX</h2>
-        <p style="font-size:0.8rem;color:var(--text-secondary);margin:0 0 1.25rem;">Compartilhe este QR Code para receber dizimos e ofertas</p>
-        <div style="display:inline-flex;align-items:center;justify-content:center;width:200px;height:200px;background:#fff;border:3px solid #f59e0b;border-radius:12px;margin-bottom:1rem;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=<?= urlencode($pixKey) ?>" alt="QR Code PIX" width="180" height="180" style="border-radius:8px;" onerror="this.parentElement.innerHTML='<svg width=60 height=60 viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'#d97706\' stroke-width=\'1.5\'><rect x=\'3\' y=\'3\' width=\'7\' height=\'7\'></rect><rect x=\'14\' y=\'3\' width=\'7\' height=\'7\'></rect><rect x=\'3\' y=\'14\' width=\'7\' height=\'7\'></rect><rect x=\'14\' y=\'14\' width=\'3\' height=\'3\'></rect></svg>'">
-        </div>
-        <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-top:0.5rem;">
-            <code style="background:var(--card-bg-secondary,#f9fafb);padding:0.375rem 0.75rem;border-radius:6px;font-size:0.8rem;color:var(--text-primary);border:1px solid var(--border-color,#e5e7eb);"><?= htmlspecialchars($pixKey) ?></code>
-            <button onclick="navigator.clipboard.writeText('<?= htmlspecialchars($pixKey) ?>');this.textContent='Copiado!';setTimeout(()=>this.textContent='Copiar',2000)" style="padding:0.375rem 0.75rem;background:#f59e0b;color:#fff;border:none;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;">Copiar</button>
-        </div>
+    <div class="mgmt-header__actions">
+        <button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-donation').style.display='flex'">Registrar contribuição</button>
     </div>
-    <?php endif; ?>
+</div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;">
-        <div style="background:var(--card-bg,#fff);border:1px solid var(--border-color,#e5e7eb);border-radius:10px;padding:1.25rem;">
-            <div style="font-size:0.75rem;color:var(--text-secondary);font-weight:500;margin-bottom:0.25rem;">Total do mes</div>
-            <div style="font-size:1.5rem;font-weight:700;color:var(--text-primary);">R$ <?= number_format(($summary['total'] ?? 0), 2, ',', '.') ?></div>
-        </div>
-        <div style="background:var(--card-bg,#fff);border:1px solid var(--border-color,#e5e7eb);border-radius:10px;padding:1.25rem;">
-            <div style="font-size:0.75rem;color:var(--text-secondary);font-weight:500;margin-bottom:0.25rem;">Dizimos</div>
-            <div style="font-size:1.5rem;font-weight:700;color:#059669;">R$ <?= number_format(($summary['tithe'] ?? 0), 2, ',', '.') ?></div>
-        </div>
-        <div style="background:var(--card-bg,#fff);border:1px solid var(--border-color,#e5e7eb);border-radius:10px;padding:1.25rem;">
-            <div style="font-size:0.75rem;color:var(--text-secondary);font-weight:500;margin-bottom:0.25rem;">Ofertas</div>
-            <div style="font-size:1.5rem;font-weight:700;color:#d97706;">R$ <?= number_format(($summary['offering'] ?? 0), 2, ',', '.') ?></div>
-        </div>
-        <div style="background:var(--card-bg,#fff);border:1px solid var(--border-color,#e5e7eb);border-radius:10px;padding:1.25rem;">
-            <div style="font-size:0.75rem;color:var(--text-secondary);font-weight:500;margin-bottom:0.25rem;">Contribuintes</div>
-            <div style="font-size:1.5rem;font-weight:700;color:var(--text-primary);"><?= (int) ($summary['donors'] ?? 0) ?></div>
-        </div>
+<?php if (!empty($pixWarning)): ?>
+    <div class="mgmt-info-card" style="border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.08);margin-bottom:var(--space-5);">
+        <strong>Configure sua chave PIX</strong> - acesse <a href="<?= url('/gestao/configuracoes/pix') ?>" style="color:#d97706;font-weight:800;">PIX / Ofertas</a> para cadastrar a chave PIX da igreja e gerar o QR Code automaticamente.
     </div>
+<?php endif; ?>
 
-    <div style="background:var(--card-bg,#fff);border:1px solid var(--border-color,#e5e7eb);border-radius:12px;overflow:hidden;">
-        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border-color,#e5e7eb);display:flex;align-items:center;justify-content:space-between;">
-            <h2 style="font-size:1rem;font-weight:600;margin:0;color:var(--text-primary);">Ultimas contribuicoes</h2>
+<div class="mgmt-kpi-grid" style="grid-template-columns:repeat(4,minmax(0,1fr));">
+    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Total do mês</div><div class="mgmt-kpi-card__value">R$ <?= number_format(($summary['total'] ?? 0), 2, ',', '.') ?></div></div></div>
+    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Dízimos</div><div class="mgmt-kpi-card__value" style="color:#059669;">R$ <?= number_format(($summary['tithe'] ?? 0), 2, ',', '.') ?></div></div></div>
+    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Ofertas</div><div class="mgmt-kpi-card__value" style="color:#d97706;">R$ <?= number_format(($summary['offering'] ?? 0), 2, ',', '.') ?></div></div></div>
+    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Contribuintes</div><div class="mgmt-kpi-card__value"><?= (int) ($summary['donors'] ?? 0) ?></div></div></div>
+</div>
+
+<div class="mgmt-grid" style="grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:var(--space-5);align-items:start;">
+    <div class="mgmt-dashboard-card" style="padding:0;overflow:hidden;">
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--color-border-light);">
+            <h2 class="mgmt-info-card__title" style="margin:0;">Últimas contribuições</h2>
         </div>
-
         <?php if (empty($donations)): ?>
-            <div style="padding:2.5rem;text-align:center;color:var(--text-secondary);font-size:0.875rem;">
-                Nenhuma contribuicao registrada ainda.
-            </div>
+            <div class="mgmt-empty"><h3 class="mgmt-empty__title">Nenhuma contribuição registrada ainda.</h3></div>
         <?php else: ?>
-            <div style="overflow-x:auto;">
-                <?php foreach ($donations as $d): ?>
-                    <?php
-                        $parts = explode(' ', trim($d['member_name'] ?? $d['donor_name'] ?? 'Anonimo'));
-                        $init = strtoupper(substr($parts[0] ?? '', 0, 1) . substr(end($parts) ?: '', 0, 1));
-                        $typeLabel = match($d['type'] ?? '') {
-                            'tithe' => 'Dizimo',
-                            'offering' => 'Oferta',
-                            'campaign' => 'Campanha',
-                            default => 'Contribuicao'
-                        };
-                        $typeColor = match($d['type'] ?? '') {
-                            'tithe' => '#059669',
-                            'offering' => '#d97706',
-                            'campaign' => '#7c3aed',
-                            default => '#6b7280'
-                        };
-                    ?>
-                    <div style="display:flex;align-items:center;gap:1rem;padding:0.875rem 1.25rem;border-bottom:1px solid var(--border-color,#e5e7eb);">
-                        <div style="flex-shrink:0;width:40px;height:40px;border-radius:50%;background:<?= $typeColor ?>15;color:<?= $typeColor ?>;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.75rem;"><?= htmlspecialchars($init) ?></div>
-                        <div style="flex:1;min-width:0;">
-                            <div style="font-weight:600;font-size:0.875rem;color:var(--text-primary);"><?= htmlspecialchars($d['member_name'] ?? $d['donor_name'] ?? 'Anonimo') ?></div>
-                            <div style="font-size:0.75rem;color:var(--text-secondary);">
-                                <span style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.0625rem 0.375rem;background:<?= $typeColor ?>15;color:<?= $typeColor ?>;border-radius:3px;font-weight:600;font-size:0.65rem;"><?= $typeLabel ?></span>
-                                <?= !empty($d['donation_date']) ? date('d/m/Y', strtotime($d['donation_date'])) : '' ?>
-                            </div>
-                        </div>
-                        <div style="flex-shrink:0;font-weight:700;font-size:0.95rem;color:var(--text-primary);">R$ <?= number_format((float)($d['amount'] ?? 0), 2, ',', '.') ?></div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+            <table class="mgmt-table">
+                <thead><tr><th>Doador</th><th>Tipo</th><th>Data</th><th style="text-align:right;">Valor</th></tr></thead>
+                <tbody>
+                    <?php foreach ($donations as $d): ?>
+                        <?php $typeLabel = match($d['type'] ?? '') { 'tithe' => 'Dízimo', 'offering' => 'Oferta', 'campaign' => 'Campanha', default => 'Contribuição' }; ?>
+                        <tr>
+                            <td><div class="mgmt-table__name"><?= e($d['member_name'] ?? $d['donor_name'] ?? 'Anônimo') ?></div></td>
+                            <td><span class="badge badge--active"><?= e($typeLabel) ?></span></td>
+                            <td><?= !empty($d['donation_date']) ? date('d/m/Y', strtotime($d['donation_date'])) : '-' ?></td>
+                            <td style="text-align:right;font-weight:800;">R$ <?= number_format((float)($d['amount'] ?? 0), 2, ',', '.') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         <?php endif; ?>
+    </div>
+
+    <div class="mgmt-info-card">
+        <h2 class="mgmt-info-card__title">PIX da igreja</h2>
+        <?php if (!empty($pixKey)): ?>
+            <p class="mgmt-header__subtitle">Compartilhe a chave abaixo para receber dízimos e ofertas de <?= e((string) $orgName) ?>.</p>
+            <code style="display:block;background:#f8fafc;border:1px solid #dfe7f4;border-radius:8px;padding:.75rem;margin-top:.75rem;word-break:break-all;"><?= e((string) $pixKey) ?></code>
+            <button type="button" class="btn btn--outline" style="margin-top:1rem;" onclick="navigator.clipboard.writeText('<?= e((string) $pixKey) ?>');this.textContent='Copiado';">Copiar chave</button>
+        <?php else: ?>
+            <p class="mgmt-header__subtitle">Cadastre sua chave PIX nas configurações para centralizar as contribuições.</p>
+            <a class="btn btn--outline" href="<?= url('/gestao/configuracoes/pix') ?>">Configurar PIX</a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="modal" id="modal-new-donation" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-new-donation-title">
+    <div class="modal__content">
+        <div class="modal__header"><h2 class="modal__title" id="modal-new-donation-title">Registrar contribuição</h2><button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'">&times;</button></div>
+        <form method="POST" action="<?= url('/gestao/doacoes') ?>" data-loading>
+            <?= csrf_field() ?>
+            <div class="modal__body">
+                <div class="modal-grid">
+                    <div class="form-group"><label class="form-label">Tipo</label><select name="type" class="form-select"><option value="tithe">Dízimo</option><option value="offering">Oferta</option><option value="special">Especial</option><option value="campaign">Campanha</option><option value="other">Outro</option></select></div>
+                    <div class="form-group"><label class="form-label">Data *</label><input type="date" name="donation_date" class="form-input" value="<?= date('Y-m-d') ?>" required></div>
+                    <div class="form-group"><label class="form-label">Valor (R$) *</label><input type="number" name="amount" class="form-input" step="0.01" min="0.01" required></div>
+                    <div class="form-group"><label class="form-label">Forma de pagamento</label><select name="payment_method" class="form-select"><option value="pix">PIX</option><option value="cash">Dinheiro</option><option value="card">Cartão</option><option value="transfer">Transferência</option><option value="other">Outro</option></select></div>
+                    <div class="form-group"><label class="form-label">Membro</label><select name="member_id" class="form-select"><option value="">Anônimo</option><?php foreach ($members as $member): ?><option value="<?= (int) $member['id'] ?>"><?= e((string) $member['name']) ?></option><?php endforeach; ?></select></div>
+                    <div class="form-group"><label class="form-label">Unidade</label><select name="church_unit_id" class="form-select"><option value="">Sede / todas as unidades</option><?php foreach ($units as $unit): ?><option value="<?= (int) $unit['id'] ?>"><?= e((string) $unit['name']) ?></option><?php endforeach; ?></select></div>
+                </div>
+                <div class="form-group"><label class="form-label">Nome do doador</label><input type="text" name="donor_name" class="form-input" placeholder="Se não for membro cadastrado"></div>
+                <div class="form-group"><label class="form-label">Referência</label><input type="text" name="reference" class="form-input" placeholder="Comprovante, campanha ou observação curta"></div>
+                <div class="form-group"><label class="form-label">Notas</label><textarea name="notes" class="form-input" rows="2"></textarea></div>
+            </div>
+            <div class="modal__footer"><button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button><button type="submit" class="btn btn--primary">Registrar</button></div>
+        </form>
     </div>
 </div>
 <?php $__view->endSection(); ?>

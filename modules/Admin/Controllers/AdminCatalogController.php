@@ -20,54 +20,33 @@ class AdminCatalogController extends Controller
     // ---- Products ----
     public function products(Request $req): void
     {
-        $this->view('admin/products/index', [
-            'pageTitle' => 'Produtos — Admin', 'breadcrumb' => 'Produtos',
-            'products' => Product::allWithCategory(),
-            'categories' => Product::getCategories(),
-        ]);
+        Session::flash('warning', 'Produtos foi removido do Admin. Use Serviços para gerenciar o catálogo da plataforma.');
+        redirect('/admin/servicos');
     }
 
     public function createProduct(Request $req): void
     {
-        $this->view('admin/products/form', [
-            'pageTitle' => 'Novo produto', 'breadcrumb' => 'Produtos / Novo',
-            'item' => null, 'categories' => Product::getCategories(),
-        ]);
+        redirect('/admin/servicos/novo');
     }
 
     public function storeProduct(Request $req): void
     {
-        $this->validate($req, ['name' => 'required', 'slug' => 'required']);
-        Product::create($req->only(['category_id','name','slug','description','price','features','status','is_featured','sort_order']));
-        Session::flash('success', 'Produto criado.');
-        redirect('/admin/produtos');
+        redirect('/admin/servicos');
     }
 
     public function editProduct(Request $req): void
     {
-        $item = Product::find((int) $req->param('id'));
-        if (!$item) { redirect('/admin/produtos'); }
-        $this->view('admin/products/form', [
-            'pageTitle' => 'Editar — ' . e($item['name']), 'breadcrumb' => 'Produtos / Editar',
-            'item' => $item, 'categories' => Product::getCategories(),
-        ]);
+        redirect('/admin/servicos');
     }
 
     public function updateProduct(Request $req): void
     {
-        $id = (int) $req->param('id');
-        $this->validate($req, ['name' => 'required']);
-        Product::update($id, $req->only(['category_id','name','slug','description','price','features','status','is_featured','sort_order']));
-        Session::flash('success', 'Produto atualizado.');
-        redirect('/admin/produtos');
+        redirect('/admin/servicos');
     }
 
     public function storeProductCategory(Request $req): void
     {
-        $this->validate($req, ['name' => 'required', 'slug' => 'required']);
-        Product::createCategory($req->only(['name','slug','description','sort_order']));
-        Session::flash('success', 'Categoria criada.');
-        redirect('/admin/produtos');
+        redirect('/admin/servicos');
     }
 
     // ---- Services ----
@@ -116,7 +95,7 @@ class AdminCatalogController extends Controller
     public function benefits(Request $req): void
     {
         $this->view('admin/benefits/index', [
-            'pageTitle' => 'Benefícios — Admin', 'breadcrumb' => 'Benefícios',
+            'pageTitle' => 'Cortesias — Admin', 'breadcrumb' => 'Cortesias',
             'benefits' => Benefit::allWithUsageCount(),
         ]);
     }
@@ -124,7 +103,7 @@ class AdminCatalogController extends Controller
     public function createBenefit(Request $req): void
     {
         $this->view('admin/benefits/form', [
-            'pageTitle' => 'Novo benefício', 'breadcrumb' => 'Benefícios / Novo', 'item' => null,
+            'pageTitle' => 'Nova cortesia', 'breadcrumb' => 'Cortesias / Nova', 'item' => null,
         ]);
     }
 
@@ -132,16 +111,16 @@ class AdminCatalogController extends Controller
     {
         $this->validate($req, ['name' => 'required', 'slug' => 'required']);
         Benefit::create($req->only(['name','slug','description','requirements','status','max_usage','valid_until']));
-        Session::flash('success', 'Benefício criado.');
-        redirect('/admin/beneficios');
+        Session::flash('success', 'Cortesia criada.');
+        redirect('/admin/cortesias');
     }
 
     public function editBenefit(Request $req): void
     {
         $item = Benefit::find((int) $req->param('id'));
-        if (!$item) { redirect('/admin/beneficios'); }
+        if (!$item) { redirect('/admin/cortesias'); }
         $this->view('admin/benefits/form', [
-            'pageTitle' => 'Editar — ' . e($item['name']), 'breadcrumb' => 'Benefícios / Editar', 'item' => $item,
+            'pageTitle' => 'Editar — ' . e($item['name']), 'breadcrumb' => 'Cortesias / Editar', 'item' => $item,
         ]);
     }
 
@@ -150,8 +129,8 @@ class AdminCatalogController extends Controller
         $id = (int) $req->param('id');
         $this->validate($req, ['name' => 'required']);
         Benefit::update($id, $req->only(['name','slug','description','requirements','status','max_usage','valid_until']));
-        Session::flash('success', 'Benefício atualizado.');
-        redirect('/admin/beneficios');
+        Session::flash('success', 'Cortesia atualizada.');
+        redirect('/admin/cortesias');
     }
 
     // ---- Subscriptions ----
@@ -241,7 +220,6 @@ class AdminCatalogController extends Controller
         $startDate = $req->input('start_date', date('Y-m-01'));
         $endDate = $req->input('end_date', date('Y-m-t'));
 
-        $newUsers = (int) $pdo->prepare("SELECT COUNT(*) FROM users WHERE created_at >= :s AND created_at <= :e")?->execute(['s' => $startDate, 'e' => $endDate . ' 23:59:59']) ? 0 : 0;
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE created_at >= :s AND created_at <= :e");
         $stmt->execute(['s' => $startDate, 'e' => $endDate . ' 23:59:59']);
         $newUsers = (int) $stmt->fetchColumn();

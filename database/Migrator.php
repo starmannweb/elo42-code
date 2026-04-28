@@ -10,10 +10,12 @@ class Migrator
 {
     private \PDO $pdo;
     private string $migrationsPath;
+    private string $driver;
 
     public function __construct()
     {
         $this->pdo = Database::connection();
+        $this->driver = (string) $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
         $this->migrationsPath = BASE_PATH . '/database/migrations';
         $this->ensureMigrationsTable();
     }
@@ -33,7 +35,7 @@ class Migrator
             $migration = require $this->migrationsPath . '/' . $file;
 
             try {
-                $this->pdo->exec($migration['up']);
+                $this->executeSql($migration['up']);
                 $this->logMigration($file);
                 echo "Migrated:  {$file}\n";
             } catch (\PDOException $e) {
@@ -60,7 +62,7 @@ class Migrator
             $migration = require $this->migrationsPath . '/' . $file;
 
             try {
-                $this->pdo->exec($migration['down']);
+                $this->executeSql($migration['down']);
                 $this->removeMigration($file);
                 echo "Rolled back: {$file}\n";
             } catch (\PDOException $e) {
@@ -86,6 +88,18 @@ class Migrator
 
     private function ensureMigrationsTable(): void
     {
+        if ($this->driver === 'sqlite') {
+            $this->pdo->exec("
+                CREATE TABLE IF NOT EXISTS migrations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    migration TEXT NOT NULL,
+                    batch INTEGER NOT NULL,
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                )
+            ");
+            return;
+        }
+
         $this->pdo->exec("
             CREATE TABLE IF NOT EXISTS migrations (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -139,5 +153,165 @@ class Migrator
     {
         $stmt = $this->pdo->prepare("DELETE FROM migrations WHERE migration = :migration");
         $stmt->execute(['migration' => $file]);
+    }
+
+    private function executeSql(string $sql): void
+    {
+        if ($this->driver !== 'sqlite') {
+            $this->pdo->exec($sql);
+            return;
+        }
+
+        foreach ($this->splitSqlStatements($this->translateSqliteSql($sql)) as $statement) {
+            $statement = $this->translateSqliteStatement($statement);
+            if ($statement === null || trim($statement) === '') {
+                continue;
+            }
+
+            $this->pdo->exec($statement);
+        }
+    }
+
+    private function translateSqliteSql(string $sql): string
+    {
+        $sql = preg_replace('/^\s*--.*$/m', '', $sql) ?? $sql;
+        $sql = preg_replace('/\)\s*ENGINE\s*=\s*InnoDB\s+DEFAULT\s+CHARSET\s*=\s*utf8mb4\s+COLLATE\s*=\s*utf8mb4_unicode_ci/i', ')', $sql);
+        $sql = preg_replace('/\s+ON\s+UPDATE\s+CURRENT_TIMESTAMP/i', '', $sql);
+        $sql = preg_replace('/\b(BIGINT|INT)\s+UNSIGNED\s+AUTO_INCREMENT\s+PRIMARY\s+KEY\b/i', 'INTEGER PRIMARY KEY AUTOINCREMENT', $sql);
+        $sql = preg_replace('/\b(BIGINT|INT)\s+AUTO_INCREMENT\s+PRIMARY\s+KEY\b/i', 'INTEGER PRIMARY KEY AUTOINCREMENT', $sql);
+        $sql = preg_replace('/\b(BIGINT|INT)\s+UNSIGNED\b/i', 'INTEGER', $sql);
+        $sql = preg_replace('/\bTINYINT\s*\(\s*1\s*\)/i', 'INTEGER', $sql);
+        $sql = preg_replace('/\bJSON\b/i', 'TEXT', $sql);
+        $sql = preg_replace('/\bENUM\s*\([^)]+\)/i', 'TEXT', $sql);
+        $sql = preg_replace('/`([^`]+)`/', '"$1"', $sql);
+        $sql = preg_replace('/\bINSERT\s+IGNORE\b/i', 'INSERT OR IGNORE', $sql);
+        $sql = $this->translateCreateTableConstraints($sql);
+
+        return $sql;
+    }
+
+    private function translateCreateTableConstraints(string $sql): string
+    {
+        return preg_replace_callback('/CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+([A-Za-z0-9_]+)\s*\((.*?)\)\s*(?=;|$)/is', function (array $matches): string {
+            $parts = $this->splitCommaSeparated($matches[2]);
+            $kept = [];
+
+            foreach ($parts as $part) {
+                $trimmed = trim($part);
+                if ($trimmed === '') {
+                    continue;
+                }
+
+                if (preg_match('/^(INDEX|KEY)\s+/i', $trimmed)) {
+                    continue;
+                }
+
+                if (preg_match('/^UNIQUE\s+KEY\s+[A-Za-z0-9_]+\s*\((.+)\)$/i', $trimmed, $unique)) {
+                    $kept[] = 'UNIQUE (' . $unique[1] . ')';
+                    continue;
+                }
+
+                $kept[] = $trimmed;
+            }
+
+            return 'CREATE TABLE IF NOT EXISTS ' . $matches[1] . " (\n            " . implode(",\n            ", $kept) . "\n        )";
+        }, $sql) ?? $sql;
+    }
+
+    private function translateSqliteStatement(string $statement): ?string
+    {
+        $statement = trim($statement);
+        if ($statement === '') {
+            return null;
+        }
+
+        if (preg_match('/^ALTER\s+TABLE\s+([A-Za-z0-9_]+)\s+ADD\s+COLUMN\s+IF\s+NOT\s+EXISTS\s+([A-Za-z0-9_]+)\s+(.+)$/is', $statement, $matches)) {
+            if ($this->sqliteColumnExists($matches[1], $matches[2])) {
+                return null;
+            }
+
+            $definition = preg_replace('/\s+AFTER\s+[A-Za-z0-9_]+/i', '', trim($matches[3]));
+            return 'ALTER TABLE ' . $matches[1] . ' ADD COLUMN ' . $matches[2] . ' ' . $definition;
+        }
+
+        $statement = preg_replace('/\s+AFTER\s+[A-Za-z0-9_]+/i', '', $statement);
+
+        return $statement;
+    }
+
+    private function sqliteColumnExists(string $table, string $column): bool
+    {
+        $stmt = $this->pdo->query("PRAGMA table_info({$table})");
+        foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+            if (strcasecmp((string) $row['name'], $column) === 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function splitSqlStatements(string $sql): array
+    {
+        $statements = [];
+        $buffer = '';
+        $quote = null;
+        $length = strlen($sql);
+
+        for ($i = 0; $i < $length; $i++) {
+            $char = $sql[$i];
+            $buffer .= $char;
+
+            if (($char === "'" || $char === '"') && ($i === 0 || $sql[$i - 1] !== '\\')) {
+                $quote = $quote === $char ? null : ($quote ?? $char);
+                continue;
+            }
+
+            if ($char === ';' && $quote === null) {
+                $statements[] = rtrim(substr($buffer, 0, -1));
+                $buffer = '';
+            }
+        }
+
+        if (trim($buffer) !== '') {
+            $statements[] = $buffer;
+        }
+
+        return $statements;
+    }
+
+    private function splitCommaSeparated(string $input): array
+    {
+        $parts = [];
+        $buffer = '';
+        $depth = 0;
+        $quote = null;
+        $length = strlen($input);
+
+        for ($i = 0; $i < $length; $i++) {
+            $char = $input[$i];
+
+            if (($char === "'" || $char === '"') && ($i === 0 || $input[$i - 1] !== '\\')) {
+                $quote = $quote === $char ? null : ($quote ?? $char);
+            } elseif ($quote === null) {
+                if ($char === '(') {
+                    $depth++;
+                } elseif ($char === ')') {
+                    $depth--;
+                } elseif ($char === ',' && $depth === 0) {
+                    $parts[] = $buffer;
+                    $buffer = '';
+                    continue;
+                }
+            }
+
+            $buffer .= $char;
+        }
+
+        if (trim($buffer) !== '') {
+            $parts[] = $buffer;
+        }
+
+        return $parts;
     }
 }

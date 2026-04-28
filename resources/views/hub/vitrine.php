@@ -11,7 +11,7 @@
     </header>
 
     <div class="dashboard-section__header">
-        <h2 class="dashboard-section__title" style="margin-bottom:0;">Produtos e serviços</h2>
+        <h2 class="dashboard-section__title" style="margin-bottom:0;">Serviços</h2>
     </div>
 
     <div class="showcase-grid">

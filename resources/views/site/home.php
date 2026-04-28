@@ -156,7 +156,7 @@
                 <p class="bento-card__text">Alcance mais pessoas com ate US$ 10.000/mes em anuncios gratuitos do Google Ad Grants, estruturamos campanhas focadas no seu ministerio.</p>
             </a>
 
-            <a href="<?= url('/servico/hokmah-expositor') ?>" class="bento-card bento-card--expositor">
+            <a href="<?= url('/servico/expositor-ia') ?>" class="bento-card bento-card--expositor">
                 <div class="bento-card__icon bento-card__icon--book"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
                 <h3 class="bento-card__title">Expositor de IA</h3>
                 <p class="bento-card__text">Ambiente de aprofundamento exegetico com IA para pastores, onde a exegese vem primeiro e o sermao nasce do texto.</p>

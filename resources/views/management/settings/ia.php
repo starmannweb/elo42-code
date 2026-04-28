@@ -1,6 +1,7 @@
 <?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
+<?php $settings = is_array($settings ?? null) ? $settings : []; ?>
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-title">Inteligência Artificial</h1>
@@ -10,28 +11,6 @@
         <a href="<?= url('/gestao') ?>" class="btn btn--ghost">Cancelar</a>
         <button type="submit" form="form-ia" class="btn btn--primary">Salvar Configurações</button>
     </div>
-</div>
-
-<!-- Tabs de navegação -->
-<div style="border-bottom: 1px solid var(--color-border-light); margin-bottom: 1.5rem; display: flex; gap: 1.5rem; overflow-x: auto;">
-    <a href="<?= url('/gestao/configuracoes') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'igreja' ? '600' : '500' ?>; white-space: nowrap;">
-        Igreja
-    </a>
-    <a href="<?= url('/gestao/configuracoes/pix') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pix' ? '600' : '500' ?>; white-space: nowrap;">
-        PIX / Ofertas
-    </a>
-    <a href="<?= url('/gestao/configuracoes/ia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'ia' ? '600' : '500' ?>; white-space: nowrap;">
-        Inteligência Artificial
-    </a>
-    <a href="<?= url('/gestao/configuracoes/aparencia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'aparencia' ? '600' : '500' ?>; white-space: nowrap;">
-        Aparência
-    </a>
-    <a href="<?= url('/gestao/configuracoes/seo') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'seo' ? '600' : '500' ?>; white-space: nowrap;">
-        SEO
-    </a>
-    <a href="<?= url('/gestao/configuracoes/pwa') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pwa' ? '600' : '500' ?>; white-space: nowrap;">
-        PWA
-    </a>
 </div>
 
 <div class="mgmt-panel" style="margin-bottom: 1.5rem;">
@@ -54,14 +33,15 @@
     </h3>
     <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Sua chave API é armazenada de forma segura e utilizada apenas para processar ministrações.</p>
     
-    <form id="form-ia" action="#" method="POST">
+    <form id="form-ia" action="<?= url('/gestao/configuracoes') ?>" method="POST">
         <?= csrf_field() ?>
+        <input type="hidden" name="redirect_to" value="<?= url('/gestao/configuracoes/ia') ?>">
         
         <div class="form-group">
             <label for="openai_key">Chave API</label>
             <div style="display: flex; gap: 0.5rem;">
                 <div style="position: relative; flex: 1;">
-                    <input type="password" id="openai_key" name="openai_key" class="form-control" placeholder="sk-..." value="">
+                    <input type="password" id="openai_key" name="openai_key" class="form-control" placeholder="sk-..." value="<?= e((string) ($settings['openai_key'] ?? '')) ?>">
                     <button type="button" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                     </button>
@@ -102,9 +82,9 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                 Modelo para Análise
             </label>
-            <select class="form-control" name="model_analysis">
-                <option value="gpt-4o-mini">GPT-4o Mini</option>
-                <option value="gpt-4o">GPT-4o</option>
+            <select class="form-control" name="model_analysis" form="form-ia">
+                <option value="gpt-4o-mini" <?= (($settings['model_analysis'] ?? '') === 'gpt-4o-mini') ? 'selected' : '' ?>>GPT-4o Mini</option>
+                <option value="gpt-4o" <?= (($settings['model_analysis'] ?? '') === 'gpt-4o') ? 'selected' : '' ?>>GPT-4o</option>
             </select>
             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Usado para transcrição de áudio e análise de ministrações</div>
         </div>
@@ -114,9 +94,9 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path></svg>
                 Modelo para Geração
             </label>
-            <select class="form-control" name="model_generation">
-                <option value="gpt-4o">GPT-4o</option>
-                <option value="gpt-4o-mini">GPT-4o Mini</option>
+            <select class="form-control" name="model_generation" form="form-ia">
+                <option value="gpt-4o" <?= (($settings['model_generation'] ?? 'gpt-4o') === 'gpt-4o') ? 'selected' : '' ?>>GPT-4o</option>
+                <option value="gpt-4o-mini" <?= (($settings['model_generation'] ?? '') === 'gpt-4o-mini') ? 'selected' : '' ?>>GPT-4o Mini</option>
             </select>
             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Usado para criar ministrações com IA</div>
         </div>

@@ -47,8 +47,8 @@ class AdminOrganizationController extends Controller
         );
 
         $this->view('admin/organizations/index', [
-            'pageTitle'     => 'OrganizaÃ§Ãµes â€” Admin',
-            'breadcrumb'    => 'OrganizaÃ§Ãµes',
+            'pageTitle'     => 'Instituições — Admin',
+            'breadcrumb'    => 'Instituições',
             'organizations' => $organizations,
             'filters'       => ['search' => $search, 'status' => $status],
         ]);
@@ -71,8 +71,8 @@ class AdminOrganizationController extends Controller
         $sub->execute(['oid' => $org['id']]);
 
         $this->view('admin/organizations/show', [
-            'pageTitle'    => e($org['name']) . ' â€” Admin',
-            'breadcrumb'   => 'OrganizaÃ§Ãµes / ' . $org['name'],
+            'pageTitle'    => e($org['name']) . ' — Admin',
+            'breadcrumb'   => 'Instituições / ' . $org['name'],
             'org'          => $org,
             'users'        => $users->fetchAll(),
             'subscription' => $sub->fetch() ?: null,
@@ -87,8 +87,8 @@ class AdminOrganizationController extends Controller
         }
 
         $this->view('admin/organizations/edit', [
-            'pageTitle'  => 'Editar â€” ' . e($org['name']),
-            'breadcrumb' => 'OrganizaÃ§Ãµes / Editar',
+            'pageTitle'  => 'Editar — ' . e($org['name']),
+            'breadcrumb' => 'Instituições / Editar',
             'org'        => $this->hydrateOrganization($org),
         ]);
     }
@@ -117,7 +117,7 @@ class AdminOrganizationController extends Controller
             'settings' => json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
         ]);
 
-        Session::flash('success', 'OrganizaÃ§Ã£o atualizada.');
+        Session::flash('success', 'Instituição atualizada.');
         redirect('/admin/organizacoes/' . $id);
     }
 

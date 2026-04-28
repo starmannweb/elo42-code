@@ -38,7 +38,28 @@ class Database
             $driver = env('DB_DRIVER', 'mysql');
         }
 
-        if ($driver === 'pgsql') {
+        if ($driver === 'sqlite') {
+            $databasePath = (string) $database;
+            if ($databasePath === '' || $databasePath === ':memory:') {
+                $databasePath = ':memory:';
+            } elseif (!preg_match('/^[A-Za-z]:[\\\\\\/]|^[\\\\\\/]/', $databasePath)) {
+                $databasePath = dirname(__DIR__, 2) . '/' . ltrim($databasePath, '/\\');
+            }
+
+            $directory = dirname($databasePath);
+            if ($databasePath !== ':memory:' && !is_dir($directory)) {
+                mkdir($directory, 0775, true);
+            }
+
+            $dsn = "sqlite:{$databasePath}";
+            $username = null;
+            $password = null;
+            $options = [
+                \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                \PDO::ATTR_EMULATE_PREPARES   => false,
+            ];
+        } elseif ($driver === 'pgsql') {
             $dsn = "pgsql:host={$host};port={$port};dbname={$database}";
             $options = [
                 \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
@@ -56,7 +77,10 @@ class Database
         }
 
         try {
-            $this->pdo = new \PDO($dsn, (string) $username, (string) $password, $options);
+            $this->pdo = new \PDO($dsn, $username !== null ? (string) $username : null, $password !== null ? (string) $password : null, $options);
+            if ($driver === 'sqlite') {
+                $this->configureSqliteConnection($this->pdo);
+            }
             self::$connectionFailed = false;
         } catch (\PDOException $e) {
             self::$connectionFailed = true;
@@ -111,6 +135,48 @@ class Database
     }
 
     private function __clone() {}
+
+    private function configureSqliteConnection(\PDO $pdo): void
+    {
+        $pdo->exec('PRAGMA foreign_keys = ON');
+
+        if (!method_exists($pdo, 'sqliteCreateFunction')) {
+            return;
+        }
+
+        $pdo->sqliteCreateFunction('NOW', static fn (): string => date('Y-m-d H:i:s'), 0);
+        $pdo->sqliteCreateFunction('DATE_FORMAT', static function ($date, string $format): ?string {
+            if ($date === null || $date === '') {
+                return null;
+            }
+
+            $timestamp = strtotime((string) $date);
+            if ($timestamp === false) {
+                return null;
+            }
+
+            $phpFormat = strtr($format, [
+                '%Y' => 'Y',
+                '%m' => 'm',
+                '%d' => 'd',
+                '%H' => 'H',
+                '%i' => 'i',
+                '%s' => 's',
+            ]);
+
+            return date($phpFormat, $timestamp);
+        }, 2);
+        $pdo->sqliteCreateFunction('FIELD', static function (...$values): int {
+            $needle = array_shift($values);
+            foreach ($values as $index => $value) {
+                if ((string) $needle === (string) $value) {
+                    return $index + 1;
+                }
+            }
+
+            return 0;
+        }, -1);
+    }
 
     public function __wakeup()
     {

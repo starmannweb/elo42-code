@@ -3,6 +3,9 @@
 use Modules\Site\Controllers\SiteController;
 
 $router->group(['middleware' => ['csrf']], function ($router) {
+    $router->get('/app-manifest', [SiteController::class, 'manifest']);
+    $router->get('/app.webmanifest', [SiteController::class, 'manifest']);
+    $router->get('/site/{slug}', [SiteController::class, 'generatedSite']);
     $router->get('/', [SiteController::class, 'home']);
     $router->get('/servico/{slug}', [SiteController::class, 'service']);
     $router->get('/sobre', [SiteController::class, 'about']);

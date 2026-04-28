@@ -1,6 +1,7 @@
-<?php $__view->extend('management'); ?>
+<?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
+<?php $units = is_array($units ?? null) ? $units : []; ?>
 <div class="mgmt-container">
     <div class="mgmt-header">
         <div>
@@ -36,6 +37,7 @@
                                     <div style="flex: 1;">
                                         <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem; font-weight: 600;"><?= e($campaign['title'] ?? 'Sem título') ?></h3>
                                         <p style="margin: 0; color: var(--hub-text-secondary); font-size: 0.875rem;"><?= e($campaign['description'] ?? '') ?></p>
+                                        <p style="margin:.5rem 0 0; color: var(--hub-text-tertiary); font-size: 0.78rem;">Destino: <?= e((string) ($campaign['designation'] ?? 'Campanha da igreja')) ?> · Unidade: <?= e((string) ($campaign['unit_name'] ?? 'Sede / todas')) ?></p>
                                     </div>
                                     <div style="display: flex; gap: 0.5rem; margin-left: 1rem;">
                                         <?php
@@ -119,7 +121,7 @@
             <button type="button" class="modal__close" onclick="document.getElementById('addCampaignModal').style.display='none'">&times;</button>
         </div>
         <form method="POST" action="<?= url('/gestao/campanhas/nova') ?>">
-            <input type="hidden" name="csrf_token" value="<?= e($csrf ?? '') ?>">
+            <?= csrf_field() ?>
             <div class="modal__body">
                 <div class="form-group">
                     <label for="title" class="form-label">Título <span style="color: var(--danger);">*</span></label>
@@ -128,6 +130,19 @@
                 <div class="form-group">
                     <label for="description" class="form-label">Descrição</label>
                     <textarea id="description" name="description" class="form-control" rows="3" placeholder="Descreva o objetivo da campanha"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="designation" class="form-label">Destino do pagamento</label>
+                    <input type="text" id="designation" name="designation" class="form-control" placeholder="Ex: Missões, reforma, tesouraria geral">
+                </div>
+                <div class="form-group">
+                    <label for="church_unit_id" class="form-label">Unidade</label>
+                    <select id="church_unit_id" name="church_unit_id" class="form-control">
+                        <option value="">Sede / todas as unidades</option>
+                        <?php foreach ($units as $unit): ?>
+                            <option value="<?= (int) $unit['id'] ?>"><?= e((string) $unit['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
@@ -170,7 +185,7 @@ function removeCampaign(id) {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '<?= url('/gestao/campanhas/') ?>' + id + '/remover';
-        form.innerHTML = '<input type="hidden" name="csrf_token" value="<?= e($csrf ?? '') ?>">';
+        form.innerHTML = '<?= str_replace("'", "\\'", csrf_field()) ?>';
         document.body.appendChild(form);
         form.submit();
     }

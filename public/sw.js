@@ -1,4 +1,4 @@
-const CACHE_NAME = 'elo42-v1';
+const CACHE_NAME = 'elo42-v2';
 const OFFLINE_URL = '/offline.html';
 
 const PRECACHE_URLS = [
@@ -6,7 +6,9 @@ const PRECACHE_URLS = [
   '/assets/css/app.css',
   '/assets/css/hub.css',
   '/assets/css/management.css',
+  '/assets/css/portal.css',
   '/assets/css/auth.css',
+  '/assets/js/app.js',
   '/assets/img/logo-color-new.png',
   '/assets/img/logo.png',
   '/offline.html',

@@ -13,6 +13,9 @@ $router->group(['prefix' => 'membro', 'middleware' => ['csrf', 'auth', 'organiza
     $router->get('/cursos', [MemberPortalController::class, 'courses']);
     $router->get('/eventos', [MemberPortalController::class, 'events']);
     $router->get('/pedidos', [MemberPortalController::class, 'requests']);
+    $router->get('/solicitacoes', [MemberPortalController::class, 'requests']);
+    $router->post('/solicitacoes', [MemberPortalController::class, 'storeRequest']);
+    $router->get('/conquistas', [MemberPortalController::class, 'achievements']);
     $router->get('/ofertas', [MemberPortalController::class, 'offerings']);
     $router->get('/configuracoes', [MemberPortalController::class, 'settings']);
     $router->post('/configuracoes/salvar', [MemberPortalController::class, 'saveSettings']);

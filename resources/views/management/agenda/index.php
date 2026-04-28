@@ -1,79 +1,149 @@
 <?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
 <?php
-$mesesPt = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-$mesAtual = (int)date('m');
-$anoAtual = (int)date('Y');
-$nomeMes = $mesesPt[$mesAtual - 1];
+    $monthParam = preg_match('/^\d{4}-\d{2}$/', (string) ($_GET['month'] ?? '')) ? (string) $_GET['month'] : date('Y-m');
+    $current = DateTimeImmutable::createFromFormat('Y-m-d', $monthParam . '-01') ?: new DateTimeImmutable('first day of this month');
+    $monthStart = $current->modify('first day of this month');
+    $monthEnd = $current->modify('last day of this month');
+    $monthNames = [1 => 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    $weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    $firstWeekday = (int) $monthStart->format('w');
+    $daysInMonth = (int) $monthStart->format('t');
+    $prevMonth = $monthStart->modify('-1 month')->format('Y-m');
+    $nextMonth = $monthStart->modify('+1 month')->format('Y-m');
+    $today = date('Y-m-d');
+    $eventColors = ['#1455ff', '#10b981', '#7c3aed', '#f59e0b', '#ef4444'];
+    $units = is_array($units ?? null) ? $units : [];
 ?>
+
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-header__title">Agenda</h1>
-        <p class="mgmt-header__subtitle">Visão unificada de eventos, visitas e aconselhamentos</p>
+        <h1 class="mgmt-header__title">Agenda e Eventos</h1>
+        <p class="mgmt-header__subtitle">Calendário unificado de eventos, visitas e aconselhamentos</p>
     </div>
-    <div class="mgmt-header__actions" style="display:flex; align-items:center; gap: var(--space-4);">
-        <button class="btn btn--ghost btn--sm" style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        </button>
-        <span style="font-size: var(--text-lg); font-weight: 700; color: var(--color-primary);"><?= $nomeMes ?> / <?= $anoAtual ?></span>
-        <button class="btn btn--ghost btn--sm" style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </button>
+    <div class="mgmt-header__actions">
+        <a href="<?= url('/gestao/eventos') ?>" class="btn btn--outline">Lista de eventos</a>
+        <button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-agenda-event').style.display='flex'">Novo evento</button>
     </div>
 </div>
 
-<div style="display:flex; gap: var(--space-3); margin-bottom: var(--space-5);">
-    <span style="display:inline-flex; align-items:center; gap:4px; padding:5px 12px; border-radius:6px; font-size:11px; font-weight:700; background:rgba(10,77,255,0.08); color:#0a4dff; text-transform:uppercase; letter-spacing:0.03em;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg> Eventos</span>
-    <span style="display:inline-flex; align-items:center; gap:4px; padding:5px 12px; border-radius:6px; font-size:11px; font-weight:700; background:rgba(16,185,129,0.08); color:#10b981; text-transform:uppercase; letter-spacing:0.03em;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg> Visitas</span>
-    <span style="display:inline-flex; align-items:center; gap:4px; padding:5px 12px; border-radius:6px; font-size:11px; font-weight:700; background:rgba(124,58,237,0.08); color:#7c3aed; text-transform:uppercase; letter-spacing:0.03em;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Aconselhamento</span>
+<div class="mgmt-dashboard-card agenda-toolbar">
+    <div class="agenda-toolbar__inner">
+        <div class="agenda-toolbar__legend">
+            <span class="badge badge-primary">Eventos</span>
+            <span class="badge badge-success">Visitas</span>
+            <span class="badge" style="background:#efe3ff;color:#6d28d9;">Aconselhamento</span>
+        </div>
+        <div class="agenda-toolbar__nav">
+            <a href="<?= url('/gestao/agenda?month=' . $prevMonth) ?>" class="btn btn--outline btn--sm" aria-label="Mês anterior">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </a>
+            <strong class="agenda-toolbar__month"><?= $monthNames[(int) $monthStart->format('n')] ?> / <?= $monthStart->format('Y') ?></strong>
+            <a href="<?= url('/gestao/agenda?month=' . $nextMonth) ?>" class="btn btn--outline btn--sm" aria-label="Próximo mês">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+        </div>
+    </div>
 </div>
 
-<div class="mgmt-dashboard-card" style="padding: 0; overflow: hidden;">
-    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; border-bottom: 1px solid var(--color-border-light);">
-        <?php 
-        $diasSemana = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
-        foreach ($diasSemana as $dia): ?>
-        <div style="padding: 10px; text-align: center; font-weight: 700; font-size: 11px; color: var(--text-muted); letter-spacing:0.05em; border-right: 1px solid var(--color-border-light);"><?= $dia ?></div>
+<div class="mgmt-calendar-shell">
+    <div class="mgmt-calendar-weekdays">
+        <?php foreach ($weekdays as $dayName): ?>
+            <div class="mgmt-calendar-weekday"><?= e($dayName) ?></div>
         <?php endforeach; ?>
     </div>
-
-    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0;">
-        <?php
-        $primeiroDia = mktime(0, 0, 0, $mesAtual, 1, $anoAtual);
-        $diasNoMes = (int)date('t', $primeiroDia);
-        $diaSemanaInicio = (int)date('w', $primeiroDia);
-        $hoje = (int)date('j');
-        $eventColors = ['#0a4dff', '#10b981', '#7c3aed', '#f59e0b', '#ef4444'];
-        
-        for ($i = 0; $i < $diaSemanaInicio; $i++): ?>
-        <div style="padding: 8px; min-height: 90px; border-right: 1px solid var(--color-border-light); border-bottom: 1px solid var(--color-border-light); color: var(--text-muted); opacity:0.4;"></div>
-        <?php endfor;
-        
-        for ($dia = 1; $dia <= $diasNoMes; $dia++): 
-            $dataAtual = date('Y-m', $primeiroDia) . '-' . str_pad((string)$dia, 2, '0', STR_PAD_LEFT);
-            $eventosNoDia = array_values(array_filter($events ?? [], fn($e) => isset($e['start_date']) && str_starts_with($e['start_date'], $dataAtual)));
-            $isHoje = ($dia === $hoje && $mesAtual === (int)date('m') && $anoAtual === (int)date('Y'));
-        ?>
-        <div style="padding: 8px; min-height: 90px; border-right: 1px solid var(--color-border-light); border-bottom: 1px solid var(--color-border-light); <?= $isHoje ? 'background: rgba(10, 77, 255, 0.04);' : '' ?>">
-            <div style="margin-bottom: 4px; <?= $isHoje ? 'display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:#0a4dff; color:white; font-weight:700; font-size:13px;' : 'font-size:13px; font-weight:500; color:var(--text-body);' ?>"><?= $dia ?></div>
-            <?php foreach (array_slice($eventosNoDia, 0, 2) as $idx => $evento): 
-                $evColor = $eventColors[$idx % count($eventColors)];
-            ?>
-            <div style="font-size: 10px; padding: 2px 6px; background: <?= $evColor ?>; color: white; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display:flex; align-items:center; gap:3px;">
-                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="3" y="4" width="18" height="18" rx="2"></rect></svg>
-                <?= e($evento['title'] ?? '') ?>
-            </div>
-            <?php endforeach; ?>
-            <?php if (count($eventosNoDia) > 2): ?>
-            <div style="font-size: 10px; color: var(--text-muted);">+<?= count($eventosNoDia) - 2 ?> mais</div>
-            <?php endif; ?>
-        </div>
-        <?php endfor;
-        
-        $diasRestantes = (7 - (($diaSemanaInicio + $diasNoMes) % 7)) % 7;
-        for ($i = 0; $i < $diasRestantes; $i++): ?>
-        <div style="padding: 8px; min-height: 90px; border-right: 1px solid var(--color-border-light); border-bottom: 1px solid var(--color-border-light); opacity:0.4;"></div>
+    <div class="mgmt-calendar-grid">
+        <?php for ($i = 0; $i < $firstWeekday; $i++): ?>
+            <div class="mgmt-calendar-day is-muted"></div>
         <?php endfor; ?>
+
+        <?php for ($day = 1; $day <= $daysInMonth; $day++): ?>
+            <?php
+                $date = $monthStart->format('Y-m') . '-' . str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+                $eventsOfDay = array_values(array_filter($events ?? [], static fn($event) => isset($event['start_date']) && str_starts_with((string) $event['start_date'], $date)));
+            ?>
+            <div class="mgmt-calendar-day <?= $date === $today ? 'is-today' : '' ?>">
+                <span class="mgmt-calendar-day__number"><?= $day ?></span>
+                <?php foreach (array_slice($eventsOfDay, 0, 3) as $index => $event): ?>
+                    <a class="mgmt-calendar-event" href="<?= url('/gestao/eventos/' . (int) ($event['id'] ?? 0)) ?>" style="background:<?= e($eventColors[$index % count($eventColors)]) ?>;">
+                        <?= e((string) ($event['title'] ?? 'Evento')) ?>
+                    </a>
+                <?php endforeach; ?>
+                <?php if (count($eventsOfDay) > 3): ?>
+                    <div style="margin-top:.35rem;color:#6b7892;font-size:.75rem;font-weight:700;">+<?= count($eventsOfDay) - 3 ?> eventos</div>
+                <?php endif; ?>
+            </div>
+        <?php endfor; ?>
+
+        <?php
+            $remaining = (7 - (($firstWeekday + $daysInMonth) % 7)) % 7;
+            for ($i = 0; $i < $remaining; $i++):
+        ?>
+            <div class="mgmt-calendar-day is-muted"></div>
+        <?php endfor; ?>
+    </div>
+</div>
+
+<div class="modal" id="modal-new-agenda-event" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-new-agenda-event-title">
+    <div class="modal__content modal__content--wide">
+        <div class="modal__header">
+            <h2 class="modal__title" id="modal-new-agenda-event-title">Novo evento</h2>
+            <button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'" aria-label="Fechar">&times;</button>
+        </div>
+        <form method="POST" action="<?= url('/gestao/eventos') ?>" data-loading>
+            <?= csrf_field() ?>
+            <div class="modal__body modal__body--compact">
+                <div class="modal-grid">
+                    <div class="form-group modal-grid__full">
+                        <label class="form-label" for="agenda-event-title">Título *</label>
+                        <input id="agenda-event-title" type="text" name="title" class="form-input" required>
+                    </div>
+                    <div class="form-group modal-grid__full">
+                        <label class="form-label" for="agenda-event-description">Descrição</label>
+                        <textarea id="agenda-event-description" name="description" class="form-input" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="agenda-event-unit">Unidade</label>
+                        <select id="agenda-event-unit" name="church_unit_id" class="form-select">
+                            <option value="">Sede / todas as unidades</option>
+                            <?php foreach ($units as $unit): ?>
+                                <option value="<?= (int) $unit['id'] ?>"><?= e((string) ($unit['name'] ?? 'Unidade')) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="agenda-event-location">Local</label>
+                        <input id="agenda-event-location" type="text" name="location" class="form-input" placeholder="Ex.: Auditório principal">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="agenda-event-start">Início *</label>
+                        <input id="agenda-event-start" type="datetime-local" name="start_date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="agenda-event-end">Término</label>
+                        <input id="agenda-event-end" type="datetime-local" name="end_date" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="agenda-event-max">Inscrições máximas</label>
+                        <input id="agenda-event-max" type="number" name="max_registrations" class="form-input" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="agenda-event-status">Status</label>
+                        <select id="agenda-event-status" name="status" class="form-select">
+                            <option value="draft">Rascunho</option>
+                            <option value="published">Publicado</option>
+                            <option value="ongoing">Em andamento</option>
+                            <option value="completed">Concluído</option>
+                            <option value="cancelled">Cancelado</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Criar evento</button>
+            </div>
+        </form>
     </div>
 </div>
 <?php $__view->endSection(); ?>

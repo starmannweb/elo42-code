@@ -6,11 +6,12 @@
         <p class="mgmt-header__subtitle">Gerencie os eventos e atividades da igreja</p>
     </div>
     <div class="mgmt-header__actions">
-        <button type="button" class="btn btn--primary" onclick="window.location.href='<?= url('/gestao/eventos/novo') ?>'">+ Novo Evento</button>
+        <button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-event').style.display='flex'">+ Novo Evento</button>
     </div>
 </div>
 
 <?php
+$units = is_array($units ?? null) ? $units : [];
 $eventosAtivos = 0;
 $totalInscritos = 0;
 $proximoEvento = null;
@@ -54,7 +55,7 @@ foreach ($events ?? [] as $ev) {
 </div>
 
 <?php if (empty($events)): ?>
-<div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div><h3 class="mgmt-empty__title">Nenhum evento</h3><p class="mgmt-empty__text">Crie o primeiro evento da sua igreja.</p><a href="<?= url('/gestao/eventos/novo') ?>" class="btn btn--primary">Criar evento</a></div>
+<div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div><h3 class="mgmt-empty__title">Nenhum evento</h3><p class="mgmt-empty__text">Crie o primeiro evento da sua igreja.</p><button type="button" onclick="document.getElementById('modal-new-event').style.display='flex'" class="btn btn--primary">Criar evento</button></div>
 <?php else: ?>
 <div class="mgmt-table-container">
     <table class="mgmt-table">
@@ -85,4 +86,67 @@ foreach ($events ?? [] as $ev) {
     </table>
 </div>
 <?php endif; ?>
+
+<div class="modal" id="modal-new-event" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-new-event-title">
+    <div class="modal__content modal__content--wide">
+        <div class="modal__header">
+            <h2 class="modal__title" id="modal-new-event-title">Novo evento</h2>
+            <button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'" aria-label="Fechar">&times;</button>
+        </div>
+        <form method="POST" action="<?= url('/gestao/eventos') ?>" data-loading>
+            <?= csrf_field() ?>
+            <div class="modal__body modal__body--compact">
+                <div class="modal-grid">
+                    <div class="form-group modal-grid__full">
+                        <label class="form-label" for="event-title">Título *</label>
+                        <input id="event-title" type="text" name="title" class="form-input" required>
+                    </div>
+                    <div class="form-group modal-grid__full">
+                        <label class="form-label" for="event-description">Descrição</label>
+                        <textarea id="event-description" name="description" class="form-input" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-unit">Unidade</label>
+                        <select id="event-unit" name="church_unit_id" class="form-select">
+                            <option value="">Sede / todas as unidades</option>
+                            <?php foreach ($units as $unit): ?>
+                                <option value="<?= (int) $unit['id'] ?>"><?= e((string) ($unit['name'] ?? 'Unidade')) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-location">Local</label>
+                        <input id="event-location" type="text" name="location" class="form-input" placeholder="Ex.: Auditório principal">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-start">Início *</label>
+                        <input id="event-start" type="datetime-local" name="start_date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-end">Término</label>
+                        <input id="event-end" type="datetime-local" name="end_date" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-max">Inscrições máximas</label>
+                        <input id="event-max" type="number" name="max_registrations" class="form-input" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-status">Status</label>
+                        <select id="event-status" name="status" class="form-select">
+                            <option value="draft">Rascunho</option>
+                            <option value="published">Publicado</option>
+                            <option value="ongoing">Em andamento</option>
+                            <option value="completed">Concluído</option>
+                            <option value="cancelled">Cancelado</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Criar evento</button>
+            </div>
+        </form>
+    </div>
+</div>
 <?php $__view->endSection(); ?>

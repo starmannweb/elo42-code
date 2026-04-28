@@ -5,14 +5,30 @@
         <h1 class="mgmt-header__title">Relatórios</h1>
         <p class="mgmt-header__subtitle">Análises detalhadas e métricas de desempenho da igreja</p>
     </div>
-    <div class="mgmt-header__actions">
-        <select class="form-select" style="min-width: 200px;">
-            <option>Visão Geral (Painel Destaque)</option>
-            <option>Financeiro</option>
-            <option>Membros</option>
-            <option>Eventos</option>
-        </select>
-    </div>
+    <form method="GET" action="<?= url('/gestao/relatorios') ?>" class="mgmt-header__actions mgmt-filter-form report-filter">
+        <?php $selectedReport = (string) ($filters['type'] ?? 'overview'); ?>
+        <?php
+            $reportTypes = [
+                'overview' => 'Visão geral',
+                'financial' => 'Financeiro',
+                'members' => 'Membros',
+                'events' => 'Eventos',
+            ];
+        ?>
+        <label class="report-filter__select">
+            <span>Relatório</span>
+            <select name="type" class="form-select" aria-label="Tipo de relatório">
+                <?php foreach ($reportTypes as $typeValue => $typeLabel): ?>
+                    <option value="<?= e($typeValue) ?>" <?= $selectedReport === $typeValue ? 'selected' : '' ?>><?= e($typeLabel) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+        <input type="date" name="start_date" class="form-control" value="<?= e((string) ($filters['start_date'] ?? date('Y-m-01'))) ?>">
+        <input type="date" name="end_date" class="form-control" value="<?= e((string) ($filters['end_date'] ?? date('Y-m-t'))) ?>">
+        <a href="<?= url('/gestao/relatorios') ?>" class="btn btn--outline">Limpar</a>
+        <button type="submit" class="btn btn--secondary">Aplicar</button>
+        <button type="submit" name="export" value="pdf" class="btn btn--primary" formtarget="_blank">Exportar PDF</button>
+    </form>
 </div>
 
 <?php 

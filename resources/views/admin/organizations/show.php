@@ -3,7 +3,7 @@
 <div class="mgmt-header"><div><h1 class="mgmt-header__title"><?= e($org['name']) ?></h1><p class="mgmt-header__subtitle"><span class="badge badge--<?= $org['status'] ?>"><?= ucfirst(e($org['status'])) ?></span></p></div><div class="mgmt-header__actions"><a href="<?= url('/admin/organizacoes/' . $org['id'] . '/editar') ?>" class="btn btn--secondary">Editar</a></div></div>
 <div class="mgmt-detail">
     <div class="mgmt-detail__main">
-        <div class="mgmt-info-card"><h3 class="mgmt-info-card__title">Dados da organização</h3>
+        <div class="mgmt-info-card"><h3 class="mgmt-info-card__title">Dados da instituição</h3>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Nome</span><span class="mgmt-info-row__value"><?= e($org['name']) ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Razão social</span><span class="mgmt-info-row__value"><?= e($org['legal_name'] ?? '—') ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">CNPJ</span><span class="mgmt-info-row__value"><?= e($org['cnpj'] ?? '—') ?></span></div>

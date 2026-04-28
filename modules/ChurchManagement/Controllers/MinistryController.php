@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\ChurchManagement\Controllers;
 
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Request;
 use App\Core\Session;
 use App\Models\Ministry;
@@ -44,6 +45,17 @@ class MinistryController extends Controller
         return 0;
     }
 
+    private function churchUnits(): array
+    {
+        try {
+            $stmt = Database::connection()->prepare('SELECT * FROM church_units WHERE organization_id = :org_id ORDER BY status ASC, name ASC');
+            $stmt->execute(['org_id' => $this->orgId()]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
     public function index(Request $request): void
     {
         try {
@@ -66,6 +78,7 @@ class MinistryController extends Controller
                 'breadcrumb' => 'Ministérios / Novo',
                 'ministry'   => null,
                 'members'    => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+                'units'      => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
@@ -76,9 +89,12 @@ class MinistryController extends Controller
     public function store(Request $request): void
     {
         $this->validate($request, ['name' => 'required|min:3']);
-        $id = Ministry::create(array_merge($request->only(['name','description','leader_member_id','color']), ['organization_id' => $this->orgId()]));
+        $data = $request->only(['name','description','leader_member_id','color','church_unit_id']);
+        $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+        $id = Ministry::create(array_merge($data, ['organization_id' => $this->orgId()]));
         $memberIds = $request->input('members', []);
-        if (is_array($memberIds)) { Ministry::syncMembers((int)$id, array_map('intval', $memberIds)); }
+        $leaderMemberId = (int) $request->input('leader_member_id', 0);
+        if (is_array($memberIds)) { Ministry::syncMembers((int)$id, array_map('intval', $memberIds), $leaderMemberId); }
         Session::flash('success', 'Ministério criado com sucesso.');
         redirect('/gestao/ministerios');
     }
@@ -93,6 +109,7 @@ class MinistryController extends Controller
                 'breadcrumb' => 'Ministérios / Editar',
                 'ministry'   => $ministry,
                 'members'    => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+                'units'      => $this->churchUnits(),
                 'current_members' => Ministry::getMembers((int) $ministry['id']),
             ]);
         } catch (\Throwable $e) {
@@ -114,9 +131,12 @@ class MinistryController extends Controller
 
         if (!$ministry || (int)$ministry['organization_id'] !== $this->orgId()) { redirect('/gestao/ministerios'); }
         $this->validate($request, ['name' => 'required|min:3']);
-        Ministry::update($id, $request->only(['name','description','leader_member_id','color','status']));
+        $data = $request->only(['name','description','leader_member_id','color','status','church_unit_id']);
+        $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+        Ministry::update($id, $data);
         $memberIds = $request->input('members', []);
-        if (is_array($memberIds)) { Ministry::syncMembers($id, array_map('intval', $memberIds)); }
+        $leaderMemberId = (int) $request->input('leader_member_id', 0);
+        if (is_array($memberIds)) { Ministry::syncMembers($id, array_map('intval', $memberIds), $leaderMemberId); }
         Session::flash('success', 'Ministério atualizado.');
         redirect('/gestao/ministerios');
     }

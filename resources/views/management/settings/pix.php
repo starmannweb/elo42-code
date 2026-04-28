@@ -1,6 +1,7 @@
 <?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
+<?php $settings = is_array($settings ?? null) ? $settings : []; ?>
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-title">Configurações do PIX</h1>
@@ -12,27 +13,9 @@
     </div>
 </div>
 
-<!-- Tabs de navegação -->
-<div style="border-bottom: 1px solid var(--color-border-light); margin-bottom: 1.5rem; display: flex; gap: 1.5rem; overflow-x: auto;">
-    <a href="<?= url('/gestao/configuracoes') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'igreja' ? '600' : '500' ?>; white-space: nowrap;">
-        Igreja
-    </a>
-    <a href="<?= url('/gestao/configuracoes/pix') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pix' ? '600' : '500' ?>; white-space: nowrap;">
-        PIX / Ofertas
-    </a>
-    <a href="<?= url('/gestao/configuracoes/ia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'ia' ? '600' : '500' ?>; white-space: nowrap;">
-        Inteligência Artificial
-    </a>
-    <a href="<?= url('/gestao/configuracoes/aparencia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'aparencia' ? '600' : '500' ?>; white-space: nowrap;">
-        Aparência
-    </a>
-    <a href="<?= url('/gestao/configuracoes/seo') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'seo' ? '600' : '500' ?>; white-space: nowrap;">
-        SEO
-    </a>
-    <a href="<?= url('/gestao/configuracoes/pwa') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pwa' ? '600' : '500' ?>; white-space: nowrap;">
-        PWA
-    </a>
-</div>
+<form id="form-pix" action="<?= url('/gestao/configuracoes') ?>" method="POST">
+    <?= csrf_field() ?>
+    <input type="hidden" name="redirect_to" value="<?= url('/gestao/configuracoes/pix') ?>">
 
 <div class="mgmt-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
     <div class="mgmt-panel">
@@ -42,9 +25,6 @@
         </h3>
         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Configure a chave PIX para receber doações</p>
         
-        <form id="form-pix" action="#" method="POST">
-            <?= csrf_field() ?>
-            
             <div class="form-group">
                 <label for="pix_type">Tipo da Chave</label>
                 <select id="pix_type" name="pix_type" class="form-control">
@@ -59,7 +39,7 @@
             <div class="form-group">
                 <label for="pix_key">Chave PIX</label>
                 <div style="display: flex; gap: 0.5rem;">
-                    <input type="text" id="pix_key" name="pix_key" class="form-control" value="00.000.000/0001-00" style="flex: 1;">
+                    <input type="text" id="pix_key" name="pix_key" class="form-control" value="<?= e((string) ($settings['pix_key'] ?? '')) ?>" placeholder="00.000.000/0001-00" style="flex: 1;">
                     <button type="button" class="btn btn--outline" style="padding: 0.5rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
                 </div>
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Esta chave será exibida na página de ofertas para os membros copiarem</div>
@@ -67,10 +47,9 @@
             
             <div class="form-group" style="margin-top: 1.5rem;">
                 <label for="pix_name">Nome do Beneficiário</label>
-                <input type="text" id="pix_name" name="pix_name" class="form-control" value="<?= e($organization['name'] ?? '') ?>">
+                <input type="text" id="pix_name" name="pix_name" class="form-control" value="<?= e((string) ($settings['pix_name'] ?? $settings['pix_beneficiary'] ?? ($organization['name'] ?? ''))) ?>">
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Nome que aparecerá no comprovante de pagamento</div>
             </div>
-        </form>
     </div>
 
     <div class="mgmt-panel">
@@ -99,7 +78,8 @@
     
     <div class="form-group">
         <label for="pix_instruction">Mensagem de Instrução</label>
-        <textarea id="pix_instruction" name="pix_instruction" class="form-control" rows="3">Escaneie o QR Code ou copie a chave PIX para fazer sua contribuição</textarea>
+        <textarea id="pix_instruction" name="pix_instruction" class="form-control" rows="3"><?= e((string) ($settings['pix_instruction'] ?? 'Escolha uma campanha, copie a chave PIX e envie sua contribuição pelo aplicativo do seu banco.')) ?></textarea>
     </div>
 </div>
+</form>
 <?php $__view->endSection(); ?>

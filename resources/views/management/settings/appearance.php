@@ -1,6 +1,7 @@
 <?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
+<?php $settings = is_array($settings ?? null) ? $settings : []; ?>
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-title">Aparência</h1>
@@ -15,28 +16,6 @@
     </div>
 </div>
 
-<!-- Tabs de navegação -->
-<div style="border-bottom: 1px solid var(--color-border-light); margin-bottom: 1.5rem; display: flex; gap: 1.5rem; overflow-x: auto;">
-    <a href="<?= url('/gestao/configuracoes') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'igreja' ? '600' : '500' ?>; white-space: nowrap;">
-        Igreja
-    </a>
-    <a href="<?= url('/gestao/configuracoes/pix') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pix' ? '600' : '500' ?>; white-space: nowrap;">
-        PIX / Ofertas
-    </a>
-    <a href="<?= url('/gestao/configuracoes/ia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'ia' ? '600' : '500' ?>; white-space: nowrap;">
-        Inteligência Artificial
-    </a>
-    <a href="<?= url('/gestao/configuracoes/aparencia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'aparencia' ? '600' : '500' ?>; white-space: nowrap;">
-        Aparência
-    </a>
-    <a href="<?= url('/gestao/configuracoes/seo') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'seo' ? '600' : '500' ?>; white-space: nowrap;">
-        SEO
-    </a>
-    <a href="<?= url('/gestao/configuracoes/pwa') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pwa' ? '600' : '500' ?>; white-space: nowrap;">
-        PWA
-    </a>
-</div>
-
 <div class="mgmt-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
     <div class="mgmt-panel">
         <h3 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--color-text-primary); margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -45,15 +24,16 @@
         </h3>
         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">As alterações são visualizadas em tempo real</p>
         
-        <form id="form-appearance" action="#" method="POST">
+        <form id="form-appearance" action="<?= url('/gestao/configuracoes') ?>" method="POST">
             <?= csrf_field() ?>
+            <input type="hidden" name="redirect_to" value="<?= url('/gestao/configuracoes/aparencia') ?>">
             
             <div class="form-group">
                 <label>Cor Primária</label>
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Cor principal do app (botões, links)</div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="color" value="#1e3a8a" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
-                    <input type="text" class="form-control" value="#1e3a8a" style="flex: 1;">
+                    <input type="color" name="appearance_primary_picker" value="<?= e((string) ($settings['appearance_primary'] ?? '#1e3a8a')) ?>" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;" data-color-sync="appearance_primary">
+                    <input type="text" id="appearance_primary" name="appearance_primary" class="form-control" value="<?= e((string) ($settings['appearance_primary'] ?? '#1e3a8a')) ?>" style="flex: 1;">
                 </div>
             </div>
             
@@ -61,8 +41,8 @@
                 <label>Cor Secundária</label>
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Cor de destaque secundário</div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="color" value="#f3f4f6" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
-                    <input type="text" class="form-control" value="#f3f4f6" style="flex: 1;">
+                    <input type="color" name="appearance_secondary_picker" value="<?= e((string) ($settings['appearance_secondary'] ?? '#f3f4f6')) ?>" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;" data-color-sync="appearance_secondary">
+                    <input type="text" id="appearance_secondary" name="appearance_secondary" class="form-control" value="<?= e((string) ($settings['appearance_secondary'] ?? '#f3f4f6')) ?>" style="flex: 1;">
                 </div>
             </div>
             
@@ -70,8 +50,8 @@
                 <label>Cor de Destaque</label>
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Cor para elementos de destaque</div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="color" value="#f59e0b" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
-                    <input type="text" class="form-control" value="#f59e0b" style="flex: 1;">
+                    <input type="color" name="appearance_accent_picker" value="<?= e((string) ($settings['appearance_accent'] ?? '#f59e0b')) ?>" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;" data-color-sync="appearance_accent">
+                    <input type="text" id="appearance_accent" name="appearance_accent" class="form-control" value="<?= e((string) ($settings['appearance_accent'] ?? '#f59e0b')) ?>" style="flex: 1;">
                 </div>
             </div>
             
@@ -79,8 +59,8 @@
                 <label>Cor de Fundo</label>
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Cor de fundo principal</div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="color" value="#ffffff" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
-                    <input type="text" class="form-control" value="#ffffff" style="flex: 1;">
+                    <input type="color" name="appearance_background_picker" value="<?= e((string) ($settings['appearance_background'] ?? '#ffffff')) ?>" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;" data-color-sync="appearance_background">
+                    <input type="text" id="appearance_background" name="appearance_background" class="form-control" value="<?= e((string) ($settings['appearance_background'] ?? '#ffffff')) ?>" style="flex: 1;">
                 </div>
             </div>
             
@@ -88,8 +68,8 @@
                 <label>Cor do Texto</label>
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Cor do texto principal</div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="color" value="#111827" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;">
-                    <input type="text" class="form-control" value="#111827" style="flex: 1;">
+                    <input type="color" name="appearance_text_picker" value="<?= e((string) ($settings['appearance_text'] ?? '#111827')) ?>" style="width: 40px; height: 40px; padding: 0; border: none; border-radius: 8px; cursor: pointer;" data-color-sync="appearance_text">
+                    <input type="text" id="appearance_text" name="appearance_text" class="form-control" value="<?= e((string) ($settings['appearance_text'] ?? '#111827')) ?>" style="flex: 1;">
                 </div>
             </div>
         </form>

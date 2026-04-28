@@ -1,6 +1,6 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
-<div class="mgmt-header"><div><h1 class="mgmt-header__title">Editar organização</h1></div></div>
+<div class="mgmt-header"><div><h1 class="mgmt-header__title">Editar instituição</h1></div></div>
 <div class="mgmt-form-card" style="max-width:640px;">
     <form method="POST" action="<?= url('/admin/organizacoes/' . $org['id'] . '/editar') ?>"><?= csrf_field() ?>
         <div class="form-group"><label class="form-label">Nome *</label><input type="text" name="name" class="form-input" value="<?= e($org['name']) ?>" required></div>

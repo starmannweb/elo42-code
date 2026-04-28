@@ -1,4 +1,4 @@
-<?php $__view->extend('management'); ?>
+<?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
 <div class="mgmt-container">
@@ -63,7 +63,10 @@
         </div>
         <div class="stat-card">
             <div class="stat-card__icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"></path>
+                    <path d="m9 13 2 2 4-4"></path>
+                </svg>
             </div>
             <div>
                 <div class="stat-card__label">Batizados</div>

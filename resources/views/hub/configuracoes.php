@@ -9,6 +9,13 @@ $accessProfiles = is_array($accessProfiles ?? null) ? $accessProfiles : [];
 $currentAccessMode = (string) ($currentAccessMode ?? 'client');
 $pendingSteps = array_values(array_filter($steps, static fn ($step) => empty($step['done'])));
 $nextPendingStep = $pendingSteps[0] ?? null;
+$orgType = (string) ($organization['type'] ?? 'church');
+$orgTypeOptions = [
+    'church' => 'Igreja',
+    'ministry' => 'Ministério',
+    'association' => 'Associação',
+    'other' => 'Outra organização',
+];
 ?>
 
 <section class="hub-page">
@@ -49,7 +56,13 @@ $nextPendingStep = $pendingSteps[0] ?? null;
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="cfg-org-type">Tipo</label>
-                        <input id="cfg-org-type" name="org_type" class="form-input" type="text" value="<?= e((string) ($organization['type'] ?? '')) ?>" placeholder="Igreja, ONG, ministério...">
+                        <select id="cfg-org-type" name="org_type" class="form-input">
+                            <?php foreach ($orgTypeOptions as $value => $label): ?>
+                                <option value="<?= e($value) ?>" <?= $orgType === $value ? 'selected' : '' ?>>
+                                    <?= e($label) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="cfg-org-phone">Telefone</label>
@@ -111,8 +124,8 @@ $nextPendingStep = $pendingSteps[0] ?? null;
         <?php if (!empty($nextPendingStep)): ?>
             <div class="church-pending-banner">
                 <div>
-                    <p class="church-pending-banner__eyebrow">Pendencia principal</p>
-                    <h3 class="church-pending-banner__title"><?= e((string) ($nextPendingStep['title'] ?? 'Finalizar configuracao')) ?></h3>
+                    <p class="church-pending-banner__eyebrow">Pendência principal</p>
+                    <h3 class="church-pending-banner__title"><?= e((string) ($nextPendingStep['title'] ?? 'Finalizar configuração')) ?></h3>
                     <p class="church-pending-banner__text"><?= e((string) ($nextPendingStep['description'] ?? 'Conclua esta etapa para liberar todos os recursos da conta.')) ?></p>
                 </div>
                 <?php if (!empty($nextPendingStep['action'])): ?>

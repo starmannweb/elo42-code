@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\ChurchManagement\Controllers;
 
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Request;
 use App\Core\Session;
 use App\Models\Event;
@@ -43,6 +44,17 @@ class EventController extends Controller
         return 0;
     }
 
+    private function churchUnits(): array
+    {
+        try {
+            $stmt = Database::connection()->prepare('SELECT * FROM church_units WHERE organization_id = :org_id ORDER BY status ASC, name ASC');
+            $stmt->execute(['org_id' => $this->orgId()]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
     public function index(Request $request): void
     {
         try {
@@ -51,6 +63,7 @@ class EventController extends Controller
                 'pageTitle'  => 'Eventos — Gestão',
                 'breadcrumb' => 'Eventos',
                 'events'     => Event::byOrg($this->orgId(), $status),
+                'units'      => $this->churchUnits(),
                 'filter_status' => $status,
             ]);
         } catch (\Throwable $e) {
@@ -66,6 +79,7 @@ class EventController extends Controller
                 'pageTitle'  => 'Novo evento — Gestão',
                 'breadcrumb' => 'Eventos / Novo',
                 'event'      => null,
+                'units'      => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
@@ -76,7 +90,10 @@ class EventController extends Controller
     public function store(Request $request): void
     {
         $this->validate($request, ['title' => 'required|min:3', 'start_date' => 'required']);
-        Event::create(array_merge($request->only(['title','description','location','start_date','end_date','max_registrations','status']), [
+        $data = $request->only(['title','description','location','start_date','end_date','max_registrations','status','church_unit_id']);
+        $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+
+        Event::create(array_merge($data, [
             'organization_id' => $this->orgId(),
             'created_by' => Session::user()['id'],
         ]));
@@ -89,6 +106,13 @@ class EventController extends Controller
         try {
             $event = Event::find((int) $request->param('id'));
             if (!$event || (int)$event['organization_id'] !== $this->orgId()) { redirect('/gestao/eventos'); }
+            $event['unit_name'] = null;
+            foreach ($this->churchUnits() as $unit) {
+                if ((int) ($unit['id'] ?? 0) === (int) ($event['church_unit_id'] ?? 0)) {
+                    $event['unit_name'] = (string) ($unit['name'] ?? '');
+                    break;
+                }
+            }
             $this->view('management/events/show', [
                 'pageTitle'     => e($event['title']) . ' — Gestão',
                 'breadcrumb'    => 'Eventos / ' . $event['title'],
@@ -110,6 +134,7 @@ class EventController extends Controller
                 'pageTitle'  => 'Editar — ' . e($event['title']),
                 'breadcrumb' => 'Eventos / Editar',
                 'event'      => $event,
+                'units'      => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar evento: ' . $e->getMessage());
@@ -130,7 +155,9 @@ class EventController extends Controller
 
         if (!$event || (int)$event['organization_id'] !== $this->orgId()) { redirect('/gestao/eventos'); }
         $this->validate($request, ['title' => 'required|min:3']);
-        Event::update($id, $request->only(['title','description','location','start_date','end_date','max_registrations','status']));
+        $data = $request->only(['title','description','location','start_date','end_date','max_registrations','status','church_unit_id']);
+        $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+        Event::update($id, $data);
         Session::flash('success', 'Evento atualizado.');
         redirect('/gestao/eventos');
     }
@@ -142,6 +169,7 @@ class EventController extends Controller
                 'pageTitle'  => 'Agenda — Gestão',
                 'breadcrumb' => 'Agenda',
                 'events'     => Event::byOrg($this->orgId()),
+                'units'      => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar agenda: ' . $e->getMessage());

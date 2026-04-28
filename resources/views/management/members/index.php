@@ -8,7 +8,7 @@
         <p class="mgmt-header__subtitle">Gerencie os membros da igreja</p>
     </div>
     <div class="mgmt-header__actions">
-        <button type="button" class="btn btn--primary" onclick="window.location.href='<?= url('/gestao/membros/novo') ?>'">+ Novo Membro</button>
+        <button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-member').style.display='flex'">+ Novo membro</button>
     </div>
 </div>
 
@@ -91,7 +91,7 @@ foreach ($members as $m) {
         <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg></div>
         <h3 style="font-weight:700; margin-bottom:4px;">Nenhum membro encontrado</h3>
         <p style="font-size:13px; margin-bottom: var(--space-4);">Comece cadastrando o primeiro membro da sua organização.</p>
-        <a href="<?= url('/gestao/membros/novo') ?>" class="btn btn--primary">Cadastrar membro</a>
+        <button type="button" onclick="document.getElementById('modal-new-member').style.display='flex'" class="btn btn--primary">Cadastrar membro</button>
     </div>
 <?php else: ?>
     <table class="mgmt-table">
@@ -135,30 +135,34 @@ foreach ($members as $m) {
 <?php endif; ?>
 </div>
 
-<div class="mgmt-dashboard-card" style="margin-top: var(--space-6);">
-    <header class="mgmt-dashboard-card__header">
-        <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg> Jornada Espiritual & Igreja</h2>
-    </header>
-    <p style="font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-4);">Marcos e informações de discipulado</p>
-    
-    <div style="margin-bottom: var(--space-5);">
-        <label style="font-size: var(--text-sm); font-weight: 600; display: block; margin-bottom: var(--space-2);">Data de Batismo</label>
-        <input type="date" class="form-input" style="max-width: 100%;" placeholder="dd/mm/aaaa" disabled>
-    </div>
-
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: var(--space-4);">
-        <label style="font-size: var(--text-sm); font-weight: 600;">Linha do Tempo Espiritual</label>
-        <button class="btn btn--outline btn--sm">+ Adicionar Marco</button>
-    </div>
-
-    <div style="margin-bottom: var(--space-5);">
-        <label style="font-size: var(--text-sm); font-weight: 600; display: block; margin-bottom: var(--space-2);">Observações Privadas</label>
-        <textarea class="form-input" rows="3" style="width: 100%; resize: vertical;" placeholder="Anotações pastorais sobre o membro..." disabled></textarea>
-    </div>
-
-    <div style="display: flex; justify-content: flex-end; gap: var(--space-3); padding-top: var(--space-4); border-top: 1px solid var(--color-border-light);">
-        <button class="btn btn--ghost">Cancelar</button>
-        <button class="btn btn--primary" disabled>Salvar Membro</button>
+<?php $units = is_array($units ?? null) ? $units : []; ?>
+<div class="modal" id="modal-new-member" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-new-member-title">
+    <div class="modal__content modal__content--wide">
+        <div class="modal__header">
+            <h2 class="modal__title" id="modal-new-member-title">Cadastrar membro</h2>
+            <button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'" aria-label="Fechar">&times;</button>
+        </div>
+        <form method="POST" action="<?= url('/gestao/membros') ?>" data-loading>
+            <?= csrf_field() ?>
+            <div class="modal__body">
+                <div class="modal-grid">
+                    <div class="form-group"><label class="form-label">Nome *</label><input type="text" name="name" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">E-mail</label><input type="email" name="email" class="form-input"></div>
+                    <div class="form-group"><label class="form-label">Telefone</label><input type="text" name="phone" class="form-input"></div>
+                    <div class="form-group"><label class="form-label">Nascimento</label><input type="date" name="birth_date" class="form-input"></div>
+                    <div class="form-group"><label class="form-label">Unidade</label><select name="church_unit_id" class="form-select"><option value="">Sede / todas as unidades</option><?php foreach ($units as $unit): ?><option value="<?= (int) $unit['id'] ?>"><?= e((string) $unit['name']) ?></option><?php endforeach; ?></select></div>
+                    <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active">Ativo</option><option value="visitor">Visitante</option><option value="inactive">Inativo</option><option value="transferred">Transferido</option></select></div>
+                    <div class="form-group"><label class="form-label">Data de membresia</label><input type="date" name="membership_date" class="form-input" value="<?= date('Y-m-d') ?>"></div>
+                    <div class="form-group"><label class="form-label">Estado civil</label><select name="marital_status" class="form-select"><option value="">Não informado</option><option value="single">Solteiro(a)</option><option value="married">Casado(a)</option><option value="divorced">Divorciado(a)</option><option value="widowed">Viúvo(a)</option></select></div>
+                </div>
+                <div class="form-group"><label class="form-label">Endereço</label><input type="text" name="address" class="form-input"></div>
+                <div class="form-group"><label class="form-label">Observações</label><textarea name="notes" class="form-input" rows="3"></textarea></div>
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Cadastrar membro</button>
+            </div>
+        </form>
     </div>
 </div>
 

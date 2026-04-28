@@ -15,11 +15,13 @@ $router->group(['prefix' => 'hub', 'middleware' => ['csrf', 'auth']], function($
     // Funcionalidades restritas (exigem organização)
     $router->group(['middleware' => ['organization']], function($router) {
         $router->get('/sites', [DashboardController::class, 'sites']);
+        $router->get('/sites/preview', [DashboardController::class, 'previewSite']);
         $router->post('/sites/gerar', [DashboardController::class, 'gerarSite']);
-        $router->group(['middleware' => ['plan:premium']], function($router) {
-            $router->get('/expositor-ia', [DashboardController::class, 'expositorIa']);
-            $router->post('/expositor-ia/gerar', [DashboardController::class, 'gerarExpositorIa']);
-        });
+        $router->post('/sites/configurar', [DashboardController::class, 'configurarSite']);
+        $router->post('/sites/publicar', [DashboardController::class, 'publicarSite']);
+        $router->get('/expositor-ia', [DashboardController::class, 'expositorIa']);
+        $router->post('/expositor-ia/gerar', [DashboardController::class, 'gerarExpositorIa']);
+        $router->post('/expositor-ia/publicar', [DashboardController::class, 'publicarExpositorIa']);
         $router->get('/creditos', [DashboardController::class, 'creditos']);
         $router->post('/creditos/comprar', [DashboardController::class, 'comprarCreditos']);
         $router->post('/configuracoes/perfil-acesso', [DashboardController::class, 'atualizarPerfilAcesso']);

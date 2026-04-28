@@ -26,6 +26,7 @@
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Nascimento</span><span class="mgmt-info-row__value"><?= $member['birth_date'] ? date('d/m/Y', strtotime($member['birth_date'])) : '—' ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Gênero</span><span class="mgmt-info-row__value"><?= e(match($member['gender'] ?? '') { 'M' => 'Masculino', 'F' => 'Feminino', 'other' => 'Outro', default => '—' }) ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Estado civil</span><span class="mgmt-info-row__value"><?= e(match($member['marital_status'] ?? '') { 'single' => 'Solteiro(a)', 'married' => 'Casado(a)', 'divorced' => 'Divorciado(a)', 'widowed' => 'Viúvo(a)', default => '—' }) ?></span></div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Unidade</span><span class="mgmt-info-row__value"><?= e((string) ($member['unit_name'] ?? 'Sede / não definida')) ?></span></div>
         </div>
 
         <?php if ($member['address'] || $member['city']): ?>

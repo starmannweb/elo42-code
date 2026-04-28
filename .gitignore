@@ -5,6 +5,8 @@
 /storage/cache/*
 /storage/sessions/*
 /public/storage/
+/database/*.sqlite
+/database/*.sqlite-*
 !storage/logs/.gitkeep
 !storage/uploads/.gitkeep
 !storage/cache/.gitkeep

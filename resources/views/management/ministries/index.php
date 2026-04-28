@@ -15,7 +15,7 @@
 <div class="mgmt-empty">
     <div class="mgmt-empty__icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
     <h3 class="mgmt-empty__title">Nenhum ministério cadastrado</h3>
-    <p class="mgmt-empty__text">Crie o primeiro ministério da sua organização.</p>
+    <p class="mgmt-empty__text">Crie o primeiro ministério e já vincule líder e membros ministeriais como Infantil, Louvor, Mídia, Intercessão ou Recepção.</p>
     <a href="<?= url('/gestao/ministerios/novo') ?>" class="btn btn--primary">Criar ministério</a>
 </div>
 <?php else: ?>
@@ -50,7 +50,8 @@
         <div style="padding: var(--space-5);">
             <h3 style="font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-2);"><?= e($m['name']) ?></h3>
             <p style="font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-4); min-height: 40px;"><?= e($m['description'] ?? 'Sem descrição') ?></p>
-            <div style="display: flex; align-items: center; justify-content: space-between;">
+            <p style="font-size: var(--text-xs); color: var(--text-muted); margin-bottom: var(--space-3);">Unidade: <?= e((string) ($m['unit_name'] ?? 'Sede / todas')) ?></p>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: var(--space-2);">
                     <div style="width: 28px; height: 28px; border-radius: 50%; background: <?= e($m['color'] ?? '#0A4DFF') ?>; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 700;"><?= strtoupper(substr($m['leader_name'] ?? 'L', 0, 2)) ?></div>
                     <div>
@@ -62,8 +63,11 @@
                     <?php for ($j = 0; $j < min(3, $m['member_count'] ?? 0); $j++): ?>
                     <div style="width: 24px; height: 24px; border-radius: 50%; background: <?= ['#10b981', '#3b82f6', '#f59e0b'][$j] ?>; border: 2px solid var(--color-bg); margin-left: <?= $j > 0 ? '-8px' : '0' ?>;"></div>
                     <?php endfor; ?>
-                    <span style="font-size: 11px; color: var(--text-muted); margin-left: 4px;"><?= $m['member_count'] ?? 0 ?> membros</span>
+                    <span style="font-size: 11px; color: var(--text-muted); margin-left: 4px;"><?= $m['member_count'] ?? 0 ?> membros ministeriais</span>
                 </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--hub-border, #e5e7eb);">
+                <a href="<?= url('/gestao/ministerios/' . (int) $m['id'] . '/editar') ?>" class="btn btn--outline btn--sm">Editar equipe</a>
             </div>
         </div>
     </div>

@@ -10,14 +10,16 @@ use App\Core\Database;
 class Event extends Model
 {
     protected static string $table = 'events';
-    protected static array $fillable = ['organization_id','title','description','location','start_date','end_date','max_registrations','status','created_by'];
+    protected static array $fillable = ['organization_id','church_unit_id','title','description','location','start_date','end_date','max_registrations','status','created_by'];
 
     public static function byOrg(int $orgId, ?string $status = null): array
     {
         try {
             $pdo = Database::connection();
-            $sql = "SELECT e.*, (SELECT COUNT(*) FROM event_registrations er WHERE er.event_id = e.id) as registrations
-                    FROM events e WHERE e.organization_id = :org";
+            $sql = "SELECT e.*, u.name AS unit_name, (SELECT COUNT(*) FROM event_registrations er WHERE er.event_id = e.id) as registrations
+                    FROM events e
+                    LEFT JOIN church_units u ON u.id = e.church_unit_id
+                    WHERE e.organization_id = :org";
             $params = ['org' => $orgId];
             if ($status) { $sql .= " AND e.status = :status"; $params['status'] = $status; }
             $sql .= " ORDER BY e.start_date DESC";

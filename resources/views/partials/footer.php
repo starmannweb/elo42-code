@@ -16,7 +16,7 @@
                     <li><a href="<?= url('/servico/central-elo42') ?>" class="footer__link">Central Elo 42</a></li>
                     <li><a href="<?= url('/servico/plataforma-gestao') ?>" class="footer__link">Plataforma de Gestão</a></li>
                     <li><a href="<?= url('/servico/google-ad-grants') ?>" class="footer__link">Google para Nonprofits</a></li>
-                    <li><a href="<?= url('/servico/hokmah-expositor') ?>" class="footer__link">Expositor IA</a></li>
+                    <li><a href="<?= url('/servico/expositor-ia') ?>" class="footer__link">Expositor IA</a></li>
                     <li><a href="<?= url('/servico/consultoria') ?>" class="footer__link">Consultoria</a></li>
                     <li><a href="<?= url('/servico/sites-prontos') ?>" class="footer__link">Site para igrejas</a></li>
                 </ul>

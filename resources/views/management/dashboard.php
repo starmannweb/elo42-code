@@ -16,8 +16,9 @@ $balance = (float) ($financial['balance'] ?? 0);
     <section class="mgmt-kpi-grid" aria-label="Indicadores">
         <article class="mgmt-kpi-card" style="justify-content:space-between;">
             <div>
-                <p class="mgmt-kpi-card__label">Membros</p>
+                <p class="mgmt-kpi-card__label">Membros ativos</p>
                 <p class="mgmt-kpi-card__value"><?= e((string) $totalMembers) ?></p>
+                <p class="mgmt-kpi-card__meta"><?= e((string) $newMembers) ?> novo(s) neste mês</p>
             </div>
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
@@ -25,8 +26,9 @@ $balance = (float) ($financial['balance'] ?? 0);
         </article>
         <article class="mgmt-kpi-card" style="justify-content:space-between;">
             <div>
-                <p class="mgmt-kpi-card__label">Eventos</p>
+                <p class="mgmt-kpi-card__label">Eventos ativos</p>
                 <p class="mgmt-kpi-card__value"><?= e((string) $activeEvents) ?></p>
+                <p class="mgmt-kpi-card__meta">Agenda e comunicação</p>
             </div>
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--indigo" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
@@ -34,8 +36,9 @@ $balance = (float) ($financial['balance'] ?? 0);
         </article>
         <article class="mgmt-kpi-card" style="justify-content:space-between; border-color: rgba(214, 166, 70, 0.3);">
             <div>
-                <p class="mgmt-kpi-card__label">Pedidos Pendentes</p>
+                <p class="mgmt-kpi-card__label">Solicitações abertas</p>
                 <p class="mgmt-kpi-card__value"><?= e((string) $openRequests) ?></p>
+                <p class="mgmt-kpi-card__meta">Pedidos, visitas e atendimento</p>
             </div>
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--gold" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
@@ -43,8 +46,9 @@ $balance = (float) ($financial['balance'] ?? 0);
         </article>
         <article class="mgmt-kpi-card" style="justify-content:space-between; border-color: rgba(16, 185, 129, 0.3);">
             <div>
-                <p class="mgmt-kpi-card__label">Receita Total</p>
-                <p class="mgmt-kpi-card__value">R$ <?= e(number_format($income, 2, ',', '.')) ?></p>
+                <p class="mgmt-kpi-card__label">Saldo do mês</p>
+                <p class="mgmt-kpi-card__value">R$ <?= e(number_format($balance, 2, ',', '.')) ?></p>
+                <p class="mgmt-kpi-card__meta">Receitas menos despesas</p>
             </div>
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 8A2.5 2.5 0 0 1 5 5.5h14A2.5 2.5 0 0 1 21.5 8v8A2.5 2.5 0 0 1 19 18.5H5A2.5 2.5 0 0 1 2.5 16z"></path><path d="M15 12h.01"></path><path d="M2.5 9.5h19"></path></svg>
@@ -175,13 +179,9 @@ $balance = (float) ($financial['balance'] ?? 0);
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h2 class="mgmt-section-title" style="margin-bottom: 0;">Visão Geral</h2>
-        <a href="<?= url('/membro') ?>" target="_blank" class="btn btn--ghost btn--sm" style="display:inline-flex; align-items:center; gap:0.5rem; color:var(--color-primary); font-weight:600;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            Acessar Portal do Membro
-        </a>
     </div>
 
-    <section class="mgmt-dashboard-grid" style="grid-template-columns: repeat(4, 1fr);">
+    <section class="mgmt-dashboard-grid mgmt-dashboard-grid--compact">
         <article class="mgmt-dashboard-card" style="display:flex; flex-direction:column; justify-content:space-between; min-height:180px;">
             <header class="mgmt-dashboard-card__header">
                 <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Próximos Eventos</h2>

@@ -6,7 +6,7 @@
 </form>
 <?php if (empty($subscriptions)): ?><div class="mgmt-empty"><div class="mgmt-empty__icon">💳</div><h3 class="mgmt-empty__title">Nenhuma assinatura</h3></div>
 <?php else: ?>
-    <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Organização</th><th>Plano</th><th>Valor</th><th>Ciclo</th><th>Status</th><th>Início</th><th>Expira</th><th>Ações</th></tr></thead><tbody>
+    <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Instituição</th><th>Plano</th><th>Valor</th><th>Ciclo</th><th>Status</th><th>Início</th><th>Expira</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($subscriptions as $s): ?><tr>
             <td><a href="<?= url('/admin/organizacoes/' . $s['organization_id']) ?>" class="mgmt-table__name" style="color:var(--color-primary);"><?= e($s['org_name']) ?></a></td>
             <td><?= e($s['plan_name']) ?></td>

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Elo 42">
+    <link rel="manifest" href="<?= url('/app-manifest') ?>">
+    <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
     <title><?= e($pageTitle ?? 'Hub — Elo 42') ?></title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,6 +45,7 @@
         $lastInitial = strtoupper(substr((string) (end($parts) ?: 'U'), 0, 1));
         $initials = trim($firstInitial . $lastInitial) !== '' ? $firstInitial . $lastInitial : 'U';
         $organizationName = (string) ($organization['name'] ?? 'Sem organização');
+        $isMasterAdmin = strtolower((string) ($user['email'] ?? '')) === 'ricieri@starmannweb.com.br';
         $churchAccess = is_array($churchManagementAccess ?? null) ? $churchManagementAccess : [
             'can_access' => !empty($organization['id']),
             'entry_url'  => !empty($organization['id']) ? url('/gestao') : url('/onboarding/organizacao'),
@@ -58,7 +64,8 @@
         <aside class="hub-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu lateral">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/hub') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" height="54">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" class="logo-dark">
+                    <img src="<?= url('/assets/img/logo-color-new.png') ?>" alt="Elo 42" class="logo-light">
                 </a>
                 <p class="hub-sidebar__brand-subtitle">Hub de membros</p>
             </div>
@@ -96,7 +103,7 @@
                     <span class="hub-nav-link__icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                     </span>
-                    Expositor IA <?php if ($currentPlan === 'free' && !$isTrialActive): ?><span style="margin-left:auto; font-size: 0.75rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-secondary);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span><?php endif; ?>
+                    Expositor IA
                 </a>
                 <a href="<?= url('/hub/creditos') ?>" class="hub-nav-link <?= e($isMenuActive('creditos', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">
@@ -123,6 +130,15 @@
                     Configurações
                 </a>
 
+                <?php if ($isMasterAdmin): ?>
+                    <p class="hub-sidebar__section-title">Admin Master</p>
+                    <a href="<?= url('/admin') ?>" class="hub-nav-link <?= e($isMenuActive('admin', $activeMenu)) ?>">
+                        <span class="hub-nav-link__icon" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6l8-4z"></path><path d="M9 12l2 2 4-5"></path></svg>
+                        </span>
+                        Painel Admin Hub
+                    </a>
+                <?php endif; ?>
             </nav>
 
             <div class="hub-sidebar__footer">
@@ -142,11 +158,6 @@
             <header class="hub-topbar">
                 <div class="hub-topbar__left">
                     <button class="hub-topbar__mobile-toggle" id="hub-sidebar-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
-                    <nav class="hub-topbar__breadcrumb" aria-label="Breadcrumb">
-                        <span><?= e($organizationName) ?></span>
-                        <span class="hub-topbar__breadcrumb-sep" aria-hidden="true">›</span>
-                        <span aria-current="page"><?= e((string) ($breadcrumb ?? 'Dashboard')) ?></span>
-                    </nav>
                 </div>
                 <div class="hub-topbar__right">
                     <a href="<?= url('/hub/suporte') ?>" class="hub-topbar__link" style="display: flex; align-items: center; gap: 4px;">
@@ -178,8 +189,10 @@
                     <div class="alert alert--warning" role="alert"><?= e($warningAlert) ?></div>
                 <?php endif; ?>
 
-                <?= $__view->yield('content') ?>
-                <footer style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 0.875rem; flex-wrap: wrap; gap: 1rem;">
+                <div class="hub-content__body">
+                    <?= $__view->yield('content') ?>
+                </div>
+                <footer class="hub-page-footer">
                     <div>&copy; <?= date('Y') ?> Elo 42. Todos os direitos reservados.</div>
                     <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;">
                         <span style="display: flex; align-items: center; gap: 0.35rem;"><strong>Comercial:</strong> <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="color: #25D366;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> <a href="https://wa.me/5513978008047" target="_blank" style="color:inherit;text-decoration:none;">(13) 97800-8047</a></span>
@@ -191,5 +204,12 @@
     </div>
 
     <script src="<?= asset('js/app.js') ?>"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('<?= url('/sw.js') ?>').catch(function () {});
+            });
+        }
+    </script>
 </body>
 </html>

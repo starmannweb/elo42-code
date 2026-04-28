@@ -44,6 +44,17 @@ class FinancialController extends Controller
         return 0;
     }
 
+    private function churchUnits(): array
+    {
+        try {
+            $stmt = Database::connection()->prepare('SELECT * FROM church_units WHERE organization_id = :org_id ORDER BY status ASC, name ASC');
+            $stmt->execute(['org_id' => $this->orgId()]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
     public function index(Request $request): void
     {
         try {
@@ -101,10 +112,11 @@ class FinancialController extends Controller
                 'breadcrumb'  => 'Financeiro / Nova',
                 'transaction' => null,
                 'categories'  => FinancialTransaction::getCategories($this->orgId()),
+                'units'       => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
-            redirect('/gestao/financeiro');
+            redirect('/gestao/receitas');
         }
     }
 
@@ -117,15 +129,18 @@ class FinancialController extends Controller
             'transaction_date' => 'required',
         ]);
 
-        FinancialTransaction::create(array_merge($request->only([
-            'type','category_id','description','amount','transaction_date','reference','status','notes'
-        ]), [
+        $data = $request->only([
+            'type','category_id','description','amount','transaction_date','reference','status','notes','church_unit_id'
+        ]);
+        $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+
+        FinancialTransaction::create(array_merge($data, [
             'organization_id' => $this->orgId(),
             'created_by'      => Session::user()['id'],
         ]));
 
         Session::flash('success', 'Transação registrada.');
-        redirect('/gestao/financeiro');
+        redirect($request->input('type') === 'expense' ? '/gestao/despesas' : '/gestao/receitas');
     }
 
     public function createCategory(Request $request): void
@@ -140,6 +155,6 @@ class FinancialController extends Controller
             'color' => $request->input('color', '#0A4DFF'),
         ]);
         Session::flash('success', 'Categoria criada.');
-        redirect('/gestao/financeiro');
+        redirect('/gestao/configuracoes/categorias');
     }
 }

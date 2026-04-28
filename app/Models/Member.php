@@ -12,7 +12,7 @@ class Member extends Model
     protected static string $table = 'members';
 
     protected static array $fillable = [
-        'organization_id', 'name', 'email', 'phone', 'birth_date',
+        'organization_id', 'church_unit_id', 'name', 'email', 'phone', 'birth_date',
         'gender', 'marital_status', 'address', 'city', 'state', 'zip_code',
         'photo', 'membership_date', 'baptism_date', 'status', 'notes', 'created_by',
     ];
@@ -41,7 +41,8 @@ class Member extends Model
             $total = (int) $countStmt->fetchColumn();
 
             $stmt = $pdo->prepare("
-                SELECT m.* FROM members m
+                SELECT m.*, u.name AS unit_name FROM members m
+                LEFT JOIN church_units u ON u.id = m.church_unit_id
                 WHERE {$whereStr}
                 ORDER BY m.name ASC
                 LIMIT {$perPage} OFFSET {$offset}

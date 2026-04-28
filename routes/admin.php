@@ -38,6 +38,11 @@ $router->group(['middleware' => ['auth', 'csrf', 'admin']], function (Router $r)
     $r->post('/admin/servicos/{id}/editar', [\Modules\Admin\Controllers\AdminCatalogController::class, 'updateService']);
 
     // Benefits
+    $r->get('/admin/cortesias', [\Modules\Admin\Controllers\AdminCatalogController::class, 'benefits']);
+    $r->get('/admin/cortesias/novo', [\Modules\Admin\Controllers\AdminCatalogController::class, 'createBenefit']);
+    $r->post('/admin/cortesias', [\Modules\Admin\Controllers\AdminCatalogController::class, 'storeBenefit']);
+    $r->get('/admin/cortesias/{id}/editar', [\Modules\Admin\Controllers\AdminCatalogController::class, 'editBenefit']);
+    $r->post('/admin/cortesias/{id}/editar', [\Modules\Admin\Controllers\AdminCatalogController::class, 'updateBenefit']);
     $r->get('/admin/beneficios', [\Modules\Admin\Controllers\AdminCatalogController::class, 'benefits']);
     $r->get('/admin/beneficios/novo', [\Modules\Admin\Controllers\AdminCatalogController::class, 'createBenefit']);
     $r->post('/admin/beneficios', [\Modules\Admin\Controllers\AdminCatalogController::class, 'storeBenefit']);

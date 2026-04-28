@@ -25,7 +25,7 @@ class DashboardController extends Controller
     public function index(Request $request): void
     {
         $context = $this->buildBaseContext('Dashboard', 'dashboard');
-        $siteBuilderAccess = $this->resolveSiteBuilderAccess($context['organization']);
+        $siteBuilderAccess = $this->resolveSiteBuilderAccess($context['organization'], $context['user']);
         $iaCredits = $this->resolveIaCredits($context['organization'], $context['user']);
         $churchMetrics = $this->resolveChurchMetrics($context['organization']);
 
@@ -60,12 +60,59 @@ class DashboardController extends Controller
     public function sites(Request $request): void
     {
         $context = $this->buildBaseContext('Meus Sites', 'sites');
-        $access = $this->resolveSiteBuilderAccess($context['organization']);
+        $access = $this->resolveSiteBuilderAccess($context['organization'], $context['user']);
+        $currentSite = $this->resolveOrganizationSite($context['organization']);
 
         $this->view('hub/sites', array_merge($context, [
             'pageTitle'         => 'Meus Sites — Hub Elo 42',
             'siteBuilderAccess' => $access,
+            'currentSite'       => $currentSite,
             'siteTemplates'     => $this->buildSiteTemplates(),
+            'publishChecklist'  => $this->buildSitePublishChecklist($context['organization'], $currentSite, $access),
+            'publishedUrl'      => $this->sitePublicUrl($currentSite),
+        ]));
+    }
+
+    public function previewSite(Request $request): void
+    {
+        $context = $this->buildBaseContext('Preview do Site', 'sites');
+        $organization = is_array($context['organization'] ?? null) ? $context['organization'] : [];
+        $template = trim((string) $request->input('template'));
+        $currentSite = $this->resolveOrganizationSite($organization);
+        $organizationName = trim((string) ($organization['name'] ?? 'Sua igreja'));
+
+        if (!$currentSite) {
+            $currentSite = [
+                'site_title' => $organizationName !== '' ? $organizationName : 'Sua igreja',
+                'template' => $template !== '' ? $template : 'Institucional Clássico',
+                'status' => 'draft',
+                'status_label' => 'Preview',
+                'slug' => $this->slugifySiteTitle($organizationName !== '' ? $organizationName : 'sua igreja'),
+            ];
+        }
+
+        if ($template !== '') {
+            $currentSite['template'] = $template;
+        }
+
+        $settings = $this->organizationSettings($organization, [
+            'seo_title',
+            'seo_desc',
+            'social_instagram',
+            'social_facebook',
+            'social_youtube',
+            'social_whatsapp',
+            'appearance_primary',
+            'appearance_accent',
+        ]);
+
+        $this->view('hub/site-preview', array_merge($context, [
+            'pageTitle' => 'Preview do Site — Hub Elo 42',
+            'currentSite' => $currentSite,
+            'settings' => $settings,
+            'previewEvents' => $this->sitePreviewEvents($organization),
+            'previewCampaigns' => $this->sitePreviewCampaigns($organization),
+            'publishedUrl' => $this->sitePublicUrl($currentSite),
         ]));
     }
 
@@ -84,42 +131,180 @@ class DashboardController extends Controller
             $template = 'Institucional Clássico';
         }
 
-        // Simulação de geração do site
         try {
+            $this->ensureOrganizationSitesTable();
             $pdo = Database::connection();
-            
-            // Check if site already exists
+            $siteTitle = trim((string) ($organization['name'] ?? 'Site institucional'));
+            $siteTitle = $siteTitle !== '' ? $siteTitle : 'Site institucional';
+            $slug = $this->slugifySiteTitle($siteTitle);
+
             $stmt = $pdo->prepare("SELECT id FROM organization_sites WHERE organization_id = :org_id LIMIT 1");
             $stmt->execute(['org_id' => (int) $organization['id']]);
             $existingSite = $stmt->fetch();
 
             if ($existingSite) {
-                // Update existing site
-                $stmt = $pdo->prepare("UPDATE organization_sites SET template = :template, updated_at = NOW() WHERE organization_id = :org_id");
+                $stmt = $pdo->prepare("
+                    UPDATE organization_sites
+                    SET template = :template,
+                        site_title = :site_title,
+                        slug = :slug,
+                        status = 'draft',
+                        generated_at = NOW(),
+                        updated_at = NOW()
+                    WHERE organization_id = :org_id
+                ");
                 $stmt->execute([
-                    'template' => $template,
-                    'org_id' => (int) $organization['id']
+                    'template'   => $template,
+                    'site_title' => $siteTitle,
+                    'slug'       => $slug,
+                    'org_id'     => (int) $organization['id'],
                 ]);
-                \App\Core\Session::flash('success', 'Site atualizado com sucesso! Modelo: ' . $template);
+                Session::flash('success', 'Site atualizado com sucesso. Modelo: ' . $template);
             } else {
-                // Create new site
-                $stmt = $pdo->prepare("INSERT INTO organization_sites (organization_id, template, status, created_at, updated_at) VALUES (:org_id, :template, 'draft', NOW(), NOW())");
+                $stmt = $pdo->prepare("
+                    INSERT INTO organization_sites (organization_id, template, status, site_title, slug, generated_at, created_at, updated_at)
+                    VALUES (:org_id, :template, 'draft', :site_title, :slug, NOW(), NOW(), NOW())
+                ");
                 $stmt->execute([
-                    'org_id' => (int) $organization['id'],
-                    'template' => $template
+                    'org_id'     => (int) $organization['id'],
+                    'template'   => $template,
+                    'site_title' => $siteTitle,
+                    'slug'       => $slug,
                 ]);
-                \App\Core\Session::flash('success', 'Site gerado com sucesso! Modelo: ' . $template . '. Seus dados organizacionais foram vinculados ao modelo.');
+                Session::flash('success', 'Site gerado com sucesso. Seus dados organizacionais foram vinculados ao modelo ' . $template . '.');
             }
         } catch (\Throwable $e) {
-            // Fallback to session if database not ready
-            \App\Core\Session::set('hub_generated_site', [
-                'template' => $template,
+            Session::set('hub_generated_site', [
+                'template'          => $template,
                 'organization_name' => $organization['name'] ?? 'Sua Organização',
-                'generated_at' => date('Y-m-d H:i:s')
+                'site_title'        => $organization['name'] ?? 'Site institucional',
+                'status'            => 'draft',
+                'status_label'      => 'Rascunho',
+                'generated_at'      => date('Y-m-d H:i:s'),
+                'generated_at_label'=> date('d/m/Y H:i'),
             ]);
-            \App\Core\Session::flash('success', 'Site gerado com sucesso! Modelo: ' . $template . '. Seus dados organizacionais foram vinculados ao modelo.');
+            Session::flash('success', 'Site gerado com sucesso em modo local. Modelo: ' . $template . '.');
         }
         
+        redirect('/hub/sites');
+    }
+
+    public function configurarSite(Request $request): void
+    {
+        $context = $this->buildBaseContext('Meus Sites', 'sites');
+        $organization = $context['organization'];
+
+        if (empty($organization['id'])) {
+            Session::flash('warning', 'Cadastre sua organização antes de configurar o site.');
+            redirect('/onboarding/organizacao');
+        }
+
+        $payload = $this->siteBuilderPayload($request, $organization);
+
+        try {
+            $this->ensureOrganizationSitesTable();
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare('SELECT id FROM organization_sites WHERE organization_id = :org_id LIMIT 1');
+            $stmt->execute(['org_id' => (int) $organization['id']]);
+            $existingSite = $stmt->fetch();
+
+            if ($existingSite) {
+                $stmt = $pdo->prepare("
+                    UPDATE organization_sites
+                    SET template = :template,
+                        status = CASE WHEN status = 'published' THEN 'ready' ELSE status END,
+                        site_title = :site_title,
+                        slug = :slug,
+                        domain = :domain,
+                        theme_color = :theme_color,
+                        hero_image = :hero_image,
+                        logo_image = :logo_image,
+                        site_description = :site_description,
+                        about_text = :about_text,
+                        contact_email = :contact_email,
+                        contact_phone = :contact_phone,
+                        whatsapp_url = :whatsapp_url,
+                        instagram_url = :instagram_url,
+                        facebook_url = :facebook_url,
+                        youtube_url = :youtube_url,
+                        address_line = :address_line,
+                        city = :city,
+                        state = :state,
+                        cta_label = :cta_label,
+                        cta_url = :cta_url,
+                        updated_at = NOW()
+                    WHERE organization_id = :org_id
+                ");
+                $stmt->execute($payload + ['org_id' => (int) $organization['id']]);
+            } else {
+                $stmt = $pdo->prepare("
+                    INSERT INTO organization_sites (
+                        organization_id, template, status, site_title, slug, domain, theme_color,
+                        hero_image, logo_image, site_description, about_text, contact_email,
+                        contact_phone, whatsapp_url, instagram_url, facebook_url, youtube_url,
+                        address_line, city, state, cta_label, cta_url, generated_at, created_at, updated_at
+                    ) VALUES (
+                        :org_id, :template, 'draft', :site_title, :slug, :domain, :theme_color,
+                        :hero_image, :logo_image, :site_description, :about_text, :contact_email,
+                        :contact_phone, :whatsapp_url, :instagram_url, :facebook_url, :youtube_url,
+                        :address_line, :city, :state, :cta_label, :cta_url, NOW(), NOW(), NOW()
+                    )
+                ");
+                $stmt->execute($payload + ['org_id' => (int) $organization['id']]);
+            }
+
+            Session::flash('success', 'Dados do site salvos. Abra o preview para revisar a página gerada.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Não foi possível salvar o site agora. Verifique os dados e tente novamente.');
+        }
+
+        redirect('/hub/sites');
+    }
+
+    public function publicarSite(Request $request): void
+    {
+        $context = $this->buildBaseContext('Meus Sites', 'sites');
+        $organization = $context['organization'];
+        $access = $this->resolveSiteBuilderAccess($organization, $context['user']);
+
+        if (empty($organization['id'])) {
+            Session::flash('warning', 'Cadastre sua organização antes de publicar o site.');
+            redirect('/onboarding/organizacao');
+        }
+
+        if (empty($access['can_publish'])) {
+            Session::flash('warning', 'A publicação em domínio real depende da mensalidade ativa do site.');
+            redirect('/hub/sites');
+        }
+
+        $site = $this->resolveOrganizationSite($organization);
+        if (!$site) {
+            Session::flash('warning', 'Gere ou configure o site antes de publicar.');
+            redirect('/hub/sites');
+        }
+
+        $publicUrl = $this->sitePublicUrl($site);
+
+        try {
+            $this->ensureOrganizationSitesTable();
+            $stmt = Database::connection()->prepare("
+                UPDATE organization_sites
+                SET status = 'published',
+                    published_url = :published_url,
+                    published_at = NOW(),
+                    updated_at = NOW()
+                WHERE organization_id = :org_id
+            ");
+            $stmt->execute([
+                'published_url' => $publicUrl,
+                'org_id' => (int) $organization['id'],
+            ]);
+
+            Session::flash('success', 'Site publicado. A URL já pode ser revisada pela equipe: ' . $publicUrl);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Não foi possível publicar o site agora. Tente novamente.');
+        }
+
         redirect('/hub/sites');
     }
 
@@ -129,30 +314,34 @@ class DashboardController extends Controller
         $organization = $context['organization'];
         $user = $context['user'];
         
-        // Give bonus credits for first-time users
+        // Give the monthly free allowance once per organization/user period.
         $credits = $this->resolveIaCredits($organization, $user);
-        $hasUsedBefore = Session::get('hub_expositor_bonus_given', false);
+        $currentPeriod = date('Y-m');
+        $hasMonthlyAllowance = $this->hasMonthlyFreeAllowance($organization, $user, $currentPeriod);
+        $monthlyAllowanceGranted = false;
         
-        if ($credits === 0 && !$hasUsedBefore) {
-            $bonusCredits = 5;
-            $this->setIaCredits($organization, $user, $bonusCredits);
+        if (!$hasMonthlyAllowance) {
+            $bonusCredits = 3;
+            $this->setIaCredits($organization, $user, $credits + $bonusCredits);
             $this->appendCreditHistory($organization, $user, [
                 'date'        => date('d/m/Y H:i'),
-                'description' => 'Créditos bônus de boas-vindas',
-                'type'        => 'Bônus',
+                'period'      => $currentPeriod,
+                'description' => '3 gerações gratuitas do mês',
+                'type'        => 'Gratuito',
                 'qty'         => $bonusCredits,
                 'price'       => null,
             ]);
-            Session::set('hub_expositor_bonus_given', true);
-            Session::flash('success', 'Bem-vindo ao Expositor IA! Você ganhou ' . $bonusCredits . ' créditos bônus para testar.');
-            $credits = $bonusCredits;
+            $monthlyAllowanceGranted = true;
+            $credits += $bonusCredits;
         }
 
         $form = Session::getFlash('hub_expositor_form', [
             'passage'      => '',
             'theme'        => '',
-            'confessional' => 'somente-biblico',
+            'confessional' => 'biblico-evangelico',
             'depth'        => 'pastoral',
+            'content_type' => 'sermon',
+            'resource_title' => '',
         ]);
 
         $this->view('hub/expositor-ia', array_merge($context, [
@@ -160,13 +349,11 @@ class DashboardController extends Controller
             'iaCredits'           => $credits,
             'iaCreditCost'        => self::IA_CREDIT_COST,
             'canGenerateIa'       => $credits >= self::IA_CREDIT_COST,
+            'monthlyAllowanceGranted' => $monthlyAllowanceGranted,
             'expositorLastResult' => Session::getFlash('hub_expositor_result'),
+            'expositorGeneratedDraft' => Session::getFlash('hub_expositor_generated'),
             'expositorForm'       => $form,
-            'confessionalOptions' => [
-                ['value' => 'somente-biblico', 'label' => 'Somente Bíblico Reformado'],
-                ['value' => 'westminster', 'label' => 'Confissão de Westminster'],
-                ['value' => 'londres-1689', 'label' => 'Confissão Batista de Londres 1689'],
-            ],
+            'confessionalOptions' => $this->buildConfessionalOptions(),
             'depthOptions' => [
                 ['value' => 'pastoral', 'label' => 'Sermão Expositivo Pastoral'],
                 ['value' => 'teologico', 'label' => 'Aprofundamento Teológico'],
@@ -200,7 +387,7 @@ class DashboardController extends Controller
                 ['value' => 'general', 'label' => 'Geral'],
                 ['value' => 'billing', 'label' => 'Financeiro'],
                 ['value' => 'technical', 'label' => 'Técnico'],
-                ['value' => 'product', 'label' => 'Produto'],
+                ['value' => 'product', 'label' => 'Serviço'],
             ],
         ]));
     }
@@ -208,7 +395,7 @@ class DashboardController extends Controller
     public function configuracoes(Request $request): void
     {
         $context = $this->buildBaseContext('Configurações', 'configuracoes');
-        $subscription = $this->resolveSiteBuilderAccess($context['organization']);
+        $subscription = $this->resolveSiteBuilderAccess($context['organization'], $context['user']);
         $credits = $this->resolveIaCredits($context['organization'], $context['user']);
 
         $this->view('hub/configuracoes', array_merge($context, [
@@ -233,10 +420,12 @@ class DashboardController extends Controller
             'theme'        => trim((string) $request->input('theme')),
             'confessional' => trim((string) $request->input('confessional')),
             'depth'        => trim((string) $request->input('depth')),
+            'content_type' => $this->normalizeExpositorContentType(trim((string) $request->input('content_type'))),
+            'resource_title' => trim((string) $request->input('resource_title')),
         ];
 
         if ($form['passage'] === '') {
-            Session::flash('error', 'Informe a passagem bíblica para gerar o esboço.');
+            Session::flash('error', 'Informe a passagem, tema ou contexto para gerar o material.');
             Session::flash('hub_expositor_form', $form);
             redirect('/hub/expositor-ia');
         }
@@ -249,6 +438,7 @@ class DashboardController extends Controller
         }
 
         $result = $this->buildExpositorResult($form);
+        $draft = $this->createExpositorDraft($organization, $user, $form, $result);
         $this->setIaCredits($organization, $user, $credits - self::IA_CREDIT_COST);
 
         $this->appendCreditHistory($organization, $user, [
@@ -259,9 +449,35 @@ class DashboardController extends Controller
             'price'       => null,
         ]);
 
-        Session::flash('success', 'Esboço gerado com sucesso. Foi descontado 1 crédito.');
+        $label = $this->expositorContentTypeLabel($form['content_type']);
+        Session::flash('success', $label . ' gerado com sucesso. Foi descontado 1 crédito.');
         Session::flash('hub_expositor_result', $result);
+        if ($draft !== null) {
+            Session::flash('hub_expositor_generated', $draft);
+        }
         Session::flash('hub_expositor_form', $form);
+        redirect('/hub/expositor-ia');
+    }
+
+    public function publicarExpositorIa(Request $request): void
+    {
+        $context = $this->buildBaseContext('Expositor IA', 'expositor');
+        $organization = $context['organization'];
+
+        $type = $this->normalizeExpositorContentType(trim((string) $request->input('draft_type')));
+        $id = (int) $request->input('draft_id');
+
+        if (empty($organization['id']) || $id <= 0) {
+            Session::flash('error', 'Não foi possível localizar o material gerado para publicação.');
+            redirect('/hub/expositor-ia');
+        }
+
+        if ($this->publishExpositorDraft($organization, $type, $id)) {
+            Session::flash('success', $this->expositorContentTypeLabel($type) . ' publicado para a área de membros.');
+            redirect($this->expositorDestinationUrl($type));
+        }
+
+        Session::flash('error', 'Não foi possível publicar esse material agora.');
         redirect('/hub/expositor-ia');
     }
 
@@ -414,6 +630,13 @@ class DashboardController extends Controller
 
         $name = trim((string) $request->input('org_name'));
         $type = trim((string) $request->input('org_type'));
+        $allowedTypes = ['church', 'ministry', 'association', 'other'];
+        if (!in_array($type, $allowedTypes, true)) {
+            $type = (string) ($organization['type'] ?? 'church');
+            if (!in_array($type, $allowedTypes, true)) {
+                $type = 'church';
+            }
+        }
         $phone = trim((string) $request->input('org_phone'));
 
         if ($name === '') {
@@ -426,7 +649,7 @@ class DashboardController extends Controller
             $stmt = $pdo->prepare('UPDATE organizations SET name = :name, type = :type, phone = :phone, updated_at = NOW() WHERE id = :id');
             $stmt->execute([
                 'name'  => $name,
-                'type'  => $type !== '' ? $type : ($organization['type'] ?? 'organizacao'),
+                'type'  => $type,
                 'phone' => $phone,
                 'id'    => (int) $organization['id'],
             ]);
@@ -436,9 +659,7 @@ class DashboardController extends Controller
 
         $sessionOrg = Session::get('organization', []);
         $sessionOrg['name'] = $name;
-        if ($type !== '') {
-            $sessionOrg['type'] = $type;
-        }
+        $sessionOrg['type'] = $type;
         Session::set('organization', $sessionOrg);
 
         Session::flash('success', 'Organização atualizada com sucesso.');
@@ -577,20 +798,35 @@ class DashboardController extends Controller
         }
     }
 
-    private function resolveSiteBuilderAccess(?array $organization): array
+    private function resolveSiteBuilderAccess(?array $organization, ?array $user = null): array
     {
         $default = [
             'has_org'             => !empty($organization['id']),
-            'plan_name'           => 'Sem assinatura',
+            'plan_name'           => 'Site para Igrejas',
             'billing_cycle'       => null,
             'status'              => 'inactive',
-            'status_label'        => 'Inativo',
-            'monthly_fee_label'   => 'Consulte valores',
+            'status_label'        => 'Sem assinatura ativa',
+            'monthly_fee_label'   => 'R$ 67,00/mês',
             'has_active_monthly'  => false,
+            'can_access'          => true,
             'can_create'          => true,
             'can_publish'         => false,
             'publish_requirement' => 'Para publicar o site em domínio real, é necessário ativar a mensalidade do construtor.',
         ];
+
+        $user = is_array($user) ? $user : (Session::user() ?? []);
+        if (strtolower((string) ($user['email'] ?? '')) === 'ricieri@starmannweb.com.br') {
+            return array_merge($default, [
+                'status'              => 'granted',
+                'status_label'        => 'Acesso livre',
+                'monthly_fee_label'   => 'Cortesia Elo 42',
+                'has_active_monthly'  => true,
+                'can_access'          => true,
+                'can_create'          => true,
+                'can_publish'         => true,
+                'publish_requirement' => 'Acesso liberado sem mensalidade para o administrador Elo 42.',
+            ]);
+        }
 
         if (empty($organization['id'])) {
             $default['status_label'] = 'Pendente de organização';
@@ -625,6 +861,7 @@ class DashboardController extends Controller
                 'status_label'        => $this->translateSubscriptionStatus($status),
                 'monthly_fee_label'   => $this->formatMoney($price) . ($billingCycle === 'monthly' ? '/mês' : ''),
                 'has_active_monthly'  => $isActiveMonthly,
+                'can_access'          => true,
                 'can_create'          => true,
                 'can_publish'         => $isActiveMonthly,
                 'publish_requirement' => 'Para publicar o site em domínio real, é necessário ativar a mensalidade do construtor.',
@@ -632,6 +869,498 @@ class DashboardController extends Controller
         } catch (\Throwable $e) {
             return $default;
         }
+    }
+
+    private function siteBuilderPayload(Request $request, array $organization): array
+    {
+        $siteTitle = trim((string) $request->input('site_title', $organization['name'] ?? 'Site institucional'));
+        $siteTitle = $siteTitle !== '' ? $siteTitle : 'Site institucional';
+        $domain = trim((string) $request->input('domain', ''));
+        $slugSource = $domain !== '' ? preg_replace('/^https?:\/\//i', '', $domain) : $siteTitle;
+        $slugSource = (string) preg_replace('/\/.*$/', '', (string) $slugSource);
+
+        return [
+            'template' => trim((string) $request->input('template', 'Institucional Clássico')) ?: 'Institucional Clássico',
+            'site_title' => $siteTitle,
+            'slug' => $this->slugifySiteTitle($slugSource),
+            'domain' => $this->nullableText($domain),
+            'theme_color' => $this->normalizeThemeColor((string) $request->input('theme_color', '#0A4DFF')),
+            'hero_image' => $this->normalizeSiteUrl((string) $request->input('hero_image', '')),
+            'logo_image' => $this->normalizeSiteUrl((string) $request->input('logo_image', '')),
+            'site_description' => $this->nullableText((string) $request->input('site_description', '')),
+            'about_text' => $this->nullableText((string) $request->input('about_text', '')),
+            'contact_email' => $this->nullableText((string) $request->input('contact_email', '')),
+            'contact_phone' => $this->nullableText((string) $request->input('contact_phone', '')),
+            'whatsapp_url' => $this->normalizeSiteUrl((string) $request->input('whatsapp_url', '')),
+            'instagram_url' => $this->normalizeSiteUrl((string) $request->input('instagram_url', '')),
+            'facebook_url' => $this->normalizeSiteUrl((string) $request->input('facebook_url', '')),
+            'youtube_url' => $this->normalizeSiteUrl((string) $request->input('youtube_url', '')),
+            'address_line' => $this->nullableText((string) $request->input('address_line', '')),
+            'city' => $this->nullableText((string) $request->input('city', '')),
+            'state' => $this->nullableText((string) $request->input('state', '')),
+            'cta_label' => $this->nullableText((string) $request->input('cta_label', '')),
+            'cta_url' => $this->normalizeSiteUrl((string) $request->input('cta_url', '')),
+        ];
+    }
+
+    private function normalizeThemeColor(string $value): string
+    {
+        $value = trim($value);
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? $value : '#0A4DFF';
+    }
+
+    private function normalizeSiteUrl(string $value): ?string
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return null;
+        }
+
+        if (str_starts_with($value, '/') || preg_match('/^https?:\/\//i', $value)) {
+            return $value;
+        }
+
+        if (str_starts_with($value, 'wa.me/') || str_contains($value, '.')) {
+            return 'https://' . ltrim($value, '/');
+        }
+
+        return $value;
+    }
+
+    private function nullableText(string $value): ?string
+    {
+        $value = trim($value);
+        return $value === '' ? null : $value;
+    }
+
+    private function sitePublicUrl(?array $site): string
+    {
+        if (!$site) {
+            return '';
+        }
+
+        $domain = trim((string) ($site['domain'] ?? ''));
+        if ($domain !== '') {
+            return preg_match('/^https?:\/\//i', $domain) ? $domain : 'https://' . $domain;
+        }
+
+        $slug = trim((string) ($site['slug'] ?? ''));
+        if ($slug === '') {
+            return '';
+        }
+
+        return url('/site/' . rawurlencode($slug));
+    }
+
+    private function buildSitePublishChecklist(?array $organization, ?array $site, array $access): array
+    {
+        $organizationName = trim((string) ($organization['name'] ?? ''));
+        $hasSite = is_array($site) && !empty($site);
+        $hasContact = $hasSite && (
+            trim((string) ($site['contact_phone'] ?? '')) !== ''
+            || trim((string) ($site['contact_email'] ?? '')) !== ''
+            || trim((string) ($site['whatsapp_url'] ?? '')) !== ''
+        );
+        $hasImages = $hasSite && (
+            trim((string) ($site['hero_image'] ?? '')) !== ''
+            || trim((string) ($site['logo_image'] ?? '')) !== ''
+        );
+        $hasSocial = $hasSite && (
+            trim((string) ($site['instagram_url'] ?? '')) !== ''
+            || trim((string) ($site['facebook_url'] ?? '')) !== ''
+            || trim((string) ($site['youtube_url'] ?? '')) !== ''
+        );
+
+        return [
+            [
+                'done' => $organizationName !== '',
+                'title' => 'Dados da organização',
+                'text' => $organizationName !== '' ? $organizationName . ' será usada como base.' : 'Complete o cadastro da organização.',
+            ],
+            [
+                'done' => $hasSite && trim((string) ($site['site_title'] ?? '')) !== '' && trim((string) ($site['site_description'] ?? '')) !== '',
+                'title' => 'Texto do site',
+                'text' => 'Título, chamada principal e resumo institucional.',
+            ],
+            [
+                'done' => $hasImages,
+                'title' => 'Imagens',
+                'text' => 'Logo e imagem principal ajudam o site a ficar publicável.',
+            ],
+            [
+                'done' => $hasContact,
+                'title' => 'Contato',
+                'text' => 'Telefone, e-mail ou WhatsApp para visitantes.',
+            ],
+            [
+                'done' => $hasSocial,
+                'title' => 'Redes sociais',
+                'text' => 'Instagram, Facebook ou YouTube oficiais.',
+            ],
+            [
+                'done' => !empty($access['can_publish']),
+                'title' => 'Mensalidade de publicação',
+                'text' => !empty($access['can_publish']) ? 'Publicação liberada.' : 'Ative a mensalidade para domínio real.',
+            ],
+        ];
+    }
+
+    private function ensureOrganizationSitesTable(): void
+    {
+        $pdo = Database::connection();
+        $driver = (string) $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
+        if ($driver === 'sqlite') {
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS organization_sites (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    organization_id INTEGER NOT NULL UNIQUE,
+                    template TEXT NOT NULL DEFAULT 'Institucional Clássico',
+                    status TEXT NOT NULL DEFAULT 'draft',
+                    site_title TEXT NULL,
+                    slug TEXT NULL,
+                    domain TEXT NULL,
+                    theme_color TEXT DEFAULT '#0A4DFF',
+                    hero_image TEXT NULL,
+                    logo_image TEXT NULL,
+                    site_description TEXT NULL,
+                    about_text TEXT NULL,
+                    contact_email TEXT NULL,
+                    contact_phone TEXT NULL,
+                    whatsapp_url TEXT NULL,
+                    instagram_url TEXT NULL,
+                    facebook_url TEXT NULL,
+                    youtube_url TEXT NULL,
+                    address_line TEXT NULL,
+                    city TEXT NULL,
+                    state TEXT NULL,
+                    cta_label TEXT NULL,
+                    cta_url TEXT NULL,
+                    published_url TEXT NULL,
+                    generated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                    published_at TEXT NULL,
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+                )
+            ");
+            $pdo->exec("CREATE INDEX IF NOT EXISTS idx_organization_sites_org ON organization_sites (organization_id)");
+            $this->ensureOrganizationSiteColumns($pdo, $driver);
+            return;
+        }
+
+        if ($driver === 'pgsql') {
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS organization_sites (
+                    id BIGSERIAL PRIMARY KEY,
+                    organization_id BIGINT NOT NULL UNIQUE,
+                    template VARCHAR(120) NOT NULL DEFAULT 'Institucional Clássico',
+                    status VARCHAR(40) NOT NULL DEFAULT 'draft',
+                    site_title VARCHAR(255) NULL,
+                    slug VARCHAR(255) NULL,
+                    domain VARCHAR(255) NULL,
+                    theme_color VARCHAR(20) DEFAULT '#0A4DFF',
+                    hero_image VARCHAR(500) NULL,
+                    logo_image VARCHAR(500) NULL,
+                    site_description TEXT NULL,
+                    about_text TEXT NULL,
+                    contact_email VARCHAR(180) NULL,
+                    contact_phone VARCHAR(40) NULL,
+                    whatsapp_url VARCHAR(500) NULL,
+                    instagram_url VARCHAR(500) NULL,
+                    facebook_url VARCHAR(500) NULL,
+                    youtube_url VARCHAR(500) NULL,
+                    address_line VARCHAR(500) NULL,
+                    city VARCHAR(120) NULL,
+                    state VARCHAR(80) NULL,
+                    cta_label VARCHAR(120) NULL,
+                    cta_url VARCHAR(500) NULL,
+                    published_url VARCHAR(500) NULL,
+                    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    published_at TIMESTAMP NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ");
+            $pdo->exec("CREATE INDEX IF NOT EXISTS idx_organization_sites_org ON organization_sites (organization_id)");
+            $this->ensureOrganizationSiteColumns($pdo, $driver);
+            return;
+        }
+
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS organization_sites (
+                id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                organization_id BIGINT UNSIGNED NOT NULL,
+                template VARCHAR(120) NOT NULL DEFAULT 'Institucional Clássico',
+                status VARCHAR(40) NOT NULL DEFAULT 'draft',
+                site_title VARCHAR(255) NULL,
+                slug VARCHAR(255) NULL,
+                domain VARCHAR(255) NULL,
+                theme_color VARCHAR(20) DEFAULT '#0A4DFF',
+                hero_image VARCHAR(500) NULL,
+                logo_image VARCHAR(500) NULL,
+                site_description TEXT NULL,
+                about_text TEXT NULL,
+                contact_email VARCHAR(180) NULL,
+                contact_phone VARCHAR(40) NULL,
+                whatsapp_url VARCHAR(500) NULL,
+                instagram_url VARCHAR(500) NULL,
+                facebook_url VARCHAR(500) NULL,
+                youtube_url VARCHAR(500) NULL,
+                address_line VARCHAR(500) NULL,
+                city VARCHAR(120) NULL,
+                state VARCHAR(80) NULL,
+                cta_label VARCHAR(120) NULL,
+                cta_url VARCHAR(500) NULL,
+                published_url VARCHAR(500) NULL,
+                generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                published_at TIMESTAMP NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_organization_sites_org (organization_id),
+                UNIQUE KEY uk_organization_sites_org (organization_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ");
+        $this->ensureOrganizationSiteColumns($pdo, $driver);
+    }
+
+    private function ensureOrganizationSiteColumns(\PDO $pdo, string $driver): void
+    {
+        $definitions = [
+            'sqlite' => [
+                'site_description' => 'TEXT NULL',
+                'about_text' => 'TEXT NULL',
+                'contact_email' => 'TEXT NULL',
+                'contact_phone' => 'TEXT NULL',
+                'whatsapp_url' => 'TEXT NULL',
+                'instagram_url' => 'TEXT NULL',
+                'facebook_url' => 'TEXT NULL',
+                'youtube_url' => 'TEXT NULL',
+                'address_line' => 'TEXT NULL',
+                'city' => 'TEXT NULL',
+                'state' => 'TEXT NULL',
+                'cta_label' => 'TEXT NULL',
+                'cta_url' => 'TEXT NULL',
+                'published_url' => 'TEXT NULL',
+            ],
+            'default' => [
+                'site_description' => 'TEXT NULL',
+                'about_text' => 'TEXT NULL',
+                'contact_email' => 'VARCHAR(180) NULL',
+                'contact_phone' => 'VARCHAR(40) NULL',
+                'whatsapp_url' => 'VARCHAR(500) NULL',
+                'instagram_url' => 'VARCHAR(500) NULL',
+                'facebook_url' => 'VARCHAR(500) NULL',
+                'youtube_url' => 'VARCHAR(500) NULL',
+                'address_line' => 'VARCHAR(500) NULL',
+                'city' => 'VARCHAR(120) NULL',
+                'state' => 'VARCHAR(80) NULL',
+                'cta_label' => 'VARCHAR(120) NULL',
+                'cta_url' => 'VARCHAR(500) NULL',
+                'published_url' => 'VARCHAR(500) NULL',
+            ],
+        ];
+
+        $columns = $definitions[$driver] ?? $definitions['default'];
+
+        foreach ($columns as $column => $definition) {
+            if ($this->databaseColumnExists($pdo, 'organization_sites', $column, $driver)) {
+                continue;
+            }
+
+            try {
+                $pdo->exec('ALTER TABLE organization_sites ADD COLUMN ' . $column . ' ' . $definition);
+            } catch (\Throwable $e) {
+                // Migrations also add these fields; ignore if another process already created the column.
+            }
+        }
+    }
+
+    private function databaseColumnExists(\PDO $pdo, string $table, string $column, string $driver): bool
+    {
+        try {
+            if ($driver === 'sqlite') {
+                $stmt = $pdo->query('PRAGMA table_info(' . $table . ')');
+                foreach ($stmt->fetchAll() as $row) {
+                    if (strcasecmp((string) ($row['name'] ?? ''), $column) === 0) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            if ($driver === 'pgsql') {
+                $stmt = $pdo->prepare('SELECT column_name FROM information_schema.columns WHERE table_name = :table AND column_name = :column LIMIT 1');
+                $stmt->execute(['table' => $table, 'column' => $column]);
+                return (bool) $stmt->fetchColumn();
+            }
+
+            $stmt = $pdo->prepare('SHOW COLUMNS FROM ' . $table . ' LIKE :column');
+            $stmt->execute(['column' => $column]);
+            return (bool) $stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            return true;
+        }
+    }
+
+    private function resolveOrganizationSite(?array $organization): ?array
+    {
+        if (!empty($organization['id'])) {
+            try {
+                $this->ensureOrganizationSitesTable();
+                $stmt = Database::connection()->prepare('SELECT * FROM organization_sites WHERE organization_id = :org_id LIMIT 1');
+                $stmt->execute(['org_id' => (int) $organization['id']]);
+                $site = $stmt->fetch();
+
+                if (is_array($site) && !empty($site)) {
+                    $site['status_label'] = $this->formatSiteStatusLabel((string) ($site['status'] ?? 'draft'));
+                    $site['generated_at_label'] = $this->formatDateTimeLabel((string) ($site['generated_at'] ?? ''));
+                    $site['public_url'] = $this->sitePublicUrl($site);
+                    return $site;
+                }
+            } catch (\Throwable $e) {
+                // fallback abaixo
+            }
+        }
+
+        $sessionSite = Session::get('hub_generated_site');
+        if (!is_array($sessionSite)) {
+            return null;
+        }
+
+        $sessionSite['status_label'] = $sessionSite['status_label'] ?? $this->formatSiteStatusLabel((string) ($sessionSite['status'] ?? 'draft'));
+        $sessionSite['generated_at_label'] = $sessionSite['generated_at_label'] ?? $this->formatDateTimeLabel((string) ($sessionSite['generated_at'] ?? ''));
+
+        return $sessionSite;
+    }
+
+    private function organizationSettings(?array $organization, array $keys = []): array
+    {
+        if (empty($organization['id']) || !$this->tableExists('settings')) {
+            return [];
+        }
+
+        $params = ['org_id' => (int) $organization['id']];
+        $sql = 'SELECT `key`, value FROM settings WHERE organization_id = :org_id';
+
+        if (!empty($keys)) {
+            $placeholders = [];
+            foreach (array_values($keys) as $index => $key) {
+                $param = 'setting_' . $index;
+                $placeholders[] = ':' . $param;
+                $params[$param] = (string) $key;
+            }
+            $sql .= ' AND `key` IN (' . implode(',', $placeholders) . ')';
+        }
+
+        $settings = [];
+        foreach ($this->fetchRows($sql, $params) as $row) {
+            $settings[(string) ($row['key'] ?? '')] = (string) ($row['value'] ?? '');
+        }
+
+        return $settings;
+    }
+
+    private function sitePreviewEvents(?array $organization): array
+    {
+        if (empty($organization['id']) || !$this->tableExists('events')) {
+            return [];
+        }
+
+        return $this->fetchRows(
+            "SELECT title, description, location, start_date
+             FROM events
+             WHERE organization_id = :org_id AND status IN ('published', 'ongoing', 'draft')
+             ORDER BY start_date ASC
+             LIMIT 3",
+            ['org_id' => (int) $organization['id']]
+        );
+    }
+
+    private function sitePreviewCampaigns(?array $organization): array
+    {
+        if (empty($organization['id']) || !$this->tableExists('campaigns')) {
+            return [];
+        }
+
+        return $this->fetchRows(
+            "SELECT title, description, goal_amount, raised_amount, designation
+             FROM campaigns
+             WHERE organization_id = :org_id AND status IN ('active', 'published', 'completed')
+             ORDER BY created_at DESC
+             LIMIT 3",
+            ['org_id' => (int) $organization['id']]
+        );
+    }
+
+    private function fetchRows(string $sql, array $params = []): array
+    {
+        try {
+            $stmt = Database::connection()->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    private function tableExists(string $table): bool
+    {
+        try {
+            $pdo = Database::connection();
+            $driver = (string) $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
+            if ($driver === 'sqlite') {
+                $stmt = $pdo->prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = :table LIMIT 1");
+                $stmt->execute(['table' => $table]);
+                return (bool) $stmt->fetchColumn();
+            }
+
+            $stmt = $pdo->prepare('SHOW TABLES LIKE :table');
+            $stmt->execute(['table' => $table]);
+            return (bool) $stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    private function formatSiteStatusLabel(string $status): string
+    {
+        return match ($status) {
+            'ready' => 'Pronto para revisão',
+            'published' => 'Publicado',
+            'blocked' => 'Bloqueado',
+            default => 'Rascunho',
+        };
+    }
+
+    private function formatDateTimeLabel(string $value): string
+    {
+        if (trim($value) === '') {
+            return 'Ainda não gerado';
+        }
+
+        $timestamp = strtotime($value);
+        if ($timestamp === false) {
+            return $value;
+        }
+
+        return date('d/m/Y H:i', $timestamp);
+    }
+
+    private function slugifySiteTitle(string $value): string
+    {
+        $value = trim($value);
+        if (function_exists('iconv')) {
+            $converted = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
+            if (is_string($converted) && $converted !== '') {
+                $value = $converted;
+            }
+        }
+
+        $slug = strtolower((string) preg_replace('/[^a-zA-Z0-9]+/', '-', $value));
+        $slug = trim($slug, '-');
+
+        return $slug !== '' ? $slug : 'site-institucional';
     }
 
     private function resolveIaCredits(?array $organization, array $user): int
@@ -688,9 +1417,9 @@ class DashboardController extends Controller
     private function buildCreditPackages(): array
     {
         return [
-            ['id' => 'starter', 'name' => 'Pacote de Entrada', 'credits' => 50, 'price_label' => 'R$ 49,00', 'description' => 'Pacote básico para sermões, estudos e suporte inicial.', 'badge' => '', 'badge_type' => ''],
-            ['id' => 'pro', 'name' => 'Pacote Ministerial', 'credits' => 150, 'price_label' => 'R$ 129,00', 'description' => 'Melhor custo-benefício para uso recorrente no ministério.', 'badge' => 'Mais vendido', 'badge_type' => 'hot'],
-            ['id' => 'max', 'name' => 'Pacote Intensivo', 'credits' => 300, 'price_label' => 'R$ 229,00', 'description' => 'Pacote premium para equipes com alta frequência de uso.', 'badge' => 'Melhor valor', 'badge_type' => 'new'],
+            ['id' => 'starter', 'name' => 'Pacote Expositor', 'credits' => 30, 'price_label' => 'R$ 34,90', 'description' => 'Créditos para sermões avulsos, estudos bíblicos e aulas EBD.', 'badge' => '', 'badge_type' => ''],
+            ['id' => 'pro', 'name' => 'Pacote Ministerial', 'credits' => 120, 'price_label' => 'R$ 97,00', 'description' => 'Melhor custo-benefício para planejamento recorrente no ministério.', 'badge' => 'Mais vendido', 'badge_type' => 'hot'],
+            ['id' => 'max', 'name' => 'Pacote Intensivo', 'credits' => 300, 'price_label' => 'R$ 197,00', 'description' => 'Volume para equipes, séries, discipulados e materiais mensais.', 'badge' => 'Melhor valor', 'badge_type' => 'new'],
         ];
     }
 
@@ -741,6 +1470,26 @@ class DashboardController extends Controller
         } catch (\Throwable $e) {
             // fallback em sessão
         }
+    }
+
+    private function hasMonthlyFreeAllowance(?array $organization, array $user, string $period): bool
+    {
+        foreach ($this->resolveCreditHistory($organization, $user) as $entry) {
+            if (!is_array($entry) || ($entry['type'] ?? '') !== 'Gratuito') {
+                continue;
+            }
+
+            if (($entry['period'] ?? '') === $period) {
+                return true;
+            }
+
+            $date = \DateTimeImmutable::createFromFormat('d/m/Y H:i', (string) ($entry['date'] ?? ''));
+            if ($date instanceof \DateTimeImmutable && $date->format('Y-m') === $period) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function resolveCreditHistorySettingKey(?array $organization, array $user): ?string
@@ -971,53 +1720,278 @@ class DashboardController extends Controller
     private function buildSiteTemplates(): array
     {
         return [
-            ['name' => 'Institucional Clássico', 'description' => 'Modelo com home, sobre, ministérios, agenda e formulário de contato.', 'status' => 'Disponível', 'highlight' => true],
-            ['name' => 'Campanhas e Eventos', 'description' => 'Landing pages para congressos, conferências, campanhas e inscrições.', 'status' => 'Disponível', 'highlight' => false],
-            ['name' => 'Captação para ONGs', 'description' => 'Páginas para apresentação institucional, projetos e doações.', 'status' => 'Disponível', 'highlight' => false],
+            [
+                'name' => 'Institucional Clássico',
+                'description' => 'Home, sobre, ministérios, agenda, ofertas e contato em um site institucional limpo.',
+                'status' => 'Disponível',
+                'highlight' => true,
+                'assets' => ['Logo', 'Foto principal da igreja', 'Fotos dos ministérios'],
+            ],
+            [
+                'name' => 'Campanhas e Eventos',
+                'description' => 'Páginas para congressos, conferências, campanhas e inscrições com chamada direta.',
+                'status' => 'Disponível',
+                'highlight' => false,
+                'assets' => ['Banner do evento', 'Imagem dos palestrantes', 'Identidade da campanha'],
+            ],
+            [
+                'name' => 'Captação para ONGs',
+                'description' => 'Apresentação institucional, projetos, impacto social, doações e captação de leads.',
+                'status' => 'Disponível',
+                'highlight' => false,
+                'assets' => ['Fotos dos projetos', 'Dados de impacto', 'Marca institucional'],
+            ],
         ];
+    }
+
+    private function buildConfessionalOptions(): array
+    {
+        return [
+            ['value' => 'somente-biblico', 'label' => 'Somente bíblica'],
+            ['value' => 'biblico-evangelico', 'label' => 'Bíblica evangélica'],
+            ['value' => 'reformada-calvinista', 'label' => 'Reformada / Calvinista'],
+            ['value' => 'westminster', 'label' => 'Presbiteriana — Westminster'],
+            ['value' => 'londres-1689', 'label' => 'Batista Reformada — Londres 1689'],
+            ['value' => 'batista-historica', 'label' => 'Batista histórica'],
+            ['value' => 'batista-tradicional', 'label' => 'Batista tradicional brasileira'],
+            ['value' => 'congregacional', 'label' => 'Congregacional'],
+            ['value' => 'arminiana-classica', 'label' => 'Arminiana clássica'],
+            ['value' => 'wesleyana-metodista', 'label' => 'Wesleyana / Metodista'],
+            ['value' => 'nazareno-holiness', 'label' => 'Nazareno / Santidade'],
+            ['value' => 'pentecostal-classica', 'label' => 'Pentecostal clássica'],
+            ['value' => 'assembleiana', 'label' => 'Pentecostal assembleiana'],
+            ['value' => 'quadrangular', 'label' => 'Pentecostal quadrangular'],
+            ['value' => 'carismatica-renovada', 'label' => 'Carismática / Renovada'],
+            ['value' => 'neopentecostal', 'label' => 'Neopentecostal'],
+            ['value' => 'luterana', 'label' => 'Luterana'],
+            ['value' => 'anglicana', 'label' => 'Anglicana'],
+            ['value' => 'anabatista-menonita', 'label' => 'Anabatista / Menonita'],
+            ['value' => 'adventista', 'label' => 'Adventista'],
+            ['value' => 'dispensacionalista', 'label' => 'Dispensacionalista'],
+            ['value' => 'aliancista', 'label' => 'Teologia da Aliança'],
+            ['value' => 'contextual-brasileira', 'label' => 'Evangélica brasileira contextual'],
+        ];
+    }
+
+    private function formatConfessionalLabel(string $value): string
+    {
+        foreach ($this->buildConfessionalOptions() as $option) {
+            if (($option['value'] ?? '') === $value) {
+                return (string) ($option['label'] ?? 'Bíblica evangélica');
+            }
+        }
+
+        return 'Bíblica evangélica';
+    }
+
+    private function normalizeExpositorContentType(string $type): string
+    {
+        return match ($type) {
+            'study' => 'study',
+            'reading_plan' => 'reading_plan',
+            'resource' => 'resource',
+            default => 'sermon',
+        };
+    }
+
+    private function expositorContentTypeLabel(string $type): string
+    {
+        return match ($this->normalizeExpositorContentType($type)) {
+            'study' => 'Estudo',
+            'reading_plan' => 'Plano de leitura',
+            'resource' => 'Recurso ministerial',
+            default => 'Sermão',
+        };
+    }
+
+    private function expositorDestinationUrl(string $type): string
+    {
+        return $this->normalizeExpositorContentType($type) === 'reading_plan'
+            ? '/gestao/plano-leitura'
+            : '/gestao/sermoes';
+    }
+
+    private function expositorDraftTitle(array $form): string
+    {
+        $theme = trim((string) ($form['theme'] ?? ''));
+        $passage = trim((string) ($form['passage'] ?? ''));
+        $resourceTitle = trim((string) ($form['resource_title'] ?? ''));
+        $type = $this->normalizeExpositorContentType((string) ($form['content_type'] ?? 'sermon'));
+
+        if ($type === 'resource' && $resourceTitle !== '') {
+            return $theme !== '' ? $resourceTitle . ': ' . $theme : $resourceTitle;
+        }
+
+        if ($theme !== '') {
+            return $theme;
+        }
+
+        return match ($type) {
+            'study' => 'Estudo bíblico sobre ' . ($passage !== '' ? $passage : 'texto bíblico'),
+            'reading_plan' => 'Plano de leitura: ' . ($passage !== '' ? $passage : 'jornada bíblica'),
+            'resource' => $resourceTitle !== '' ? $resourceTitle : 'Recurso ministerial',
+            default => 'Sermão sobre ' . ($passage !== '' ? $passage : 'texto bíblico'),
+        };
+    }
+
+    private function createExpositorDraft(?array $organization, array $user, array $form, string $result): ?array
+    {
+        if (empty($organization['id'])) {
+            return null;
+        }
+
+        $type = $this->normalizeExpositorContentType((string) ($form['content_type'] ?? 'sermon'));
+        $title = $this->expositorDraftTitle($form);
+        $now = date('Y-m-d H:i:s');
+
+        try {
+            $pdo = Database::connection();
+
+            if ($type === 'reading_plan') {
+                if (!$this->tableExists('reading_plans')) {
+                    return null;
+                }
+
+                $stmt = $pdo->prepare(
+                    'INSERT INTO reading_plans (organization_id, title, description, duration_days, book_range, participants_count, status, created_at, updated_at)
+                     VALUES (:organization_id, :title, :description, :duration_days, :book_range, :participants_count, :status, :created_at, :updated_at)'
+                );
+                $stmt->execute([
+                    'organization_id' => (int) $organization['id'],
+                    'title' => $title,
+                    'description' => $result,
+                    'duration_days' => 30,
+                    'book_range' => trim((string) ($form['passage'] ?? '')) ?: 'Bíblia',
+                    'participants_count' => 0,
+                    'status' => 'draft',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            } else {
+                if (!$this->tableExists('sermons')) {
+                    return null;
+                }
+
+                $reference = trim((string) ($form['passage'] ?? ''));
+                $label = $this->expositorContentTypeLabel($type);
+                $stmt = $pdo->prepare(
+                    'INSERT INTO sermons (organization_id, title, preacher, sermon_date, bible_reference, summary, series_name, tags, status, created_at, updated_at)
+                     VALUES (:organization_id, :title, :preacher, :sermon_date, :bible_reference, :summary, :series_name, :tags, :status, :created_at, :updated_at)'
+                );
+                $stmt->execute([
+                    'organization_id' => (int) $organization['id'],
+                    'title' => $title,
+                    'preacher' => trim((string) ($user['name'] ?? '')) ?: 'Expositor IA',
+                    'sermon_date' => date('Y-m-d'),
+                    'bible_reference' => $reference,
+                    'summary' => $result,
+                    'series_name' => $type === 'resource' ? trim((string) ($form['resource_title'] ?? '')) : null,
+                    'tags' => 'Expositor IA, ' . $label,
+                    'status' => 'draft',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }
+
+            return [
+                'type' => $type,
+                'id' => (int) $pdo->lastInsertId(),
+                'title' => $title,
+                'label' => $this->expositorContentTypeLabel($type),
+                'destination' => $this->expositorDestinationUrl($type),
+            ];
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    private function publishExpositorDraft(?array $organization, string $type, int $id): bool
+    {
+        if (empty($organization['id']) || $id <= 0) {
+            return false;
+        }
+
+        $type = $this->normalizeExpositorContentType($type);
+        $table = $type === 'reading_plan' ? 'reading_plans' : 'sermons';
+        $status = $type === 'reading_plan' ? 'active' : 'published';
+
+        if (!$this->tableExists($table)) {
+            return false;
+        }
+
+        try {
+            $stmt = Database::connection()->prepare(
+                "UPDATE {$table}
+                 SET status = :status, updated_at = :updated_at
+                 WHERE id = :id AND organization_id = :organization_id"
+            );
+            $stmt->execute([
+                'status' => $status,
+                'updated_at' => date('Y-m-d H:i:s'),
+                'id' => $id,
+                'organization_id' => (int) $organization['id'],
+            ]);
+
+            return $stmt->rowCount() > 0;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     private function buildExpositorResult(array $form): string
     {
         $passage = $form['passage'] !== '' ? $form['passage'] : 'Passagem não informada';
         $theme = $form['theme'] !== '' ? $form['theme'] : 'Tema livre';
+        $confessionalLabel = $this->formatConfessionalLabel((string) ($form['confessional'] ?? 'biblico-evangelico'));
+        $type = $this->normalizeExpositorContentType((string) ($form['content_type'] ?? 'sermon'));
+        $contentLabel = $this->expositorContentTypeLabel($type);
+        $resourceTitle = trim((string) ($form['resource_title'] ?? ''));
 
-        $confessionalLabel = match ($form['confessional']) {
-            'westminster' => 'Confissão de Westminster',
-            'londres-1689' => 'Confissão Batista de Londres 1689',
-            default => 'Somente Bíblico Reformado',
-        };
-
-        $depthLabel = match ($form['depth']) {
+        $depthLabel = match ((string) ($form['depth'] ?? 'pastoral')) {
             'teologico' => 'Aprofundamento Teológico',
             'academico' => 'Exegese Acadêmica',
             default => 'Sermão Expositivo Pastoral',
         };
 
-        return "Passagem: {$passage}\n"
+        $resourceLine = $resourceTitle !== '' ? "Recurso: {$resourceTitle}\n" : '';
+
+        return "Tipo de material: {$contentLabel}\n"
+            . $resourceLine
+            . "Passagem/contexto: {$passage}\n"
             . "Tema/Ênfase: {$theme}\n"
-            . "Camada Confessional: {$confessionalLabel}\n"
-            . "Nível de Profundidade: {$depthLabel}\n\n"
-            . "1. Contexto do texto\n"
-            . "Identifique autor, audiência original e finalidade pastoral da perícope.\n\n"
-            . "2. Estrutura expositiva sugerida\n"
-            . "- Introdução: problema pastoral central do texto\n"
-            . "- Movimento 1: verdade bíblica principal\n"
-            . "- Movimento 2: implicações para a igreja\n"
-            . "- Movimento 3: aplicação prática com chamada à resposta\n\n"
-            . "3. Aplicações ministeriais\n"
-            . "- Liderança: decisões orientadas pela Escritura\n"
-            . "- Comunidade: cuidado mútuo e discipulado\n"
-            . "- Missão: testemunho público com clareza e ordem\n\n"
-            . "4. Recursos para continuidade\n"
-            . "Sugestão: transformar este esboço em série semanal e registrar desdobramentos no Hub.";
+            . "Linha teológica: {$confessionalLabel}\n"
+            . "Nível de profundidade: {$depthLabel}\n\n"
+            . "1. Caminho exegético\n"
+            . "- Contexto histórico: identifique autor, audiência original, ocasião e tensão pastoral da perícope.\n"
+            . "- Estrutura literária: observe movimentos do argumento, repetições, contrastes e conectivos.\n"
+            . "- Palavras-chave: destaque termos relevantes no português e, quando necessário, investigue hebraico/grego com sobriedade.\n"
+            . "- Teologia do texto: formule a verdade central antes de buscar aplicações.\n"
+            . "- Eixo cristológico: mostre como o texto se conecta ao evangelho sem forçar alegorias.\n"
+            . "- Ênfase confessional: revise o conteúdo à luz da linha escolhida, mantendo a Escritura como norma final.\n\n"
+            . "2. Ponte de revisão pastoral\n"
+            . "- Tema central para aprovar: {$theme}\n"
+            . "- Pergunta de controle: o sermão nasce do texto ou apenas usa o texto como pretexto?\n"
+            . "- Decisão pastoral: ajuste tom, público, ilustrações e chamada à resposta antes de desenvolver o material.\n\n"
+            . "3. Desenvolvimento sugerido\n"
+            . "- Introdução: apresente a dor pastoral que o texto confronta.\n"
+            . "- Movimento 1: exponha a verdade bíblica principal.\n"
+            . "- Movimento 2: mostre as implicações para fé, comunidade e obediência.\n"
+            . "- Movimento 3: aplique com clareza, esperança e responsabilidade espiritual.\n"
+            . "- Conclusão: conduza a igreja à resposta apropriada: arrependimento, fé, gratidão, missão ou perseverança.\n\n"
+            . "4. Materiais derivados\n"
+            . "- Sermão: organize em introdução, proposição, pontos, aplicação e conclusão.\n"
+            . "- Pequeno grupo: crie 5 perguntas de observação, interpretação e aplicação.\n"
+            . "- EBD/discipulado: transforme o estudo em aula com objetivo, roteiro e tarefa prática.\n"
+            . "- Série: avalie se a passagem abre uma sequência de 3 a 6 mensagens.\n\n"
+            . "Nota pastoral\n"
+            . "Use este resultado como apoio de estudo. A oração, a responsabilidade pastoral, a revisão doutrinária e o conhecimento da igreja local continuam indispensáveis.";
     }
 
     private function buildShowcaseItems(): array
     {
         return [
             ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial com 7 dias gratuitos.', 'price' => 'R$ 49,90/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
-            ['icon' => 'book', 'title' => 'Expositor IA', 'description' => 'Geração de esboços e estudos bíblicos para apoio pastoral e ministerial.', 'price' => 'A partir de R$ 49,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/hub/expositor-ia')],
+            ['icon' => 'book', 'title' => 'Expositor IA', 'description' => 'Geração de esboços e estudos bíblicos para apoio pastoral e ministerial.', 'price' => 'Use com créditos', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Comprar créditos', 'url' => url('/hub/creditos')],
             ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação para captar até US$ 10.000/mês em anúncios.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
             ['icon' => 'gift', 'title' => 'Google para ONGs', 'description' => 'Trilha guiada para aprovação e criação do Google Workspace gratuito.', 'price' => 'R$ 297,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
             ['icon' => 'megaphone', 'title' => 'Gestão de Tráfego Pago', 'description' => 'Planejamento e operação de campanhas para ampliar alcance e resultados.', 'price' => 'Consulte', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
@@ -1086,8 +2060,8 @@ class DashboardController extends Controller
             [
                 'product'     => 'Expositor IA',
                 'package'     => 'Pacote de entrada',
-                'price'       => '50 créditos por R$ 49,00',
-                'description' => 'Ideal para começar com esboços e estudos no ritmo da sua equipe.',
+                'price'       => 'Pacotes de créditos',
+                'description' => 'Ideal para começar com esboços e estudos no ritmo da sua equipe, pagando por uso.',
                 'cta'         => 'Comprar créditos',
                 'url'         => url('/hub/creditos'),
             ],

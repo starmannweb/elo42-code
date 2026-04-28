@@ -1,11 +1,11 @@
-<?php $__view->extend('management'); ?>
+<?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
 <div class="mgmt-container">
     <div class="mgmt-header">
         <div>
             <h1 class="mgmt-title">Grupos Pequenos</h1>
-            <p class="mgmt-subtitle">Gerencie células, líderes e encontros semanais</p>
+            <p class="mgmt-subtitle">Gerencie grupos, líderes e encontros semanais</p>
         </div>
         <button type="button" class="btn btn-primary" onclick="document.getElementById('addGroupModal').style.display='flex'">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.5rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -117,7 +117,7 @@
             <div class="modal__body">
                 <div class="form-group">
                     <label for="name" class="form-label">Nome do Grupo <span style="color: var(--danger);">*</span></label>
-                    <input type="text" id="name" name="name" class="form-control" placeholder="Ex: Célula São Paulo Centro" required>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Ex: Grupo Centro" required>
                 </div>
                 <div class="form-group">
                     <label for="leader_name" class="form-label">Líder <span style="color: var(--danger);">*</span></label>

@@ -52,6 +52,227 @@ class GeneralController extends Controller
         return 0;
     }
 
+    private function buildBaseContext(string $breadcrumb, string $activeMenu): array
+    {
+        return [
+            'breadcrumb' => $breadcrumb,
+            'activeMenu' => $activeMenu,
+            'organization' => Session::get('organization') ?: [],
+            'user' => Session::user() ?: [],
+        ];
+    }
+
+    private function hasPremiumAccess(): bool
+    {
+        $organization = Session::get('organization');
+        $organization = is_array($organization) ? $organization : [];
+        $user = Session::user() ?? [];
+        $permissions = is_array($user['permissions'] ?? null) ? $user['permissions'] : [];
+        $plan = strtolower((string) ($organization['plan'] ?? 'free'));
+        $roleSlug = (string) ($organization['role_slug'] ?? '');
+        $premiumPlans = ['premium', 'professional', 'enterprise'];
+
+        if (in_array($plan, $premiumPlans, true)) {
+            return true;
+        }
+
+        if (
+            in_array($roleSlug, ['super-admin', 'admin-elo42'], true)
+            || in_array('admin.access', $permissions, true)
+            || strtolower((string) ($user['email'] ?? '')) === 'ricieri@starmannweb.com.br'
+        ) {
+            return true;
+        }
+
+        if ($plan === 'free' && !empty($user['created_at'])) {
+            try {
+                return new \DateTimeImmutable('now') < (new \DateTimeImmutable((string) $user['created_at']))->modify('+7 days');
+            } catch (\Throwable $e) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private function containsPremiumSetting(array $payload): bool
+    {
+        $exactKeys = [
+            'pix_type',
+            'pix_key',
+            'pix_name',
+            'pix_beneficiary',
+            'pix_instruction',
+            'openai_key',
+            'model_analysis',
+            'model_generation',
+            'seo_title',
+            'seo_desc',
+            'seo_keywords',
+            'pwa_name',
+            'pwa_short_name',
+            'pwa_desc',
+            'theme_color',
+            'background_color',
+            'pwa_icon_192',
+            'pwa_icon_512',
+            'payment_gateway',
+            'payment_public_key',
+            'payment_secret_key',
+            'whatsapp_provider',
+            'email_provider',
+            'webhook_url',
+        ];
+
+        $prefixes = [
+            'appearance_',
+            'social_',
+        ];
+
+        foreach (array_keys($payload) as $key) {
+            $key = (string) $key;
+            if (in_array($key, $exactKeys, true)) {
+                return true;
+            }
+
+            foreach ($prefixes as $prefix) {
+                if (str_starts_with($key, $prefix)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function orgUsers(): array
+    {
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("
+                SELECT u.*, ou.role_id, r.name as role_name, r.slug as role_slug, ou.id as org_user_id
+                FROM users u
+                JOIN organization_users ou ON u.id = ou.user_id
+                LEFT JOIN roles r ON ou.role_id = r.id
+                WHERE ou.organization_id = :org_id AND ou.status = 'active'
+                ORDER BY u.name ASC
+            ");
+            $stmt->execute(['org_id' => $this->orgId()]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            Session::flash('warning', 'Usuarios indisponiveis no momento. Exibindo modo de contingencia.');
+            return [];
+        }
+    }
+
+    private function settingValues(array $keys = []): array
+    {
+        try {
+            $pdo = Database::connection();
+            $params = ['org_id' => $this->orgId()];
+            $sql = "SELECT `key`, value FROM settings WHERE organization_id = :org_id";
+
+            if (!empty($keys)) {
+                $placeholders = [];
+                foreach (array_values($keys) as $index => $key) {
+                    $name = 'key_' . $index;
+                    $placeholders[] = ':' . $name;
+                    $params[$name] = (string) $key;
+                }
+                $sql .= ' AND `key` IN (' . implode(',', $placeholders) . ')';
+            }
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+
+            $values = [];
+            foreach ($stmt->fetchAll() as $row) {
+                $values[(string) ($row['key'] ?? '')] = (string) ($row['value'] ?? '');
+            }
+
+            return $values;
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    private function saveSettingValues(array $values, string $group = 'church'): void
+    {
+        if (empty($values)) {
+            return;
+        }
+
+        $pdo = Database::connection();
+        $orgId = $this->orgId();
+        $delete = $pdo->prepare('DELETE FROM settings WHERE organization_id = :org_id AND `key` = :setting_key');
+        $insert = $pdo->prepare(
+            'INSERT INTO settings (`group`, `key`, value, type, organization_id, created_at, updated_at)
+             VALUES (:group_name, :setting_key, :setting_value, :setting_type, :org_id, NOW(), NOW())'
+        );
+
+        foreach ($values as $key => $value) {
+            $key = (string) $key;
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $key)) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $value = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $type = 'json';
+            } elseif (is_bool($value)) {
+                $value = $value ? '1' : '0';
+                $type = 'boolean';
+            } else {
+                $value = trim((string) $value);
+                $type = is_numeric($value) ? 'string' : 'string';
+            }
+
+            $params = [
+                'group_name' => $group,
+                'setting_key' => $key,
+                'org_id' => $orgId,
+            ];
+            $delete->execute([
+                'setting_key' => $key,
+                'org_id' => $orgId,
+            ]);
+            $insert->execute($params + [
+                'setting_value' => $value,
+                'setting_type' => $type,
+            ]);
+        }
+    }
+
+    private function churchUnits(): array
+    {
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare('SELECT * FROM church_units WHERE organization_id = :org_id ORDER BY status ASC, name ASC');
+            $stmt->execute(['org_id' => $this->orgId()]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    private function preachersList(): array
+    {
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare(
+                'SELECT p.*, u.name AS unit_name
+                 FROM preachers p
+                 LEFT JOIN church_units u ON u.id = p.church_unit_id
+                 WHERE p.organization_id = :org_id
+                 ORDER BY p.status ASC, p.name ASC'
+            );
+            $stmt->execute(['org_id' => $this->orgId()]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
     // --- Requests ---
     public function requests(Request $req): void
     {
@@ -121,6 +342,7 @@ class GeneralController extends Controller
             $this->view('management/visits/form', [
                 'pageTitle' => 'Nova visita', 'breadcrumb' => 'Visitas / Nova', 'item' => null,
                 'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+                'units' => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
@@ -192,6 +414,8 @@ class GeneralController extends Controller
             $this->view('management/sermons/index', [
                 'pageTitle' => 'Sermões — Gestão', 'breadcrumb' => 'Sermões',
                 'sermons' => Sermon::byOrg($this->orgId(), $req->input('search')),
+                'preachers' => $this->preachersList(),
+                'units' => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar sermões: ' . $e->getMessage());
@@ -204,6 +428,8 @@ class GeneralController extends Controller
         try {
             $this->view('management/sermons/form', [
                 'pageTitle' => 'Novo sermão', 'breadcrumb' => 'Sermões / Novo', 'item' => null,
+                'preachers' => $this->preachersList(),
+                'units' => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
@@ -214,8 +440,23 @@ class GeneralController extends Controller
     public function storeSermon(Request $req): void
     {
         $this->validate($req, ['title' => 'required']);
-        Sermon::create(array_merge($req->only(['title','preacher','sermon_date','bible_reference','summary','series_name','tags','status']), [
+        $preacher = trim((string) $req->input('preacher'));
+        $preacherId = (int) $req->input('preacher_id', 0);
+        if ($preacher === '' && $preacherId > 0) {
+            foreach ($this->preachersList() as $item) {
+                if ((int) ($item['id'] ?? 0) === $preacherId) {
+                    $preacher = (string) ($item['name'] ?? '');
+                    break;
+                }
+            }
+        }
+
+        $data = $req->only(['title','sermon_date','bible_reference','summary','series_name','tags','status','church_unit_id']);
+        $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+
+        Sermon::create(array_merge($data, [
             'organization_id' => $this->orgId(),
+            'preacher' => $preacher !== '' ? $preacher : null,
         ]));
         Session::flash('success', 'Sermão registrado.');
         redirect('/gestao/sermoes');
@@ -348,6 +589,7 @@ class GeneralController extends Controller
             $this->view('management/donations/form', [
                 'pageTitle' => 'Nova doação', 'breadcrumb' => 'Doações / Nova', 'item' => null,
                 'members' => Member::byOrg($this->orgId(), [], 1, 500)['data'],
+                'units' => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
@@ -358,7 +600,10 @@ class GeneralController extends Controller
     public function storeDonation(Request $req): void
     {
         $this->validate($req, ['amount' => 'required', 'donation_date' => 'required']);
-        Donation::create(array_merge($req->only(['member_id','donor_name','type','amount','donation_date','payment_method','reference','notes']), [
+        $data = $req->only(['member_id','donor_name','type','amount','donation_date','payment_method','reference','notes','church_unit_id']);
+        $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+
+        Donation::create(array_merge($data, [
             'organization_id' => $this->orgId(),
         ]));
         Session::flash('success', 'Doação registrada.');
@@ -373,13 +618,14 @@ class GeneralController extends Controller
             $orgId = $this->orgId();
             $startDate = $req->input('start_date', date('Y-m-01'));
             $endDate = $req->input('end_date', date('Y-m-t'));
+            $reportType = $req->input('type', 'overview');
             $financial = FinancialTransaction::summary($orgId, $startDate, $endDate);
 
             if (($financial['degraded'] ?? false) === true) {
                 Session::flash('warning', 'Relatorios com dados parciais no momento. Exibindo modo de contingencia.');
             }
 
-            $this->view('management/reports/index', [
+            $data = [
                 'pageTitle'      => 'Relatórios — Gestão', 'breadcrumb' => 'Relatórios',
                 'totalMembers'   => Member::countByOrg($orgId),
                 'activeMembers'  => Member::countByOrg($orgId, 'active'),
@@ -389,8 +635,15 @@ class GeneralController extends Controller
                 'donationSummary' => Donation::summaryByType($orgId, $startDate, $endDate),
                 'openRequests'   => ChurchRequest::countOpen($orgId),
                 'pendingTasks'   => ActionPlan::pendingTasks($orgId),
-                'filters'        => ['start_date' => $startDate, 'end_date' => $endDate],
-            ]);
+                'filters'        => ['start_date' => $startDate, 'end_date' => $endDate, 'type' => $reportType],
+            ];
+
+            if ($req->input('export') === 'pdf') {
+                $this->view('management/reports/print', $data);
+                return;
+            }
+
+            $this->view('management/reports/index', $data);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar relatórios: ' . $e->getMessage());
             redirect('/gestao');
@@ -400,6 +653,13 @@ class GeneralController extends Controller
     // --- Users ---
     public function users(Request $req): void
     {
+        $this->view('management/users/index', [
+            'pageTitle' => 'Usuários — Gestão',
+            'breadcrumb' => 'Usuários',
+            'users' => $this->orgUsers(),
+        ]);
+        return;
+
         $users = [];
 
         try {
@@ -454,7 +714,7 @@ class GeneralController extends Controller
             $pdo->rollBack();
             Session::flash('error', 'Erro ao processar usuário.');
         }
-        redirect('/gestao/usuarios');
+        redirect('/gestao/configuracoes/usuarios');
     }
 
     public function destroyUser(Request $req): void
@@ -463,12 +723,15 @@ class GeneralController extends Controller
         $pdo = Database::connection();
         $pdo->prepare("DELETE FROM organization_users WHERE id = ? AND organization_id = ?")->execute([$id, $this->orgId()]);
         Session::flash('success', 'Usuário desvinculado.');
-        redirect('/gestao/usuarios');
+        redirect('/gestao/configuracoes/usuarios');
     }
 
     // --- Settings ---
     public function settings(Request $req): void
     {
+        $this->settingsUsers($req);
+        return;
+
         try {
             $context = $this->buildBaseContext('Configurações da Igreja', 'configuracoes');
             $this->view('management/settings/index', array_merge($context, [
@@ -481,13 +744,124 @@ class GeneralController extends Controller
         }
     }
 
+    public function settingsUsers(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Configurações / Usuários', 'configuracoes');
+            $this->view('management/settings/users', array_merge($context, [
+                'pageTitle' => 'Usuários e Permissões — Gestão',
+                'activeTab' => 'usuarios',
+                'users' => $this->orgUsers(),
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar usuários: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function settingsCategories(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Configurações / Categorias', 'configuracoes');
+            $this->view('management/settings/categories', array_merge($context, [
+                'pageTitle' => 'Categorias — Gestão',
+                'activeTab' => 'categorias',
+                'categories' => FinancialTransaction::getCategories($this->orgId()),
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar categorias: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function settingsUnits(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Configurações / Unidades', 'configuracoes/unidades');
+            $this->view('management/settings/units', array_merge($context, [
+                'pageTitle' => 'Unidades da Igreja — Gestão',
+                'activeTab' => 'unidades',
+                'units' => $this->churchUnits(),
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar unidades: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function storeUnit(Request $req): void
+    {
+        $name = trim((string) $req->input('name'));
+        if ($name === '') {
+            Session::flash('error', 'Informe o nome da unidade.');
+            redirect('/gestao/configuracoes/unidades');
+        }
+
+        try {
+            $stmt = Database::connection()->prepare(
+                'INSERT INTO church_units (organization_id, name, code, address, city, state, phone, status, created_at, updated_at)
+                 VALUES (:organization_id, :name, :code, :address, :city, :state, :phone, :status, NOW(), NOW())'
+            );
+            $stmt->execute([
+                'organization_id' => $this->orgId(),
+                'name' => $name,
+                'code' => trim((string) $req->input('code')) ?: null,
+                'address' => trim((string) $req->input('address')) ?: null,
+                'city' => trim((string) $req->input('city')) ?: null,
+                'state' => strtoupper(substr(trim((string) $req->input('state')), 0, 2)) ?: null,
+                'phone' => trim((string) $req->input('phone')) ?: null,
+                'status' => $req->input('status') === 'inactive' ? 'inactive' : 'active',
+            ]);
+            Session::flash('success', 'Unidade cadastrada com sucesso.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Não foi possível salvar a unidade: ' . $e->getMessage());
+        }
+
+        redirect('/gestao/configuracoes/unidades');
+    }
+
+    public function removeUnit(Request $req): void
+    {
+        try {
+            $stmt = Database::connection()->prepare('DELETE FROM church_units WHERE id = :id AND organization_id = :organization_id');
+            $stmt->execute(['id' => (int) $req->param('id'), 'organization_id' => $this->orgId()]);
+            Session::flash('success', 'Unidade removida.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Não foi possível remover a unidade.');
+        }
+
+        redirect('/gestao/configuracoes/unidades');
+    }
+
+    public function saveSettings(Request $req): void
+    {
+        $payload = $_POST;
+        unset($payload['_token'], $payload['csrf_token'], $payload['redirect_to']);
+
+        if ($this->containsPremiumSetting($payload) && !$this->hasPremiumAccess()) {
+            Session::flash('warning', 'Este recurso é exclusivo do Plano Premium. Assine agora para desbloquear!');
+            redirect('/gestao/assinatura');
+        }
+
+        try {
+            $this->saveSettingValues($payload, 'church');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Não foi possível salvar as configurações: ' . $e->getMessage());
+            redirect((string) $req->input('redirect_to', '/gestao/configuracoes'));
+        }
+
+        Session::flash('success', 'Configurações salvas.');
+        redirect((string) $req->input('redirect_to', '/gestao/configuracoes'));
+    }
+
     public function settingsPix(Request $req): void
     {
         try {
             $context = $this->buildBaseContext('Configurações PIX / Ofertas', 'configuracoes/pix');
             $this->view('management/settings/pix', array_merge($context, [
                 'pageTitle' => 'PIX / Ofertas — Gestão',
-                'activeTab' => 'pix'
+                'activeTab' => 'pix',
+                'settings' => $this->settingValues()
             ]));
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
@@ -497,16 +871,7 @@ class GeneralController extends Controller
 
     public function settingsAi(Request $req): void
     {
-        try {
-            $context = $this->buildBaseContext('Inteligência Artificial', 'configuracoes/ia');
-            $this->view('management/settings/ia', array_merge($context, [
-                'pageTitle' => 'IA — Gestão',
-                'activeTab' => 'ia'
-            ]));
-        } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
-            redirect('/gestao');
-        }
+        redirect('/gestao/configuracoes/integracoes');
     }
 
     public function settingsAppearance(Request $req): void
@@ -515,7 +880,8 @@ class GeneralController extends Controller
             $context = $this->buildBaseContext('Aparência', 'configuracoes/aparencia');
             $this->view('management/settings/appearance', array_merge($context, [
                 'pageTitle' => 'Aparência — Gestão',
-                'activeTab' => 'aparencia'
+                'activeTab' => 'aparencia',
+                'settings' => $this->settingValues()
             ]));
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
@@ -529,7 +895,8 @@ class GeneralController extends Controller
             $context = $this->buildBaseContext('SEO & Meta Tags', 'configuracoes/seo');
             $this->view('management/settings/seo', array_merge($context, [
                 'pageTitle' => 'SEO — Gestão',
-                'activeTab' => 'seo'
+                'activeTab' => 'seo',
+                'settings' => $this->settingValues()
             ]));
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
@@ -543,12 +910,92 @@ class GeneralController extends Controller
             $context = $this->buildBaseContext('Configurações PWA', 'configuracoes/pwa');
             $this->view('management/settings/pwa', array_merge($context, [
                 'pageTitle' => 'PWA — Gestão',
-                'activeTab' => 'pwa'
+                'activeTab' => 'pwa',
+                'settings' => $this->settingValues()
             ]));
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
             redirect('/gestao');
         }
+    }
+
+    public function settingsIntegrations(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Configurações / Integrações', 'configuracoes/integracoes');
+            $this->view('management/settings/integrations', array_merge($context, [
+                'pageTitle' => 'Integrações e IA — Gestão',
+                'activeTab' => 'integracoes',
+                'settings' => $this->settingValues()
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar integrações: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function settingsSocial(Request $req): void
+    {
+        redirect('/hub/sites');
+    }
+
+    public function preachers(Request $req): void
+    {
+        try {
+            $this->view('management/sermons/preachers', [
+                'pageTitle' => 'Pregadores — Gestão',
+                'breadcrumb' => 'Pregadores',
+                'activeMenu' => 'pregadores',
+                'preachers' => $this->preachersList(),
+                'units' => $this->churchUnits(),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar pregadores: ' . $e->getMessage());
+            redirect('/gestao/sermoes');
+        }
+    }
+
+    public function storePreacher(Request $req): void
+    {
+        $name = trim((string) $req->input('name'));
+        if ($name === '') {
+            Session::flash('error', 'Informe o nome do pregador.');
+            redirect('/gestao/pregadores');
+        }
+
+        try {
+            $stmt = Database::connection()->prepare(
+                'INSERT INTO preachers (organization_id, church_unit_id, name, email, phone, bio, status, created_at, updated_at)
+                 VALUES (:organization_id, :church_unit_id, :name, :email, :phone, :bio, :status, NOW(), NOW())'
+            );
+            $stmt->execute([
+                'organization_id' => $this->orgId(),
+                'church_unit_id' => (int) $req->input('church_unit_id', 0) ?: null,
+                'name' => $name,
+                'email' => trim((string) $req->input('email')) ?: null,
+                'phone' => trim((string) $req->input('phone')) ?: null,
+                'bio' => trim((string) $req->input('bio')) ?: null,
+                'status' => $req->input('status') === 'inactive' ? 'inactive' : 'active',
+            ]);
+            Session::flash('success', 'Pregador cadastrado com sucesso.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Não foi possível salvar o pregador: ' . $e->getMessage());
+        }
+
+        redirect('/gestao/pregadores');
+    }
+
+    public function removePreacher(Request $req): void
+    {
+        try {
+            $stmt = Database::connection()->prepare('DELETE FROM preachers WHERE id = :id AND organization_id = :organization_id');
+            $stmt->execute(['id' => (int) $req->param('id'), 'organization_id' => $this->orgId()]);
+            Session::flash('success', 'Pregador removido.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Não foi possível remover o pregador.');
+        }
+
+        redirect('/gestao/pregadores');
     }
 
     public function ministrations(Request $req): void

@@ -4,7 +4,7 @@
 <div class="mgmt-detail">
     <div class="mgmt-detail__main">
         <div class="mgmt-info-card"><h3 class="mgmt-info-card__title">Detalhes da assinatura</h3>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Organização</span><span class="mgmt-info-row__value"><a href="<?= url('/admin/organizacoes/' . $org['id']) ?>" style="color:var(--color-primary);"><?= e($org['name']) ?></a></span></div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Instituição</span><span class="mgmt-info-row__value"><a href="<?= url('/admin/organizacoes/' . $org['id']) ?>" style="color:var(--color-primary);"><?= e($org['name']) ?></a></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Plano</span><span class="mgmt-info-row__value"><?= e($sub['plan_name']) ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Valor</span><span class="mgmt-info-row__value">R$ <?= number_format((float)$sub['price'], 2, ',', '.') ?>/<?= e(match($sub['billing_cycle']) { 'monthly'=>'mês','quarterly'=>'trimestre','yearly'=>'ano', default=>$sub['billing_cycle'] }) ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Status</span><span class="mgmt-info-row__value"><span class="badge badge--<?= $sub['status'] ?>"><?= ucfirst(e($sub['status'])) ?></span></span></div>

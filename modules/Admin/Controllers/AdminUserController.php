@@ -25,8 +25,9 @@ class AdminUserController extends Controller
         if ($search) { $where .= " AND (u.name LIKE :s OR u.email LIKE :s)"; $params['s'] = "%{$search}%"; }
         if ($status) { $where .= " AND u.status = :st"; $params['st'] = $status; }
 
-        $total = (int) $pdo->prepare("SELECT COUNT(*) FROM users u WHERE {$where}") and
-            ($countStmt = $pdo->prepare("SELECT COUNT(*) FROM users u WHERE {$where}")) and $countStmt->execute($params) and ($total = (int) $countStmt->fetchColumn());
+        $countStmt = $pdo->prepare("SELECT COUNT(*) FROM users u WHERE {$where}");
+        $countStmt->execute($params);
+        $total = (int) $countStmt->fetchColumn();
 
         $offset = ($page - 1) * $perPage;
         $stmt = $pdo->prepare("SELECT u.*, (SELECT COUNT(*) FROM organization_users ou WHERE ou.user_id = u.id) as org_count FROM users u WHERE {$where} ORDER BY u.created_at DESC LIMIT {$perPage} OFFSET {$offset}");

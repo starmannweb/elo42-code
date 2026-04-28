@@ -10,7 +10,7 @@ use App\Core\Database;
 class FinancialTransaction extends Model
 {
     protected static string $table = 'financial_transactions';
-    protected static array $fillable = ['organization_id','category_id','type','description','amount','transaction_date','reference','member_id','status','notes','created_by'];
+    protected static array $fillable = ['organization_id','church_unit_id','category_id','type','description','amount','transaction_date','reference','member_id','status','notes','created_by'];
 
     public static function byOrg(int $orgId, array $filters = [], int $page = 1, int $perPage = 20): array
     {
@@ -31,9 +31,10 @@ class FinancialTransaction extends Model
             $total = (int) $countStmt->fetchColumn();
 
             $stmt = $pdo->prepare("
-                SELECT ft.*, fc.name as category_name, fc.color as category_color
+                SELECT ft.*, fc.name as category_name, fc.color as category_color, u.name as unit_name
                 FROM financial_transactions ft
                 LEFT JOIN financial_categories fc ON ft.category_id = fc.id
+                LEFT JOIN church_units u ON u.id = ft.church_unit_id
                 WHERE {$whereStr}
                 ORDER BY ft.transaction_date DESC, ft.id DESC
                 LIMIT {$perPage} OFFSET {$offset}

@@ -7,7 +7,7 @@
         <p>Adicione um usuário e atribua a ele acesso à sua organização.</p>
     </div>
     <div class="mgmt-header__actions">
-        <a href="<?= url('/gestao/usuarios') ?>" class="btn btn--outline">Voltar</a>
+        <a href="<?= url('/gestao/configuracoes/usuarios') ?>" class="btn btn--outline">Voltar</a>
     </div>
 </div>
 

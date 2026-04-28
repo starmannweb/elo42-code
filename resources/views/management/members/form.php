@@ -2,7 +2,11 @@
 
 <?php $__view->section('content'); ?>
 
-<?php $isEdit = $member !== null; ?>
+<?php
+    $isEdit = $member !== null;
+    $units = is_array($units ?? null) ? $units : [];
+    $selectedUnit = (string) ($isEdit ? ($member['church_unit_id'] ?? '') : old('church_unit_id'));
+?>
 
 <div class="mgmt-header">
     <div>
@@ -91,6 +95,17 @@
 
         <div class="mgmt-form-row--3">
             <div class="form-group">
+                <label class="form-label">Unidade</label>
+                <select name="church_unit_id" class="form-select">
+                    <option value="">Sede / não definida</option>
+                    <?php foreach ($units as $unit): ?>
+                        <option value="<?= (int) $unit['id'] ?>" <?= $selectedUnit === (string) $unit['id'] ? 'selected' : '' ?>>
+                            <?= e((string) $unit['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group">
                 <label class="form-label">Membro desde</label>
                 <input type="date" name="membership_date" class="form-input" value="<?= e($isEdit ? $member['membership_date'] : old('membership_date')) ?>">
             </div>
@@ -98,6 +113,9 @@
                 <label class="form-label">Data de batismo</label>
                 <input type="date" name="baptism_date" class="form-input" value="<?= e($isEdit ? $member['baptism_date'] : old('baptism_date')) ?>">
             </div>
+        </div>
+
+        <div class="mgmt-form-row">
             <div class="form-group">
                 <label class="form-label">Status</label>
                 <select name="status" class="form-select">

@@ -42,19 +42,18 @@
                     <span class="hub-nav-link__icon" aria-hidden="true">👤</span> Usuários
                 </a>
                 <a href="<?= url('/admin/organizacoes') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/organizacoes') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/organizacoes') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true">🏢</span> Organizações
+                    <span class="hub-nav-link__icon" aria-hidden="true">🏢</span> Instituições
                 </a>
 
-                <p class="hub-sidebar__section-title">Catálogo</p>
-                <a href="<?= url('/admin/produtos') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/produtos') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/produtos') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true">📦</span> Produtos
-                </a>
+                <p class="hub-sidebar__section-title">Serviços</p>
                 <a href="<?= url('/admin/servicos') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/servicos') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/servicos') ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true">🔧</span> Serviços
                 </a>
-                <a href="<?= url('/admin/beneficios') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/beneficios') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/beneficios') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true">🎁</span> Benefícios
+                <a href="<?= url('/admin/cortesias') ?>" class="hub-nav-link <?= (str_starts_with($uri, '/admin/beneficios') || str_starts_with($uri, '/admin/cortesias')) ? 'active' : '' ?>" <?= (str_starts_with($uri, '/admin/beneficios') || str_starts_with($uri, '/admin/cortesias')) ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true">🎁</span> Cortesias
                 </a>
+
+                <p class="hub-sidebar__section-title">Financeiro</p>
                 <a href="<?= url('/admin/assinaturas') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/assinaturas') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/assinaturas') ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true">💳</span> Assinaturas
                 </a>
@@ -62,9 +61,6 @@
                 <p class="hub-sidebar__section-title">Operação</p>
                 <a href="<?= url('/admin/tickets') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/tickets') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/tickets') ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true">🎫</span> Tickets
-                </a>
-                <a href="<?= url('/admin/relatorios') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/relatorios') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/relatorios') ? 'aria-current="page"' : '' ?>>
-                    <span class="hub-nav-link__icon" aria-hidden="true">📈</span> Relatórios
                 </a>
                 <a href="<?= url('/admin/logs') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/logs') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/logs') ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true">📋</span> Logs
@@ -90,11 +86,6 @@
             <header class="hub-topbar admin-topbar">
                 <div class="hub-topbar__left">
                     <button class="hub-topbar__mobile-toggle" id="hub-sidebar-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
-                    <nav class="hub-topbar__breadcrumb" aria-label="Breadcrumb">
-                        <span class="admin-badge-top">Admin</span>
-                        <span class="hub-topbar__breadcrumb-sep" aria-hidden="true">›</span>
-                        <span aria-current="page"><?= e($breadcrumb ?? 'Dashboard') ?></span>
-                    </nav>
                 </div>
                 <div class="hub-topbar__right">
                     <a href="<?= url('/hub') ?>" class="hub-topbar__link">← Hub</a>

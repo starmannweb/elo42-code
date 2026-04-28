@@ -14,8 +14,8 @@
         </div>
 
         <?php if (!empty($organizations)): ?>
-        <div class="mgmt-info-card" style="margin-top:var(--space-5);"><h3 class="mgmt-info-card__title">Organizações vinculadas</h3>
-            <table class="mgmt-table"><thead><tr><th>Organização</th><th>Papel</th><th>Status</th></tr></thead><tbody>
+        <div class="mgmt-info-card" style="margin-top:var(--space-5);"><h3 class="mgmt-info-card__title">Instituições vinculadas</h3>
+            <table class="mgmt-table"><thead><tr><th>Instituição</th><th>Papel</th><th>Status</th></tr></thead><tbody>
                 <?php foreach ($organizations as $o): ?><tr>
                     <td><a href="<?= url('/admin/organizacoes/' . $o['id']) ?>" class="mgmt-table__name" style="color:var(--color-primary);"><?= e($o['name']) ?></a></td>
                     <td><?= e($o['role_name'] ?? '—') ?></td>

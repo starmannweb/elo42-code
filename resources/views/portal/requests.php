@@ -1,116 +1,139 @@
 <?php $__view->extends('portal'); ?>
 
 <?php $__view->section('content'); ?>
-<style>
-    .requests-subtitle {
-        color: #6b7280;
-        font-size: 0.95rem;
-        margin-bottom: 2rem;
-    }
-    .req-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        max-width: 800px;
-    }
-    .req-card {
-        background: #fff;
-        border: 1px solid #f3f4f6;
-        border-radius: 12px;
-        padding: 1.25rem 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        text-decoration: none;
-        color: inherit;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        transition: all 0.2s;
-    }
-    .req-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border-color: #e5e7eb;
-    }
-    .req-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-    .req-icon svg {
-        width: 24px;
-        height: 24px;
-    }
-    .req-content {
-        flex: 1;
-    }
-    .req-title {
-        font-weight: 600;
-        font-size: 1rem;
-        color: #111827;
-        margin-bottom: 0.25rem;
-    }
-    .req-desc {
-        font-size: 0.85rem;
-        color: #6b7280;
-    }
-</style>
+<?php
+    $statusLabel = [
+        'open' => 'Aberta',
+        'in_progress' => 'Em acompanhamento',
+        'resolved' => 'Resolvida',
+        'closed' => 'Encerrada',
+    ];
+    $statusClass = [
+        'open' => 'portal-status--warning',
+        'in_progress' => 'portal-status--neutral',
+        'resolved' => 'portal-status--success',
+        'closed' => 'portal-status--neutral',
+    ];
+?>
 
-<div class="requests-subtitle">Como podemos ajudar você?</div>
+<div class="portal-page portal-page--wide">
+    <div class="portal-page-header">
+        <div>
+            <h2 class="portal-title">Solicitações</h2>
+            <p class="portal-subtitle">Envie pedidos de oração, batismo, apoio, visita ou atendimento pastoral.</p>
+        </div>
+    </div>
 
-<div class="req-list">
-    <a href="#" class="req-card">
-        <div class="req-icon" style="background: #fef2f2; color: #e11d48;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-        </div>
-        <div class="req-content">
-            <div class="req-title">Oração</div>
-            <div class="req-desc">Envie seu pedido de oração</div>
-        </div>
-    </a>
+    <div class="portal-split">
+        <section class="portal-grid">
+            <div class="portal-grid portal-grid--2">
+                <?php foreach ($requestTypes as $key => $type): ?>
+                    <button type="button" class="portal-list-card" data-request-type="<?= e($key) ?>" style="text-align:left;cursor:pointer;">
+                        <span class="portal-soft-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+                        </span>
+                        <span class="portal-list-card__content">
+                            <strong class="portal-list-card__title"><?= e($type['title']) ?></strong>
+                            <span class="portal-list-card__text"><?= e($type['subtitle']) ?></span>
+                        </span>
+                    </button>
+                <?php endforeach; ?>
+            </div>
 
-    <a href="#" class="req-card">
-        <div class="req-icon" style="background: #eff6ff; color: #2563eb;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-        </div>
-        <div class="req-content">
-            <div class="req-title">Batismo</div>
-            <div class="req-desc">Inscreva-se para o próximo batismo</div>
-        </div>
-    </a>
+            <div class="portal-card">
+                <div class="portal-card__header">
+                    <div>
+                        <h3 class="portal-card__title">Minhas solicitações</h3>
+                        <p class="portal-card__subtitle">Acompanhe o andamento dos pedidos enviados.</p>
+                    </div>
+                </div>
+                <div class="portal-card__body">
+                    <?php if (empty($requests)): ?>
+                        <div class="portal-empty" style="min-height:190px;">
+                            <div>
+                                <span class="portal-empty__icon">
+                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6"/></svg>
+                                </span>
+                                <h4 class="portal-empty__title">Nenhuma solicitação enviada</h4>
+                                <p class="portal-empty__text">Escolha um tipo de pedido e envie as informações para a equipe da igreja.</p>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="portal-list">
+                            <?php foreach ($requests as $item): ?>
+                                <?php $status = (string) ($item['status'] ?? 'open'); ?>
+                                <article class="portal-list-card">
+                                    <span class="portal-soft-icon">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+                                    </span>
+                                    <div class="portal-list-card__content">
+                                        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                                            <h4 class="portal-list-card__title"><?= e($item['title'] ?? 'Solicitação') ?></h4>
+                                            <span class="portal-status <?= e($statusClass[$status] ?? 'portal-status--neutral') ?>"><?= e($statusLabel[$status] ?? $status) ?></span>
+                                        </div>
+                                        <p class="portal-list-card__text"><?= e($item['description'] ?? '') ?></p>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </section>
 
-    <a href="#" class="req-card">
-        <div class="req-icon" style="background: #fffbeb; color: #d97706;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-        </div>
-        <div class="req-content">
-            <div class="req-title">Cesta Básica</div>
-            <div class="req-desc">Solicite auxílio alimentar</div>
-        </div>
-    </a>
-
-    <a href="#" class="req-card">
-        <div class="req-icon" style="background: #f0fdf4; color: #16a34a;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-        </div>
-        <div class="req-content">
-            <div class="req-title">Visita</div>
-            <div class="req-desc">Solicite uma visita pastoral</div>
-        </div>
-    </a>
-
-    <a href="#" class="req-card">
-        <div class="req-icon" style="background: #fff7ed; color: #ea580c;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        </div>
-        <div class="req-content">
-            <div class="req-title">Direção Pastoral</div>
-            <div class="req-desc">Agende uma conversa com um pastor</div>
-        </div>
-    </a>
+        <aside class="portal-card">
+            <div class="portal-card__header">
+                <div>
+                    <h3 class="portal-card__title">Nova solicitação</h3>
+                    <p class="portal-card__subtitle">Descreva o pedido com clareza para facilitar o atendimento.</p>
+                </div>
+            </div>
+            <div class="portal-card__body">
+                <form class="portal-form" method="POST" action="<?= url('/membro/solicitacoes') ?>">
+                    <?= csrf_field() ?>
+                    <div class="portal-field">
+                        <label class="portal-label" for="type">Tipo</label>
+                        <select class="portal-select" id="type" name="type">
+                            <?php foreach ($requestTypes as $key => $type): ?>
+                                <option value="<?= e($key) ?>"><?= e($type['title']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="portal-field">
+                        <label class="portal-label" for="title">Título</label>
+                        <input class="portal-input" id="title" name="title" type="text" placeholder="Ex: Pedido de oração pela família">
+                    </div>
+                    <div class="portal-field">
+                        <label class="portal-label" for="description">Detalhes</label>
+                        <textarea class="portal-textarea" id="description" name="description" required placeholder="Escreva aqui sua solicitação"></textarea>
+                    </div>
+                    <div class="portal-field">
+                        <label class="portal-label" for="priority">Prioridade</label>
+                        <select class="portal-select" id="priority" name="priority">
+                            <option value="normal">Normal</option>
+                            <option value="high">Alta</option>
+                            <option value="urgent">Urgente</option>
+                            <option value="low">Baixa</option>
+                        </select>
+                    </div>
+                    <button class="portal-btn portal-btn--primary" type="submit">Enviar solicitação</button>
+                </form>
+            </div>
+        </aside>
+    </div>
 </div>
 
+<?php $__view->section('scripts'); ?>
+<script>
+    document.querySelectorAll('[data-request-type]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const select = document.getElementById('type');
+            if (select) {
+                select.value = button.getAttribute('data-request-type');
+                document.getElementById('description')?.focus();
+            }
+        });
+    });
+</script>
+<?php $__view->endSection(); ?>
 <?php $__view->endSection(); ?>

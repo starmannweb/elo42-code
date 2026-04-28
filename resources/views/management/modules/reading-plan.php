@@ -1,4 +1,4 @@
-<?php $__view->extend('management'); ?>
+<?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
 <div class="mgmt-container">
@@ -94,7 +94,7 @@
             <button type="button" class="modal__close" onclick="document.getElementById('addPlanModal').style.display='none'">&times;</button>
         </div>
         <form method="POST" action="<?= url('/gestao/plano-leitura/novo') ?>">
-            <input type="hidden" name="csrf_token" value="<?= e($csrf ?? '') ?>">
+            <?= csrf_field() ?>
             <div class="modal__body">
                 <div class="form-group">
                     <label for="title" class="form-label">Título <span style="color: var(--danger);">*</span></label>
@@ -145,7 +145,7 @@ function removePlan(id) {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '<?= url('/gestao/plano-leitura/') ?>' + id + '/remover';
-        form.innerHTML = '<input type="hidden" name="csrf_token" value="<?= e($csrf ?? '') ?>">';
+        form.innerHTML = '<?= str_replace("'", "\\'", csrf_field()) ?>';
         document.body.appendChild(form);
         form.submit();
     }

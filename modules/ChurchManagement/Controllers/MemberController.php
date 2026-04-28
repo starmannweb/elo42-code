@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\ChurchManagement\Controllers;
 
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Request;
 use App\Core\Session;
 use App\Models\Member;
@@ -43,6 +44,17 @@ class MemberController extends Controller
         return 0;
     }
 
+    private function churchUnits(): array
+    {
+        try {
+            $stmt = Database::connection()->prepare('SELECT * FROM church_units WHERE organization_id = :org_id ORDER BY status ASC, name ASC');
+            $stmt->execute(['org_id' => $this->orgId()]);
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
     public function index(Request $request): void
     {
         try {
@@ -69,6 +81,7 @@ class MemberController extends Controller
                 'members'     => $result['data'],
                 'pagination'  => $result,
                 'filters'     => $filters,
+                'units'       => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar membros: ' . $e->getMessage());
@@ -88,6 +101,7 @@ class MemberController extends Controller
                 'pageTitle'  => 'Novo membro - Gestao',
                 'breadcrumb' => 'Membros / Novo',
                 'member'     => null,
+                'units'      => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
@@ -109,10 +123,13 @@ class MemberController extends Controller
         ]);
 
         try {
-            Member::create(array_merge($request->only([
-                'name','email','phone','birth_date','gender','marital_status',
+            $data = $request->only([
+                'name','email','phone','birth_date','gender','marital_status','church_unit_id',
                 'address','city','state','zip_code','membership_date','baptism_date','status','notes'
-            ]), [
+            ]);
+            $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+
+            Member::create(array_merge($data, [
                 'organization_id' => $orgId,
                 'created_by'      => Session::user()['id'],
             ]));
@@ -132,6 +149,13 @@ class MemberController extends Controller
             $member = Member::find((int) $request->param('id'));
             if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
                 redirect('/gestao/membros');
+            }
+            $member['unit_name'] = null;
+            foreach ($this->churchUnits() as $unit) {
+                if ((int) ($unit['id'] ?? 0) === (int) ($member['church_unit_id'] ?? 0)) {
+                    $member['unit_name'] = (string) ($unit['name'] ?? '');
+                    break;
+                }
             }
             $this->view('management/members/show', [
                 'pageTitle'  => e($member['name']) . ' - Gestao',
@@ -155,6 +179,7 @@ class MemberController extends Controller
                 'pageTitle'  => 'Editar - ' . e($member['name']),
                 'breadcrumb' => 'Membros / Editar',
                 'member'     => $member,
+                'units'      => $this->churchUnits(),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar membro: ' . $e->getMessage());
@@ -180,10 +205,12 @@ class MemberController extends Controller
         $this->validate($request, ['name' => 'required|min:3']);
 
         try {
-            Member::update($id, $request->only([
-                'name','email','phone','birth_date','gender','marital_status',
+            $data = $request->only([
+                'name','email','phone','birth_date','gender','marital_status','church_unit_id',
                 'address','city','state','zip_code','membership_date','baptism_date','status','notes'
-            ]));
+            ]);
+            $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+            Member::update($id, $data);
         } catch (\Throwable $e) {
             Session::flash('error', 'Nao foi possivel atualizar membro agora. Tente novamente.');
             Session::setOld($request->all());

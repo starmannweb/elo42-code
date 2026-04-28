@@ -1,4 +1,4 @@
-<?php $__view->extend('management'); ?>
+<?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
 <div class="mgmt-container">
@@ -71,7 +71,7 @@
                                             'giving' => '#f59e0b',
                                             'growth' => '#ef4444',
                                         ];
-                                        $achType = $achievement['type'] ?? 'growth';
+                                        $achType = $achievement['type'] ?? $achievement['criteria_type'] ?? 'growth';
                                     ?>
                                     <span class="badge" style="background: <?= $typeColors[$achType] ?? '#6b7280' ?>;">
                                         <?= $typeLabels[$achType] ?? 'Conquista' ?>
@@ -114,7 +114,7 @@
             <button type="button" class="modal__close" onclick="document.getElementById('addAchievementModal').style.display='none'">&times;</button>
         </div>
         <form method="POST" action="<?= url('/gestao/conquistas/nova') ?>">
-            <input type="hidden" name="csrf_token" value="<?= e($csrf ?? '') ?>">
+            <?= csrf_field() ?>
             <div class="modal__body">
                 <div class="form-group">
                     <label for="title" class="form-label">Título <span style="color: var(--danger);">*</span></label>
@@ -167,7 +167,7 @@ function removeAchievement(id) {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '<?= url('/gestao/conquistas/') ?>' + id + '/remover';
-        form.innerHTML = '<input type="hidden" name="csrf_token" value="<?= e($csrf ?? '') ?>">';
+        form.innerHTML = '<input type="hidden" name="_csrf_token" value="<?= e(csrf_token()) ?>">';
         document.body.appendChild(form);
         form.submit();
     }

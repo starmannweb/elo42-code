@@ -8,7 +8,7 @@
 </form>
 <?php if (empty($tickets)): ?><div class="mgmt-empty"><div class="mgmt-empty__icon">🎫</div><h3 class="mgmt-empty__title">Nenhum ticket</h3></div>
 <?php else: ?>
-    <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Assunto</th><th>Usuário</th><th>Organização</th><th>Prioridade</th><th>Status</th><th>Criação</th><th>Ações</th></tr></thead><tbody>
+    <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Assunto</th><th>Usuário</th><th>Instituição</th><th>Prioridade</th><th>Status</th><th>Criação</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($tickets as $t): ?><tr>
             <td><div class="mgmt-table__name"><?= e($t['subject']) ?></div><div class="mgmt-table__sub"><?= e($t['category']) ?></div></td>
             <td><?= e($t['user_name']) ?></td>

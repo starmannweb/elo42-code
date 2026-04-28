@@ -3,12 +3,12 @@
 <?php $__view->section('content'); ?>
 
 <section class="hub-page">
-    <header class="hub-page__header">
+    <header class="hub-page__header hub-team-header">
         <div>
             <h1 class="hub-page__title">Minha Equipe</h1>
             <p class="hub-page__subtitle">Gerencie os usuários e permissões de acesso da sua organização.</p>
         </div>
-        <button class="btn btn--gold" type="button" onclick="document.getElementById('modal-add-user').style.display='flex'">
+        <button class="btn btn--primary btn--sm hub-team-add-btn" type="button" onclick="document.getElementById('modal-add-user').style.display='flex'">
             <span aria-hidden="true">+</span> Adicionar Membro
         </button>
     </header>

@@ -10,17 +10,18 @@ use App\Core\Database;
 class Ministry extends Model
 {
     protected static string $table = 'ministries';
-    protected static array $fillable = ['organization_id', 'name', 'description', 'leader_member_id', 'color', 'status'];
+    protected static array $fillable = ['organization_id', 'church_unit_id', 'name', 'description', 'leader_member_id', 'color', 'status'];
 
     public static function byOrg(int $orgId): array
     {
         try {
             $pdo = Database::connection();
             $stmt = $pdo->prepare("
-                SELECT mi.*, m.name as leader_name,
+                SELECT mi.*, m.name as leader_name, u.name as unit_name,
                 (SELECT COUNT(*) FROM ministry_members mm WHERE mm.ministry_id = mi.id) as member_count
                 FROM ministries mi
                 LEFT JOIN members m ON mi.leader_member_id = m.id
+                LEFT JOIN church_units u ON u.id = mi.church_unit_id
                 WHERE mi.organization_id = :org ORDER BY mi.name
             ");
             $stmt->execute(['org' => $orgId]);
@@ -61,13 +62,23 @@ class Ministry extends Model
         }
     }
 
-    public static function syncMembers(int $ministryId, array $memberIds): void
+    public static function syncMembers(int $ministryId, array $memberIds, ?int $leaderMemberId = null): void
     {
         $pdo = Database::connection();
         $pdo->prepare("DELETE FROM ministry_members WHERE ministry_id = :mid")->execute(['mid' => $ministryId]);
-        $stmt = $pdo->prepare("INSERT INTO ministry_members (ministry_id, member_id) VALUES (:mid, :memid)");
+        $memberIds = array_values(array_unique(array_filter(array_map('intval', $memberIds), static fn (int $id): bool => $id > 0)));
+        $leaderMemberId = $leaderMemberId !== null && $leaderMemberId > 0 ? $leaderMemberId : null;
+        if ($leaderMemberId !== null && !in_array($leaderMemberId, $memberIds, true)) {
+            $memberIds[] = $leaderMemberId;
+        }
+
+        $stmt = $pdo->prepare("INSERT INTO ministry_members (ministry_id, member_id, role) VALUES (:mid, :memid, :role)");
         foreach ($memberIds as $memId) {
-            $stmt->execute(['mid' => $ministryId, 'memid' => $memId]);
+            $stmt->execute([
+                'mid' => $ministryId,
+                'memid' => $memId,
+                'role' => $leaderMemberId === $memId ? 'leader' : 'member',
+            ]);
         }
     }
 }

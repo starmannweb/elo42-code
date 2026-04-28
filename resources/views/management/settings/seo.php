@@ -1,6 +1,7 @@
 <?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
+<?php $settings = is_array($settings ?? null) ? $settings : []; ?>
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-title">SEO & Meta Tags</h1>
@@ -12,28 +13,6 @@
     </div>
 </div>
 
-<!-- Tabs de navegação -->
-<div style="border-bottom: 1px solid var(--color-border-light); margin-bottom: 1.5rem; display: flex; gap: 1.5rem; overflow-x: auto;">
-    <a href="<?= url('/gestao/configuracoes') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'igreja' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'igreja' ? '600' : '500' ?>; white-space: nowrap;">
-        Igreja
-    </a>
-    <a href="<?= url('/gestao/configuracoes/pix') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pix' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pix' ? '600' : '500' ?>; white-space: nowrap;">
-        PIX / Ofertas
-    </a>
-    <a href="<?= url('/gestao/configuracoes/ia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'ia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'ia' ? '600' : '500' ?>; white-space: nowrap;">
-        Inteligência Artificial
-    </a>
-    <a href="<?= url('/gestao/configuracoes/aparencia') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'aparencia' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'aparencia' ? '600' : '500' ?>; white-space: nowrap;">
-        Aparência
-    </a>
-    <a href="<?= url('/gestao/configuracoes/seo') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'seo' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'seo' ? '600' : '500' ?>; white-space: nowrap;">
-        SEO
-    </a>
-    <a href="<?= url('/gestao/configuracoes/pwa') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= ($activeTab ?? '') === 'pwa' ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= ($activeTab ?? '') === 'pwa' ? '600' : '500' ?>; white-space: nowrap;">
-        PWA
-    </a>
-</div>
-
 <div class="mgmt-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
     <div class="mgmt-panel">
         <h3 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--color-text-primary); margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -42,24 +21,25 @@
         </h3>
         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Otimize seu app para mecanismos de busca</p>
         
-        <form id="form-seo" action="#" method="POST">
+        <form id="form-seo" action="<?= url('/gestao/configuracoes') ?>" method="POST">
             <?= csrf_field() ?>
+            <input type="hidden" name="redirect_to" value="<?= url('/gestao/configuracoes/seo') ?>">
             
             <div class="form-group">
                 <label for="seo_title">Título SEO</label>
-                <input type="text" id="seo_title" name="seo_title" class="form-control" value="Igreja VERBO - Aplicativo Oficial">
+                <input type="text" id="seo_title" name="seo_title" class="form-control" value="<?= e((string) ($settings['seo_title'] ?? 'Sua Igreja - Aplicativo Oficial')) ?>">
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">0/60 caracteres (recomendado: até 60)</div>
             </div>
             
             <div class="form-group" style="margin-top: 1.5rem;">
                 <label for="seo_desc">Meta Descrição</label>
-                <textarea id="seo_desc" name="seo_desc" class="form-control" rows="3">Acesse a Bíblia, ministrações, planos de leitura e muito mais...</textarea>
+                <textarea id="seo_desc" name="seo_desc" class="form-control" rows="3"><?= e((string) ($settings['seo_desc'] ?? 'Acesse Bíblia, ministrações, planos de leitura, eventos e muito mais.')) ?></textarea>
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">0/160 caracteres (recomendado: 120-160)</div>
             </div>
             
             <div class="form-group" style="margin-top: 1.5rem;">
                 <label for="seo_keywords">Palavras-chave</label>
-                <input type="text" id="seo_keywords" name="seo_keywords" class="form-control" value="igreja, bíblia, cristão, ministração, culto">
+                <input type="text" id="seo_keywords" name="seo_keywords" class="form-control" value="<?= e((string) ($settings['seo_keywords'] ?? 'igreja, bíblia, cristão, ministração, culto, eventos')) ?>">
                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Separe por vírgulas</div>
             </div>
             
