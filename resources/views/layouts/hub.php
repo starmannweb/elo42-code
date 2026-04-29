@@ -1,14 +1,22 @@
 <!DOCTYPE html>
+<?php
+    $hubOrganizationCtx = \App\Core\Session::get('organization');
+    $hubOrganizationCtx = is_array($hubOrganizationCtx) ? $hubOrganizationCtx : [];
+    $hubPlan = strtolower((string) ($hubOrganizationCtx['plan'] ?? ''));
+    $isHubPwaEnabled = in_array($hubPlan, ['premium', 'enterprise', 'business', 'pro'], true);
+?>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#1e3a8a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Elo 42">
-    <link rel="manifest" href="<?= url('/app-manifest') ?>">
-    <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
+    <?php if ($isHubPwaEnabled): ?>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-title" content="Elo 42">
+        <link rel="manifest" href="<?= url('/app-manifest') ?>">
+        <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
+    <?php endif; ?>
     <title><?= e($pageTitle ?? 'Hub — Elo 42') ?></title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -209,11 +217,13 @@
 
     <script src="<?= asset('js/app.js') ?>"></script>
     <script>
+        <?php if ($isHubPwaEnabled): ?>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function () {
                 navigator.serviceWorker.register('<?= url('/sw.js') ?>').catch(function () {});
             });
         }
+        <?php endif; ?>
     </script>
 </body>
 </html>

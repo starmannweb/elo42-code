@@ -19,7 +19,11 @@
 
 <?php if (!empty($pixWarning)): ?>
     <div class="mgmt-info-card" style="border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.08);margin-bottom:var(--space-5);">
-        <strong>Configure sua chave PIX</strong> - acesse <a href="<?= url('/gestao/configuracoes/pix') ?>" style="color:#d97706;font-weight:800;">PIX / Ofertas</a> para cadastrar a chave PIX da igreja e gerar o QR Code automaticamente.
+        <strong>Configure sua chave PIX</strong>
+        <span class="premium-feature-icon" title="Recurso Premium" aria-label="Recurso Premium" style="color:#d97706;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 5 5 5 5-8 5 8 5-5-3 14H5L2 5z"></path><path d="M5 19h14"></path></svg>
+        </span>
+        - acesse <a href="<?= url('/gestao/configuracoes/pix') ?>" style="color:#d97706;font-weight:800;">PIX / Ofertas</a> para cadastrar a chave PIX da igreja e gerar o QR Code automaticamente.
     </div>
 <?php endif; ?>
 
@@ -63,7 +67,12 @@
             <button type="button" class="btn btn--outline" style="margin-top:1rem;" onclick="navigator.clipboard.writeText('<?= e((string) $pixKey) ?>');this.textContent='Copiado';">Copiar chave</button>
         <?php else: ?>
             <p class="mgmt-header__subtitle">Cadastre sua chave PIX nas configurações para centralizar as contribuições.</p>
-            <a class="btn btn--outline" href="<?= url('/gestao/configuracoes/pix') ?>">Configurar PIX</a>
+            <a class="btn btn--outline" href="<?= url('/gestao/configuracoes/pix') ?>" style="display:inline-flex;align-items:center;gap:.4rem;">
+                Configurar PIX
+                <span class="premium-feature-icon" title="Recurso Premium" aria-label="Recurso Premium" style="color:#d97706;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 5 5 5 5-8 5 8 5-5-3 14H5L2 5z"></path><path d="M5 19h14"></path></svg>
+                </span>
+            </a>
         <?php endif; ?>
     </div>
 </div>

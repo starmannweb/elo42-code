@@ -14,22 +14,53 @@ class AdminDashboardController extends Controller
 {
     public function index(Request $request): void
     {
-        $pdo = Database::connection();
         $startDate = (string) $request->input('start_date', date('Y-m-01'));
         $endDate = (string) $request->input('end_date', date('Y-m-t'));
         $reportType = (string) $request->input('report_type', 'overview');
 
-        $totalUsers = (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
-        $totalOrgs = (int) $pdo->query("SELECT COUNT(*) FROM organizations")->fetchColumn();
-        $activeSubs = Subscription::countByStatus('active');
-        $trialSubs = Subscription::countByStatus('trial');
-        $openTickets = Ticket::countOpen();
-        $activeBenefits = (int) $pdo->query("SELECT COUNT(*) FROM benefits WHERE status = 'active'")->fetchColumn();
-        $activeServices = (int) $pdo->query("SELECT COUNT(*) FROM services WHERE status = 'active'")->fetchColumn();
+        $totalUsers = 0;
+        $totalOrgs = 0;
+        $activeSubs = 0;
+        $trialSubs = 0;
+        $openTickets = 0;
+        $activeBenefits = 0;
+        $activeServices = 0;
+        $recentUsers = [];
+        $recentOrgs = [];
+        $report = $this->emptyReport();
+        $degraded = false;
 
-        $recentUsers = $pdo->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 5")->fetchAll();
-        $recentOrgs = $pdo->query("SELECT * FROM organizations ORDER BY created_at DESC LIMIT 5")->fetchAll();
-        $report = $this->buildReport($pdo, $startDate, $endDate);
+        try {
+            $pdo = Database::connection();
+            $safeInt = static function (\Closure $resolver): int {
+                try {
+                    return (int) $resolver();
+                } catch (\Throwable $e) {
+                    return 0;
+                }
+            };
+            $safeArray = static function (\Closure $resolver): array {
+                try {
+                    return $resolver() ?: [];
+                } catch (\Throwable $e) {
+                    return [];
+                }
+            };
+
+            $totalUsers = $safeInt(static fn () => $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn());
+            $totalOrgs = $safeInt(static fn () => $pdo->query("SELECT COUNT(*) FROM organizations")->fetchColumn());
+            $activeSubs = $safeInt(static fn () => Subscription::countByStatus('active'));
+            $trialSubs = $safeInt(static fn () => Subscription::countByStatus('trial'));
+            $openTickets = $safeInt(static fn () => Ticket::countOpen());
+            $activeBenefits = $safeInt(static fn () => $pdo->query("SELECT COUNT(*) FROM benefits WHERE status = 'active'")->fetchColumn());
+            $activeServices = $safeInt(static fn () => $pdo->query("SELECT COUNT(*) FROM services WHERE status = 'active'")->fetchColumn());
+            $recentUsers = $safeArray(static fn () => $pdo->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 5")->fetchAll());
+            $recentOrgs = $safeArray(static fn () => $pdo->query("SELECT * FROM organizations ORDER BY created_at DESC LIMIT 5")->fetchAll());
+            $report = $this->buildReport($pdo, $startDate, $endDate);
+        } catch (\Throwable $e) {
+            error_log('[AdminDashboard] ' . $e->getMessage());
+            $degraded = true;
+        }
 
         if ($request->input('export') === 'csv') {
             $this->exportCsv($report, $reportType, $startDate, $endDate);
@@ -54,28 +85,62 @@ class AdminDashboardController extends Controller
                 'end_date'    => $endDate,
                 'report_type' => $reportType,
             ],
+            'degraded'       => $degraded,
         ]);
+    }
+
+    private function emptyReport(): array
+    {
+        return [
+            'total_users' => 0,
+            'new_users' => 0,
+            'total_orgs' => 0,
+            'new_orgs' => 0,
+            'active_subscriptions' => 0,
+            'trial_subscriptions' => 0,
+            'open_tickets' => 0,
+            'active_products' => 0,
+            'active_benefits' => 0,
+        ];
     }
 
     private function buildReport(\PDO $pdo, string $startDate, string $endDate): array
     {
         $periodEnd = $endDate . ' 23:59:59';
         $countBetween = static function (string $table) use ($pdo, $startDate, $periodEnd): int {
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM {$table} WHERE created_at >= :start AND created_at <= :end");
-            $stmt->execute(['start' => $startDate, 'end' => $periodEnd]);
-            return (int) $stmt->fetchColumn();
+            try {
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM {$table} WHERE created_at >= :start AND created_at <= :end");
+                $stmt->execute(['start' => $startDate, 'end' => $periodEnd]);
+                return (int) $stmt->fetchColumn();
+            } catch (\Throwable $e) {
+                return 0;
+            }
+        };
+        $countAll = static function (string $sql) use ($pdo): int {
+            try {
+                return (int) $pdo->query($sql)->fetchColumn();
+            } catch (\Throwable $e) {
+                return 0;
+            }
+        };
+        $countStatus = static function (string $status): int {
+            try {
+                return Subscription::countByStatus($status);
+            } catch (\Throwable $e) {
+                return 0;
+            }
         };
 
         return [
-            'total_users' => (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn(),
+            'total_users' => $countAll('SELECT COUNT(*) FROM users'),
             'new_users' => $countBetween('users'),
-            'total_orgs' => (int) $pdo->query('SELECT COUNT(*) FROM organizations')->fetchColumn(),
+            'total_orgs' => $countAll('SELECT COUNT(*) FROM organizations'),
             'new_orgs' => $countBetween('organizations'),
-            'active_subscriptions' => Subscription::countByStatus('active'),
-            'trial_subscriptions' => Subscription::countByStatus('trial'),
-            'open_tickets' => Ticket::countOpen(),
-            'active_products' => (int) $pdo->query("SELECT COUNT(*) FROM services WHERE status = 'active'")->fetchColumn(),
-            'active_benefits' => (int) $pdo->query("SELECT COUNT(*) FROM benefits WHERE status = 'active'")->fetchColumn(),
+            'active_subscriptions' => $countStatus('active'),
+            'trial_subscriptions' => $countStatus('trial'),
+            'open_tickets' => (function () { try { return Ticket::countOpen(); } catch (\Throwable $e) { return 0; } })(),
+            'active_products' => $countAll("SELECT COUNT(*) FROM services WHERE status = 'active'"),
+            'active_benefits' => $countAll("SELECT COUNT(*) FROM benefits WHERE status = 'active'"),
         ];
     }
 

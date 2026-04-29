@@ -268,8 +268,8 @@ body[data-portal-theme="dark"] .portal-nav-link.active {
 }
 
 .portal-topbar {
-    min-height: 74px;
-    padding: 14px 32px;
+    min-height: 100px;
+    padding: 18px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -284,6 +284,42 @@ body[data-portal-theme="dark"] .portal-nav-link.active {
 
 body[data-portal-theme="dark"] .portal-topbar {
     background: rgba(12, 20, 37, 0.76);
+}
+
+.portal-topbar__left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.portal-topbar__context {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.portal-topbar__context .portal-topbar__eyebrow {
+    color: var(--portal-text-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.portal-topbar__context .portal-topbar__title {
+    margin: 0;
+    color: var(--portal-text);
+    font-family: var(--portal-heading-font);
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: min(48vw, 480px);
 }
 
 .portal-mobile-toggle {
@@ -925,6 +961,11 @@ body[data-portal-theme="dark"] .portal-status--neutral {
     display: grid;
     grid-template-columns: 300px minmax(0, 1fr);
     gap: 20px;
+}
+
+.portal-bible-reader[hidden],
+.portal-bible-panel[hidden] {
+    display: none !important;
 }
 
 .portal-reading-text {

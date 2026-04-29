@@ -95,11 +95,6 @@ class App
         // Clean any partial output first
         while (ob_get_level() > 0) { @ob_end_clean(); }
 
-        // Print error directly to browser to debug the print screen error
-        if (str_contains($_SERVER['REQUEST_URI'] ?? '', '/hub/usuarios')) {
-            die("Debug Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
-        }
-
         // Log error
         try {
             (new Logger())->error('app.unhandled_exception', [
@@ -120,6 +115,28 @@ class App
             } catch (\Throwable $ignored) {}
             if (!headers_sent()) {
                 header('Location: /gestao', true, 302);
+            }
+            exit;
+        }
+
+        // For Hub sub-pages, redirect to hub home with friendly message
+        if (str_starts_with($uri, '/hub') && $uri !== '/hub' && $uri !== '/hub/') {
+            try {
+                Session::flash('error', 'Não foi possível carregar a página agora. Tente novamente em instantes.');
+            } catch (\Throwable $ignored) {}
+            if (!headers_sent()) {
+                header('Location: /hub', true, 302);
+            }
+            exit;
+        }
+
+        // For Admin sub-pages, redirect to admin home with friendly message
+        if (str_starts_with($uri, '/admin') && $uri !== '/admin' && $uri !== '/admin/') {
+            try {
+                Session::flash('error', 'Não foi possível carregar a página agora. Tente novamente em instantes.');
+            } catch (\Throwable $ignored) {}
+            if (!headers_sent()) {
+                header('Location: /admin', true, 302);
             }
             exit;
         }

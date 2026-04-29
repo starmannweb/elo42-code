@@ -1,15 +1,23 @@
 <!DOCTYPE html>
+<?php
+    $portalOrganizationCtx = is_array($organization ?? null) ? $organization : (\App\Core\Session::get('organization') ?: []);
+    $portalOrganizationCtx = is_array($portalOrganizationCtx) ? $portalOrganizationCtx : [];
+    $portalPlan = strtolower((string) ($portalOrganizationCtx['plan'] ?? ''));
+    $isPortalPwaEnabled = in_array($portalPlan, ['premium', 'enterprise', 'business', 'pro'], true);
+?>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($pageTitle ?? 'Portal do Membro') ?></title>
     <meta name="theme-color" content="<?= e((string) (($appearanceSettings['theme_color'] ?? null) ?: '#1547f5')) ?>">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="<?= e((string) (($appearanceSettings['pwa_short_name'] ?? null) ?: 'Elo 42')) ?>">
-    <link rel="manifest" href="<?= url('/app-manifest') ?>">
-    <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
+    <?php if ($isPortalPwaEnabled): ?>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="apple-mobile-web-app-title" content="<?= e((string) (($appearanceSettings['pwa_short_name'] ?? null) ?: 'Elo 42')) ?>">
+        <link rel="manifest" href="<?= url('/app-manifest') ?>">
+        <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
+    <?php endif; ?>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -133,10 +141,24 @@
 
         <main class="portal-main">
             <header class="portal-topbar">
-                <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+                <div class="portal-topbar__left">
                     <button type="button" class="portal-icon-btn portal-mobile-toggle" data-portal-menu aria-label="Abrir menu">
                         <?= $icon('menu') ?>
                     </button>
+                    <?php
+                        $organizationName = trim((string) ($organization['name'] ?? ''));
+                        $memberDisplayName = trim((string) ($user['name'] ?? ''));
+                        if ($memberDisplayName === '') {
+                            $memberDisplayName = 'Membro';
+                        }
+                        if ($organizationName === '' || strcasecmp($organizationName, $memberDisplayName) === 0) {
+                            $organizationName = 'Sua igreja';
+                        }
+                    ?>
+                    <div class="portal-topbar__context">
+                        <span class="portal-topbar__eyebrow"><?= e($organizationName) ?></span>
+                        <strong class="portal-topbar__title"><?= e($memberDisplayName) ?></strong>
+                    </div>
                 </div>
 
                 <div class="portal-topbar__actions">
@@ -186,11 +208,13 @@
                 document.cookie = 'elo42_portal_theme=' + next + '; path=/; max-age=31536000; SameSite=Lax';
             });
 
+            <?php if ($isPortalPwaEnabled): ?>
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function () {
                     navigator.serviceWorker.register('<?= url('/sw.js') ?>').catch(function () {});
                 });
             }
+            <?php endif; ?>
         })();
     </script>
     <?= $__view->yield('scripts'); ?>

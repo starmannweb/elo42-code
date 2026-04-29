@@ -4,8 +4,8 @@
 <div class="mgmt-container">
     <div class="mgmt-header">
         <div>
-            <h1 class="mgmt-title">Aprovações de Despesas</h1>
-            <p class="mgmt-subtitle">Controle e aprove despesas da igreja</p>
+            <h1 class="mgmt-title">Aprovações & Histórico de Despesas</h1>
+            <p class="mgmt-subtitle">Histórico completo de despesas da igreja com fluxo de aprovação.</p>
         </div>
         <button type="button" class="btn btn-primary" onclick="document.getElementById('addExpenseModal').style.display='flex'">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.5rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -98,6 +98,22 @@
                     </thead>
                     <tbody>
                         <?php foreach ($expenses as $expense): ?>
+                            <?php
+                                $isHistory = !empty($expense['is_history']);
+                                $rowId = (int) ($expense['id'] ?? 0);
+                                $rowSource = $isHistory ? 'transaction' : 'approval';
+                                $statusClass = [
+                                    'pending' => 'badge badge-warning',
+                                    'approved' => 'badge badge-success',
+                                    'rejected' => 'badge badge-danger',
+                                ];
+                                $statusLabel = [
+                                    'pending' => 'Pendente',
+                                    'approved' => 'Aprovado',
+                                    'rejected' => 'Rejeitado',
+                                ];
+                                $currentStatus = $expense['status'] ?? 'pending';
+                            ?>
                             <tr>
                                 <td><strong><?= e($expense['description'] ?? 'N/A') ?></strong></td>
                                 <td><?= e($expense['supplier'] ?? '-') ?></td>
@@ -107,34 +123,23 @@
                                 <td><?= !empty($expense['expense_date']) ? date('d/m/Y', strtotime($expense['expense_date'])) : '-' ?></td>
                                 <td><?= e($expense['requester_name'] ?? '-') ?></td>
                                 <td>
-                                    <?php 
-                                        $statusClass = [
-                                            'pending' => 'badge badge-warning',
-                                            'approved' => 'badge badge-success',
-                                            'rejected' => 'badge badge-danger',
-                                        ];
-                                        $statusLabel = [
-                                            'pending' => 'Pendente',
-                                            'approved' => 'Aprovado',
-                                            'rejected' => 'Rejeitado',
-                                        ];
-                                        $currentStatus = $expense['status'] ?? 'pending';
-                                    ?>
                                     <span class="<?= $statusClass[$currentStatus] ?? 'badge' ?>"><?= $statusLabel[$currentStatus] ?? 'N/A' ?></span>
+                                    <?php if ($isHistory): ?>
+                                        <span class="badge" style="margin-left:6px;background:rgba(107,114,128,0.12);color:#6b7280;">Histórico</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <div style="display: flex; gap: 0.5rem;">
-                                        <?php if ($currentStatus === 'pending'): ?>
-                                            <button type="button" class="btn btn-sm btn-success" onclick="approveExpense(<?= $expense['id'] ?>)" title="Aprovar">
+                                        <?php if ($currentStatus !== 'approved'): ?>
+                                            <button type="button" class="btn btn-sm btn-success" onclick="approveExpense(<?= $rowId ?>, '<?= e($rowSource) ?>')" title="Aprovar">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-danger" onclick="rejectExpense(<?= $expense['id'] ?>)" title="Rejeitar">
+                                        <?php endif; ?>
+                                        <?php if ($currentStatus !== 'rejected'): ?>
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="rejectExpense(<?= $rowId ?>, '<?= e($rowSource) ?>')" title="Rejeitar">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
                                         <?php endif; ?>
-                                        <button type="button" class="btn-icon" title="Ver Detalhes" onclick="viewExpense(<?= $expense['id'] ?>)">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -193,30 +198,26 @@
 </div>
 
 <script>
-function approveExpense(id) {
+function submitDecision(id, source, action) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<?= url('/gestao/aprovacoes-despesas/') ?>' + id + '/' + action;
+    form.innerHTML = '<input type="hidden" name="_csrf_token" value="<?= e(csrf_token()) ?>">' +
+        '<input type="hidden" name="source" value="' + (source || 'approval') + '">';
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function approveExpense(id, source) {
     if (confirm('Deseja aprovar esta despesa?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '<?= url('/gestao/aprovacoes-despesas/') ?>' + id + '/aprovar';
-        form.innerHTML = '<input type="hidden" name="_csrf_token" value="<?= e(csrf_token()) ?>">';
-        document.body.appendChild(form);
-        form.submit();
+        submitDecision(id, source, 'aprovar');
     }
 }
 
-function rejectExpense(id) {
+function rejectExpense(id, source) {
     if (confirm('Deseja rejeitar esta despesa?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '<?= url('/gestao/aprovacoes-despesas/') ?>' + id + '/rejeitar';
-        form.innerHTML = '<input type="hidden" name="_csrf_token" value="<?= e(csrf_token()) ?>">';
-        document.body.appendChild(form);
-        form.submit();
+        submitDecision(id, source, 'rejeitar');
     }
-}
-
-function viewExpense(id) {
-    window.location.href = '<?= url('/gestao/aprovacoes-despesas/') ?>' + id;
 }
 </script>
 <?php $__view->endSection(); ?>

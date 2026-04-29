@@ -4,25 +4,21 @@
 <?php
     $supportUser = is_array($user ?? null) ? $user : [];
     $supportOrganization = is_array($organization ?? null) ? $organization : [];
-    $whatsappBaseUrl = (string) ($supportWhatsappUrl ?? 'https://wa.me/5511991775458');
 ?>
 
 <section class="hub-page">
     <header class="hub-page__header">
         <h1 class="hub-page__title">Suporte</h1>
-        <p class="hub-page__subtitle">Abra tickets e fale com a equipe pelo WhatsApp para dúvidas técnicas, financeiras e operacionais.</p>
+        <p class="hub-page__subtitle">Abra tickets para dúvidas técnicas, financeiras e operacionais e nossa equipe responderá em seguida.</p>
     </header>
 
     <div class="hub-panel">
-        <div class="hub-panel__row">
-            <div>
-                <h2 class="hub-panel__title">Atendimento rápido</h2>
-                <p class="hub-panel__text">WhatsApp oficial: <a href="<?= e($whatsappBaseUrl) ?>" target="_blank" rel="noopener noreferrer" class="text-primary font-bold"><?= e((string) ($supportWhatsapp ?? '(11) 99177-5458')) ?></a></p>
-            </div>
-            <a href="<?= e($whatsappBaseUrl) ?>" target="_blank" rel="noopener noreferrer" class="btn btn--gold">Conversar no WhatsApp</a>
+        <div>
+            <h2 class="hub-panel__title">Atendimento rápido</h2>
+            <p class="hub-panel__text">Preencha o formulário abaixo e a equipe Elo 42 retornará por e-mail.</p>
         </div>
 
-        <form method="POST" action="<?= url('/hub/suporte/tickets') ?>" data-loading data-support-whatsapp-form data-whatsapp-url="<?= e($whatsappBaseUrl) ?>" data-user-name="<?= e((string) ($supportUser['name'] ?? '')) ?>" data-user-email="<?= e((string) ($supportUser['email'] ?? '')) ?>" data-organization-name="<?= e((string) ($supportOrganization['name'] ?? '')) ?>">
+        <form method="POST" action="<?= url('/hub/suporte/tickets') ?>" data-loading>
             <?= csrf_field() ?>
 
             <div class="form-group">
@@ -84,38 +80,5 @@
         <?php endif; ?>
     </div>
 </section>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var form = document.querySelector('[data-support-whatsapp-form]');
-    if (!form) {
-        return;
-    }
-
-    form.addEventListener('submit', function () {
-        var subject = form.querySelector('[name="subject"]')?.value || '';
-        var categoryField = form.querySelector('[name="category"]');
-        var category = categoryField?.options[categoryField.selectedIndex]?.text || categoryField?.value || '';
-        var message = form.querySelector('[name="message"]')?.value || '';
-        var userName = form.getAttribute('data-user-name') || '';
-        var userEmail = form.getAttribute('data-user-email') || '';
-        var organizationName = form.getAttribute('data-organization-name') || '';
-        var baseUrl = form.getAttribute('data-whatsapp-url') || 'https://wa.me/5511991775458';
-        var text = [
-            'Novo ticket Elo 42',
-            '',
-            'Assunto: ' + subject,
-            'Categoria: ' + category,
-            'Mensagem: ' + message,
-            '',
-            'Organizacao: ' + (organizationName || 'Nao informada'),
-            'Solicitante: ' + (userName || 'Nao informado'),
-            'E-mail: ' + (userEmail || 'Nao informado')
-        ].join('\n');
-
-        window.open(baseUrl + (baseUrl.indexOf('?') === -1 ? '?' : '&') + 'text=' + encodeURIComponent(text), '_blank', 'noopener');
-    });
-});
-</script>
 
 <?php $__view->endSection(); ?>

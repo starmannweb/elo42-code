@@ -25,6 +25,12 @@
     </div>
 </div>
 
+<?php if (!empty($degraded)): ?>
+    <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
+        Painel exibindo dados parciais — o serviço de dados está temporariamente indisponível e novas leituras serão retomadas em instantes.
+    </div>
+<?php endif; ?>
+
 <div class="mgmt-stats-grid">
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--blue">👤</span><div><div class="mgmt-stat__value"><?= $totalUsers ?></div><div class="mgmt-stat__label">Usuários</div></div></div>
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--gold">🏢</span><div><div class="mgmt-stat__value"><?= $totalOrgs ?></div><div class="mgmt-stat__label">Instituições</div></div></div>

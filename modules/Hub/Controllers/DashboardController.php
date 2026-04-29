@@ -2263,14 +2263,30 @@ class DashboardController extends Controller
             redirect('/onboarding/organizacao');
         }
 
-        // Buscar membros da equipe
-        $teamMembers = \App\Models\Organization::getUsers((int) $organization['id']);
+        $teamMembers = [];
+        $availableRoles = [];
+        $degraded = false;
 
-        // Buscar papéis disponíveis
-        $pdo = \App\Core\Database::connection();
-        $stmt = $pdo->prepare("SELECT id, name FROM roles WHERE slug LIKE 'org-%' ORDER BY name ASC");
-        $stmt->execute();
-        $availableRoles = $stmt->fetchAll();
+        try {
+            $teamMembers = \App\Models\Organization::getUsers((int) $organization['id']) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[Hub.usuarios] team load failed: ' . $e->getMessage());
+            $degraded = true;
+        }
+
+        try {
+            $pdo = \App\Core\Database::connection();
+            $stmt = $pdo->prepare("SELECT id, name FROM roles WHERE slug LIKE 'org-%' ORDER BY name ASC");
+            $stmt->execute();
+            $availableRoles = $stmt->fetchAll() ?: [];
+        } catch (\Throwable $e) {
+            error_log('[Hub.usuarios] roles load failed: ' . $e->getMessage());
+            $degraded = true;
+        }
+
+        if ($degraded) {
+            \App\Core\Session::flash('warning', 'Não conseguimos carregar todos os dados da equipe agora. Tente novamente em instantes.');
+        }
 
         $this->view('hub/usuarios', array_merge($context, [
             'pageTitle'      => 'Minha Equipe — Hub Elo 42',

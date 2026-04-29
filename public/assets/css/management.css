@@ -41,6 +41,17 @@ body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-light {
     gap: var(--space-4);
 }
 
+.mgmt-header--stack {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.mgmt-header--stack .mgmt-header__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .mgmt-header__title {
     font-family: 'Inter', sans-serif;
     font-size: var(--text-2xl);
@@ -52,6 +63,60 @@ body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-light {
     font-size: var(--text-sm);
     color: var(--color-text-muted);
     margin-top: 4px;
+}
+
+.mgmt-report-filter {
+    display: grid;
+    grid-template-columns: minmax(200px, 1.2fr) minmax(160px, 1fr) minmax(160px, 1fr) auto;
+    gap: var(--space-3);
+    align-items: end;
+    background: var(--color-white);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+.mgmt-report-filter__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.mgmt-report-filter__field span {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mgmt-report-filter__field .form-select,
+.mgmt-report-filter__field .form-control {
+    width: 100%;
+    min-height: 40px;
+}
+
+.mgmt-report-filter__actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+    .mgmt-report-filter {
+        grid-template-columns: 1fr 1fr;
+    }
+    .mgmt-report-filter__actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 540px) {
+    .mgmt-report-filter {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* --- Dashboard KPI Grid --- */
@@ -911,6 +976,8 @@ body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-light {
 .mgmt-layout .hub-topbar {
     background: #ffffff;
     min-width: 0;
+    min-height: 82px;
+    align-items: center;
 }
 
 .mgmt-layout .hub-topbar__breadcrumb,

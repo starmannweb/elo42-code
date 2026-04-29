@@ -1,15 +1,23 @@
 <!DOCTYPE html>
+<?php
+    $mgmtOrganization = \App\Core\Session::get('organization');
+    $mgmtOrganization = is_array($mgmtOrganization) ? $mgmtOrganization : [];
+    $mgmtPlan = strtolower((string) ($mgmtOrganization['plan'] ?? ''));
+    $isPwaEnabled = in_array($mgmtPlan, ['premium', 'enterprise', 'business', 'pro'], true);
+?>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#1e3a8a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Elo 42">
-    <link rel="manifest" href="<?= url('/app-manifest') ?>">
-    <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
+    <?php if ($isPwaEnabled): ?>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Elo 42">
+        <link rel="manifest" href="<?= url('/app-manifest') ?>">
+        <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
+    <?php endif; ?>
     <title><?= e($pageTitle ?? 'Gestão - Elo 42') ?></title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -152,7 +160,7 @@
                 <?= $navItem('/gestao/membros', 'Membros', 'users', false, ['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico']) ?>
                 <?= $navItem('/gestao/atendimento-pastoral', 'Atendimento pastoral', 'message', true, ['/gestao/atendimento-pastoral']) ?>
                 <?= $navItem('/gestao/celulas', 'Grupos Pequenos', 'home', true, ['/gestao/celulas']) ?>
-                <?= $navItem('/gestao/ministerios', 'Ministérios', 'ministries', false, ['/gestao/ministerios']) ?>
+                <?= $navItem('/gestao/ministerios', 'Ministérios', 'ministries', true, ['/gestao/ministerios']) ?>
 
                 <?php $renderSection('Financeiro'); ?>
                 <?= $navItem('/gestao/receitas', 'Receitas', 'income', false, ['/gestao/receitas', '/gestao/doacoes']) ?>
@@ -196,9 +204,16 @@
             <header class="hub-topbar">
                 <div class="hub-topbar__left">
                     <button class="hub-topbar__mobile-toggle" id="hub-sidebar-toggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+                    <?php
+                        $orgDisplayName = trim((string) ($organization['name'] ?? ''));
+                        $userDisplayName = trim((string) ($user['name'] ?? ''));
+                        if ($orgDisplayName === '' || strcasecmp($orgDisplayName, $userDisplayName) === 0) {
+                            $orgDisplayName = 'Sua igreja';
+                        }
+                    ?>
                     <div class="hub-topbar__context">
                         <span>Gest&atilde;o para Igrejas</span>
-                        <strong><?= e((string) ($organization['name'] ?? 'Elo 42')) ?></strong>
+                        <strong><?= e($orgDisplayName) ?></strong>
                     </div>
                 </div>
                 <div class="hub-topbar__right" style="display:flex;align-items:center;gap:1rem;">
@@ -262,11 +277,13 @@
             });
         });
 
+        <?php if ($isPwaEnabled): ?>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('<?= url('/sw.js') ?>').catch(() => {});
             });
         }
+        <?php endif; ?>
     </script>
 </body>
 </html>

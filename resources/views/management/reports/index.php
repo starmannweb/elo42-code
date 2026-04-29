@@ -1,11 +1,11 @@
 <?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
-<div class="mgmt-header mgmt-header--reports">
-    <div>
+<div class="mgmt-header mgmt-header--reports mgmt-header--stack">
+    <div class="mgmt-header__intro">
         <h1 class="mgmt-header__title">Relatórios</h1>
         <p class="mgmt-header__subtitle">Análises detalhadas e métricas de desempenho da igreja</p>
     </div>
-    <form method="GET" action="<?= url('/gestao/relatorios') ?>" class="mgmt-header__actions mgmt-filter-form report-filter">
+    <form method="GET" action="<?= url('/gestao/relatorios') ?>" class="mgmt-report-filter">
         <?php $selectedReport = (string) ($filters['type'] ?? 'overview'); ?>
         <?php
             $reportTypes = [
@@ -15,7 +15,7 @@
                 'events' => 'Eventos',
             ];
         ?>
-        <label class="report-filter__select">
+        <label class="mgmt-report-filter__field">
             <span>Relatório</span>
             <select name="type" class="form-select" aria-label="Tipo de relatório">
                 <?php foreach ($reportTypes as $typeValue => $typeLabel): ?>
@@ -23,17 +23,19 @@
                 <?php endforeach; ?>
             </select>
         </label>
-        <label class="report-filter__field">
+        <label class="mgmt-report-filter__field">
             <span>Início</span>
             <input type="date" name="start_date" class="form-control" value="<?= e((string) ($filters['start_date'] ?? date('Y-m-01'))) ?>">
         </label>
-        <label class="report-filter__field">
+        <label class="mgmt-report-filter__field">
             <span>Fim</span>
             <input type="date" name="end_date" class="form-control" value="<?= e((string) ($filters['end_date'] ?? date('Y-m-t'))) ?>">
         </label>
-        <a href="<?= url('/gestao/relatorios') ?>" class="btn btn--outline">Limpar</a>
-        <button type="submit" class="btn btn--secondary">Aplicar</button>
-        <button type="submit" name="export" value="pdf" class="btn btn--primary" formtarget="_blank">Exportar PDF</button>
+        <div class="mgmt-report-filter__actions">
+            <a href="<?= url('/gestao/relatorios') ?>" class="btn btn--outline">Limpar</a>
+            <button type="submit" class="btn btn--secondary">Aplicar</button>
+            <button type="submit" name="export" value="pdf" class="btn btn--primary" formtarget="_blank">Exportar PDF</button>
+        </div>
     </form>
 </div>
 
@@ -86,18 +88,17 @@ $taxaCativante = $totalMembers > 0 ? round(($activeMembers / $totalMembers) * 10
 
 <div class="mgmt-dashboard-grid" style="margin-top: var(--space-6);">
     <article class="mgmt-dashboard-card">
-        <header class="mgmt-dashboard-card__header">
-            <h2 style="display:flex;align-items:center;gap:8px;">Receitas vs Despesas</h2>
+        <header class="mgmt-dashboard-card__header" style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;">
+            <h2 style="margin:0;">Receitas vs Despesas</h2>
             <span style="font-size: 12px; color: var(--text-muted);">Comparativo financeiro mensal</span>
-            <button class="btn btn--outline btn--sm" style="margin-left: auto;">📄 PDF</button>
         </header>
         <div style="display: flex; align-items: flex-end; justify-content: space-around; height: 200px; padding: var(--space-4) 0;">
-            <?php 
+            <?php
             $meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
             $receitas = [15000, 18000, 22000, 19000, 25000, 21000];
             $despesas = [12000, 14000, 16000, 15000, 18000, 17000];
             $maxVal = max(max($receitas), max($despesas));
-            foreach ($meses as $i => $mes): 
+            foreach ($meses as $i => $mes):
                 $hRec = ($receitas[$i] / $maxVal) * 150;
                 $hDesp = ($despesas[$i] / $maxVal) * 150;
             ?>

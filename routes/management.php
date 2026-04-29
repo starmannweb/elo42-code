@@ -60,6 +60,12 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
         $router->get('/sermoes/expositor-ia', [\Modules\Hub\Controllers\DashboardController::class, 'expositorIa']);
         $router->get('/relatorios', [GeneralController::class, 'reports']);
 
+        $router->get('/ministerios', [MinistryController::class, 'index']);
+        $router->get('/ministerios/novo', [MinistryController::class, 'create']);
+        $router->post('/ministerios', [MinistryController::class, 'store']);
+        $router->get('/ministerios/{id}/editar', [MinistryController::class, 'edit']);
+        $router->post('/ministerios/{id}/editar', [MinistryController::class, 'update']);
+
         $router->get('/configuracoes/pix', [GeneralController::class, 'settingsPix']);
         $router->get('/configuracoes/ia', [GeneralController::class, 'settingsAi']);
         $router->get('/configuracoes/aparencia', [GeneralController::class, 'settingsAppearance']);
@@ -77,12 +83,6 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
     $router->get('/membros/{id}/editar', [MemberController::class, 'edit']);
     $router->post('/membros/{id}/editar', [MemberController::class, 'update']);
     $router->post('/membros/{id}/excluir', [MemberController::class, 'destroy']);
-
-    $router->get('/ministerios', [MinistryController::class, 'index']);
-    $router->get('/ministerios/novo', [MinistryController::class, 'create']);
-    $router->post('/ministerios', [MinistryController::class, 'store']);
-    $router->get('/ministerios/{id}/editar', [MinistryController::class, 'edit']);
-    $router->post('/ministerios/{id}/editar', [MinistryController::class, 'update']);
 
     $router->get('/receitas', [ModuleController::class, 'tithesOfferings']);
     $router->get('/despesas', [ModuleController::class, 'expenses']);
