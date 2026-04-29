@@ -1,5 +1,6 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
+<?php $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'suspended' => 'Suspenso']; ?>
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-header__title">Usuários</h1>
@@ -33,7 +34,7 @@
                     <td class="mgmt-table__name"><?= e($u['name']) ?></td>
                     <td class="mgmt-table__sub"><?= e($u['email']) ?></td>
                     <td><?= $u['org_count'] ?></td>
-                    <td><span class="badge badge--<?= $u['status'] ?>"><?= ucfirst(e($u['status'])) ?></span></td>
+                    <td><span class="badge badge--<?= e($u['status']) ?>"><?= e($statusLabels[$u['status'] ?? ''] ?? ($u['status'] ?? '-')) ?></span></td>
                     <td><?= $u['last_login_at'] ? date('d/m/Y H:i', strtotime($u['last_login_at'])) : '-' ?></td>
                     <td class="mgmt-table__actions" style="display:flex;gap:0.5rem;align-items:center;">
                         <a href="<?= url('/admin/usuarios/' . $u['id']) ?>">Ver</a>

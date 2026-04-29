@@ -4,6 +4,7 @@
 
 <?php
     $currentSite = is_array($currentSite ?? null) ? $currentSite : null;
+    $hasSavedSite = $currentSite && empty($currentSite['is_preview_only']);
     $canPublish = !empty($siteBuilderAccess['can_publish']);
     $checklist = is_array($publishChecklist ?? null) ? $publishChecklist : [];
     $doneCount = count(array_filter($checklist, static fn ($item) => !empty($item['done'])));
@@ -16,93 +17,56 @@
     $publishedUrl = (string) ($publishedUrl ?? ($currentSite['public_url'] ?? ''));
     $templateValue = (string) ($currentSite['template'] ?? 'Institucional Clássico');
     $defaultDescription = 'Uma comunidade para acolher, servir e caminhar em fé.';
+    $steps = [
+        ['id' => 'dados-site', 'number' => '1', 'title' => 'Dados do site', 'text' => 'Informações públicas e contatos'],
+        ['id' => 'modelos-site', 'number' => '2', 'title' => 'Escolher modelo', 'text' => 'Estrutura visual inicial'],
+        ['id' => 'aparencia-site', 'number' => '3', 'title' => 'Definir aparência', 'text' => 'Logo, imagem, cores e redes'],
+        ['id' => 'publicar-site', 'number' => '4', 'title' => 'Publicar', 'text' => 'Preview, prontidão e assinatura'],
+    ];
 ?>
 
-<section class="hub-page site-builder-page">
-    <header class="hub-page__header">
-        <div class="hub-panel__row">
-            <div>
-                <h1 class="hub-page__title">Meus sites</h1>
-                <p class="hub-page__subtitle">
-                    Configure os dados públicos da igreja, revise o preview e publique quando a mensalidade e o domínio estiverem prontos.
-                </p>
-            </div>
-            <div class="hub-page__actions">
-                <?php if ($currentSite): ?>
-                    <a href="#dados-site" class="btn btn--outline btn--lg">Editar dados</a>
-                <?php endif; ?>
-                <?php if ($canPublish && $currentSite): ?>
-                    <form action="<?= url('/hub/sites/publicar') ?>" method="POST" data-loading>
-                        <?= csrf_field() ?>
-                        <button class="btn btn--primary btn--lg" type="submit">Publicar site</button>
-                    </form>
-                <?php else: ?>
-                    <a href="<?= url('/contato') ?>" class="btn btn--primary btn--lg">Ativar publicação</a>
-                <?php endif; ?>
-            </div>
+<section class="hub-page site-builder-page" data-site-builder-flow>
+    <header class="hub-page__header site-builder-header">
+        <div>
+            <h1 class="hub-page__title">Meus sites</h1>
+            <p class="hub-page__subtitle">
+                Configure o site em etapas, revise o preview e publique quando a mensalidade e o domínio estiverem prontos.
+            </p>
+        </div>
+        <div class="hub-page__actions">
+            <a href="#dados-site" class="btn btn--outline btn--lg" data-site-step-link>Editar dados</a>
+            <a href="#modelos-site" class="btn btn--ghost btn--lg" data-site-step-link>Modelos</a>
+            <?php if ($currentSite): ?>
+                <a href="<?= url('/hub/sites/preview') ?>" class="btn btn--ghost btn--lg" target="_blank" rel="noopener noreferrer">Preview</a>
+            <?php endif; ?>
+            <?php if ($canPublish && $hasSavedSite): ?>
+                <button class="btn btn--primary btn--lg" type="submit" form="site-builder-form" formaction="<?= url('/hub/sites/publicar') ?>">Publicar site</button>
+            <?php elseif ($canPublish): ?>
+                <button class="btn btn--primary btn--lg" type="submit" form="site-builder-form">Salvar para publicar</button>
+            <?php else: ?>
+                <a href="#publicar-site" class="btn btn--primary btn--lg" data-site-step-link>Ver publicação</a>
+            <?php endif; ?>
         </div>
     </header>
 
-    <div class="site-builder-status-grid">
-        <article class="site-status-card">
-            <div class="hub-panel__row">
-                <div>
-                    <h2 class="hub-panel__title">Status de publicação</h2>
-                    <p class="hub-panel__text">
-                        O rascunho pode ser preparado agora. Publicar em domínio real exige mensalidade ativa e revisão dos dados.
-                    </p>
-                </div>
-                <span class="hub-badge <?= e($statusClass) ?>">
-                    <?= $canPublish ? 'Publicação liberada' : 'Publicação bloqueada' ?>
+    <nav class="site-step-nav" aria-label="Etapas do site">
+        <?php foreach ($steps as $index => $step): ?>
+            <a href="#<?= e($step['id']) ?>" class="site-step-link <?= $index === 0 ? 'is-active' : '' ?>" data-site-step-link>
+                <span class="site-step-link__number"><?= e($step['number']) ?></span>
+                <span>
+                    <strong><?= e($step['title']) ?></strong>
+                    <small><?= e($step['text']) ?></small>
                 </span>
-            </div>
+            </a>
+        <?php endforeach; ?>
+    </nav>
 
-            <div class="site-status-card__meta">
-                <div>
-                    <span>Plano</span>
-                    <strong><?= e((string) ($siteBuilderAccess['plan_name'] ?? 'Site para Igrejas')) ?></strong>
-                </div>
-                <div>
-                    <span>Mensalidade</span>
-                    <strong><?= e((string) ($siteBuilderAccess['monthly_fee_label'] ?? 'Consulte valores')) ?></strong>
-                </div>
-                <div>
-                    <span>Situação</span>
-                    <strong><?= e((string) ($siteBuilderAccess['status_label'] ?? 'Sem assinatura ativa')) ?></strong>
-                </div>
-            </div>
-        </article>
+    <form id="site-builder-form" class="site-step-form" action="<?= url('/hub/sites/configurar') ?>" method="POST" data-loading>
+        <?= csrf_field() ?>
+        <input type="hidden" id="site-template-value" name="template" value="<?= e($templateValue) ?>">
 
-        <article class="site-readiness-card">
-            <div class="site-readiness-card__head">
-                <div>
-                    <h2 class="hub-panel__title">Prontidão do site</h2>
-                    <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos</p>
-                </div>
-                <strong><?= $completion ?>%</strong>
-            </div>
-            <div class="site-progress"><span style="width: <?= $completion ?>%;"></span></div>
-            <ul class="site-readiness-list">
-                <?php foreach ($checklist as $item): ?>
-                    <li class="<?= !empty($item['done']) ? 'is-done' : 'is-pending' ?>">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
-                        </svg>
-                        <div>
-                            <strong><?= e((string) ($item['title'] ?? 'Item')) ?></strong>
-                            <span><?= e((string) ($item['text'] ?? '')) ?></span>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        </article>
-    </div>
-
-    <div class="site-builder-grid">
-        <form id="dados-site" class="hub-panel site-config-form" action="<?= url('/hub/sites/configurar') ?>" method="POST" data-loading>
-            <?= csrf_field() ?>
-
-            <div class="hub-panel__row">
+        <section id="dados-site" class="site-step-panel is-active" data-site-step-panel>
+            <div class="site-step-panel__head">
                 <div>
                     <h2 class="hub-panel__title">Dados do site</h2>
                     <p class="hub-panel__text">Essas informações alimentam o preview e a página publicada.</p>
@@ -116,13 +80,8 @@
                     <input id="site_title" name="site_title" class="form-input" value="<?= e($siteTitle) ?>" placeholder="Ex.: Comunidade Esperança">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="template">Modelo</label>
-                    <select id="template" name="template" class="form-select">
-                        <?php foreach (($siteTemplates ?? []) as $template): ?>
-                            <?php $name = (string) ($template['name'] ?? 'Modelo'); ?>
-                            <option value="<?= e($name) ?>" <?= $templateValue === $name ? 'selected' : '' ?>><?= e($name) ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <label class="form-label">Modelo selecionado</label>
+                    <div class="site-selected-template" data-site-template-label><?= e($templateValue) ?></div>
                 </div>
             </div>
 
@@ -134,17 +93,6 @@
             <div class="form-group">
                 <label class="form-label" for="about_text">Sobre a igreja</label>
                 <textarea id="about_text" name="about_text" class="form-textarea" rows="4" placeholder="Conte em poucas linhas a história, missão e rotina da comunidade."><?= e((string) ($currentSite['about_text'] ?? '')) ?></textarea>
-            </div>
-
-            <div class="form-grid form-grid--2">
-                <div class="form-group">
-                    <label class="form-label" for="logo_image">URL da logo</label>
-                    <input id="logo_image" name="logo_image" class="form-input" value="<?= e((string) ($currentSite['logo_image'] ?? '')) ?>" placeholder="https://.../logo.png">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="hero_image">URL da imagem principal</label>
-                    <input id="hero_image" name="hero_image" class="form-input" value="<?= e((string) ($currentSite['hero_image'] ?? '')) ?>" placeholder="https://.../foto-culto.jpg">
-                </div>
             </div>
 
             <div class="form-grid form-grid--3">
@@ -184,8 +132,96 @@
                     <span class="form-hint">Se ficar vazio, o preview usa a URL local da Elo 42.</span>
                 </div>
                 <div class="form-group">
+                    <label class="form-label" for="cta_label">Texto do botão principal</label>
+                    <input id="cta_label" name="cta_label" class="form-input" value="<?= e((string) ($currentSite['cta_label'] ?? 'Falar com a igreja')) ?>" placeholder="Falar com a igreja">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="cta_url">Link do botão principal</label>
+                <input id="cta_url" name="cta_url" class="form-input" value="<?= e((string) ($currentSite['cta_url'] ?? '')) ?>" placeholder="https://wa.me/55...">
+            </div>
+
+            <div class="site-step-panel__footer">
+                <span class="hub-panel__text">Os dados cadastrais da organização já entram como base quando estiverem preenchidos.</span>
+                <button type="button" class="btn btn--outline" data-site-step-button="#modelos-site">Escolher modelo</button>
+            </div>
+        </section>
+
+        <section id="modelos-site" class="site-step-panel" data-site-step-panel hidden>
+            <div class="site-step-panel__head">
+                <div>
+                    <h2 class="hub-panel__title">Modelos disponíveis</h2>
+                    <p class="hub-panel__text">Escolha um ponto de partida. Depois, os dados preenchidos alimentam o site automaticamente.</p>
+                </div>
+                <button class="btn btn--primary" type="submit">Salvar modelo</button>
+            </div>
+
+            <div class="site-template-grid">
+                <?php foreach (($siteTemplates ?? []) as $template): ?>
+                    <?php $name = (string) ($template['name'] ?? 'Modelo'); ?>
+                    <article class="site-template-card <?= ($templateValue === $name || !empty($template['highlight'])) ? 'is-highlight' : '' ?>" data-site-template-card="<?= e($name) ?>">
+                        <div>
+                            <h3 class="hub-mini-card__title"><?= e($name) ?></h3>
+                            <p class="hub-mini-card__text"><?= e((string) ($template['description'] ?? '')) ?></p>
+                        </div>
+
+                        <ul class="site-template-card__asset-list">
+                            <?php foreach (($template['assets'] ?? []) as $asset): ?>
+                                <li><?= e((string) $asset) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+
+                        <div class="hub-page__actions" style="margin-top:auto;">
+                            <a href="<?= url('/hub/sites/preview?template=' . rawurlencode($name)) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Ver preview</a>
+                            <button type="submit" name="template" value="<?= e($name) ?>" class="btn btn--primary" data-site-template-choice="<?= e($name) ?>">Usar modelo</button>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="site-step-panel__footer">
+                <button type="button" class="btn btn--ghost" data-site-step-button="#dados-site">Voltar aos dados</button>
+                <button type="button" class="btn btn--outline" data-site-step-button="#aparencia-site">Definir aparência</button>
+            </div>
+        </section>
+
+        <section id="aparencia-site" class="site-step-panel" data-site-step-panel hidden>
+            <div class="site-step-panel__head">
+                <div>
+                    <h2 class="hub-panel__title">Definir aparência</h2>
+                    <p class="hub-panel__text">Ajuste identidade visual, imagem principal e redes públicas do site.</p>
+                </div>
+                <button class="btn btn--primary" type="submit">Salvar aparência</button>
+            </div>
+
+            <div class="form-grid form-grid--2">
+                <div class="form-group">
+                    <label class="form-label" for="logo_image">URL da logo</label>
+                    <input id="logo_image" name="logo_image" class="form-input" value="<?= e((string) ($currentSite['logo_image'] ?? '')) ?>" placeholder="https://.../logo.png">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="hero_image">URL da imagem principal</label>
+                    <input id="hero_image" name="hero_image" class="form-input" value="<?= e((string) ($currentSite['hero_image'] ?? '')) ?>" placeholder="https://.../foto-culto.jpg">
+                </div>
+            </div>
+
+            <div class="form-grid form-grid--2">
+                <div class="form-group">
                     <label class="form-label" for="theme_color">Cor principal</label>
                     <input id="theme_color" name="theme_color" type="color" class="form-input form-input--color" value="<?= e((string) ($currentSite['theme_color'] ?? '#0A4DFF')) ?>">
+                </div>
+                <div class="site-preview-card" aria-label="Preview visual do site">
+                    <?php if (!empty($currentSite['hero_image'])): ?>
+                        <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
+                    <?php else: ?>
+                        <div class="site-preview-card__hero"></div>
+                    <?php endif; ?>
+                    <div>
+                        <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>
+                        <p class="hub-mini-card__text"><?= e($templateValue) ?></p>
+                    </div>
+                    <div class="site-preview-card__lines"><span></span><span></span><span></span></div>
                 </div>
             </div>
 
@@ -204,104 +240,181 @@
                 </div>
             </div>
 
-            <div class="form-grid form-grid--2">
-                <div class="form-group">
-                    <label class="form-label" for="cta_label">Texto do botão principal</label>
-                    <input id="cta_label" name="cta_label" class="form-input" value="<?= e((string) ($currentSite['cta_label'] ?? 'Falar com a igreja')) ?>" placeholder="Falar com a igreja">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="cta_url">Link do botão principal</label>
-                    <input id="cta_url" name="cta_url" class="form-input" value="<?= e((string) ($currentSite['cta_url'] ?? '')) ?>" placeholder="https://wa.me/55...">
-                </div>
+            <div class="site-step-panel__footer">
+                <button type="button" class="btn btn--ghost" data-site-step-button="#modelos-site">Voltar aos modelos</button>
+                <button type="button" class="btn btn--outline" data-site-step-button="#publicar-site">Revisar publicação</button>
             </div>
-        </form>
+        </section>
 
-        <aside class="site-builder-side">
-            <article class="site-status-card">
-                <div class="hub-panel__row">
-                    <div>
-                        <h2 class="hub-panel__title">Site atual</h2>
-                        <p class="hub-panel__text">
-                            <?= $currentSite ? 'Rascunho salvo e pronto para revisão visual.' : 'Nenhum site foi gerado ainda.' ?>
-                        </p>
-                    </div>
-                    <?php if ($currentSite): ?>
-                        <span class="hub-badge <?= (($currentSite['status'] ?? '') === 'published') ? 'hub-badge--success' : 'hub-badge--warning' ?>">
-                            <?= e((string) ($currentSite['status_label'] ?? 'Rascunho')) ?>
-                        </span>
-                    <?php endif; ?>
+        <section id="publicar-site" class="site-step-panel" data-site-step-panel hidden>
+            <div class="site-step-panel__head">
+                <div>
+                    <h2 class="hub-panel__title">Publicar</h2>
+                    <p class="hub-panel__text">Revise a prontidão, gere o rascunho e publique quando a assinatura estiver ativa.</p>
                 </div>
+                <span class="hub-badge <?= e($statusClass) ?>">
+                    <?= $canPublish ? 'Publicação liberada' : 'Publicação bloqueada' ?>
+                </span>
+            </div>
 
-                <div class="site-preview-card" aria-label="Preview visual do site">
-                    <?php if (!empty($currentSite['hero_image'])): ?>
-                        <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
-                    <?php else: ?>
-                        <div class="site-preview-card__hero"></div>
-                    <?php endif; ?>
-                    <div>
-                        <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>
-                        <p class="hub-mini-card__text"><?= e($templateValue) ?></p>
-                    </div>
-                    <div class="site-preview-card__lines"><span></span><span></span><span></span></div>
-                </div>
+            <div class="site-publish-grid">
+                <article class="site-status-card">
+                    <h3 class="hub-panel__title">Status de publicação</h3>
+                    <p class="hub-panel__text">
+                        O rascunho pode ser preparado agora. Publicar em domínio real exige mensalidade ativa e revisão dos dados.
+                    </p>
 
-                <div class="site-status-card__meta" style="grid-template-columns:1fr;">
-                    <div>
-                        <span>Última geração</span>
-                        <strong><?= e((string) ($currentSite['generated_at_label'] ?? 'Ainda não gerado')) ?></strong>
-                    </div>
-                    <div>
-                        <span>URL de revisão</span>
-                        <strong><?= e($publishedUrl !== '' ? $publishedUrl : 'Após salvar o site') ?></strong>
-                    </div>
-                </div>
-
-                <div class="hub-page__actions">
-                    <form action="<?= url('/hub/sites/gerar') ?>" method="POST" data-loading>
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="template" value="<?= e($templateValue) ?>">
-                        <button class="btn btn--outline" type="submit"><?= $currentSite ? 'Atualizar rascunho' : 'Gerar rascunho' ?></button>
-                    </form>
-                    <?php if ($currentSite): ?>
-                        <a href="<?= url('/hub/sites/preview') ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Preview</a>
-                    <?php endif; ?>
-                </div>
-            </article>
-        </aside>
-    </div>
-
-    <div class="hub-panel">
-        <div>
-            <h2 class="hub-panel__title">Modelos disponíveis</h2>
-            <p class="hub-panel__text">Escolha um ponto de partida. Depois, os dados acima preenchem o site automaticamente.</p>
-        </div>
-
-        <div class="site-template-grid">
-            <?php foreach (($siteTemplates ?? []) as $template): ?>
-                <article class="site-template-card <?= !empty($template['highlight']) ? 'is-highlight' : '' ?>">
-                    <div>
-                        <h3 class="hub-mini-card__title"><?= e((string) ($template['name'] ?? 'Modelo')) ?></h3>
-                        <p class="hub-mini-card__text"><?= e((string) ($template['description'] ?? '')) ?></p>
-                    </div>
-
-                    <ul class="site-template-card__asset-list">
-                        <?php foreach (($template['assets'] ?? []) as $asset): ?>
-                            <li><?= e((string) $asset) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-
-                    <div class="hub-page__actions" style="margin-top:auto;">
-                        <a href="<?= url('/hub/sites/preview?template=' . rawurlencode((string) ($template['name'] ?? ''))) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Ver preview</a>
-                        <form action="<?= url('/hub/sites/gerar') ?>" method="POST" data-loading>
-                            <?= csrf_field() ?>
-                            <input type="hidden" name="template" value="<?= e((string) ($template['name'] ?? '')) ?>">
-                            <button type="submit" class="btn btn--primary">Usar modelo</button>
-                        </form>
+                    <div class="site-status-card__meta">
+                        <div>
+                            <span>Plano</span>
+                            <strong><?= e((string) ($siteBuilderAccess['plan_name'] ?? 'Site para Igrejas')) ?></strong>
+                        </div>
+                        <div>
+                            <span>Mensalidade</span>
+                            <strong><?= e((string) ($siteBuilderAccess['monthly_fee_label'] ?? 'Consulte valores')) ?></strong>
+                        </div>
+                        <div>
+                            <span>Situação</span>
+                            <strong><?= e((string) ($siteBuilderAccess['status_label'] ?? 'Sem assinatura ativa')) ?></strong>
+                        </div>
                     </div>
                 </article>
-            <?php endforeach; ?>
-        </div>
-    </div>
+
+                <article class="site-readiness-card">
+                    <div class="site-readiness-card__head">
+                        <div>
+                            <h3 class="hub-panel__title">Prontidão do site</h3>
+                            <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos</p>
+                        </div>
+                        <strong><?= $completion ?>%</strong>
+                    </div>
+                    <div class="site-progress"><span style="width: <?= $completion ?>%;"></span></div>
+                    <ul class="site-readiness-list">
+                        <?php foreach ($checklist as $item): ?>
+                            <li class="<?= !empty($item['done']) ? 'is-done' : 'is-pending' ?>">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
+                                </svg>
+                                <div>
+                                    <strong><?= e((string) ($item['title'] ?? 'Item')) ?></strong>
+                                    <span><?= e((string) ($item['text'] ?? '')) ?></span>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </article>
+
+                <article class="site-status-card site-publish-card">
+                    <div class="hub-panel__row">
+                        <div>
+                            <h3 class="hub-panel__title">Site atual</h3>
+                            <p class="hub-panel__text">
+                                <?= $currentSite ? ($hasSavedSite ? 'Rascunho salvo e pronto para revisão visual.' : 'Preview montado com os dados cadastrais da igreja.') : 'Nenhum site foi gerado ainda.' ?>
+                            </p>
+                        </div>
+                        <?php if ($currentSite): ?>
+                            <span class="hub-badge <?= (($currentSite['status'] ?? '') === 'published') ? 'hub-badge--success' : 'hub-badge--warning' ?>">
+                                <?= e((string) ($currentSite['status_label'] ?? 'Rascunho')) ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="site-preview-card" aria-label="Preview visual do site">
+                        <?php if (!empty($currentSite['hero_image'])): ?>
+                            <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
+                        <?php else: ?>
+                            <div class="site-preview-card__hero"></div>
+                        <?php endif; ?>
+                        <div>
+                            <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>
+                            <p class="hub-mini-card__text"><?= e($templateValue) ?></p>
+                        </div>
+                        <div class="site-preview-card__lines"><span></span><span></span><span></span></div>
+                    </div>
+
+                    <div class="site-status-card__meta" style="grid-template-columns:1fr;">
+                        <div>
+                            <span>Última geração</span>
+                            <strong><?= e((string) ($currentSite['generated_at_label'] ?? 'Ainda não gerado')) ?></strong>
+                        </div>
+                        <div>
+                            <span>URL de revisão</span>
+                            <strong><?= e($publishedUrl !== '' ? $publishedUrl : 'Após salvar o site') ?></strong>
+                        </div>
+                    </div>
+
+                    <div class="hub-page__actions">
+                        <button class="btn btn--outline" type="submit" formaction="<?= url('/hub/sites/gerar') ?>"><?= $currentSite ? 'Atualizar rascunho' : 'Gerar rascunho' ?></button>
+                        <?php if ($currentSite): ?>
+                            <a href="<?= url('/hub/sites/preview') ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Preview</a>
+                        <?php endif; ?>
+                        <?php if ($canPublish && $hasSavedSite): ?>
+                            <button class="btn btn--primary" type="submit" formaction="<?= url('/hub/sites/publicar') ?>">Publicar site</button>
+                        <?php elseif (!$canPublish): ?>
+                            <a href="<?= url('/contato') ?>" class="btn btn--primary">Ativar publicação</a>
+                        <?php else: ?>
+                            <button class="btn btn--primary" type="submit">Salvar dados</button>
+                        <?php endif; ?>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </form>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var root = document.querySelector('[data-site-builder-flow]');
+    if (!root) {
+        return;
+    }
+
+    var links = Array.prototype.slice.call(root.querySelectorAll('[data-site-step-link], [data-site-step-button]'));
+    var panels = Array.prototype.slice.call(root.querySelectorAll('[data-site-step-panel]'));
+    var templateInput = document.getElementById('site-template-value');
+    var templateLabel = root.querySelector('[data-site-template-label]');
+
+    function showStep(id, updateHash) {
+        var target = id.replace('#', '');
+        panels.forEach(function (panel) {
+            var active = panel.id === target;
+            panel.hidden = !active;
+            panel.classList.toggle('is-active', active);
+        });
+        root.querySelectorAll('.site-step-link').forEach(function (link) {
+            link.classList.toggle('is-active', link.getAttribute('href') === '#' + target);
+        });
+        if (updateHash !== false && window.location.hash !== '#' + target) {
+            history.replaceState(null, '', '#' + target);
+        }
+    }
+
+    links.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            var target = link.getAttribute('href') || link.getAttribute('data-site-step-button');
+            if (!target || target.charAt(0) !== '#') {
+                return;
+            }
+            event.preventDefault();
+            showStep(target, true);
+        });
+    });
+
+    root.querySelectorAll('[data-site-template-choice]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var name = button.getAttribute('data-site-template-choice') || button.value || '';
+            if (templateInput && name !== '') {
+                templateInput.value = name;
+            }
+            if (templateLabel && name !== '') {
+                templateLabel.textContent = name;
+            }
+        });
+    });
+
+    var initialHash = window.location.hash && root.querySelector(window.location.hash) ? window.location.hash : '#dados-site';
+    showStep(initialHash, false);
+});
+</script>
 
 <?php $__view->endSection(); ?>

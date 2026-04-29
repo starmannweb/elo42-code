@@ -1,20 +1,29 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
+<?php
+$services = $services ?? [];
+$statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'paused' => 'Pausado'];
+?>
 <div class="mgmt-header">
-    <div><h1 class="mgmt-header__title">Cortesias</h1></div>
+    <div>
+        <h1 class="mgmt-header__title">Cortesias</h1>
+        <p class="mgmt-header__subtitle">Libere produtos ou serviços para uma igreja/usuário por um período definido.</p>
+    </div>
     <div class="mgmt-header__actions"><button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-benefit').style.display='flex'">Nova cortesia</button></div>
 </div>
 
 <?php if (empty($benefits)): ?>
     <div class="mgmt-empty"><div class="mgmt-empty__icon">🎁</div><h3 class="mgmt-empty__title">Nenhuma cortesia</h3></div>
 <?php else: ?>
-    <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Cortesia</th><th>Utilizações</th><th>Limite</th><th>Válido até</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+    <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Cortesia</th><th>Produto/serviço</th><th>Prazo</th><th>Utilizações</th><th>Limite</th><th>Válido até</th><th>Status</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($benefits as $b): ?><tr>
             <td><div class="mgmt-table__name"><?= e($b['name']) ?></div><div class="mgmt-table__sub"><?= e($b['slug']) ?></div></td>
+            <td><?= e($b['service_name'] ?? 'Qualquer serviço') ?></td>
+            <td><?= $b['duration_days'] ? (int) $b['duration_days'] . ' dias' : 'Sem prazo automático' ?></td>
             <td><?= $b['usage_count'] ?? 0 ?></td>
-            <td><?= $b['max_usage'] ?? '∞' ?></td>
+            <td><?= $b['max_usage'] ?? 'Ilimitado' ?></td>
             <td><?= $b['valid_until'] ? date('d/m/Y', strtotime($b['valid_until'])) : '-' ?></td>
-            <td><span class="badge badge--<?= $b['status'] ?>"><?= ucfirst(e($b['status'])) ?></span></td>
+            <td><span class="badge badge--<?= e($b['status']) ?>"><?= e($statusLabels[$b['status'] ?? ''] ?? ($b['status'] ?? '-')) ?></span></td>
             <td class="mgmt-table__actions"><a href="<?= url('/admin/cortesias/' . $b['id'] . '/editar') ?>">Editar</a></td>
         </tr><?php endforeach; ?>
     </tbody></table></div>
@@ -29,6 +38,8 @@
                 <div class="modal-grid">
                     <div class="form-group"><label class="form-label">Nome *</label><input type="text" name="name" class="form-input" required></div>
                     <div class="form-group"><label class="form-label">Slug *</label><input type="text" name="slug" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Produto/serviço liberado</label><select name="service_id" class="form-select"><option value="">Qualquer serviço</option><?php foreach ($services as $service): ?><option value="<?= $service['id'] ?>"><?= e($service['name']) ?></option><?php endforeach; ?></select></div>
+                    <div class="form-group"><label class="form-label">Duração da cortesia</label><input type="number" name="duration_days" class="form-input" min="1" placeholder="Ex.: 30 dias"></div>
                     <div class="form-group"><label class="form-label">Limite de uso</label><input type="number" name="max_usage" class="form-input" placeholder="Vazio = ilimitado"></div>
                     <div class="form-group"><label class="form-label">Válido até</label><input type="date" name="valid_until" class="form-input"></div>
                     <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active">Ativo</option><option value="inactive">Inativo</option><option value="paused">Pausado</option></select></div>

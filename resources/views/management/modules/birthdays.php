@@ -1,13 +1,18 @@
 <?php $__view->extends('management', ['pageTitle' => $pageTitle ?? 'Aniversários', 'breadcrumb' => $breadcrumb ?? 'Aniversários', 'activeMenu' => $activeMenu ?? 'aniversarios']); ?>
 
 <?php $__view->section('content'); ?>
-<?php $birthdayCount = count($members ?? []); ?>
+<?php
+    $birthdayCount = count($members ?? []);
+    $months = [1 => 'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    $monthAbbr = [1 => 'jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    $monthLabel = ucfirst($months[(int) date('n')]) . ' de ' . date('Y');
+?>
 
 <div class="mgmt-container">
     <div class="mgmt-header">
         <div>
             <h1 class="mgmt-header__title">Aniversariantes do Mês</h1>
-            <p class="mgmt-header__subtitle"><?= e(date('F Y')) ?></p>
+            <p class="mgmt-header__subtitle"><?= e($monthLabel) ?></p>
         </div>
         <span class="hub-badge">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -44,7 +49,7 @@
                     <?php foreach ($members as $m): ?>
                         <?php
                             $day = date('d', strtotime($m['birth_date']));
-                            $monthName = date('M', strtotime($m['birth_date']));
+                            $monthName = $monthAbbr[(int) date('n', strtotime($m['birth_date']))] ?? date('m', strtotime($m['birth_date']));
                             $isToday = date('m-d') === date('m-d', strtotime($m['birth_date']));
                             $parts = explode(' ', trim($m['name'] ?? 'Membro'));
                             $initials = strtoupper(substr($parts[0] ?? '', 0, 1) . substr(end($parts) ?: '', 0, 1));

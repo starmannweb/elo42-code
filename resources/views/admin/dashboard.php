@@ -11,6 +11,7 @@
         'catalog' => 'Serviços',
         'support' => 'Suporte',
     ];
+    $typeLabels = ['church' => 'Igreja', 'association' => 'Associação', 'ministry' => 'Ministério', 'ong' => 'ONG', 'other' => 'Outro'];
 ?>
 
 <div class="mgmt-header">
@@ -73,7 +74,7 @@
         <h3 class="mgmt-info-card__title">Últimas instituições</h3>
         <table class="mgmt-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Cadastro</th></tr></thead><tbody>
             <?php foreach ($recentOrgs as $o): ?>
-            <tr><td class="mgmt-table__name"><?= e($o['name']) ?></td><td><span class="badge badge--active"><?= e($o['type'] ?? '-') ?></span></td><td><?= date('d/m H:i', strtotime($o['created_at'])) ?></td></tr>
+            <tr><td class="mgmt-table__name"><?= e($o['name']) ?></td><td><span class="badge badge--active"><?= e($typeLabels[$o['type'] ?? ''] ?? ($o['type'] ?? '-')) ?></span></td><td><?= date('d/m H:i', strtotime($o['created_at'])) ?></td></tr>
             <?php endforeach; ?>
         </tbody></table>
     </div>

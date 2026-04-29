@@ -52,6 +52,8 @@ class AdminCatalogController extends Controller
     // ---- Services ----
     public function services(Request $req): void
     {
+        $this->ensureDefaultServices();
+
         $this->view('admin/services/index', [
             'pageTitle' => 'Serviços — Admin', 'breadcrumb' => 'Serviços',
             'services' => Service::all('sort_order'),
@@ -94,23 +96,29 @@ class AdminCatalogController extends Controller
     // ---- Benefits ----
     public function benefits(Request $req): void
     {
+        $this->ensureDefaultServices();
+
         $this->view('admin/benefits/index', [
             'pageTitle' => 'Cortesias — Admin', 'breadcrumb' => 'Cortesias',
             'benefits' => Benefit::allWithUsageCount(),
+            'services' => Service::all('sort_order'),
         ]);
     }
 
     public function createBenefit(Request $req): void
     {
+        $this->ensureDefaultServices();
+
         $this->view('admin/benefits/form', [
             'pageTitle' => 'Nova cortesia', 'breadcrumb' => 'Cortesias / Nova', 'item' => null,
+            'services' => Service::all('sort_order'),
         ]);
     }
 
     public function storeBenefit(Request $req): void
     {
         $this->validate($req, ['name' => 'required', 'slug' => 'required']);
-        Benefit::create($req->only(['name','slug','description','requirements','status','max_usage','valid_until']));
+        Benefit::create($this->benefitPayload($req));
         Session::flash('success', 'Cortesia criada.');
         redirect('/admin/cortesias');
     }
@@ -119,7 +127,10 @@ class AdminCatalogController extends Controller
     {
         $item = Benefit::find((int) $req->param('id'));
         if (!$item) { redirect('/admin/cortesias'); }
+        $this->ensureDefaultServices();
+
         $this->view('admin/benefits/form', [
+            'services' => Service::all('sort_order'),
             'pageTitle' => 'Editar — ' . e($item['name']), 'breadcrumb' => 'Cortesias / Editar', 'item' => $item,
         ]);
     }
@@ -128,7 +139,7 @@ class AdminCatalogController extends Controller
     {
         $id = (int) $req->param('id');
         $this->validate($req, ['name' => 'required']);
-        Benefit::update($id, $req->only(['name','slug','description','requirements','status','max_usage','valid_until']));
+        Benefit::update($id, $this->benefitPayload($req));
         Session::flash('success', 'Cortesia atualizada.');
         redirect('/admin/cortesias');
     }
@@ -279,5 +290,48 @@ class AdminCatalogController extends Controller
         }
         Session::flash('success', 'Configurações atualizadas.');
         redirect('/admin/configuracoes');
+    }
+
+    private function benefitPayload(Request $req): array
+    {
+        $data = $req->only(['name','slug','description','requirements','status','max_usage','valid_until','service_id','duration_days']);
+
+        foreach (['max_usage', 'service_id', 'duration_days'] as $field) {
+            if (($data[$field] ?? '') === '') {
+                $data[$field] = null;
+            }
+        }
+
+        if (($data['valid_until'] ?? '') === '') {
+            $data['valid_until'] = null;
+        }
+
+        return $data;
+    }
+
+    private function ensureDefaultServices(): void
+    {
+        $defaults = [
+            ['name' => 'Painel de Gestao para Igrejas', 'slug' => 'painel-gestao-igrejas', 'description' => 'Sistema completo para membros, financas, ministerios, eventos, relatorios e rotina pastoral.', 'rules' => 'Acesso por assinatura da igreja responsavel.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Expositor IA', 'slug' => 'expositor-ia', 'description' => 'Criacao assistida de sermoes, estudos biblicos, series, ministracoes e planos de leitura.', 'rules' => 'Materiais publicados aparecem no sistema de gestao e na area do membro.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Site para Igrejas', 'slug' => 'site-para-igrejas', 'description' => 'Construtor de site institucional com modelos, dados cadastrais, preview e publicacao para assinantes.', 'rules' => 'Publicacao liberada para assinatura ativa.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Google Ad Grants', 'slug' => 'google-ad-grants', 'description' => 'Apoio para elegibilidade, configuracao e gestao de campanhas para ONGs e igrejas.', 'rules' => 'Disponibilidade depende das regras do programa e validacao da instituicao.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Google para ONGs', 'slug' => 'google-para-ongs', 'description' => 'Orientacao para ativar ferramentas Google Workspace e recursos para organizacoes elegiveis.', 'rules' => 'Sujeito a aprovacao externa do programa.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Gestao de Trafego Pago', 'slug' => 'gestao-trafego-pago', 'description' => 'Planejamento, criacao e acompanhamento de campanhas pagas para comunicacao e captacao.', 'rules' => 'Investimento de midia nao incluso no servico.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'TechSoup Brasil', 'slug' => 'techsoup-brasil', 'description' => 'Apoio para identificar beneficios, licencas e oportunidades de tecnologia para organizacoes.', 'rules' => 'Sujeito as regras e disponibilidade dos parceiros.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Microsoft, Canva e Slack', 'slug' => 'microsoft-canva-slack', 'description' => 'Apoio na estruturacao de ferramentas colaborativas, design e produtividade para equipes.', 'rules' => 'Beneficios dependem da elegibilidade da instituicao.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Implantacao Acompanhada', 'slug' => 'implantacao-acompanhada', 'description' => 'Acompanhamento para configurar dados iniciais, equipe, modulos e rotina de adocao.', 'rules' => 'Agenda conforme disponibilidade operacional.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Diagnostico Organizacional', 'slug' => 'diagnostico-organizacional', 'description' => 'Mapeamento de processos, comunicacao, governanca e oportunidades de melhoria.', 'rules' => 'Pode exigir reuniao de levantamento com responsaveis.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Workshop de Capacitacao', 'slug' => 'workshop-capacitacao', 'description' => 'Treinamentos para lideranca, comunicacao, tecnologia e uso da plataforma.', 'rules' => 'Formato e duracao definidos por demanda.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+        ];
+
+        foreach ($defaults as $index => $service) {
+            if (Service::first('slug', $service['slug'])) {
+                continue;
+            }
+
+            $service['sort_order'] = ($index + 1) * 10;
+            Service::create($service);
+        }
     }
 }

@@ -821,25 +821,40 @@ class ModuleController extends Controller
             if ($orgId > 0) {
                 try {
                     $pdo = \App\Core\Database::connection();
-                    $sql = "SELECT * FROM expense_approvals WHERE organization_id = :org_id";
+                    $driver = (string) $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+                    $monthExpr = $driver === 'sqlite'
+                        ? "strftime('%Y-%m', COALESCE(ft.transaction_date, ea.created_at))"
+                        : "DATE_FORMAT(COALESCE(ft.transaction_date, ea.created_at), '%Y-%m')";
+                    $sql = "
+                        SELECT ea.*,
+                            COALESCE(ft.transaction_date, ea.created_at) as expense_date,
+                            ft.reference as supplier,
+                            requester.name as requester_name,
+                            approver.name as approver_name
+                        FROM expense_approvals ea
+                        LEFT JOIN financial_transactions ft ON ft.id = ea.transaction_id
+                        LEFT JOIN users requester ON requester.id = ea.requested_by
+                        LEFT JOIN users approver ON approver.id = ea.approved_by
+                        WHERE ea.organization_id = :org_id
+                    ";
                     $params = ['org_id' => $orgId];
                     
                     if (!empty($search)) {
-                        $sql .= " AND (description LIKE :search OR supplier LIKE :search)";
+                        $sql .= " AND (ea.description LIKE :search OR ft.reference LIKE :search)";
                         $params['search'] = '%' . $search . '%';
                     }
                     
                     if (!empty($status)) {
-                        $sql .= " AND status = :status";
+                        $sql .= " AND ea.status = :status";
                         $params['status'] = $status;
                     }
                     
                     if (!empty($month)) {
-                        $sql .= " AND DATE_FORMAT(expense_date, '%Y-%m') = :month";
+                        $sql .= " AND {$monthExpr} = :month";
                         $params['month'] = $month;
                     }
                     
-                    $sql .= " ORDER BY expense_date DESC";
+                    $sql .= " ORDER BY expense_date DESC, ea.id DESC";
                     
                     $stmt = $pdo->prepare($sql);
                     $stmt->execute($params);
@@ -861,6 +876,97 @@ class ModuleController extends Controller
             ]);
         } catch (\Throwable $e) {
             $this->handleError($e);
+        }
+    }
+
+    public function storeExpenseApproval(Request $request): void
+    {
+        $this->validate($request, [
+            'description' => 'required|min:3',
+            'amount' => 'required',
+            'expense_date' => 'required',
+        ]);
+
+        try {
+            $orgId = $this->orgId();
+            $pdo = \App\Core\Database::connection();
+            $userId = (int) (Session::user()['id'] ?? 0);
+
+            $stmt = $pdo->prepare("
+                INSERT INTO financial_transactions (organization_id, type, description, amount, transaction_date, reference, status, notes, created_by, created_at, updated_at)
+                VALUES (:org, 'expense', :description, :amount, :transaction_date, :reference, 'pending', :notes, :created_by, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            ");
+            $stmt->execute([
+                'org' => $orgId,
+                'description' => (string) $request->input('description'),
+                'amount' => (float) $request->input('amount'),
+                'transaction_date' => (string) $request->input('expense_date'),
+                'reference' => $request->input('supplier', ''),
+                'notes' => $request->input('notes', ''),
+                'created_by' => $userId,
+            ]);
+            $transactionId = (int) $pdo->lastInsertId();
+
+            $stmt = $pdo->prepare("
+                INSERT INTO expense_approvals (organization_id, transaction_id, description, amount, requested_by, status, notes, created_at, updated_at)
+                VALUES (:org, :transaction_id, :description, :amount, :requested_by, 'pending', :notes, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            ");
+            $stmt->execute([
+                'org' => $orgId,
+                'transaction_id' => $transactionId,
+                'description' => (string) $request->input('description'),
+                'amount' => (float) $request->input('amount'),
+                'requested_by' => $userId,
+                'notes' => $request->input('notes', ''),
+            ]);
+
+            Session::flash('success', 'Despesa enviada para aprovação.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Não foi possível registrar a despesa: ' . $e->getMessage());
+        }
+
+        redirect('/gestao/aprovacoes-despesas?status=pending');
+    }
+
+    public function approveExpense(Request $request): void
+    {
+        $this->setExpenseApprovalStatus((int) $request->param('id'), 'approved');
+        Session::flash('success', 'Despesa aprovada e confirmada no financeiro.');
+        redirect('/gestao/aprovacoes-despesas');
+    }
+
+    public function rejectExpense(Request $request): void
+    {
+        $this->setExpenseApprovalStatus((int) $request->param('id'), 'rejected');
+        Session::flash('success', 'Despesa rejeitada.');
+        redirect('/gestao/aprovacoes-despesas');
+    }
+
+    private function setExpenseApprovalStatus(int $id, string $status): void
+    {
+        $pdo = \App\Core\Database::connection();
+        $orgId = $this->orgId();
+        $userId = (int) (Session::user()['id'] ?? 0);
+        $transactionStatus = $status === 'approved' ? 'confirmed' : 'cancelled';
+
+        $stmt = $pdo->prepare('SELECT transaction_id FROM expense_approvals WHERE id = :id AND organization_id = :org LIMIT 1');
+        $stmt->execute(['id' => $id, 'org' => $orgId]);
+        $transactionId = (int) ($stmt->fetchColumn() ?: 0);
+
+        $stmt = $pdo->prepare("
+            UPDATE expense_approvals
+            SET status = :status, approved_by = :user_id, approved_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+            WHERE id = :id AND organization_id = :org
+        ");
+        $stmt->execute(['status' => $status, 'user_id' => $userId, 'id' => $id, 'org' => $orgId]);
+
+        if ($transactionId > 0) {
+            $stmt = $pdo->prepare("
+                UPDATE financial_transactions
+                SET status = :status, updated_at = CURRENT_TIMESTAMP
+                WHERE id = :id AND organization_id = :org
+            ");
+            $stmt->execute(['status' => $transactionStatus, 'id' => $transactionId, 'org' => $orgId]);
         }
     }
 

@@ -1,7 +1,14 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
+<?php
+$statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo'];
+$recurrenceLabels = ['one_time' => 'Único', 'monthly' => 'Mensal', 'quarterly' => 'Trimestral', 'yearly' => 'Anual'];
+?>
 <div class="mgmt-header">
-    <div><h1 class="mgmt-header__title">Serviços</h1></div>
+    <div>
+        <h1 class="mgmt-header__title">Serviços</h1>
+        <p class="mgmt-header__subtitle">Catálogo de produtos e serviços disponíveis no hub e nas cortesias.</p>
+    </div>
     <div class="mgmt-header__actions"><button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-service').style.display='flex'">Novo serviço</button></div>
 </div>
 
@@ -11,9 +18,9 @@
     <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Serviço</th><th>Preço</th><th>Recorrência</th><th>Status</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($services as $s): ?><tr>
             <td><div class="mgmt-table__name"><?= e($s['name']) ?></div><div class="mgmt-table__sub"><?= e($s['slug']) ?></div></td>
-            <td style="font-weight:700;">R$ <?= number_format((float)$s['price'], 2, ',', '.') ?></td>
-            <td><?= e(match($s['recurrence']) { 'one_time'=>'Único','monthly'=>'Mensal','quarterly'=>'Trimestral','yearly'=>'Anual', default=>$s['recurrence'] }) ?></td>
-            <td><span class="badge badge--<?= $s['status'] ?>"><?= ucfirst(e($s['status'])) ?></span></td>
+            <td style="font-weight:700;">R$ <?= number_format((float)($s['price'] ?? 0), 2, ',', '.') ?></td>
+            <td><?= e($recurrenceLabels[$s['recurrence'] ?? ''] ?? ($s['recurrence'] ?? '-')) ?></td>
+            <td><span class="badge badge--<?= e($s['status']) ?>"><?= e($statusLabels[$s['status'] ?? ''] ?? ($s['status'] ?? '-')) ?></span></td>
             <td class="mgmt-table__actions"><a href="<?= url('/admin/servicos/' . $s['id'] . '/editar') ?>">Editar</a></td>
         </tr><?php endforeach; ?>
     </tbody></table></div>

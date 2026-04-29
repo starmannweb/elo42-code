@@ -7,7 +7,7 @@
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-header__title">Despesas</h1>
-        <p class="mgmt-header__subtitle">Acompanhe as saídas financeiras da igreja.</p>
+        <p class="mgmt-header__subtitle">Registre saídas e acompanhe a aprovação financeira antes da confirmação.</p>
     </div>
     <div class="mgmt-header__actions">
         <button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-expense').style.display='flex'">Nova despesa</button>
@@ -23,7 +23,13 @@
 <div class="mgmt-dashboard-card" style="padding:0;overflow:hidden;">
     <?php if (empty($transactions)): ?>
         <div class="mgmt-empty">
-            <div class="mgmt-empty__icon">R$</div>
+            <div class="mgmt-empty__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M6 9h.01M18 15h.01"></path>
+                </svg>
+            </div>
             <h3 class="mgmt-empty__title">Nenhuma despesa registrada</h3>
             <p class="mgmt-empty__text">Registre as saídas para manter o financeiro em dia.</p>
             <button type="button" onclick="document.getElementById('modal-new-expense').style.display='flex'" class="btn btn--primary">Registrar despesa</button>
@@ -57,10 +63,10 @@
                     <div class="form-group"><label class="form-label">Valor (R$) *</label><input type="number" name="amount" class="form-input" step="0.01" min="0.01" required></div>
                     <div class="form-group"><label class="form-label">Categoria</label><select name="category_id" class="form-select"><option value="">Nenhuma</option><?php foreach ($categories as $c): ?><?php if (($c['type'] ?? '') === 'expense'): ?><option value="<?= (int) $c['id'] ?>"><?= e((string) $c['name']) ?></option><?php endif; ?><?php endforeach; ?></select></div>
                     <div class="form-group"><label class="form-label">Unidade</label><select name="church_unit_id" class="form-select"><option value="">Sede / todas as unidades</option><?php foreach ($units as $unit): ?><option value="<?= (int) $unit['id'] ?>"><?= e((string) $unit['name']) ?></option><?php endforeach; ?></select></div>
-                    <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-select"><option value="confirmed">Confirmado</option><option value="pending">Pendente</option></select></div>
                 </div>
                 <div class="form-group"><label class="form-label">Descrição *</label><input type="text" name="description" class="form-input" required></div>
                 <div class="form-group"><label class="form-label">Referência</label><input type="text" name="reference" class="form-input" placeholder="NF, recibo, etc."></div>
+                <p class="form-hint">Toda nova despesa entra como pendente e aparece em Aprovações para o responsável financeiro aprovar ou rejeitar.</p>
                 <div class="form-group"><label class="form-label">Notas</label><textarea name="notes" class="form-input" rows="2"></textarea></div>
             </div>
             <div class="modal__footer"><button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button><button type="submit" class="btn btn--primary">Registrar</button></div>

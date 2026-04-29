@@ -323,12 +323,7 @@ class MemberPortalController extends Controller
         return [
             ['label' => 'Bíblia', 'href' => '/membro/biblia', 'icon' => 'book'],
             ['label' => 'Eventos', 'href' => '/membro/eventos', 'icon' => 'calendar'],
-            ['label' => 'Ministrações', 'href' => '/membro/ministracoes', 'icon' => 'audio'],
-            ['label' => 'Ofertas', 'href' => '/membro/ofertas', 'icon' => 'gift'],
-            ['label' => 'Solicitações', 'href' => '/membro/solicitacoes', 'icon' => 'message'],
-            ['label' => 'Planos', 'href' => '/membro/planos-leitura', 'icon' => 'check'],
-            ['label' => 'Cursos', 'href' => '/membro/cursos', 'icon' => 'course'],
-            ['label' => 'Conquistas', 'href' => '/membro/conquistas', 'icon' => 'award'],
+            ['label' => 'Planos de leitura', 'href' => '/membro/planos-leitura', 'icon' => 'check'],
         ];
     }
 
@@ -727,36 +722,42 @@ class MemberPortalController extends Controller
                 'title' => 'Pedido de oração',
                 'subtitle' => 'Compartilhe um motivo de oração com a equipe pastoral.',
                 'database_type' => 'prayer',
+                'icon' => 'heart',
                 'tone' => 'danger',
             ],
             'baptism' => [
                 'title' => 'Batismo',
                 'subtitle' => 'Demonstre interesse no próximo batismo.',
                 'database_type' => 'support',
+                'icon' => 'droplet',
                 'tone' => 'primary',
             ],
             'material' => [
                 'title' => 'Cesta básica',
                 'subtitle' => 'Solicite apoio material da igreja.',
                 'database_type' => 'material',
+                'icon' => 'package',
                 'tone' => 'warning',
             ],
             'visit' => [
                 'title' => 'Visita pastoral',
                 'subtitle' => 'Peça uma visita ou acompanhamento próximo.',
                 'database_type' => 'support',
+                'icon' => 'home',
                 'tone' => 'neutral',
             ],
             'pastoral' => [
                 'title' => 'Direção pastoral',
                 'subtitle' => 'Agende uma conversa com a liderança.',
                 'database_type' => 'support',
+                'icon' => 'users',
                 'tone' => 'success',
             ],
             'general' => [
                 'title' => 'Outro pedido',
                 'subtitle' => 'Envie uma solicitação geral para a equipe.',
                 'database_type' => 'general',
+                'icon' => 'message',
                 'tone' => 'neutral',
             ],
         ];

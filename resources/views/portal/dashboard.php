@@ -12,6 +12,7 @@
             'check' => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
             'course' => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 10-10-5-10 5 10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
             'award' => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8.2 13.2 7 22l5-3 5 3-1.2-8.8"/></svg>',
+            'crown' => '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 5 5 5 5-8 5 8 5-5-3 14H5L2 5z"/><path d="M5 19h14"/></svg>',
             default => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>',
         };
     };
@@ -26,22 +27,13 @@
     <div class="portal-page-header">
         <div>
             <p class="portal-subtitle" style="margin-top:0;"><?= e($greeting) ?>, <?= e($firstName) ?></p>
-            <h2 class="portal-title">Sua jornada na igreja</h2>
-            <p class="portal-subtitle">Acompanhe conteúdos, eventos, solicitações e próximos passos em um só lugar.</p>
+            <h2 class="portal-title">Sua área na igreja</h2>
+            <p class="portal-subtitle">Acesse Bíblia, eventos, ministrações e próximos passos em um só lugar.</p>
         </div>
     </div>
 
     <div class="portal-dashboard-grid">
         <section class="portal-grid">
-            <div class="portal-hero" style="<?= $bannerStyle ?>">
-                <span class="portal-hero__badge"><?= e($banner['label'] ?? 'Destaque') ?></span>
-                <h3 class="portal-hero__title"><?= e($banner['title'] ?? '') ?></h3>
-                <p class="portal-hero__text"><?= e($banner['description'] ?? '') ?></p>
-                <div>
-                    <a class="portal-btn portal-btn--gold" href="<?= url((string) ($banner['link_url'] ?? '/membro/eventos')) ?>">Ver agora</a>
-                </div>
-            </div>
-
             <div class="portal-grid portal-grid--3">
                 <div class="portal-card portal-stat">
                     <span class="portal-soft-icon"><?= $icon('calendar') ?></span>
@@ -63,6 +55,15 @@
                         <p class="portal-stat__value"><?= (int) ($achievementSummary['points'] ?? 0) ?></p>
                         <p class="portal-stat__label">Pontos</p>
                     </div>
+                </div>
+            </div>
+
+            <div class="portal-hero" style="<?= $bannerStyle ?>">
+                <span class="portal-hero__badge"><?= e($banner['label'] ?? 'Destaque') ?></span>
+                <h3 class="portal-hero__title"><?= e($banner['title'] ?? '') ?></h3>
+                <p class="portal-hero__text"><?= e($banner['description'] ?? '') ?></p>
+                <div>
+                    <a class="portal-btn portal-btn--gold" href="<?= url((string) ($banner['link_url'] ?? '/membro/eventos')) ?>">Ver agora</a>
                 </div>
             </div>
 
@@ -107,7 +108,7 @@
                     <?php foreach ($quickActions as $action): ?>
                         <a class="portal-quick-card" href="<?= url($action['href']) ?>">
                             <span class="portal-quick-card__icon"><?= $icon($action['icon']) ?></span>
-                            <span class="portal-quick-card__label"><?= e($action['label']) ?></span>
+                            <span class="portal-quick-card__label"><?= e($action['label']) ?><?php if (!empty($action['premium'])): ?> <small class="portal-premium-inline"><?= $icon('crown') ?></small><?php endif; ?></span>
                         </a>
                     <?php endforeach; ?>
                 </div>

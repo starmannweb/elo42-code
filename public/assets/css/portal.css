@@ -476,7 +476,7 @@ body[data-portal-theme="dark"] .portal-topbar {
 
 .portal-dashboard-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
     gap: 22px;
 }
 
@@ -524,7 +524,7 @@ body[data-portal-theme="dark"] .portal-topbar {
 
 .portal-quick-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(126px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
 
@@ -563,7 +563,14 @@ body[data-portal-theme="dark"] .portal-topbar {
 .portal-quick-card__label {
     font-weight: 500;
     line-height: 1.25;
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
+    word-break: normal;
+}
+
+.portal-premium-inline {
+    display: inline-flex;
+    vertical-align: -0.12em;
+    color: var(--portal-gold);
 }
 
 .portal-campaign-payment {
@@ -928,6 +935,104 @@ body[data-portal-theme="dark"] .portal-status--neutral {
 
 .portal-reading-text strong {
     color: var(--portal-primary-dark);
+}
+
+.portal-bible-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.portal-bible-tabs button {
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid var(--portal-border);
+    border-radius: 999px;
+    background: var(--portal-surface);
+    color: var(--portal-text-soft);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.portal-bible-tabs button.active {
+    background: var(--portal-primary-dark);
+    border-color: var(--portal-primary-dark);
+    color: #fff;
+}
+
+.portal-verse {
+    margin-bottom: 14px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+}
+
+.portal-verse.is-highlighted {
+    border-color: rgba(229, 184, 79, 0.45);
+    background: rgba(229, 184, 79, 0.16);
+}
+
+.portal-verse p {
+    margin: 0;
+}
+
+.portal-verse-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.portal-verse-actions button {
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--portal-border);
+    border-radius: 999px;
+    background: var(--portal-surface);
+    color: var(--portal-text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.portal-verse-actions button.active {
+    border-color: var(--portal-primary);
+    color: var(--portal-primary-dark);
+    background: var(--portal-primary-soft);
+}
+
+.portal-bible-panel {
+    margin-top: 18px;
+}
+
+.portal-bible-saved-list {
+    display: grid;
+    gap: 12px;
+}
+
+.portal-bible-saved-item,
+.portal-bible-empty {
+    padding: 16px;
+    border: 1px solid var(--portal-border);
+    border-radius: 14px;
+    background: var(--portal-surface-2);
+}
+
+.portal-bible-saved-item p {
+    margin: 8px 0 0;
+    color: var(--portal-text-soft);
+    line-height: 1.6;
+}
+
+.portal-note-box {
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--portal-primary-soft);
 }
 
 .portal-media-frame {

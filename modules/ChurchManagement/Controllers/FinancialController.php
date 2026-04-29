@@ -91,16 +91,17 @@ class FinancialController extends Controller
     public function categories(Request $request): void
     {
         try {
-            $context = $this->buildBaseContext('Categorias Financeiras', 'categorias-financeiras');
-            
             $categories = FinancialTransaction::getCategories($this->orgId());
 
-            $this->view('management/financial/categories', array_merge($context, [
+            $this->view('management/financial/categories', [
                 'pageTitle' => 'Categorias Financeiras — Gestão',
-                'categories' => $categories
-            ]));
+                'breadcrumb' => 'Categorias Financeiras',
+                'activeMenu' => 'categorias-financeiras',
+                'categories' => $categories,
+            ]);
         } catch (\Throwable $e) {
-            $this->handleError($e);
+            Session::flash('error', 'Erro ao carregar categorias: ' . $e->getMessage());
+            redirect('/gestao');
         }
     }
 
@@ -134,10 +135,20 @@ class FinancialController extends Controller
         ]);
         $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
 
-        FinancialTransaction::create(array_merge($data, [
+        if (($data['type'] ?? '') === 'expense') {
+            $data['status'] = 'pending';
+        }
+
+        $transactionId = FinancialTransaction::create(array_merge($data, [
             'organization_id' => $this->orgId(),
             'created_by'      => Session::user()['id'],
         ]));
+
+        if (($data['type'] ?? '') === 'expense') {
+            $this->createExpenseApproval((int) $transactionId, $data);
+            Session::flash('success', 'Despesa registrada e enviada para aprovação financeira.');
+            redirect('/gestao/aprovacoes-despesas?status=pending');
+        }
 
         Session::flash('success', 'Transação registrada.');
         redirect($request->input('type') === 'expense' ? '/gestao/despesas' : '/gestao/receitas');
@@ -155,6 +166,32 @@ class FinancialController extends Controller
             'color' => $request->input('color', '#0A4DFF'),
         ]);
         Session::flash('success', 'Categoria criada.');
-        redirect('/gestao/configuracoes/categorias');
+        redirect('/gestao/categorias-financeiras');
+    }
+
+    private function createExpenseApproval(int $transactionId, array $data): void
+    {
+        $pdo = Database::connection();
+        $categoryName = null;
+
+        if (!empty($data['category_id'])) {
+            $stmt = $pdo->prepare('SELECT name FROM financial_categories WHERE id = :id AND organization_id = :org LIMIT 1');
+            $stmt->execute(['id' => (int) $data['category_id'], 'org' => $this->orgId()]);
+            $categoryName = $stmt->fetchColumn() ?: null;
+        }
+
+        $stmt = $pdo->prepare("
+            INSERT INTO expense_approvals (organization_id, transaction_id, description, amount, category, requested_by, status, notes, created_at, updated_at)
+            VALUES (:org, :transaction_id, :description, :amount, :category, :requested_by, 'pending', :notes, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        ");
+        $stmt->execute([
+            'org' => $this->orgId(),
+            'transaction_id' => $transactionId,
+            'description' => (string) ($data['description'] ?? ''),
+            'amount' => (float) ($data['amount'] ?? 0),
+            'category' => $categoryName,
+            'requested_by' => (int) (Session::user()['id'] ?? 0),
+            'notes' => $data['notes'] ?? null,
+        ]);
     }
 }

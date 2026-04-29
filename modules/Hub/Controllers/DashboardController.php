@@ -61,7 +61,10 @@ class DashboardController extends Controller
     {
         $context = $this->buildBaseContext('Meus Sites', 'sites');
         $access = $this->resolveSiteBuilderAccess($context['organization'], $context['user']);
-        $currentSite = $this->resolveOrganizationSite($context['organization']);
+        $currentSite = $this->applyOrganizationSiteDefaults(
+            $this->resolveOrganizationSite($context['organization']),
+            is_array($context['organization'] ?? null) ? $context['organization'] : []
+        );
 
         $this->view('hub/sites', array_merge($context, [
             'pageTitle'         => 'Meus Sites — Hub Elo 42',
@@ -78,7 +81,7 @@ class DashboardController extends Controller
         $context = $this->buildBaseContext('Preview do Site', 'sites');
         $organization = is_array($context['organization'] ?? null) ? $context['organization'] : [];
         $template = trim((string) $request->input('template'));
-        $currentSite = $this->resolveOrganizationSite($organization);
+        $currentSite = $this->applyOrganizationSiteDefaults($this->resolveOrganizationSite($organization), $organization, $template);
         $organizationName = trim((string) ($organization['name'] ?? 'Sua igreja'));
 
         if (!$currentSite) {
@@ -134,7 +137,8 @@ class DashboardController extends Controller
         try {
             $this->ensureOrganizationSitesTable();
             $pdo = Database::connection();
-            $siteTitle = trim((string) ($organization['name'] ?? 'Site institucional'));
+            $defaults = $this->siteDefaultsFromOrganization(is_array($organization) ? $organization : [], $template);
+            $siteTitle = trim((string) ($defaults['site_title'] ?? ($organization['name'] ?? 'Site institucional')));
             $siteTitle = $siteTitle !== '' ? $siteTitle : 'Site institucional';
             $slug = $this->slugifySiteTitle($siteTitle);
 
@@ -146,11 +150,11 @@ class DashboardController extends Controller
                 $stmt = $pdo->prepare("
                     UPDATE organization_sites
                     SET template = :template,
-                        site_title = :site_title,
-                        slug = :slug,
+                        site_title = COALESCE(NULLIF(site_title, ''), :site_title),
+                        slug = COALESCE(NULLIF(slug, ''), :slug),
                         status = 'draft',
-                        generated_at = NOW(),
-                        updated_at = NOW()
+                        generated_at = CURRENT_TIMESTAMP,
+                        updated_at = CURRENT_TIMESTAMP
                     WHERE organization_id = :org_id
                 ");
                 $stmt->execute([
@@ -162,14 +166,23 @@ class DashboardController extends Controller
                 Session::flash('success', 'Site atualizado com sucesso. Modelo: ' . $template);
             } else {
                 $stmt = $pdo->prepare("
-                    INSERT INTO organization_sites (organization_id, template, status, site_title, slug, generated_at, created_at, updated_at)
-                    VALUES (:org_id, :template, 'draft', :site_title, :slug, NOW(), NOW(), NOW())
+                    INSERT INTO organization_sites (
+                        organization_id, template, status, site_title, slug, domain, theme_color,
+                        hero_image, logo_image, site_description, about_text, contact_email,
+                        contact_phone, whatsapp_url, instagram_url, facebook_url, youtube_url,
+                        address_line, city, state, cta_label, cta_url, generated_at, created_at, updated_at
+                    ) VALUES (
+                        :org_id, :template, 'draft', :site_title, :slug, :domain, :theme_color,
+                        :hero_image, :logo_image, :site_description, :about_text, :contact_email,
+                        :contact_phone, :whatsapp_url, :instagram_url, :facebook_url, :youtube_url,
+                        :address_line, :city, :state, :cta_label, :cta_url, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+                    )
                 ");
-                $stmt->execute([
-                    'org_id'     => (int) $organization['id'],
-                    'template'   => $template,
+                $stmt->execute($defaults + [
+                    'org_id' => (int) $organization['id'],
+                    'template' => $template,
                     'site_title' => $siteTitle,
-                    'slug'       => $slug,
+                    'slug' => $slug,
                 ]);
                 Session::flash('success', 'Site gerado com sucesso. Seus dados organizacionais foram vinculados ao modelo ' . $template . '.');
             }
@@ -232,7 +245,7 @@ class DashboardController extends Controller
                         state = :state,
                         cta_label = :cta_label,
                         cta_url = :cta_url,
-                        updated_at = NOW()
+                        updated_at = CURRENT_TIMESTAMP
                     WHERE organization_id = :org_id
                 ");
                 $stmt->execute($payload + ['org_id' => (int) $organization['id']]);
@@ -247,7 +260,7 @@ class DashboardController extends Controller
                         :org_id, :template, 'draft', :site_title, :slug, :domain, :theme_color,
                         :hero_image, :logo_image, :site_description, :about_text, :contact_email,
                         :contact_phone, :whatsapp_url, :instagram_url, :facebook_url, :youtube_url,
-                        :address_line, :city, :state, :cta_label, :cta_url, NOW(), NOW(), NOW()
+                        :address_line, :city, :state, :cta_label, :cta_url, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
                     )
                 ");
                 $stmt->execute($payload + ['org_id' => (int) $organization['id']]);
@@ -291,8 +304,8 @@ class DashboardController extends Controller
                 UPDATE organization_sites
                 SET status = 'published',
                     published_url = :published_url,
-                    published_at = NOW(),
-                    updated_at = NOW()
+                    published_at = CURRENT_TIMESTAMP,
+                    updated_at = CURRENT_TIMESTAMP
                 WHERE organization_id = :org_id
             ");
             $stmt->execute([
@@ -900,6 +913,103 @@ class DashboardController extends Controller
             'state' => $this->nullableText((string) $request->input('state', '')),
             'cta_label' => $this->nullableText((string) $request->input('cta_label', '')),
             'cta_url' => $this->normalizeSiteUrl((string) $request->input('cta_url', '')),
+        ];
+    }
+
+    private function applyOrganizationSiteDefaults(?array $site, array $organization, string $template = ''): ?array
+    {
+        if (!$site && empty($organization)) {
+            return null;
+        }
+
+        $defaults = $this->siteDefaultsFromOrganization($organization, $template);
+
+        if (!$site) {
+            $site = $defaults;
+            $site['status'] = 'draft';
+            $site['status_label'] = 'Preview';
+            $site['generated_at_label'] = 'Dados cadastrais';
+            $site['is_preview_only'] = true;
+        } else {
+            foreach ($defaults as $field => $value) {
+                $current = $site[$field] ?? null;
+                if (($current === null || trim((string) $current) === '') && $value !== null && trim((string) $value) !== '') {
+                    $site[$field] = $value;
+                }
+            }
+
+            $site['status_label'] = $site['status_label'] ?? $this->formatSiteStatusLabel((string) ($site['status'] ?? 'draft'));
+            $site['generated_at_label'] = $site['generated_at_label'] ?? $this->formatDateTimeLabel((string) ($site['generated_at'] ?? ''));
+        }
+
+        if ($template !== '') {
+            $site['template'] = $template;
+        }
+
+        $site['public_url'] = $this->sitePublicUrl($site);
+
+        return $site;
+    }
+
+    private function siteDefaultsFromOrganization(array $organization, string $template = ''): array
+    {
+        $settings = $this->organizationSettings($organization, [
+            'seo_title',
+            'seo_desc',
+            'social_instagram',
+            'social_facebook',
+            'social_youtube',
+            'social_whatsapp',
+            'appearance_primary',
+        ]);
+
+        $jsonSettings = [];
+        if (!empty($organization['settings'])) {
+            $decoded = json_decode((string) $organization['settings'], true);
+            $jsonSettings = is_array($decoded) ? $decoded : [];
+        }
+
+        $fromSettings = static function (string $key) use ($settings, $jsonSettings): string {
+            return trim((string) ($settings[$key] ?? $jsonSettings[$key] ?? ''));
+        };
+
+        $siteTitle = trim((string) ($fromSettings('seo_title') ?: ($organization['name'] ?? 'Site institucional')));
+        $siteTitle = $siteTitle !== '' ? $siteTitle : 'Site institucional';
+        $phone = trim((string) ($organization['phone'] ?? ''));
+        $whatsapp = $fromSettings('social_whatsapp');
+
+        if ($whatsapp === '' && $phone !== '') {
+            $digits = preg_replace('/\D+/', '', $phone) ?? '';
+            if ($digits !== '') {
+                $whatsapp = 'https://wa.me/' . (str_starts_with($digits, '55') ? $digits : '55' . ltrim($digits, '0'));
+            }
+        }
+
+        $domain = trim((string) ($organization['website'] ?? ''));
+        $slugSource = $domain !== '' ? preg_replace('/^https?:\/\//i', '', $domain) : $siteTitle;
+        $slugSource = (string) preg_replace('/\/.*$/', '', (string) $slugSource);
+
+        return [
+            'template' => $template !== '' ? $template : 'Institucional Clássico',
+            'site_title' => $siteTitle,
+            'slug' => $this->slugifySiteTitle($slugSource),
+            'domain' => $this->nullableText($domain),
+            'theme_color' => $this->normalizeThemeColor($fromSettings('appearance_primary') ?: '#0A4DFF'),
+            'hero_image' => null,
+            'logo_image' => $this->normalizeSiteUrl((string) ($organization['logo'] ?? '')),
+            'site_description' => $this->nullableText($fromSettings('seo_desc') ?: 'Uma página institucional para acolher visitantes, apresentar a igreja e facilitar o contato.'),
+            'about_text' => $this->nullableText('Conheça a comunidade, acompanhe eventos, ministérios e campanhas cadastradas pela igreja.'),
+            'contact_email' => $this->nullableText((string) ($organization['email'] ?? '')),
+            'contact_phone' => $this->nullableText($phone),
+            'whatsapp_url' => $this->normalizeSiteUrl($whatsapp),
+            'instagram_url' => $this->normalizeSiteUrl($fromSettings('social_instagram')),
+            'facebook_url' => $this->normalizeSiteUrl($fromSettings('social_facebook')),
+            'youtube_url' => $this->normalizeSiteUrl($fromSettings('social_youtube')),
+            'address_line' => $this->nullableText((string) ($organization['address'] ?? '')),
+            'city' => $this->nullableText((string) ($organization['city'] ?? '')),
+            'state' => $this->nullableText((string) ($organization['state'] ?? '')),
+            'cta_label' => $whatsapp !== '' ? 'Falar no WhatsApp' : 'Falar com a igreja',
+            'cta_url' => $this->normalizeSiteUrl($whatsapp),
         ];
     }
 

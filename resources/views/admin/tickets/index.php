@@ -1,5 +1,6 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
+<?php $priorityLabels = ['urgent' => 'Urgente', 'high' => 'Alta', 'normal' => 'Normal', 'low' => 'Baixa']; ?>
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Tickets</h1></div></div>
 <form method="GET" action="<?= url('/admin/tickets') ?>" class="mgmt-filters">
     <select name="status" class="form-select"><option value="">Todos</option><?php foreach (['open'=>'Abertos','in_progress'=>'Em andamento','waiting'=>'Aguardando','resolved'=>'Resolvidos','closed'=>'Fechados'] as $k=>$v): ?><option value="<?= $k ?>" <?= ($filters['status']??'')===$k?'selected':'' ?>><?= $v ?></option><?php endforeach; ?></select>
@@ -13,7 +14,7 @@
             <td><div class="mgmt-table__name"><?= e($t['subject']) ?></div><div class="mgmt-table__sub"><?= e($t['category']) ?></div></td>
             <td><?= e($t['user_name']) ?></td>
             <td><?= e($t['org_name'] ?? '—') ?></td>
-            <td><span class="badge badge--<?= $t['priority'] ?>"><?= ucfirst(e($t['priority'])) ?></span></td>
+            <td><span class="badge badge--<?= e($t['priority']) ?>"><?= e($priorityLabels[$t['priority'] ?? ''] ?? ($t['priority'] ?? '-')) ?></span></td>
             <td><span class="badge badge--<?= $t['status'] ?>"><?= e(match($t['status']) { 'open'=>'Aberto','in_progress'=>'Andamento','waiting'=>'Aguardando','resolved'=>'Resolvido','closed'=>'Fechado', default=>$t['status'] }) ?></span></td>
             <td><?= date('d/m/Y H:i', strtotime($t['created_at'])) ?></td>
             <td class="mgmt-table__actions"><a href="<?= url('/admin/tickets/' . $t['id']) ?>">Ver</a></td>

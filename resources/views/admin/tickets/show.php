@@ -1,7 +1,8 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
+<?php $priorityLabels = ['urgent' => 'Urgente', 'high' => 'Alta', 'normal' => 'Normal', 'low' => 'Baixa']; ?>
 <div class="mgmt-header">
-    <div><h1 class="mgmt-header__title">Ticket #<?= $ticket['id'] ?></h1><p class="mgmt-header__subtitle"><span class="badge badge--<?= $ticket['priority'] ?>"><?= ucfirst(e($ticket['priority'])) ?></span> · <span class="badge badge--<?= $ticket['status'] ?>"><?= e(match($ticket['status']) { 'open'=>'Aberto','in_progress'=>'Em andamento','waiting'=>'Aguardando','resolved'=>'Resolvido','closed'=>'Fechado', default=>$ticket['status'] }) ?></span></p></div>
+    <div><h1 class="mgmt-header__title">Ticket #<?= $ticket['id'] ?></h1><p class="mgmt-header__subtitle"><span class="badge badge--<?= e($ticket['priority']) ?>"><?= e($priorityLabels[$ticket['priority'] ?? ''] ?? ($ticket['priority'] ?? '-')) ?></span> · <span class="badge badge--<?= $ticket['status'] ?>"><?= e(match($ticket['status']) { 'open'=>'Aberto','in_progress'=>'Em andamento','waiting'=>'Aguardando','resolved'=>'Resolvido','closed'=>'Fechado', default=>$ticket['status'] }) ?></span></p></div>
     <div class="mgmt-header__actions">
         <form method="POST" action="<?= url('/admin/tickets/' . $ticket['id'] . '/status') ?>" style="display:flex;gap:var(--space-2);">
             <?= csrf_field() ?>

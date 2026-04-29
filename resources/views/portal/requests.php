@@ -14,6 +14,16 @@
         'resolved' => 'portal-status--success',
         'closed' => 'portal-status--neutral',
     ];
+    $requestIcon = static function (string $name): string {
+        return match ($name) {
+            'heart' => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+            'droplet' => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.5S6 9 6 14a6 6 0 0 0 12 0c0-5-6-11.5-6-11.5z"/></svg>',
+            'package' => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 8-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
+            'home' => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10.5 9-7 9 7V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>',
+            'users' => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+            default => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>',
+        };
+    };
 ?>
 
 <div class="portal-page portal-page--wide">
@@ -30,7 +40,7 @@
                 <?php foreach ($requestTypes as $key => $type): ?>
                     <button type="button" class="portal-list-card" data-request-type="<?= e($key) ?>" style="text-align:left;cursor:pointer;">
                         <span class="portal-soft-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+                            <?= $requestIcon((string) ($type['icon'] ?? 'message')) ?>
                         </span>
                         <span class="portal-list-card__content">
                             <strong class="portal-list-card__title"><?= e($type['title']) ?></strong>
@@ -62,9 +72,11 @@
                         <div class="portal-list">
                             <?php foreach ($requests as $item): ?>
                                 <?php $status = (string) ($item['status'] ?? 'open'); ?>
+                                <?php $type = (string) ($item['type'] ?? 'general'); ?>
+                                <?php $iconName = (string) ($requestTypes[$type]['icon'] ?? 'message'); ?>
                                 <article class="portal-list-card">
                                     <span class="portal-soft-icon">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+                                        <?= $requestIcon($iconName) ?>
                                     </span>
                                     <div class="portal-list-card__content">
                                         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">

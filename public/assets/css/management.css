@@ -599,6 +599,12 @@ body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-light {
     border-radius: var(--radius-full);
 }
 
+.mgmt-empty__icon svg {
+    width: 44px;
+    height: 44px;
+    color: #0f1d3a;
+}
+
 .mgmt-empty__title {
     font-family: 'Inter', sans-serif;
     font-size: var(--text-lg);
@@ -1455,7 +1461,8 @@ textarea.form-input,
     border-radius: 12px;
 }
 
-.btn.btn-secondary {
+.btn.btn-secondary,
+.btn.btn--secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1569,7 +1576,7 @@ textarea.form-input,
 
 .modal__content {
     width: min(680px, 100%);
-    max-height: calc(100dvh - 3rem);
+    max-height: min(760px, calc(100dvh - 2rem));
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -1593,11 +1600,17 @@ textarea.form-input,
     border-top: 1px solid #edf1f7;
     border-bottom: 0;
     justify-content: flex-end;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    flex: 0 0 auto;
+    background: #fff;
 }
 
 .modal__body {
     padding: 1.35rem;
     overflow-y: auto;
+    max-height: calc(100dvh - 190px);
     scrollbar-gutter: stable;
 }
 
@@ -1714,6 +1727,10 @@ body[data-hub-theme="dark"] .mgmt-tabs-frame {
     text-transform: uppercase;
 }
 
+.report-filter__select::after {
+    content: "v";
+}
+
 .report-filter__select select {
     min-height: 42px;
     width: 100%;
@@ -1721,6 +1738,50 @@ body[data-hub-theme="dark"] .mgmt-tabs-frame {
     padding-right: 2.75rem;
     cursor: pointer;
     appearance: none;
+}
+
+.mgmt-header--reports {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.95fr) minmax(0, 1.55fr);
+    align-items: end;
+    column-gap: 1.5rem;
+}
+
+.mgmt-header--reports .report-filter {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: minmax(220px, 1.15fr) repeat(2, minmax(160px, 0.72fr)) minmax(104px, auto) minmax(112px, auto) minmax(170px, auto);
+    align-items: end !important;
+    justify-content: end;
+    gap: 0.8rem !important;
+}
+
+.report-filter__field {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.report-filter__field span {
+    color: #60708e;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.report-filter__field .form-control,
+.mgmt-header--reports .report-filter__select select {
+    min-height: 52px;
+    height: 52px;
+}
+
+.mgmt-header--reports .report-filter .btn {
+    min-height: 52px;
+    padding-inline: 1.2rem;
+}
+
+.mgmt-header--reports .report-filter .btn--primary {
+    min-width: 170px;
 }
 
 .mgmt-list {
@@ -1950,6 +2011,7 @@ body[data-hub-theme="dark"] .modal textarea {
 .btn,
 .btn.btn-primary,
 .btn.btn-secondary,
+.btn.btn--secondary,
 .btn.btn--primary,
 .btn.btn--outline,
 .btn.btn--ghost {
@@ -1983,6 +2045,7 @@ body[data-hub-theme="dark"] .modal textarea {
 }
 
 .btn.btn-secondary,
+.btn.btn--secondary,
 .btn.btn--outline {
     border: 1px solid #c7d6f4;
     background: #fff;
@@ -2053,13 +2116,13 @@ body[data-hub-theme="dark"] .modal textarea {
 
 .mgmt-filter-form,
 .report-filter {
-    align-items: center !important;
+    align-items: end !important;
 }
 
 .mgmt-header .report-filter {
-    width: min(100%, 820px);
+    width: min(100%, 1120px);
     margin-left: auto;
-    grid-template-columns: minmax(180px, 1fr) 158px 158px auto auto;
+    grid-template-columns: minmax(220px, 1.2fr) 158px 158px 112px 112px minmax(170px, auto);
     gap: 0.75rem !important;
 }
 
@@ -2067,7 +2130,7 @@ body[data-hub-theme="dark"] .modal textarea {
 .report-filter .form-select {
     min-width: 0;
     width: 100%;
-    height: 46px;
+    height: 52px;
 }
 
 .report-filter .btn {
@@ -2127,6 +2190,7 @@ body[data-hub-theme="dark"] .hub-content {
 }
 
 body[data-hub-theme="dark"] .btn.btn-secondary,
+body[data-hub-theme="dark"] .btn.btn--secondary,
 body[data-hub-theme="dark"] .btn.btn--outline,
 body[data-hub-theme="dark"] .btn.btn--ghost,
 body[data-hub-theme="dark"] .modal__close {
@@ -2139,7 +2203,15 @@ body[data-hub-theme="dark"] .mgmt-calendar-day:hover {
     background: #111c31;
 }
 
+body[data-hub-theme="dark"] .modal__footer {
+    background: #0f1c31;
+}
+
 @media (max-width: 1180px) {
+    .mgmt-header--reports {
+        grid-template-columns: 1fr;
+    }
+
     .mgmt-header .report-filter {
         width: 100%;
         margin-left: 0;
@@ -2358,6 +2430,10 @@ body[data-hub-theme="dark"] .mgmt-layout h3,
 body[data-hub-theme="dark"] .mgmt-layout h4,
 body[data-hub-theme="dark"] .mgmt-layout .mgmt-empty__title,
 body[data-hub-theme="dark"] .mgmt-layout .mgmt-table__name {
+    color: #f8fafc;
+}
+
+body[data-hub-theme="dark"] .mgmt-layout .mgmt-empty__icon svg {
     color: #f8fafc;
 }
 

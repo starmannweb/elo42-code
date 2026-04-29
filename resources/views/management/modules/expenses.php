@@ -153,7 +153,7 @@
             <button type="button" class="modal__close" onclick="document.getElementById('addExpenseModal').style.display='none'">&times;</button>
         </div>
         <form method="POST" action="<?= url('/gestao/aprovacoes-despesas/nova') ?>">
-            <input type="hidden" name="csrf_token" value="<?= e($csrf ?? '') ?>">
+            <?= csrf_field() ?>
             <div class="modal__body">
                 <div class="form-group">
                     <label for="description" class="form-label">Descrição <span style="color: var(--danger);">*</span></label>
@@ -198,7 +198,7 @@ function approveExpense(id) {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '<?= url('/gestao/aprovacoes-despesas/') ?>' + id + '/aprovar';
-        form.innerHTML = '<input type="hidden" name="csrf_token" value="<?= e($csrf ?? '') ?>">';
+        form.innerHTML = '<input type="hidden" name="_csrf_token" value="<?= e(csrf_token()) ?>">';
         document.body.appendChild(form);
         form.submit();
     }
@@ -209,7 +209,7 @@ function rejectExpense(id) {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '<?= url('/gestao/aprovacoes-despesas/') ?>' + id + '/rejeitar';
-        form.innerHTML = '<input type="hidden" name="csrf_token" value="<?= e($csrf ?? '') ?>">';
+        form.innerHTML = '<input type="hidden" name="_csrf_token" value="<?= e(csrf_token()) ?>">';
         document.body.appendChild(form);
         form.submit();
     }

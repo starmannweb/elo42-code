@@ -374,9 +374,36 @@ class GeneralController extends Controller
     public function counseling(Request $req): void
     {
         try {
+            $allSessions = CounselingSession::byOrg($this->orgId());
+            $statusFilter = (string) $req->input('status', 'pending');
+            $allowedFilters = ['pending', 'in_progress', 'completed', 'all'];
+            if (!in_array($statusFilter, $allowedFilters, true)) {
+                $statusFilter = 'pending';
+            }
+
+            $statusGroup = static function (array $session): string {
+                return match ((string) ($session['status'] ?? 'pending')) {
+                    'scheduled', 'pending' => 'pending',
+                    'in_progress' => 'in_progress',
+                    'completed' => 'completed',
+                    default => 'pending',
+                };
+            };
+
+            $counts = ['pending' => 0, 'in_progress' => 0, 'completed' => 0];
+            foreach ($allSessions as $session) {
+                $counts[$statusGroup($session)]++;
+            }
+
+            $sessions = $statusFilter === 'all'
+                ? $allSessions
+                : array_values(array_filter($allSessions, static fn (array $session): bool => $statusGroup($session) === $statusFilter));
+
             $this->view('management/counseling/index', [
                 'pageTitle' => 'Aconselhamento — Gestão', 'breadcrumb' => 'Aconselhamento',
-                'sessions' => CounselingSession::byOrg($this->orgId()),
+                'sessions' => $sessions,
+                'statusCounts' => $counts,
+                'statusFilter' => $statusFilter,
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar aconselhamento: ' . $e->getMessage());
@@ -761,17 +788,7 @@ class GeneralController extends Controller
 
     public function settingsCategories(Request $req): void
     {
-        try {
-            $context = $this->buildBaseContext('Configurações / Categorias', 'configuracoes');
-            $this->view('management/settings/categories', array_merge($context, [
-                'pageTitle' => 'Categorias — Gestão',
-                'activeTab' => 'categorias',
-                'categories' => FinancialTransaction::getCategories($this->orgId()),
-            ]));
-        } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar categorias: ' . $e->getMessage());
-            redirect('/gestao');
-        }
+        redirect('/gestao/categorias-financeiras');
     }
 
     public function settingsUnits(Request $req): void
@@ -876,17 +893,7 @@ class GeneralController extends Controller
 
     public function settingsAppearance(Request $req): void
     {
-        try {
-            $context = $this->buildBaseContext('Aparência', 'configuracoes/aparencia');
-            $this->view('management/settings/appearance', array_merge($context, [
-                'pageTitle' => 'Aparência — Gestão',
-                'activeTab' => 'aparencia',
-                'settings' => $this->settingValues()
-            ]));
-        } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
-            redirect('/gestao');
-        }
+        redirect('/hub/sites#aparencia-site');
     }
 
     public function settingsSeo(Request $req): void

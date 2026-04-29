@@ -35,6 +35,9 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
         $router->post('/solicitacoes/{id}/status', [GeneralController::class, 'updateRequestStatus']);
         
         $router->get('/aprovacoes-despesas', [ModuleController::class, 'expensesApprovals']);
+        $router->post('/aprovacoes-despesas/nova', [ModuleController::class, 'storeExpenseApproval']);
+        $router->post('/aprovacoes-despesas/{id}/aprovar', [ModuleController::class, 'approveExpense']);
+        $router->post('/aprovacoes-despesas/{id}/rejeitar', [ModuleController::class, 'rejectExpense']);
         $router->get('/auditoria', [ModuleController::class, 'auditing']);
         $router->get('/contas', [ModuleController::class, 'accounts']);
 
@@ -86,6 +89,7 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
     $router->get('/financeiro/novo', [FinancialController::class, 'create']);
     $router->post('/financeiro', [FinancialController::class, 'store']);
     $router->post('/financeiro/categoria', [FinancialController::class, 'createCategory']);
+    $router->get('/categorias-financeiras', [FinancialController::class, 'categories']);
     $router->get('/doacoes', [GeneralController::class, 'donations']);
     $router->get('/doacoes/nova', [GeneralController::class, 'createDonation']);
     $router->post('/doacoes', [GeneralController::class, 'storeDonation']);

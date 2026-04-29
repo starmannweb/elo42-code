@@ -16,6 +16,11 @@ foreach ($sessions ?? [] as $s) {
     elseif (($s['status'] ?? '') === 'in_progress') $emAndamento++;
     elseif (($s['status'] ?? '') === 'completed') $concluidos++;
 }
+$statusCounts = is_array($statusCounts ?? null) ? $statusCounts : ['pending' => $pendentes, 'in_progress' => $emAndamento, 'completed' => $concluidos];
+$pendentes = (int) ($statusCounts['pending'] ?? 0);
+$emAndamento = (int) ($statusCounts['in_progress'] ?? 0);
+$concluidos = (int) ($statusCounts['completed'] ?? 0);
+$statusFilter = (string) ($statusFilter ?? 'pending');
 ?>
 
 <div class="mgmt-kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
@@ -49,9 +54,9 @@ foreach ($sessions ?? [] as $s) {
 </div>
 
 <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-6); border-bottom: 1px solid var(--color-border);">
-    <button class="btn btn--ghost" style="border-bottom: 2px solid var(--color-primary); border-radius: 0; padding-bottom: var(--space-3);">Pendentes (<?= $pendentes ?>)</button>
-    <button class="btn btn--ghost" style="border-radius: 0; padding-bottom: var(--space-3); color: var(--text-muted);">Em Andamento (<?= $emAndamento ?>)</button>
-    <button class="btn btn--ghost" style="border-radius: 0; padding-bottom: var(--space-3); color: var(--text-muted);">Concluídos (<?= $concluidos ?>)</button>
+    <a class="btn btn--ghost" href="<?= url('/gestao/atendimento-pastoral?status=pending') ?>" style="<?= $statusFilter === 'pending' ? 'border-bottom: 2px solid var(--color-primary); color: var(--color-primary);' : 'color: var(--text-muted);' ?> border-radius: 0; padding-bottom: var(--space-3);">Pendentes (<?= $pendentes ?>)</a>
+    <a class="btn btn--ghost" href="<?= url('/gestao/atendimento-pastoral?status=in_progress') ?>" style="<?= $statusFilter === 'in_progress' ? 'border-bottom: 2px solid var(--color-primary); color: var(--color-primary);' : 'color: var(--text-muted);' ?> border-radius: 0; padding-bottom: var(--space-3);">Em Andamento (<?= $emAndamento ?>)</a>
+    <a class="btn btn--ghost" href="<?= url('/gestao/atendimento-pastoral?status=completed') ?>" style="<?= $statusFilter === 'completed' ? 'border-bottom: 2px solid var(--color-primary); color: var(--color-primary);' : 'color: var(--text-muted);' ?> border-radius: 0; padding-bottom: var(--space-3);">Concluídos (<?= $concluidos ?>)</a>
 </div>
 
 <?php if (empty($sessions)): ?>

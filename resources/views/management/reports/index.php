@@ -1,6 +1,6 @@
 <?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
-<div class="mgmt-header">
+<div class="mgmt-header mgmt-header--reports">
     <div>
         <h1 class="mgmt-header__title">Relatórios</h1>
         <p class="mgmt-header__subtitle">Análises detalhadas e métricas de desempenho da igreja</p>
@@ -23,8 +23,14 @@
                 <?php endforeach; ?>
             </select>
         </label>
-        <input type="date" name="start_date" class="form-control" value="<?= e((string) ($filters['start_date'] ?? date('Y-m-01'))) ?>">
-        <input type="date" name="end_date" class="form-control" value="<?= e((string) ($filters['end_date'] ?? date('Y-m-t'))) ?>">
+        <label class="report-filter__field">
+            <span>Início</span>
+            <input type="date" name="start_date" class="form-control" value="<?= e((string) ($filters['start_date'] ?? date('Y-m-01'))) ?>">
+        </label>
+        <label class="report-filter__field">
+            <span>Fim</span>
+            <input type="date" name="end_date" class="form-control" value="<?= e((string) ($filters['end_date'] ?? date('Y-m-t'))) ?>">
+        </label>
         <a href="<?= url('/gestao/relatorios') ?>" class="btn btn--outline">Limpar</a>
         <button type="submit" class="btn btn--secondary">Aplicar</button>
         <button type="submit" name="export" value="pdf" class="btn btn--primary" formtarget="_blank">Exportar PDF</button>

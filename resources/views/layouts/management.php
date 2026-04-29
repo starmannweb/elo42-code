@@ -129,9 +129,7 @@
             $settingsTabs = [
                 ['href' => '/gestao/configuracoes/usuarios', 'label' => 'Usuários', 'icon' => 'users', 'active' => ['/gestao/configuracoes', '/gestao/configuracoes/usuarios', '/gestao/usuarios']],
                 ['href' => '/gestao/configuracoes/unidades', 'label' => 'Unidades', 'icon' => 'home'],
-                ['href' => '/gestao/configuracoes/categorias', 'label' => 'Categorias', 'icon' => 'category'],
                 ['href' => '/gestao/configuracoes/pix', 'label' => 'PIX / Ofertas', 'icon' => 'pix', 'premium' => true],
-                ['href' => '/gestao/configuracoes/aparencia', 'label' => 'Aparência', 'icon' => 'palette', 'premium' => true],
                 ['href' => '/gestao/configuracoes/seo', 'label' => 'SEO', 'icon' => 'seo', 'premium' => true],
                 ['href' => '/gestao/configuracoes/pwa', 'label' => 'PWA', 'icon' => 'pwa', 'premium' => true],
                 ['href' => '/gestao/configuracoes/integracoes', 'label' => 'Integrações e IA', 'icon' => 'integration', 'premium' => true, 'active' => ['/gestao/configuracoes/integracoes', '/gestao/configuracoes/ia']],
@@ -159,13 +157,14 @@
                 <?php $renderSection('Financeiro'); ?>
                 <?= $navItem('/gestao/receitas', 'Receitas', 'income', false, ['/gestao/receitas', '/gestao/doacoes']) ?>
                 <?= $navItem('/gestao/despesas', 'Despesas', 'expense', false, ['/gestao/despesas']) ?>
+                <?= $navItem('/gestao/categorias-financeiras', 'Categorias', 'category', false, ['/gestao/categorias-financeiras']) ?>
                 <?= $navItem('/gestao/aprovacoes-despesas', 'Aprovações', 'check', true, ['/gestao/aprovacoes-despesas']) ?>
                 <?= $navItem('/gestao/auditoria', 'Auditoria', 'audit', true, ['/gestao/auditoria']) ?>
                 <?= $navItem('/gestao/contas', 'Contas / Caixas', 'wallet', true, ['/gestao/contas']) ?>
 
                 <?php $renderSection('Comunicação'); ?>
                 <?= $navItem('/gestao/agenda', 'Agenda e Eventos', 'calendar', false, ['/gestao/agenda', '/gestao/eventos']) ?>
-                <?= $navItem('/gestao/plano-leitura', 'Plano de leitura', 'book', false, ['/gestao/plano-leitura']) ?>
+                <?= $navItem('/gestao/plano-leitura', 'Planos de Leitura', 'book', false, ['/gestao/plano-leitura']) ?>
                 <?= $navItem('/gestao/banners', 'Banners', 'image', true, ['/gestao/banners']) ?>
                 <?= $navItem('/gestao/cursos', 'Cursos', 'courses', true, ['/gestao/cursos']) ?>
                 <?= $navItem('/gestao/campanhas', 'Campanhas', 'campaign', true, ['/gestao/campanhas']) ?>
@@ -197,6 +196,10 @@
             <header class="hub-topbar">
                 <div class="hub-topbar__left">
                     <button class="hub-topbar__mobile-toggle" id="hub-sidebar-toggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+                    <div class="hub-topbar__context">
+                        <span>Gest&atilde;o para Igrejas</span>
+                        <strong><?= e((string) ($organization['name'] ?? 'Elo 42')) ?></strong>
+                    </div>
                 </div>
                 <div class="hub-topbar__right" style="display:flex;align-items:center;gap:1rem;">
                     <?php if ($isSystemAdmin): ?>

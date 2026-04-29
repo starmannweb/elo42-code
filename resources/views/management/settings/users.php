@@ -1,5 +1,21 @@
 <?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
+<?php
+    $statusLabels = [
+        'active' => 'Ativo',
+        'inactive' => 'Inativo',
+        'pending' => 'Pendente',
+        'blocked' => 'Bloqueado',
+        'suspended' => 'Suspenso',
+    ];
+    $roleLabels = [
+        'super admin' => 'Super administrador',
+        'admin' => 'Administrador',
+        'member' => 'Membro',
+        'manager' => 'Gestor',
+        'finance' => 'Financeiro',
+    ];
+?>
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-header__title">Usuários e permissões</h1>
@@ -29,11 +45,14 @@
                 </tr>
             <?php else: ?>
                 <?php foreach ($users as $item): ?>
+                    <?php $status = strtolower((string) ($item['status'] ?? 'active')); ?>
+                    <?php $roleName = (string) ($item['role_name'] ?? 'Membro'); ?>
+                    <?php $roleKey = strtolower(trim($roleName)); ?>
                     <tr>
                         <td><div class="mgmt-table__name"><?= e((string) ($item['name'] ?? 'Usuário')) ?></div></td>
                         <td><?= e((string) ($item['email'] ?? '-')) ?></td>
-                        <td><span class="badge badge--info"><?= e((string) ($item['role_name'] ?? 'Membro')) ?></span></td>
-                        <td><span class="badge badge--<?= e((string) ($item['status'] ?? 'active')) ?>"><?= e((string) ($item['status'] ?? 'active')) ?></span></td>
+                        <td><span class="badge badge--info"><?= e($roleLabels[$roleKey] ?? $roleName) ?></span></td>
+                        <td><span class="badge badge--<?= e($status) ?>"><?= e($statusLabels[$status] ?? ucfirst($status)) ?></span></td>
                         <td style="text-align:right;">
                             <form action="<?= url('/gestao/usuarios/' . ($item['org_user_id'] ?? 0) . '/excluir') ?>" method="POST" style="display:inline-block;" onsubmit="return confirm('Desvincular usuário?');">
                                 <?= csrf_field() ?>
