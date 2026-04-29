@@ -1,0 +1,29 @@
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct web access to application source and private files when the
+    # repository is deployed inside public_html on shared hosting.
+    RewriteRule ^(\.git|\.github|app|config|database|modules|resources|routes|storage|vendor)(/|$) - [F,L,NC]
+    RewriteRule ^(\.env|\.env\..*|composer\.(json|lock)|Dockerfile|render\.yaml|README\.md|migrate\.php|serve\.ps1|seed-review-users\.php|test_usuarios\.php|docker-entrypoint\.sh|Animation-.*\.json)$ - [F,L,NC]
+
+    # Shared hosting fallback: keep public assets available at the same URLs
+    # used by the application while routing requests through public/index.php.
+    RewriteRule ^$ public/index.php [L]
+    RewriteRule ^assets/(.*)$ public/assets/$1 [L,NC]
+    RewriteRule ^storage/(.*)$ public/storage/$1 [L,NC]
+    RewriteRule ^(manifest\.json|offline\.html|sw\.js)$ public/$1 [L,NC]
+
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/index.php?url=$1 [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

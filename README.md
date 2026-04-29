@@ -45,3 +45,17 @@ Para ativar deploy automatico para o Render via hook:
 1. Crie um Deploy Hook no Render.
 2. No GitHub, adicione o secret `RENDER_DEPLOY_HOOK_URL` com a URL do hook.
 3. Cada push na branch `master` vai disparar o deploy.
+
+## Deploy no Napoleon
+
+Use o guia em `docs/DEPLOY_NAPOLEON.md`.
+
+Resumo:
+
+1. Crie o dominio, SSL, PHP 8.2+ e MySQL no painel Napoleon.
+2. Clone este repositorio no servidor.
+3. Aponte o document root para `public` sempre que o painel permitir.
+4. Copie `.env.napoleon.example` para `.env` e preencha dominio e banco.
+5. Rode `php migrate.php`.
+
+Se o painel exigir uso direto de `public_html`, o `.htaccess` da raiz faz fallback para `public/index.php` e bloqueia arquivos privados.
