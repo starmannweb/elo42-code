@@ -61,18 +61,28 @@ class DashboardController extends Controller
     {
         $context = $this->buildBaseContext('Meus Sites', 'sites');
         $access = $this->resolveSiteBuilderAccess($context['organization'], $context['user']);
+        $organization = is_array($context['organization'] ?? null) ? $context['organization'] : [];
         $currentSite = $this->applyOrganizationSiteDefaults(
             $this->resolveOrganizationSite($context['organization']),
-            is_array($context['organization'] ?? null) ? $context['organization'] : []
+            $organization
         );
 
+        $appearanceSettings = $this->organizationSettings($organization, [
+            'appearance_primary',
+            'appearance_secondary',
+            'appearance_accent',
+            'appearance_background',
+            'appearance_text',
+        ]);
+
         $this->view('hub/sites', array_merge($context, [
-            'pageTitle'         => 'Meus Sites — Hub Elo 42',
-            'siteBuilderAccess' => $access,
-            'currentSite'       => $currentSite,
-            'siteTemplates'     => $this->buildSiteTemplates(),
-            'publishChecklist'  => $this->buildSitePublishChecklist($context['organization'], $currentSite, $access),
-            'publishedUrl'      => $this->sitePublicUrl($currentSite),
+            'pageTitle'          => 'Meus Sites — Hub Elo 42',
+            'siteBuilderAccess'  => $access,
+            'currentSite'        => $currentSite,
+            'siteTemplates'      => $this->buildSiteTemplates(),
+            'publishChecklist'   => $this->buildSitePublishChecklist($context['organization'], $currentSite, $access),
+            'publishedUrl'       => $this->sitePublicUrl($currentSite),
+            'appearanceSettings' => $appearanceSettings,
         ]));
     }
 
@@ -83,6 +93,14 @@ class DashboardController extends Controller
         $template = trim((string) $request->input('template'));
         $currentSite = $this->applyOrganizationSiteDefaults($this->resolveOrganizationSite($organization), $organization, $template);
         $organizationName = trim((string) ($organization['name'] ?? 'Sua igreja'));
+
+        $publicUrl = $this->sitePublicUrl($currentSite);
+        if ($publicUrl !== '') {
+            if ($template !== '') {
+                $publicUrl .= (str_contains($publicUrl, '?') ? '&' : '?') . 'template=' . rawurlencode($template);
+            }
+            redirect($publicUrl);
+        }
 
         if (!$currentSite) {
             $currentSite = [

@@ -15,12 +15,19 @@
     $siteTitle = (string) ($currentSite['site_title'] ?? $organizationName);
     $siteDescription = (string) ($currentSite['site_description'] ?? '');
     $publishedUrl = (string) ($publishedUrl ?? ($currentSite['public_url'] ?? ''));
+    $previewUrl = $publishedUrl !== '' ? $publishedUrl : url('/site/' . rawurlencode((string) ($currentSite['slug'] ?? 'preview')));
     $templateValue = (string) ($currentSite['template'] ?? 'Institucional Clássico');
     $defaultDescription = 'Uma comunidade para acolher, servir e caminhar em fé.';
+    $appearance = is_array($appearanceSettings ?? null) ? $appearanceSettings : [];
+    $appearancePrimary = trim((string) ($appearance['appearance_primary'] ?? ''));
+    $appearanceAccent = trim((string) ($appearance['appearance_accent'] ?? ''));
+    $appearanceBackground = trim((string) ($appearance['appearance_background'] ?? ''));
+    $appearanceText = trim((string) ($appearance['appearance_text'] ?? ''));
+    $hasAppearanceSettings = ($appearancePrimary !== '' || $appearanceAccent !== '');
     $steps = [
         ['id' => 'dados-site', 'number' => '1', 'title' => 'Dados do site', 'text' => 'Informações públicas e contatos'],
         ['id' => 'modelos-site', 'number' => '2', 'title' => 'Escolher modelo', 'text' => 'Estrutura visual inicial'],
-        ['id' => 'aparencia-site', 'number' => '3', 'title' => 'Definir aparência', 'text' => 'Logo, imagem, cores e redes'],
+        ['id' => 'aparencia-site', 'number' => '3', 'title' => 'Definir aparência', 'text' => 'Logo, imagem e cores'],
         ['id' => 'publicar-site', 'number' => '4', 'title' => 'Publicar', 'text' => 'Preview, prontidão e assinatura'],
     ];
 ?>
@@ -33,12 +40,8 @@
                 Configure o site em etapas, revise o preview e publique quando a mensalidade e o domínio estiverem prontos.
             </p>
         </div>
-        <div class="hub-page__actions">
-            <a href="#dados-site" class="btn btn--outline btn--lg" data-site-step-link>Editar dados</a>
-            <a href="#modelos-site" class="btn btn--ghost btn--lg" data-site-step-link>Modelos</a>
-            <?php if ($currentSite): ?>
-                <a href="<?= url('/hub/sites/preview') ?>" class="btn btn--ghost btn--lg" target="_blank" rel="noopener noreferrer">Preview</a>
-            <?php endif; ?>
+        <div class="hub-page__actions site-builder-header__actions">
+            <a href="<?= e($previewUrl) ?>" class="btn btn--outline btn--lg" target="_blank" rel="noopener noreferrer">Preview</a>
             <?php if ($canPublish && $hasSavedSite): ?>
                 <button class="btn btn--primary btn--lg" type="submit" form="site-builder-form" formaction="<?= url('/hub/sites/publicar') ?>">Publicar site</button>
             <?php elseif ($canPublish): ?>
@@ -127,19 +130,30 @@
 
             <div class="form-grid form-grid--2">
                 <div class="form-group">
-                    <label class="form-label" for="domain">Domínio próprio</label>
-                    <input id="domain" name="domain" class="form-input" value="<?= e((string) ($currentSite['domain'] ?? '')) ?>" placeholder="www.suaigreja.org.br">
-                    <span class="form-hint">Se ficar vazio, o preview usa a URL local da Elo 42.</span>
-                </div>
-                <div class="form-group">
                     <label class="form-label" for="cta_label">Texto do botão principal</label>
                     <input id="cta_label" name="cta_label" class="form-input" value="<?= e((string) ($currentSite['cta_label'] ?? 'Falar com a igreja')) ?>" placeholder="Falar com a igreja">
                 </div>
+                <div class="form-group">
+                    <label class="form-label" for="cta_url">Link do botão principal</label>
+                    <input id="cta_url" name="cta_url" class="form-input" value="<?= e((string) ($currentSite['cta_url'] ?? '')) ?>" placeholder="https://wa.me/55...">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="cta_url">Link do botão principal</label>
-                <input id="cta_url" name="cta_url" class="form-input" value="<?= e((string) ($currentSite['cta_url'] ?? '')) ?>" placeholder="https://wa.me/55...">
+            <h3 class="hub-panel__title" style="margin-top:1.5rem;">Redes sociais</h3>
+            <p class="hub-panel__text">Esses links aparecem no rodapé e cabeçalho do site público.</p>
+            <div class="form-grid form-grid--3">
+                <div class="form-group">
+                    <label class="form-label" for="instagram_url">Instagram</label>
+                    <input id="instagram_url" name="instagram_url" class="form-input" value="<?= e((string) ($currentSite['instagram_url'] ?? '')) ?>" placeholder="https://instagram.com/...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="facebook_url">Facebook</label>
+                    <input id="facebook_url" name="facebook_url" class="form-input" value="<?= e((string) ($currentSite['facebook_url'] ?? '')) ?>" placeholder="https://facebook.com/...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="youtube_url">YouTube</label>
+                    <input id="youtube_url" name="youtube_url" class="form-input" value="<?= e((string) ($currentSite['youtube_url'] ?? '')) ?>" placeholder="https://youtube.com/...">
+                </div>
             </div>
 
             <div class="site-step-panel__footer">
@@ -173,7 +187,7 @@
                         </ul>
 
                         <div class="hub-page__actions" style="margin-top:auto;">
-                            <a href="<?= url('/hub/sites/preview?template=' . rawurlencode($name)) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Ver preview</a>
+                            <a href="<?= e($previewUrl . (str_contains($previewUrl, '?') ? '&' : '?') . 'template=' . rawurlencode($name)) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Ver preview</a>
                             <button type="submit" name="template" value="<?= e($name) ?>" class="btn btn--primary" data-site-template-choice="<?= e($name) ?>">Usar modelo</button>
                         </div>
                     </article>
@@ -190,7 +204,7 @@
             <div class="site-step-panel__head">
                 <div>
                     <h2 class="hub-panel__title">Definir aparência</h2>
-                    <p class="hub-panel__text">Ajuste identidade visual, imagem principal e redes públicas do site.</p>
+                    <p class="hub-panel__text">Logo e imagem principal ficam aqui. As cores vêm das configurações da Gestão para Igrejas.</p>
                 </div>
                 <button class="btn btn--primary" type="submit">Salvar aparência</button>
             </div>
@@ -206,38 +220,54 @@
                 </div>
             </div>
 
-            <div class="form-grid form-grid--2">
-                <div class="form-group">
-                    <label class="form-label" for="theme_color">Cor principal</label>
-                    <input id="theme_color" name="theme_color" type="color" class="form-input form-input--color" value="<?= e((string) ($currentSite['theme_color'] ?? '#0A4DFF')) ?>">
-                </div>
-                <div class="site-preview-card" aria-label="Preview visual do site">
-                    <?php if (!empty($currentSite['hero_image'])): ?>
-                        <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
-                    <?php else: ?>
-                        <div class="site-preview-card__hero"></div>
-                    <?php endif; ?>
+            <input type="hidden" name="theme_color" value="<?= e($appearancePrimary !== '' ? $appearancePrimary : (string) ($currentSite['theme_color'] ?? '#0A4DFF')) ?>">
+
+            <div class="hub-panel" style="background:var(--color-bg-soft, #f5f8ff);border:1px solid var(--color-border-light, #dfe7f4);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
                     <div>
-                        <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>
-                        <p class="hub-mini-card__text"><?= e($templateValue) ?></p>
+                        <h3 class="hub-panel__title" style="margin:0;">Cores do site</h3>
+                        <p class="hub-panel__text" style="margin:0;">As cores aplicadas vêm da aparência configurada na Gestão para Igrejas.</p>
                     </div>
-                    <div class="site-preview-card__lines"><span></span><span></span><span></span></div>
+                    <a href="<?= url('/gestao/configuracoes/aparencia') ?>" class="btn btn--outline btn--sm" target="_blank" rel="noopener noreferrer">Editar cores na Gestão</a>
                 </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:1rem;">
+                    <div style="display:flex;align-items:center;gap:.6rem;">
+                        <span style="width:28px;height:28px;border-radius:8px;background:<?= e($appearancePrimary !== '' ? $appearancePrimary : '#1e3a8a') ?>;border:1px solid rgba(0,0,0,.08);"></span>
+                        <div><strong>Cor primária</strong><div class="hub-panel__text" style="margin:0;font-size:.8rem;"><?= e($appearancePrimary !== '' ? $appearancePrimary : '#1e3a8a') ?></div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.6rem;">
+                        <span style="width:28px;height:28px;border-radius:8px;background:<?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?>;border:1px solid rgba(0,0,0,.08);"></span>
+                        <div><strong>Cor de destaque</strong><div class="hub-panel__text" style="margin:0;font-size:.8rem;"><?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?></div></div>
+                    </div>
+                    <?php if ($appearanceBackground !== ''): ?>
+                    <div style="display:flex;align-items:center;gap:.6rem;">
+                        <span style="width:28px;height:28px;border-radius:8px;background:<?= e($appearanceBackground) ?>;border:1px solid rgba(0,0,0,.08);"></span>
+                        <div><strong>Cor de fundo</strong><div class="hub-panel__text" style="margin:0;font-size:.8rem;"><?= e($appearanceBackground) ?></div></div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($appearanceText !== ''): ?>
+                    <div style="display:flex;align-items:center;gap:.6rem;">
+                        <span style="width:28px;height:28px;border-radius:8px;background:<?= e($appearanceText) ?>;border:1px solid rgba(0,0,0,.08);"></span>
+                        <div><strong>Cor do texto</strong><div class="hub-panel__text" style="margin:0;font-size:.8rem;"><?= e($appearanceText) ?></div></div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <?php if (!$hasAppearanceSettings): ?>
+                    <p class="hub-panel__text" style="margin-top:.75rem;color:#d97706;">Nenhuma cor configurada ainda. Defina as cores na <a href="<?= url('/gestao/configuracoes/aparencia') ?>" target="_blank" rel="noopener noreferrer">Aparência</a> da gestão.</p>
+                <?php endif; ?>
             </div>
 
-            <div class="form-grid form-grid--3">
-                <div class="form-group">
-                    <label class="form-label" for="instagram_url">Instagram</label>
-                    <input id="instagram_url" name="instagram_url" class="form-input" value="<?= e((string) ($currentSite['instagram_url'] ?? '')) ?>" placeholder="https://instagram.com/...">
+            <div class="site-preview-card" aria-label="Preview visual do site">
+                <?php if (!empty($currentSite['hero_image'])): ?>
+                    <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
+                <?php else: ?>
+                    <div class="site-preview-card__hero" style="background:linear-gradient(135deg, <?= e($appearancePrimary !== '' ? $appearancePrimary : '#1e3a8a') ?>, <?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?>);"></div>
+                <?php endif; ?>
+                <div>
+                    <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>
+                    <p class="hub-mini-card__text"><?= e($templateValue) ?></p>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="facebook_url">Facebook</label>
-                    <input id="facebook_url" name="facebook_url" class="form-input" value="<?= e((string) ($currentSite['facebook_url'] ?? '')) ?>" placeholder="https://facebook.com/...">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="youtube_url">YouTube</label>
-                    <input id="youtube_url" name="youtube_url" class="form-input" value="<?= e((string) ($currentSite['youtube_url'] ?? '')) ?>" placeholder="https://youtube.com/...">
-                </div>
+                <div class="site-preview-card__lines"><span></span><span></span><span></span></div>
             </div>
 
             <div class="site-step-panel__footer">
@@ -261,7 +291,11 @@
                 <article class="site-status-card">
                     <h3 class="hub-panel__title">Status de publicação</h3>
                     <p class="hub-panel__text">
-                        O rascunho pode ser preparado agora. Publicar em domínio real exige mensalidade ativa e revisão dos dados.
+                        <?php if ($canPublish): ?>
+                            Sua assinatura está ativa. Configure o domínio próprio (opcional) e publique quando estiver pronto.
+                        <?php else: ?>
+                            Publicar exige assinatura ativa do plano "Site para Igrejas". Use o domínio próprio assim que a assinatura for confirmada.
+                        <?php endif; ?>
                     </p>
 
                     <div class="site-status-card__meta">
@@ -278,6 +312,24 @@
                             <strong><?= e((string) ($siteBuilderAccess['status_label'] ?? 'Sem assinatura ativa')) ?></strong>
                         </div>
                     </div>
+
+                    <div class="form-group" style="margin-top:1.25rem;">
+                        <label class="form-label" for="domain">Domínio próprio</label>
+                        <input id="domain" name="domain" class="form-input" value="<?= e((string) ($currentSite['domain'] ?? '')) ?>" placeholder="www.suaigreja.org.br" <?= $canPublish ? '' : 'disabled' ?>>
+                        <span class="form-hint">
+                            <?php if ($canPublish): ?>
+                                Aponte o DNS A/CNAME desse domínio para os servidores Elo 42 e o site público responderá nele. Se ficar vazio, usamos a URL <code><?= e(url('/site/' . rawurlencode((string) ($currentSite['slug'] ?? 'minha-igreja')))) ?></code>.
+                            <?php else: ?>
+                                Disponível para assinantes do plano "Site para Igrejas". Ative a assinatura para liberar o domínio próprio.
+                            <?php endif; ?>
+                        </span>
+                    </div>
+
+                    <?php if (!$canPublish): ?>
+                        <div style="margin-top:1rem;">
+                            <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary btn--sm">Ativar assinatura</a>
+                        </div>
+                    <?php endif; ?>
                 </article>
 
                 <article class="site-readiness-card">
@@ -345,13 +397,11 @@
 
                     <div class="hub-page__actions">
                         <button class="btn btn--outline" type="submit" formaction="<?= url('/hub/sites/gerar') ?>"><?= $currentSite ? 'Atualizar rascunho' : 'Gerar rascunho' ?></button>
-                        <?php if ($currentSite): ?>
-                            <a href="<?= url('/hub/sites/preview') ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Preview</a>
-                        <?php endif; ?>
+                        <a href="<?= e($previewUrl) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Preview</a>
                         <?php if ($canPublish && $hasSavedSite): ?>
                             <button class="btn btn--primary" type="submit" formaction="<?= url('/hub/sites/publicar') ?>">Publicar site</button>
                         <?php elseif (!$canPublish): ?>
-                            <a href="<?= url('/contato') ?>" class="btn btn--primary">Ativar publicação</a>
+                            <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary">Ativar publicação</a>
                         <?php else: ?>
                             <button class="btn btn--primary" type="submit">Salvar dados</button>
                         <?php endif; ?>
