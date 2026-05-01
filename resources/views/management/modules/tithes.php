@@ -28,7 +28,14 @@
         <h2 class="mgmt-info-card__title" style="margin:0;">Últimas contribuições</h2>
     </div>
     <?php if (empty($donations)): ?>
-        <div class="mgmt-empty"><h3 class="mgmt-empty__title">Nenhuma contribuição registrada ainda.</h3></div>
+        <div class="mgmt-empty" style="padding:2.5rem 1.5rem;text-align:center;">
+            <div class="mgmt-empty__icon" style="width:56px;height:56px;border-radius:50%;background:rgba(10,77,255,0.08);display:inline-flex;align-items:center;justify-content:center;margin-bottom:1rem;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a4dff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </div>
+            <h3 class="mgmt-empty__title" style="margin:0 0 0.5rem;">Nenhuma contribuição registrada ainda</h3>
+            <p class="mgmt-empty__text" style="margin:0 0 1.25rem;color:var(--color-text-muted);">Registre dízimos, ofertas ou contribuições especiais para acompanhar a saúde financeira da igreja.</p>
+            <button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-donation').style.display='flex'">+ Registrar contribuição</button>
+        </div>
     <?php else: ?>
         <table class="mgmt-table">
             <thead><tr><th>Doador</th><th>Tipo</th><th>Data</th><th style="text-align:right;">Valor</th></tr></thead>

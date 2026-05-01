@@ -1377,17 +1377,18 @@ body[data-hub-theme="dark"] .mgmt-layout .modal textarea::placeholder {
 
 .mgmt-title {
     margin: 0;
-    color: #08122d;
-    font-family: 'Saira', 'Inter', sans-serif;
-    font-size: clamp(1.75rem, 2.2vw, 2.35rem);
-    line-height: 1.1;
+    font-family: 'Inter', sans-serif;
+    font-size: var(--text-2xl);
     font-weight: 800;
+    color: var(--color-text-primary);
+    line-height: 1.2;
 }
 
 .mgmt-subtitle {
-    margin: 0.35rem 0 0;
-    color: #6b7892;
-    font-size: 1rem;
+    margin: 4px 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.45;
 }
 
 .mgmt-card {

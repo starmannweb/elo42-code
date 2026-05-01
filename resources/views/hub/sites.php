@@ -223,7 +223,7 @@
 
             <input type="hidden" name="theme_color" value="<?= e($appearancePrimary !== '' ? $appearancePrimary : (string) ($currentSite['theme_color'] ?? '#0A4DFF')) ?>">
 
-            <div class="hub-panel" style="background:var(--color-bg-soft, #f5f8ff);border:1px solid var(--color-border-light, #dfe7f4);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;">
+            <div class="site-appearance-card">
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
                     <div>
                         <h3 class="hub-panel__title" style="margin:0;">Cores do site</h3>
@@ -290,72 +290,29 @@
                 <?php endif; ?>
             </div>
 
-            <div class="site-publish-grid">
-                <article class="site-status-card site-publish-card">
-                    <div class="hub-panel__row">
-                        <div>
-                            <h3 class="hub-panel__title">Site atual</h3>
-                            <p class="hub-panel__text">
-                                <?= $currentSite ? ($hasSavedSite ? 'Rascunho salvo e pronto para revisão visual.' : 'Preview montado com os dados cadastrais da igreja.') : 'Nenhum site foi gerado ainda.' ?>
-                            </p>
-                        </div>
+            <article class="site-readiness-card">
+                <div class="site-readiness-card__head">
+                    <div>
+                        <h3 class="hub-panel__title">Prontidão do site</h3>
+                        <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos</p>
                     </div>
-
-                    <div class="site-preview-card" aria-label="Preview visual do site">
-                        <?php if (!empty($currentSite['hero_image'])): ?>
-                            <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
-                        <?php else: ?>
-                            <div class="site-preview-card__hero"></div>
-                        <?php endif; ?>
-                        <div>
-                            <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>
-                            <p class="hub-mini-card__text"><?= e($templateValue) ?></p>
-                        </div>
-                        <div class="site-preview-card__lines"><span></span><span></span><span></span></div>
-                    </div>
-
-                    <div class="site-status-card__meta" style="grid-template-columns:1fr;">
-                        <div>
-                            <span>Última geração</span>
-                            <strong><?= e((string) ($currentSite['generated_at_label'] ?? 'Ainda não gerado')) ?></strong>
-                        </div>
-                        <div>
-                            <span>URL de revisão</span>
-                            <strong><?= e($publishedUrl !== '' ? $publishedUrl : 'Após salvar o site') ?></strong>
-                        </div>
-                    </div>
-
-                    <div class="hub-page__actions">
-                        <button class="btn btn--outline" type="submit" formaction="<?= url('/hub/sites/gerar') ?>"><?= $currentSite ? 'Atualizar rascunho' : 'Gerar rascunho' ?></button>
-                        <a href="<?= e($previewUrl) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Abrir preview</a>
-                        <button class="btn btn--primary" type="submit">Salvar dados</button>
-                    </div>
-                </article>
-
-                <article class="site-readiness-card">
-                    <div class="site-readiness-card__head">
-                        <div>
-                            <h3 class="hub-panel__title">Prontidão do site</h3>
-                            <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos</p>
-                        </div>
-                        <strong><?= $completion ?>%</strong>
-                    </div>
-                    <div class="site-progress"><span style="width: <?= $completion ?>%;"></span></div>
-                    <ul class="site-readiness-list">
-                        <?php foreach ($checklist as $item): ?>
-                            <li class="<?= !empty($item['done']) ? 'is-done' : 'is-pending' ?>">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
-                                </svg>
-                                <div>
-                                    <strong><?= e((string) ($item['title'] ?? 'Item')) ?></strong>
-                                    <span><?= e((string) ($item['text'] ?? '')) ?></span>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </article>
-            </div>
+                    <strong><?= $completion ?>%</strong>
+                </div>
+                <div class="site-progress"><span style="width: <?= $completion ?>%;"></span></div>
+                <ul class="site-readiness-list">
+                    <?php foreach ($checklist as $item): ?>
+                        <li class="<?= !empty($item['done']) ? 'is-done' : 'is-pending' ?>">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
+                            </svg>
+                            <div>
+                                <strong><?= e((string) ($item['title'] ?? 'Item')) ?></strong>
+                                <span><?= e((string) ($item['text'] ?? '')) ?></span>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </article>
 
             <div class="site-step-panel__footer">
                 <button type="button" class="btn btn--ghost" data-site-step-button="#aparencia-site">Voltar à aparência</button>
@@ -373,6 +330,46 @@
                     <?= $canPublish ? 'Publicação liberada' : 'Publicação bloqueada' ?>
                 </span>
             </div>
+
+            <article class="site-status-card site-publish-card" style="margin-bottom:var(--space-4);">
+                <div class="hub-panel__row">
+                    <div>
+                        <h3 class="hub-panel__title">Site atual</h3>
+                        <p class="hub-panel__text">
+                            <?= $currentSite ? ($hasSavedSite ? 'Rascunho salvo e pronto para revisão visual.' : 'Preview montado com os dados cadastrais da igreja.') : 'Nenhum site foi gerado ainda.' ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="site-preview-card" aria-label="Preview visual do site">
+                    <?php if (!empty($currentSite['hero_image'])): ?>
+                        <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
+                    <?php else: ?>
+                        <div class="site-preview-card__hero"></div>
+                    <?php endif; ?>
+                    <div>
+                        <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>
+                        <p class="hub-mini-card__text"><?= e($templateValue) ?></p>
+                    </div>
+                    <div class="site-preview-card__lines"><span></span><span></span><span></span></div>
+                </div>
+
+                <div class="site-status-card__meta" style="grid-template-columns:1fr 1fr;">
+                    <div>
+                        <span>Última geração</span>
+                        <strong><?= e((string) ($currentSite['generated_at_label'] ?? 'Ainda não gerado')) ?></strong>
+                    </div>
+                    <div>
+                        <span>URL de revisão</span>
+                        <strong><?= e($publishedUrl !== '' ? $publishedUrl : 'Após salvar o site') ?></strong>
+                    </div>
+                </div>
+
+                <div class="hub-page__actions">
+                    <button class="btn btn--outline" type="submit" formaction="<?= url('/hub/sites/gerar') ?>"><?= $currentSite ? 'Atualizar rascunho' : 'Gerar rascunho' ?></button>
+                    <a href="<?= e($previewUrl) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Abrir preview</a>
+                </div>
+            </article>
 
             <article class="site-status-card">
                 <?php if (!$canPublish): ?>
