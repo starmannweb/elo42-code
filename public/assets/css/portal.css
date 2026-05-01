@@ -1178,3 +1178,44 @@ body[data-portal-theme="dark"] .portal-status--neutral {
         padding: 18px;
     }
 }
+
+/* =================================================================
+   Dark mode polish — portal tabs/chips readability
+   ================================================================= */
+
+body[data-portal-theme="dark"] .portal-chip {
+    color: #e7eefb;
+    border-color: rgba(155, 183, 226, 0.32);
+    background: #142a4b;
+}
+
+body[data-portal-theme="dark"] .portal-chip:hover {
+    color: #ffffff;
+    border-color: rgba(155, 183, 226, 0.5);
+    background: #1d3764;
+}
+
+body[data-portal-theme="dark"] .portal-bible-tabs button {
+    color: #e7eefb;
+    border-color: rgba(155, 183, 226, 0.32);
+    background: #142a4b;
+}
+
+body[data-portal-theme="dark"] .portal-bible-tabs button:hover {
+    color: #ffffff;
+    border-color: rgba(155, 183, 226, 0.5);
+    background: #1d3764;
+}
+
+body[data-portal-theme="dark"] .portal-bible-tabs button.active {
+    background: var(--portal-primary);
+    border-color: var(--portal-primary);
+    color: #06183a;
+}
+
+body[data-portal-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+body[data-portal-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
+body[data-portal-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.85) brightness(1.4);
+    cursor: pointer;
+}

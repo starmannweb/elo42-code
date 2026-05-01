@@ -167,8 +167,8 @@
                 <div class="hub-topbar__left">
                     <button class="hub-topbar__mobile-toggle" id="hub-sidebar-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
                     <div class="hub-topbar__context">
-                        <span>Hub Elo 42</span>
-                        <strong><?= e((string) ($organizationName ?: 'Sua organização')) ?></strong>
+                        <span>Instituição</span>
+                        <strong><?= e((string) ($organizationName ?: 'Sua igreja')) ?></strong>
                     </div>
                 </div>
                 <div class="hub-topbar__right">

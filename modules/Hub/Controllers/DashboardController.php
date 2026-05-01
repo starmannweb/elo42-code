@@ -2285,6 +2285,11 @@ class DashboardController extends Controller
         $availableRoles = [];
         $degraded = false;
 
+        $currentUserId = (int) ($context['user']['id'] ?? 0);
+        if ($currentUserId > 0) {
+            \App\Models\Organization::ensureOwnerLink((int) $organization['id'], $currentUserId);
+        }
+
         try {
             $teamMembers = \App\Models\Organization::getUsers((int) $organization['id']) ?: [];
         } catch (\Throwable $e) {

@@ -6,6 +6,8 @@ $router->group(['middleware' => ['auth', 'csrf', 'admin']], function (Router $r)
 
     // Dashboard
     $r->get('/admin', [\Modules\Admin\Controllers\AdminDashboardController::class, 'index']);
+    $r->post('/admin/seed-demo', [\Modules\Admin\Controllers\AdminDashboardController::class, 'seedDemo']);
+    $r->post('/admin/unseed-demo', [\Modules\Admin\Controllers\AdminDashboardController::class, 'unseedDemo']);
 
     // Users
     $r->get('/admin/usuarios', [\Modules\Admin\Controllers\AdminUserController::class, 'index']);

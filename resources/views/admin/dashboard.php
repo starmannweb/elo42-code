@@ -25,6 +25,25 @@
     </div>
 </div>
 
+<div class="mgmt-info-card" style="margin-bottom:var(--space-5); border: 1px dashed rgba(214, 166, 70, 0.4); background: rgba(214, 166, 70, 0.06);">
+    <div style="display:flex; flex-wrap:wrap; gap:var(--space-4); align-items:center; justify-content:space-between;">
+        <div style="flex:1; min-width: 280px;">
+            <h3 class="mgmt-info-card__title" style="margin:0 0 var(--space-1);">Dados de demonstração</h3>
+            <p class="mgmt-header__subtitle" style="margin:0;">Popule o sistema com 2 organizações e 3 usuários para testes (senha padrão: <code>demo@2026</code>). Use "Remover" para limpar dados de demo sem afetar contas reais.</p>
+        </div>
+        <div style="display:flex; gap:var(--space-2); flex-wrap:wrap;">
+            <form method="POST" action="<?= url('/admin/seed-demo') ?>" style="margin:0;" onsubmit="return confirm('Popular dados de demonstração?');">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn--gold">+ Popular demo</button>
+            </form>
+            <form method="POST" action="<?= url('/admin/unseed-demo') ?>" style="margin:0;" onsubmit="return confirm('Remover todos os dados de demonstração? Essa ação remove apenas registros marcados como demo.');">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn--outline btn--danger">Remover demo</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <?php if (!empty($degraded)): ?>
     <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
         Painel exibindo dados parciais — o serviço de dados está temporariamente indisponível e novas leituras serão retomadas em instantes.

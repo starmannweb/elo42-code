@@ -74,8 +74,8 @@ class Organization extends Model
     {
         $pdo = Database::connection();
         $stmt = $pdo->prepare("
-            SELECT u.id, u.name, u.email, u.phone, u.avatar, u.status as user_status, 
-                   ou.status as org_status, ou.role_id, ou.joined_at, 
+            SELECT u.id, u.name, u.email, u.phone, u.avatar, u.status as user_status,
+                   ou.status as org_status, ou.role_id, ou.joined_at,
                    r.name as role_name, r.slug as role_slug
             FROM organization_users ou
             JOIN users u ON ou.user_id = u.id
@@ -84,6 +84,35 @@ class Organization extends Model
             ORDER BY u.name ASC
         ");
         $stmt->execute(['org_id' => $orgId]);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll() ?: [];
+    }
+
+    public static function ensureOwnerLink(int $orgId, int $userId): void
+    {
+        try {
+            $pdo = Database::connection();
+
+            $check = $pdo->prepare("SELECT 1 FROM organization_users WHERE organization_id = :org_id AND user_id = :u_id LIMIT 1");
+            $check->execute(['org_id' => $orgId, 'u_id' => $userId]);
+            if ($check->fetchColumn()) {
+                return;
+            }
+
+            $managerRole = $pdo->prepare("SELECT id FROM roles WHERE slug = 'org-manager' LIMIT 1");
+            $managerRole->execute();
+            $roleId = $managerRole->fetch()['id'] ?? null;
+
+            $stmt = $pdo->prepare("
+                INSERT INTO organization_users (organization_id, user_id, role_id, status, joined_at)
+                VALUES (:org_id, :u_id, :role_id, 'active', NOW())
+            ");
+            $stmt->execute([
+                'org_id'  => $orgId,
+                'u_id'    => $userId,
+                'role_id' => $roleId,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[Organization.ensureOwnerLink] ' . $e->getMessage());
+        }
     }
 }

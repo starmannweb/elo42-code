@@ -1867,9 +1867,16 @@
 
 .site-builder-header {
     display: flex;
+    flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.site-builder-header__actions {
+    margin-left: auto;
+    justify-content: flex-end;
 }
 
 .site-step-nav {
@@ -3000,4 +3007,161 @@ body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__user-av
         flex-direction: column;
         align-items: flex-start;
     }
+}
+
+/* =================================================================
+   Dark mode polish — applied across hub/management/admin
+   ================================================================= */
+
+/* Sidebar header height matches topbar to align top borders */
+.hub-sidebar__header {
+    min-height: 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Footer (WhatsApp links) in dark mode */
+body[data-hub-theme="dark"] .hub-page-footer {
+    color: rgba(210, 224, 247, 0.78);
+    border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+body[data-hub-theme="dark"] .hub-page-footer a,
+body[data-hub-theme="dark"] .hub-page-footer strong {
+    color: rgba(235, 242, 255, 0.95);
+}
+
+/* Calendar icon for native date inputs in dark mode */
+body[data-hub-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+body[data-hub-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
+body[data-hub-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+body[data-hub-theme="dark"] input[type="month"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.85) brightness(1.4);
+    cursor: pointer;
+    opacity: 0.9;
+}
+
+body[data-hub-theme="dark"] input[type="date"],
+body[data-hub-theme="dark"] input[type="time"],
+body[data-hub-theme="dark"] input[type="datetime-local"],
+body[data-hub-theme="dark"] input[type="month"] {
+    color-scheme: dark;
+}
+
+/* Form inputs in dark mode (visits, decisions, etc.) */
+body[data-hub-theme="dark"] .form-input,
+body[data-hub-theme="dark"] .form-select,
+body[data-hub-theme="dark"] .form-textarea,
+body[data-hub-theme="dark"] .form-control {
+    background: #0f1f3a;
+    border-color: rgba(155, 183, 226, 0.28);
+    color: #f4f8ff;
+}
+
+body[data-hub-theme="dark"] .form-input::placeholder,
+body[data-hub-theme="dark"] .form-textarea::placeholder {
+    color: rgba(196, 214, 244, 0.42);
+}
+
+body[data-hub-theme="dark"] .form-label {
+    color: #d8e3f6;
+}
+
+/* Empty-state icon background (birthdays, ministries, events, sermons) */
+body[data-hub-theme="dark"] .mgmt-empty {
+    background: #10223d;
+    border-color: rgba(155, 183, 226, 0.22);
+}
+
+body[data-hub-theme="dark"] .mgmt-empty__icon {
+    background: #1a2f55;
+    border: 1px solid rgba(155, 183, 226, 0.28);
+}
+
+body[data-hub-theme="dark"] .mgmt-empty__icon svg {
+    color: #cbd9f1;
+}
+
+/* Hub-side empty states (usuarios) */
+body[data-hub-theme="dark"] .text-muted {
+    color: #91a2c0;
+}
+
+/* Categorias financeiras — dark mode + spacing */
+body[data-hub-theme="dark"] .mgmt-table thead th {
+    background: #122545;
+    color: #d8e3f6;
+    border-bottom-color: rgba(155, 183, 226, 0.2);
+}
+
+body[data-hub-theme="dark"] .mgmt-table tbody tr {
+    border-bottom-color: rgba(155, 183, 226, 0.12);
+}
+
+body[data-hub-theme="dark"] .mgmt-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Native color picker in dark mode */
+body[data-hub-theme="dark"] input[type="color"].form-input {
+    padding: 4px;
+    height: 42px;
+    background: #0f1f3a;
+}
+
+/* Reports filter — better alignment */
+.report-filter {
+    align-items: end;
+    gap: var(--space-3);
+}
+
+.report-filter .form-select,
+.report-filter .form-control,
+.report-filter .form-input {
+    min-height: 42px;
+}
+
+@media (max-width: 900px) {
+    .report-filter {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .report-filter {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Hub topbar context: institution-only label */
+.hub-topbar__context-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+/* Visits / forms in management dark mode */
+body[data-hub-theme="dark"] .mgmt-layout .form-input,
+body[data-hub-theme="dark"] .mgmt-layout .form-select,
+body[data-hub-theme="dark"] .mgmt-layout .form-textarea,
+body[data-hub-theme="dark"] .mgmt-layout .form-control {
+    background: #0f1f3a;
+    border-color: rgba(155, 183, 226, 0.28);
+    color: #f4f8ff;
+}
+
+body[data-hub-theme="dark"] .mgmt-layout .form-label {
+    color: #d8e3f6;
+}
+
+/* Admin sidebar emoji icons get a softer background to match modern design */
+.admin-sidebar .hub-nav-link__icon {
+    width: 22px;
+    font-size: 14px;
+}
+
+body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
+    filter: brightness(1.05);
 }

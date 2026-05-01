@@ -2519,3 +2519,96 @@ body[data-hub-theme="dark"] .mgmt-layout .btn.btn-primary {
         grid-template-columns: 1fr !important;
     }
 }
+
+/* =================================================================
+   Reports header polish — Img 20
+   ================================================================= */
+.mgmt-header--reports {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-5);
+}
+
+.mgmt-header--reports .mgmt-header__intro {
+    flex: 0 1 320px;
+    min-width: 240px;
+}
+
+.mgmt-header--reports .mgmt-report-filter {
+    flex: 1 1 640px;
+    grid-template-columns: minmax(160px, 1fr) minmax(140px, 0.85fr) minmax(140px, 0.85fr) auto;
+    align-items: end;
+}
+
+.mgmt-header--reports .mgmt-report-filter__actions {
+    align-self: end;
+    grid-column: auto;
+}
+
+@media (max-width: 1100px) {
+    .mgmt-header--reports .mgmt-report-filter {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .mgmt-header--reports .mgmt-report-filter__field:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .mgmt-header--reports .mgmt-report-filter__actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 600px) {
+    .mgmt-header--reports {
+        flex-direction: column;
+    }
+
+    .mgmt-header--reports .mgmt-report-filter {
+        grid-template-columns: 1fr;
+    }
+}
+
+body[data-hub-theme="dark"] .mgmt-report-filter {
+    background: #10223d;
+    border-color: rgba(155, 183, 226, 0.22);
+}
+
+body[data-hub-theme="dark"] .mgmt-report-filter__field span {
+    color: #94a3b8;
+}
+
+body[data-hub-theme="dark"] .mgmt-kpi-card {
+    background: #10223d;
+    border-color: rgba(155, 183, 226, 0.22);
+}
+
+body[data-hub-theme="dark"] .mgmt-kpi-card__label {
+    color: #94a3b8;
+}
+
+body[data-hub-theme="dark"] .mgmt-kpi-card__value {
+    color: #f4f8ff;
+}
+
+body[data-hub-theme="dark"] .mgmt-stat {
+    background: #10223d;
+    border-color: rgba(155, 183, 226, 0.22);
+}
+
+body[data-hub-theme="dark"] .mgmt-stat__value {
+    color: #f4f8ff;
+}
+
+body[data-hub-theme="dark"] .mgmt-stat__label {
+    color: #94a3b8;
+}
+
+body[data-hub-theme="dark"] .mgmt-dashboard-card {
+    background: #10223d;
+    border-color: rgba(155, 183, 226, 0.22);
+}

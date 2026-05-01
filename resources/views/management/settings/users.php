@@ -90,6 +90,19 @@
                         <label class="form-label" for="settings-user-password">Senha temporária *</label>
                         <input type="password" id="settings-user-password" name="password" class="form-input" required minlength="6">
                     </div>
+                    <div class="form-group modal-grid__full">
+                        <label class="form-label" for="settings-user-role">Perfil de acesso *</label>
+                        <select id="settings-user-role" name="role_id" class="form-select" required>
+                            <?php if (empty($availableRoles)): ?>
+                                <option value="">Carregando perfis...</option>
+                            <?php else: ?>
+                                <?php foreach ($availableRoles as $role): ?>
+                                    <option value="<?= e((string) ($role['id'] ?? '')) ?>"><?= e((string) ($role['name'] ?? 'Perfil')) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                        <span class="mgmt-auto-note">Define quais áreas da Gestão o usuário poderá acessar.</span>
+                    </div>
                 </div>
             </div>
             <div class="modal__footer">

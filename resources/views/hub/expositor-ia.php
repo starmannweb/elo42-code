@@ -39,7 +39,6 @@
             <h1 class="hub-page__title">Expositor IA</h1>
             <p class="hub-page__subtitle">Um ambiente ministerial separado para planejar, estudar o texto, gerar sermões, refinar rascunhos e preparar materiais para EBD, pequenos grupos e discipulado.</p>
         </div>
-        <a href="<?= url('/hub/creditos') ?>" class="btn btn--outline">Ver créditos</a>
     </header>
 
     <nav class="expositor-workbench-tabs" aria-label="Fluxos do Expositor IA">
@@ -57,6 +56,7 @@
         <div class="expositor-usage__meter" aria-label="Saldo de créditos">
             <span><?= e((string) $credits) ?> crédito(s) disponíveis</span>
             <div><i style="width:<?= $credits > 0 ? '100' : '0' ?>%;"></i></div>
+            <a href="<?= url('/hub/creditos') ?>" class="btn btn--outline btn--sm" style="margin-top: 0.5rem;">Ver créditos</a>
         </div>
     </div>
 

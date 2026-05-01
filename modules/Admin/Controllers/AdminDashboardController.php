@@ -178,4 +178,102 @@ class AdminDashboardController extends Controller
     {
         return '"' . str_replace('"', '""', $value) . '"';
     }
+
+    private const DEMO_EMAIL_DOMAIN = 'demo.elo42.test';
+
+    public function seedDemo(Request $request): void
+    {
+        try {
+            $pdo = Database::connection();
+            $pdo->beginTransaction();
+
+            $managerRoleId = (int) ($pdo->query("SELECT id FROM roles WHERE slug = 'org-manager' LIMIT 1")->fetchColumn() ?: 1);
+            $memberRoleId = (int) ($pdo->query("SELECT id FROM roles WHERE slug = 'org-member' LIMIT 1")->fetchColumn() ?: 3);
+
+            $orgs = [
+                ['name' => 'Igreja Demo Esperança', 'slug' => 'demo-esperanca', 'type' => 'church'],
+                ['name' => 'Comunidade Demo Vida', 'slug' => 'demo-vida', 'type' => 'church'],
+            ];
+
+            $orgIds = [];
+            foreach ($orgs as $org) {
+                $existing = $pdo->prepare("SELECT id FROM organizations WHERE slug = :slug LIMIT 1");
+                $existing->execute(['slug' => $org['slug']]);
+                $orgId = (int) ($existing->fetchColumn() ?: 0);
+
+                if ($orgId === 0) {
+                    $stmt = $pdo->prepare("INSERT INTO organizations (name, slug, type, plan, status, created_at, updated_at) VALUES (:name, :slug, :type, 'free', 'active', NOW(), NOW())");
+                    $stmt->execute(['name' => $org['name'], 'slug' => $org['slug'], 'type' => $org['type']]);
+                    $orgId = (int) $pdo->lastInsertId();
+                }
+                $orgIds[] = $orgId;
+            }
+
+            $users = [
+                ['name' => 'Pastor Demo', 'email' => 'pastor@' . self::DEMO_EMAIL_DOMAIN, 'role' => $managerRoleId, 'org' => $orgIds[0]],
+                ['name' => 'Líder Demo', 'email' => 'lider@' . self::DEMO_EMAIL_DOMAIN, 'role' => $memberRoleId, 'org' => $orgIds[0]],
+                ['name' => 'Membro Demo', 'email' => 'membro@' . self::DEMO_EMAIL_DOMAIN, 'role' => $memberRoleId, 'org' => $orgIds[1]],
+            ];
+
+            $passwordHash = password_hash('demo@2026', PASSWORD_DEFAULT);
+            foreach ($users as $u) {
+                $existing = $pdo->prepare("SELECT id FROM users WHERE email = :email LIMIT 1");
+                $existing->execute(['email' => $u['email']]);
+                $userId = (int) ($existing->fetchColumn() ?: 0);
+
+                if ($userId === 0) {
+                    $stmt = $pdo->prepare("INSERT INTO users (name, email, password, status, created_at, updated_at) VALUES (:name, :email, :pwd, 'active', NOW(), NOW())");
+                    $stmt->execute(['name' => $u['name'], 'email' => $u['email'], 'pwd' => $passwordHash]);
+                    $userId = (int) $pdo->lastInsertId();
+                }
+
+                $check = $pdo->prepare("SELECT 1 FROM organization_users WHERE organization_id = :org AND user_id = :u LIMIT 1");
+                $check->execute(['org' => $u['org'], 'u' => $userId]);
+                if (!$check->fetchColumn()) {
+                    $link = $pdo->prepare("INSERT INTO organization_users (organization_id, user_id, role_id, status, joined_at) VALUES (:org, :u, :r, 'active', NOW())");
+                    $link->execute(['org' => $u['org'], 'u' => $userId, 'r' => $u['role']]);
+                }
+            }
+
+            $pdo->commit();
+            \App\Core\Session::flash('success', 'Dados de demo populados (2 organizações, 3 usuários). Senha padrão: demo@2026');
+        } catch (\Throwable $e) {
+            if (isset($pdo) && $pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log('[AdminDashboard.seedDemo] ' . $e->getMessage());
+            \App\Core\Session::flash('error', 'Erro ao popular dados de demo: ' . $e->getMessage());
+        }
+
+        redirect('/admin');
+    }
+
+    public function unseedDemo(Request $request): void
+    {
+        try {
+            $pdo = Database::connection();
+            $pdo->beginTransaction();
+
+            $userIds = $pdo->query("SELECT id FROM users WHERE email LIKE '%@" . self::DEMO_EMAIL_DOMAIN . "'")->fetchAll(\PDO::FETCH_COLUMN) ?: [];
+
+            if (!empty($userIds)) {
+                $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+                $pdo->prepare("DELETE FROM organization_users WHERE user_id IN ({$placeholders})")->execute($userIds);
+                $pdo->prepare("DELETE FROM users WHERE id IN ({$placeholders})")->execute($userIds);
+            }
+
+            $pdo->prepare("DELETE FROM organizations WHERE slug IN ('demo-esperanca', 'demo-vida')")->execute();
+
+            $pdo->commit();
+            \App\Core\Session::flash('success', 'Dados de demo removidos.');
+        } catch (\Throwable $e) {
+            if (isset($pdo) && $pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log('[AdminDashboard.unseedDemo] ' . $e->getMessage());
+            \App\Core\Session::flash('error', 'Erro ao remover dados de demo: ' . $e->getMessage());
+        }
+
+        redirect('/admin');
+    }
 }

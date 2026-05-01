@@ -353,10 +353,27 @@ class GeneralController extends Controller
     public function storeVisit(Request $req): void
     {
         $this->validate($req, ['visitor_name' => 'required', 'visit_date' => 'required']);
-        Visit::create(array_merge($req->only(['visitor_name','phone','email','visit_date','source','notes','assigned_to']), [
-            'organization_id' => $this->orgId(),
-        ]));
-        Session::flash('success', 'Visita registrada.');
+
+        $payload = $req->only(['visitor_name','phone','email','visit_date','source','notes','assigned_to']);
+
+        foreach (['phone', 'email', 'notes'] as $optional) {
+            if (isset($payload[$optional]) && trim((string) $payload[$optional]) === '') {
+                $payload[$optional] = null;
+            }
+        }
+
+        $assigned = $payload['assigned_to'] ?? null;
+        $payload['assigned_to'] = ($assigned === '' || $assigned === null) ? null : (int) $assigned;
+
+        try {
+            Visit::create(array_merge($payload, [
+                'organization_id' => $this->orgId(),
+            ]));
+            Session::flash('success', 'Visita registrada.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Não foi possível registrar a visita: ' . $e->getMessage());
+        }
+
         redirect('/gestao/visitas');
     }
 
@@ -721,6 +738,18 @@ class GeneralController extends Controller
     {
         $this->validate($req, ['name' => 'required', 'email' => 'required', 'password' => 'required']);
         $pdo = Database::connection();
+
+        $roleId = (int) $req->input('role_id');
+        if ($roleId <= 0) {
+            try {
+                $stmt = $pdo->prepare("SELECT id FROM roles WHERE slug = 'org-member' LIMIT 1");
+                $stmt->execute();
+                $roleId = (int) ($stmt->fetch()['id'] ?? 3);
+            } catch (\Throwable $e) {
+                $roleId = 3;
+            }
+        }
+
         $pdo->beginTransaction();
         try {
             $user = \App\Models\User::findByEmail($req->input('email'));
@@ -732,14 +761,23 @@ class GeneralController extends Controller
                 ]);
             } else {
                 $uid = $user['id'];
+
+                $check = $pdo->prepare("SELECT 1 FROM organization_users WHERE organization_id = :org_id AND user_id = :u_id LIMIT 1");
+                $check->execute(['org_id' => $this->orgId(), 'u_id' => $uid]);
+                if ($check->fetchColumn()) {
+                    throw new \Exception('Esse usuário já está vinculado à organização.');
+                }
             }
-            $pdo->prepare("INSERT INTO organization_users (organization_id, user_id, role_id, status) VALUES (?, ?, 3, 'active')")
-                ->execute([$this->orgId(), $uid]);
+
+            $pdo->prepare("INSERT INTO organization_users (organization_id, user_id, role_id, status) VALUES (?, ?, ?, 'active')")
+                ->execute([$this->orgId(), $uid, $roleId]);
             $pdo->commit();
             Session::flash('success', 'Usuário criado/vinculado com sucesso.');
-        } catch (\Exception $e) {
-            $pdo->rollBack();
-            Session::flash('error', 'Erro ao processar usuário.');
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            Session::flash('error', 'Erro ao processar usuário: ' . $e->getMessage());
         }
         redirect('/gestao/configuracoes/usuarios');
     }
@@ -775,10 +813,26 @@ class GeneralController extends Controller
     {
         try {
             $context = $this->buildBaseContext('Configurações / Usuários', 'configuracoes');
+
+            $currentUserId = (int) ($context['user']['id'] ?? 0);
+            if ($currentUserId > 0) {
+                \App\Models\Organization::ensureOwnerLink($this->orgId(), $currentUserId);
+            }
+
+            $availableRoles = [];
+            try {
+                $stmt = Database::connection()->prepare("SELECT id, name, slug FROM roles WHERE slug LIKE 'org-%' ORDER BY name ASC");
+                $stmt->execute();
+                $availableRoles = $stmt->fetchAll() ?: [];
+            } catch (\Throwable $e) {
+                $availableRoles = [];
+            }
+
             $this->view('management/settings/users', array_merge($context, [
                 'pageTitle' => 'Usuários e Permissões — Gestão',
                 'activeTab' => 'usuarios',
                 'users' => $this->orgUsers(),
+                'availableRoles' => $availableRoles,
             ]));
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar usuários: ' . $e->getMessage());
