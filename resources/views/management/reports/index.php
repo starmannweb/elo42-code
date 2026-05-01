@@ -5,7 +5,7 @@
         <h1 class="mgmt-header__title">Relatórios</h1>
         <p class="mgmt-header__subtitle">Análises detalhadas e métricas de desempenho da igreja</p>
     </div>
-    <form method="GET" action="<?= url('/gestao/relatorios') ?>" class="mgmt-report-filter">
+    <form method="GET" action="<?= url('/gestao/relatorios') ?>" class="mgmt-report-filter" data-auto-submit>
         <?php $selectedReport = (string) ($filters['type'] ?? 'overview'); ?>
         <?php
             $reportTypes = [
@@ -32,8 +32,6 @@
             <input type="date" name="end_date" class="form-control" value="<?= e((string) ($filters['end_date'] ?? date('Y-m-t'))) ?>">
         </label>
         <div class="mgmt-report-filter__actions">
-            <a href="<?= url('/gestao/relatorios') ?>" class="btn btn--outline">Limpar</a>
-            <button type="submit" class="btn btn--secondary">Aplicar</button>
             <button type="submit" name="export" value="pdf" class="btn btn--primary" formtarget="_blank">Exportar PDF</button>
         </div>
     </form>

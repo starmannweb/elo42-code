@@ -52,7 +52,12 @@
         $firstInitial = strtoupper(substr((string) ($parts[0] ?? 'U'), 0, 1));
         $lastInitial = strtoupper(substr((string) (end($parts) ?: 'U'), 0, 1));
         $initials = trim($firstInitial . $lastInitial) !== '' ? $firstInitial . $lastInitial : 'U';
-        $organizationName = (string) ($organization['name'] ?? 'Sem organização');
+        $rawOrgName = trim((string) ($organization['name'] ?? ''));
+        $userDisplayName = trim((string) ($user['name'] ?? ''));
+        $organizationName = $rawOrgName;
+        if ($organizationName === '' || strcasecmp($organizationName, $userDisplayName) === 0) {
+            $organizationName = 'Sua igreja';
+        }
         $isMasterAdmin = strtolower((string) ($user['email'] ?? '')) === 'ricieri@starmannweb.com.br';
         $churchAccess = is_array($churchManagementAccess ?? null) ? $churchManagementAccess : [
             'can_access' => !empty($organization['id']),
@@ -138,15 +143,6 @@
                     Configurações
                 </a>
 
-                <?php if ($isMasterAdmin): ?>
-                    <p class="hub-sidebar__section-title">Admin Master</p>
-                    <a href="<?= url('/admin') ?>" class="hub-nav-link <?= e($isMenuActive('admin', $activeMenu)) ?>">
-                        <span class="hub-nav-link__icon" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6l8-4z"></path><path d="M9 12l2 2 4-5"></path></svg>
-                        </span>
-                        Painel Admin Hub
-                    </a>
-                <?php endif; ?>
             </nav>
 
             <div class="hub-sidebar__footer">
@@ -172,6 +168,12 @@
                     </div>
                 </div>
                 <div class="hub-topbar__right">
+                    <?php if ($isMasterAdmin): ?>
+                        <a href="<?= url('/admin') ?>" class="hub-topbar__link hub-topbar__link--master" title="Painel Admin Master" aria-label="Painel Admin Master">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6l8-4z"></path><path d="M9 12l2 2 4-5"></path></svg>
+                            Admin
+                        </a>
+                    <?php endif; ?>
                     <a href="<?= url('/hub/suporte') ?>" class="hub-topbar__link" style="display: flex; align-items: center; gap: 4px;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                         Ajuda

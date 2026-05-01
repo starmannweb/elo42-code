@@ -89,6 +89,9 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
     $router->get('/financeiro/novo', [FinancialController::class, 'create']);
     $router->post('/financeiro', [FinancialController::class, 'store']);
     $router->post('/financeiro/categoria', [FinancialController::class, 'createCategory']);
+    $router->post('/financeiro/categoria/popular', [FinancialController::class, 'seedCategories']);
+    $router->post('/financeiro/categoria/{id}/editar', [FinancialController::class, 'updateCategory']);
+    $router->post('/financeiro/categoria/{id}/excluir', [FinancialController::class, 'deleteCategory']);
     $router->get('/categorias-financeiras', [FinancialController::class, 'categories']);
     $router->get('/doacoes', [GeneralController::class, 'donations']);
     $router->get('/doacoes/nova', [GeneralController::class, 'createDonation']);

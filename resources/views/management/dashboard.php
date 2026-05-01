@@ -98,11 +98,11 @@ $balance = (float) ($financial['balance'] ?? 0);
                         <circle cx="100" cy="10" r="1.5" fill="#f59e0b" stroke="#f59e0b" stroke-width="4" vector-effect="non-scaling-stroke"/>
                     </svg>
                     <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:11px; color:var(--text-muted); position:absolute; width:100%; left:0; bottom:0;">
-                        <span style="transform:translateX(-50%);">Oct</span>
+                        <span style="transform:translateX(-50%);">Out</span>
                         <span style="transform:translateX(-50%); position:absolute; left:20%;">Nov</span>
-                        <span style="transform:translateX(-50%); position:absolute; left:40%;">Dec</span>
+                        <span style="transform:translateX(-50%); position:absolute; left:40%;">Dez</span>
                         <span style="transform:translateX(-50%); position:absolute; left:60%;">Jan</span>
-                        <span style="transform:translateX(-50%); position:absolute; left:80%;">Feb</span>
+                        <span style="transform:translateX(-50%); position:absolute; left:80%;">Fev</span>
                         <span style="transform:translateX(-50%); position:absolute; left:100%;">Mar</span>
                     </div>
                 </div>

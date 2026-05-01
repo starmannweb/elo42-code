@@ -50,13 +50,18 @@
     </div>
 <?php endif; ?>
 
+<?php
+    $statSvg = static function (string $path): string {
+        return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $path . '</svg>';
+    };
+?>
 <div class="mgmt-stats-grid">
-    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--blue">👤</span><div><div class="mgmt-stat__value"><?= $totalUsers ?></div><div class="mgmt-stat__label">Usuários</div></div></div>
-    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--gold">🏢</span><div><div class="mgmt-stat__value"><?= $totalOrgs ?></div><div class="mgmt-stat__label">Instituições</div></div></div>
-    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--green">💳</span><div><div class="mgmt-stat__value"><?= $activeSubs ?></div><div class="mgmt-stat__label">Assinaturas ativas</div></div></div>
-    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--teal">🧪</span><div><div class="mgmt-stat__value"><?= $trialSubs ?></div><div class="mgmt-stat__label">Em teste</div></div></div>
-    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--red">🎫</span><div><div class="mgmt-stat__value"><?= $openTickets ?></div><div class="mgmt-stat__label">Tickets abertos</div></div></div>
-    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--purple">🔧</span><div><div class="mgmt-stat__value"><?= $activeProducts ?></div><div class="mgmt-stat__label">Serviços ativos</div></div></div>
+    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--blue"><?= $statSvg('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>') ?></span><div><div class="mgmt-stat__value"><?= $totalUsers ?></div><div class="mgmt-stat__label">Usuários</div></div></div>
+    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--gold"><?= $statSvg('<path d="M3 21V7l9-4 9 4v14"></path><path d="M9 21v-6h6v6"></path><path d="M3 21h18"></path>') ?></span><div><div class="mgmt-stat__value"><?= $totalOrgs ?></div><div class="mgmt-stat__label">Instituições</div></div></div>
+    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--green"><?= $statSvg('<rect x="2.5" y="5" width="19" height="14" rx="2"></rect><path d="M16 12h.01"></path><path d="M2.5 9h19"></path>') ?></span><div><div class="mgmt-stat__value"><?= $activeSubs ?></div><div class="mgmt-stat__label">Assinaturas ativas</div></div></div>
+    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--teal"><?= $statSvg('<path d="M9 2h6"></path><path d="M10 2v7l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V2"></path><path d="M7 14h10"></path>') ?></span><div><div class="mgmt-stat__value"><?= $trialSubs ?></div><div class="mgmt-stat__label">Em teste</div></div></div>
+    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--red"><?= $statSvg('<path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"></path><path d="M13 5v14"></path>') ?></span><div><div class="mgmt-stat__value"><?= $openTickets ?></div><div class="mgmt-stat__label">Tickets abertos</div></div></div>
+    <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--purple"><?= $statSvg('<path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 1 5.4-5.4l-2.7 2.7-1.4-1.4 2.7-2.7z"></path>') ?></span><div><div class="mgmt-stat__value"><?= $activeProducts ?></div><div class="mgmt-stat__label">Serviços ativos</div></div></div>
 </div>
 
 <div class="mgmt-info-card" style="margin-top:var(--space-6);">
@@ -66,7 +71,7 @@
             <p class="mgmt-header__subtitle" style="margin:0;">Gere e exporte relatórios sem sair do dashboard administrativo.</p>
         </div>
     </div>
-    <form method="GET" action="<?= url('/admin') ?>" class="mgmt-filter-form report-filter" style="margin-top:var(--space-4);grid-template-columns:1fr 160px 160px auto auto;">
+    <form method="GET" action="<?= url('/admin') ?>" class="mgmt-filter-form report-filter" data-auto-submit style="margin-top:var(--space-4);grid-template-columns:1fr 160px 160px auto;">
         <select name="report_type" class="form-select">
             <?php foreach ($reportLabels as $value => $label): ?>
                 <option value="<?= e($value) ?>" <?= $reportType === $value ? 'selected' : '' ?>><?= e($label) ?></option>
@@ -74,9 +79,20 @@
         </select>
         <input type="date" name="start_date" class="form-control" value="<?= e((string) ($reportFilters['start_date'] ?? date('Y-m-01'))) ?>">
         <input type="date" name="end_date" class="form-control" value="<?= e((string) ($reportFilters['end_date'] ?? date('Y-m-t'))) ?>">
-        <button type="submit" class="btn btn--outline">Gerar</button>
         <button type="submit" name="export" value="csv" class="btn btn--primary">Exportar CSV</button>
     </form>
+    <script>
+    (function () {
+        var form = document.querySelector('.report-filter[data-auto-submit]');
+        if (!form) return;
+        form.querySelectorAll('select, input[type="date"]').forEach(function (field) {
+            field.addEventListener('change', function () {
+                if (typeof form.requestSubmit === 'function') form.requestSubmit();
+                else form.submit();
+            });
+        });
+    })();
+    </script>
 
     <div class="mgmt-kpi-grid" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-top:var(--space-5);">
         <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Novos usuários</div><div class="mgmt-kpi-card__value"><?= (int) ($report['new_users'] ?? 0) ?></div></div></div>

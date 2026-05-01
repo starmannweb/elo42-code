@@ -28,7 +28,8 @@
         ['id' => 'dados-site', 'number' => '1', 'title' => 'Dados do site', 'text' => 'Informações públicas e contatos'],
         ['id' => 'modelos-site', 'number' => '2', 'title' => 'Escolher modelo', 'text' => 'Estrutura visual inicial'],
         ['id' => 'aparencia-site', 'number' => '3', 'title' => 'Definir aparência', 'text' => 'Logo, imagem e cores'],
-        ['id' => 'publicar-site', 'number' => '4', 'title' => 'Publicar', 'text' => 'Preview, prontidão e assinatura'],
+        ['id' => 'preview-site', 'number' => '4', 'title' => 'Preview', 'text' => 'Pré-visualização antes de publicar'],
+        ['id' => 'publicar-site', 'number' => '5', 'title' => 'Publicar', 'text' => 'Assinatura e domínio próprio'],
     ];
 ?>
 
@@ -272,90 +273,24 @@
 
             <div class="site-step-panel__footer">
                 <button type="button" class="btn btn--ghost" data-site-step-button="#modelos-site">Voltar aos modelos</button>
-                <button type="button" class="btn btn--outline" data-site-step-button="#publicar-site">Revisar publicação</button>
+                <button type="button" class="btn btn--outline" data-site-step-button="#preview-site">Ver preview</button>
             </div>
         </section>
 
-        <section id="publicar-site" class="site-step-panel" data-site-step-panel hidden>
+        <section id="preview-site" class="site-step-panel" data-site-step-panel hidden>
             <div class="site-step-panel__head">
                 <div>
-                    <h2 class="hub-panel__title">Publicar</h2>
-                    <p class="hub-panel__text">Revise a prontidão, gere o rascunho e publique quando a assinatura estiver ativa.</p>
+                    <h2 class="hub-panel__title">Preview do site</h2>
+                    <p class="hub-panel__text">Revise como ficou antes de avançar para a publicação.</p>
                 </div>
-                <span class="hub-badge <?= e($statusClass) ?>">
-                    <?= $canPublish ? 'Publicação liberada' : 'Publicação bloqueada' ?>
-                </span>
+                <?php if ($currentSite): ?>
+                    <span class="hub-badge <?= (($currentSite['status'] ?? '') === 'published') ? 'hub-badge--success' : 'hub-badge--warning' ?>">
+                        <?= e((string) ($currentSite['status_label'] ?? 'Rascunho')) ?>
+                    </span>
+                <?php endif; ?>
             </div>
 
             <div class="site-publish-grid">
-                <article class="site-status-card">
-                    <h3 class="hub-panel__title">Status de publicação</h3>
-                    <p class="hub-panel__text">
-                        <?php if ($canPublish): ?>
-                            Sua assinatura está ativa. Configure o domínio próprio (opcional) e publique quando estiver pronto.
-                        <?php else: ?>
-                            Publicar exige assinatura ativa do plano "Site para Igrejas". Use o domínio próprio assim que a assinatura for confirmada.
-                        <?php endif; ?>
-                    </p>
-
-                    <div class="site-status-card__meta">
-                        <div>
-                            <span>Plano</span>
-                            <strong><?= e((string) ($siteBuilderAccess['plan_name'] ?? 'Site para Igrejas')) ?></strong>
-                        </div>
-                        <div>
-                            <span>Mensalidade</span>
-                            <strong><?= e((string) ($siteBuilderAccess['monthly_fee_label'] ?? 'Consulte valores')) ?></strong>
-                        </div>
-                        <div>
-                            <span>Situação</span>
-                            <strong><?= e((string) ($siteBuilderAccess['status_label'] ?? 'Sem assinatura ativa')) ?></strong>
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-top:1.25rem;">
-                        <label class="form-label" for="domain">Domínio próprio</label>
-                        <input id="domain" name="domain" class="form-input" value="<?= e((string) ($currentSite['domain'] ?? '')) ?>" placeholder="www.suaigreja.org.br" <?= $canPublish ? '' : 'disabled' ?>>
-                        <span class="form-hint">
-                            <?php if ($canPublish): ?>
-                                Aponte o DNS A/CNAME desse domínio para os servidores Elo 42 e o site público responderá nele. Se ficar vazio, usamos a URL <code><?= e(url('/site/' . rawurlencode((string) ($currentSite['slug'] ?? 'minha-igreja')))) ?></code>.
-                            <?php else: ?>
-                                Disponível para assinantes do plano "Site para Igrejas". Ative a assinatura para liberar o domínio próprio.
-                            <?php endif; ?>
-                        </span>
-                    </div>
-
-                    <?php if (!$canPublish): ?>
-                        <div style="margin-top:1rem;">
-                            <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary btn--sm">Ativar assinatura</a>
-                        </div>
-                    <?php endif; ?>
-                </article>
-
-                <article class="site-readiness-card">
-                    <div class="site-readiness-card__head">
-                        <div>
-                            <h3 class="hub-panel__title">Prontidão do site</h3>
-                            <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos</p>
-                        </div>
-                        <strong><?= $completion ?>%</strong>
-                    </div>
-                    <div class="site-progress"><span style="width: <?= $completion ?>%;"></span></div>
-                    <ul class="site-readiness-list">
-                        <?php foreach ($checklist as $item): ?>
-                            <li class="<?= !empty($item['done']) ? 'is-done' : 'is-pending' ?>">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
-                                </svg>
-                                <div>
-                                    <strong><?= e((string) ($item['title'] ?? 'Item')) ?></strong>
-                                    <span><?= e((string) ($item['text'] ?? '')) ?></span>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </article>
-
                 <article class="site-status-card site-publish-card">
                     <div class="hub-panel__row">
                         <div>
@@ -364,11 +299,6 @@
                                 <?= $currentSite ? ($hasSavedSite ? 'Rascunho salvo e pronto para revisão visual.' : 'Preview montado com os dados cadastrais da igreja.') : 'Nenhum site foi gerado ainda.' ?>
                             </p>
                         </div>
-                        <?php if ($currentSite): ?>
-                            <span class="hub-badge <?= (($currentSite['status'] ?? '') === 'published') ? 'hub-badge--success' : 'hub-badge--warning' ?>">
-                                <?= e((string) ($currentSite['status_label'] ?? 'Rascunho')) ?>
-                            </span>
-                        <?php endif; ?>
                     </div>
 
                     <div class="site-preview-card" aria-label="Preview visual do site">
@@ -397,17 +327,104 @@
 
                     <div class="hub-page__actions">
                         <button class="btn btn--outline" type="submit" formaction="<?= url('/hub/sites/gerar') ?>"><?= $currentSite ? 'Atualizar rascunho' : 'Gerar rascunho' ?></button>
-                        <a href="<?= e($previewUrl) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Preview</a>
-                        <?php if ($canPublish && $hasSavedSite): ?>
-                            <button class="btn btn--primary" type="submit" formaction="<?= url('/hub/sites/publicar') ?>">Publicar site</button>
-                        <?php elseif (!$canPublish): ?>
-                            <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary">Ativar publicação</a>
-                        <?php else: ?>
-                            <button class="btn btn--primary" type="submit">Salvar dados</button>
-                        <?php endif; ?>
+                        <a href="<?= e($previewUrl) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Abrir preview</a>
+                        <button class="btn btn--primary" type="submit">Salvar dados</button>
                     </div>
                 </article>
+
+                <article class="site-readiness-card">
+                    <div class="site-readiness-card__head">
+                        <div>
+                            <h3 class="hub-panel__title">Prontidão do site</h3>
+                            <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos</p>
+                        </div>
+                        <strong><?= $completion ?>%</strong>
+                    </div>
+                    <div class="site-progress"><span style="width: <?= $completion ?>%;"></span></div>
+                    <ul class="site-readiness-list">
+                        <?php foreach ($checklist as $item): ?>
+                            <li class="<?= !empty($item['done']) ? 'is-done' : 'is-pending' ?>">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
+                                </svg>
+                                <div>
+                                    <strong><?= e((string) ($item['title'] ?? 'Item')) ?></strong>
+                                    <span><?= e((string) ($item['text'] ?? '')) ?></span>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </article>
             </div>
+
+            <div class="site-step-panel__footer">
+                <button type="button" class="btn btn--ghost" data-site-step-button="#aparencia-site">Voltar à aparência</button>
+                <button type="button" class="btn btn--outline" data-site-step-button="#publicar-site">Avançar para publicação</button>
+            </div>
+        </section>
+
+        <section id="publicar-site" class="site-step-panel" data-site-step-panel hidden>
+            <div class="site-step-panel__head">
+                <div>
+                    <h2 class="hub-panel__title">Publicar</h2>
+                    <p class="hub-panel__text">Publicação exige assinatura ativa. Configure o domínio próprio quando o plano estiver liberado.</p>
+                </div>
+                <span class="hub-badge <?= e($statusClass) ?>">
+                    <?= $canPublish ? 'Publicação liberada' : 'Publicação bloqueada' ?>
+                </span>
+            </div>
+
+            <article class="site-status-card">
+                <?php if (!$canPublish): ?>
+                    <div class="site-publish-cta">
+                        <div>
+                            <h3 class="hub-panel__title">Plano "Site para Igrejas"</h3>
+                            <p class="hub-panel__text">Para publicar e usar domínio próprio é necessário assinar o plano. Os dados e o preview ficam salvos enquanto você ativa.</p>
+                        </div>
+                        <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary btn--lg">Tornar-se assinante</a>
+                    </div>
+                <?php else: ?>
+                    <p class="hub-panel__text">Sua assinatura está ativa. Configure o domínio próprio (opcional) e publique quando estiver pronto.</p>
+                <?php endif; ?>
+
+                <div class="site-status-card__meta">
+                    <div>
+                        <span>Plano</span>
+                        <strong><?= e((string) ($siteBuilderAccess['plan_name'] ?? 'Site para Igrejas')) ?></strong>
+                    </div>
+                    <div>
+                        <span>Mensalidade</span>
+                        <strong><?= e((string) ($siteBuilderAccess['monthly_fee_label'] ?? 'Consulte valores')) ?></strong>
+                    </div>
+                    <div>
+                        <span>Situação</span>
+                        <strong><?= e((string) ($siteBuilderAccess['status_label'] ?? 'Sem assinatura ativa')) ?></strong>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top:1.25rem;">
+                    <label class="form-label" for="domain">Domínio próprio</label>
+                    <input id="domain" name="domain" class="form-input" value="<?= e((string) ($currentSite['domain'] ?? '')) ?>" placeholder="www.suaigreja.org.br" <?= $canPublish ? '' : 'disabled' ?>>
+                    <span class="form-hint">
+                        <?php if ($canPublish): ?>
+                            Aponte o DNS A/CNAME desse domínio para os servidores Elo 42. Se ficar vazio, usamos <code><?= e(url('/site/' . rawurlencode((string) ($currentSite['slug'] ?? 'minha-igreja')))) ?></code>.
+                        <?php else: ?>
+                            Disponível para assinantes. Ative a assinatura para liberar o domínio próprio.
+                        <?php endif; ?>
+                    </span>
+                </div>
+
+                <div class="hub-page__actions" style="margin-top:1rem;">
+                    <button type="button" class="btn btn--ghost" data-site-step-button="#preview-site">Voltar ao preview</button>
+                    <?php if ($canPublish && $hasSavedSite): ?>
+                        <button class="btn btn--primary" type="submit" formaction="<?= url('/hub/sites/publicar') ?>">Publicar site</button>
+                    <?php elseif ($canPublish): ?>
+                        <button class="btn btn--primary" type="submit">Salvar para publicar</button>
+                    <?php else: ?>
+                        <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary">Ativar assinatura</a>
+                    <?php endif; ?>
+                </div>
+            </article>
         </section>
     </form>
 </section>

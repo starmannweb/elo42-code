@@ -130,8 +130,26 @@ class App
             exit;
         }
 
-        // For Admin sub-pages, redirect to admin home with friendly message
+        // For Admin sub-pages: in debug mode, expose the underlying error so the
+        // dev panel actually surfaces what's broken instead of looping back to /admin.
         if (str_starts_with($uri, '/admin') && $uri !== '/admin' && $uri !== '/admin/') {
+            $debug = (bool) (config('app')['debug'] ?? false);
+            if ($debug) {
+                http_response_code(500);
+                echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Admin — Erro</title>';
+                echo '<style>body{margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b1730;color:#e7edf7;padding:32px;line-height:1.5}';
+                echo '.box{max-width:980px;margin:0 auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,80,80,.4);border-radius:12px;padding:24px}';
+                echo 'h1{margin:0 0 8px;color:#ff8c8c;font-size:18px}h2{margin:18px 0 6px;font-size:14px;color:#9ec0ff}';
+                echo 'pre{white-space:pre-wrap;word-break:break-word;background:rgba(0,0,0,.3);padding:14px;border-radius:8px;font-size:12px;margin:0}';
+                echo 'a{color:#8ec1ff}</style></head><body><div class="box">';
+                echo '<h1>Erro no Admin (APP_DEBUG=true)</h1>';
+                echo '<p>' . htmlspecialchars(get_class($e) . ': ' . $e->getMessage(), ENT_QUOTES, 'UTF-8') . '</p>';
+                echo '<h2>' . htmlspecialchars($e->getFile() . ':' . $e->getLine(), ENT_QUOTES, 'UTF-8') . '</h2>';
+                echo '<h2>Stack trace</h2><pre>' . htmlspecialchars($e->getTraceAsString(), ENT_QUOTES, 'UTF-8') . '</pre>';
+                echo '<p style="margin-top:16px;"><a href="/admin">← Voltar ao painel</a></p>';
+                echo '</div></body></html>';
+                exit;
+            }
             try {
                 Session::flash('error', 'Não foi possível carregar a página agora. Tente novamente em instantes.');
             } catch (\Throwable $ignored) {}

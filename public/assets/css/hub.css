@@ -3013,12 +3013,56 @@ body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__user-av
    Dark mode polish — applied across hub/management/admin
    ================================================================= */
 
-/* Sidebar header height matches topbar to align top borders */
+/* Sidebar header height matches topbar exactly so the bottom border aligns */
 .hub-sidebar__header {
     min-height: 72px;
+    height: 72px;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    box-sizing: border-box;
+}
+
+.hub-sidebar__header .hub-sidebar__logo img {
+    max-height: 36px;
+}
+
+.hub-sidebar__brand-subtitle {
+    font-size: 0.7rem;
+    margin-top: 2px;
+}
+
+/* Topbar matches the sidebar header height so the dividers align */
+.hub-topbar {
+    min-height: 72px;
+    height: 72px;
+    box-sizing: border-box;
+}
+
+/* Master admin shortcut in topbar — distinct, isolated */
+.hub-topbar__link--master {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #d6a646 0%, #b8862c 100%);
+    color: #1a1209 !important;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 12px rgba(214, 166, 70, 0.28);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.hub-topbar__link--master:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(214, 166, 70, 0.38);
+    color: #1a1209 !important;
 }
 
 /* Footer (WhatsApp links) in dark mode */
