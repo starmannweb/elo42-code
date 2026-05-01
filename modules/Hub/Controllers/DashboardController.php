@@ -2117,19 +2117,31 @@ class DashboardController extends Controller
 
     private function buildShowcaseItems(): array
     {
+        $wa = fn (string $service): string => $this->buildCommercialWhatsAppUrl($service);
+
         return [
             ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial com 7 dias gratuitos.', 'price' => 'R$ 49,90/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
             ['icon' => 'book', 'title' => 'Expositor IA', 'description' => 'Geração de esboços e estudos bíblicos para apoio pastoral e ministerial.', 'price' => 'Use com créditos', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Comprar créditos', 'url' => url('/hub/creditos')],
-            ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação para captar até US$ 10.000/mês em anúncios.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'gift', 'title' => 'Google para ONGs', 'description' => 'Trilha guiada para aprovação e criação do Google Workspace gratuito.', 'price' => 'R$ 297,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'megaphone', 'title' => 'Gestão de Tráfego Pago', 'description' => 'Planejamento e operação de campanhas para ampliar alcance e resultados.', 'price' => 'Consulte', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'briefcase', 'title' => 'TechSoup Brasil', 'description' => 'Registro e validação para liberar benefícios de filantropia digital.', 'price' => 'R$ 197,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
-            ['icon' => 'briefcase', 'title' => 'Microsoft, Canva e Slack para ONGs', 'description' => 'Liberação de contas premium para ganho real de produtividade.', 'price' => 'R$ 147,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
+            ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação para captar até US$ 10.000/mês em anúncios.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('Google Ad Grants')],
+            ['icon' => 'gift', 'title' => 'Google para ONGs', 'description' => 'Trilha guiada para aprovação e criação do Google Workspace gratuito.', 'price' => 'R$ 297,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Falar com comercial', 'url' => $wa('Google para ONGs')],
+            ['icon' => 'megaphone', 'title' => 'Gestão de Tráfego Pago', 'description' => 'Planejamento e operação de campanhas para ampliar alcance e resultados.', 'price' => 'Consulte', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Falar com comercial', 'url' => $wa('Gestão de Tráfego Pago')],
+            ['icon' => 'briefcase', 'title' => 'TechSoup Brasil', 'description' => 'Registro e validação para liberar benefícios de filantropia digital.', 'price' => 'R$ 197,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('TechSoup Brasil')],
+            ['icon' => 'briefcase', 'title' => 'Microsoft, Canva e Slack para ONGs', 'description' => 'Liberação de contas premium para ganho real de produtividade.', 'price' => 'R$ 147,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Falar com comercial', 'url' => $wa('Microsoft, Canva e Slack para ONGs')],
             ['icon' => 'globe', 'title' => 'Site para Igrejas', 'description' => 'Sites profissionais para publicação com identidade visual da organização.', 'price' => 'R$ 67,00/mês', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/hub/sites')],
-            ['icon' => 'hand', 'title' => 'Implantação Acompanhada', 'description' => 'Implementação do painel com apoio personalizado da equipe Elo 42.', 'price' => 'Em breve', 'badge' => '', 'badge_type' => '', 'cta' => 'Saber mais', 'url' => url('/contato')],
-            ['icon' => 'diagnostic', 'title' => 'Diagnóstico Organizacional', 'description' => 'Análise completa da operação com recomendações práticas e plano de ação.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/contato')],
+            ['icon' => 'hand', 'title' => 'Implantação Acompanhada', 'description' => 'Implementação do painel com apoio personalizado da equipe Elo 42.', 'price' => 'Em breve', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('Implantação Acompanhada')],
+            ['icon' => 'diagnostic', 'title' => 'Diagnóstico Organizacional', 'description' => 'Análise completa da operação com recomendações práticas e plano de ação.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('Diagnóstico Organizacional')],
             ['icon' => 'calendar', 'title' => 'Workshop: Gestão Eficiente para Igrejas', 'description' => 'Treinamento prático para líderes e equipes de gestão eclesiástica.', 'price' => 'Em breve', 'badge' => 'Em breve', 'badge_type' => 'coming', 'cta' => 'Em breve', 'url' => '#', 'is_disabled' => true],
         ];
+    }
+
+    private function buildCommercialWhatsAppUrl(string $serviceName): string
+    {
+        $user = \App\Core\Session::user() ?? [];
+        $name = trim((string) ($user['name'] ?? ''));
+        $greeting = $name !== '' ? "Olá, sou {$name}." : 'Olá!';
+        $message = "{$greeting} Tenho interesse no serviço \"{$serviceName}\" e gostaria de mais informações.";
+
+        return 'https://wa.me/5513978008047?text=' . rawurlencode($message);
     }
 
     private function buildPlatformAccesses(array $churchManagementAccess): array
@@ -2183,7 +2195,7 @@ class DashboardController extends Controller
                 'price'       => 'R$ 49,90/mês',
                 'description' => 'Acesso ao sistema de gestão com suporte inicial para implantação.',
                 'cta'         => 'Solicitar contratação',
-                'url'         => url('/contato'),
+                'url'         => $this->buildCommercialWhatsAppUrl('Painel de Gestão de Igrejas — Plano mensal'),
             ],
             [
                 'product'     => 'Expositor IA',
@@ -2199,7 +2211,7 @@ class DashboardController extends Controller
                 'price'       => 'A partir de R$ 497,00',
                 'description' => 'Aprovação, estrutura de campanhas e acompanhamento de performance.',
                 'cta'         => 'Quero este pacote',
-                'url'         => url('/contato'),
+                'url'         => $this->buildCommercialWhatsAppUrl('Google Ad Grants + Tráfego — Implantação completa'),
             ],
             [
                 'product'     => 'Pacote Operacional para ONGs',
@@ -2207,7 +2219,7 @@ class DashboardController extends Controller
                 'price'       => 'Sob consulta',
                 'description' => 'Conjunto de benefícios para reduzir custo e aumentar produtividade.',
                 'cta'         => 'Solicitar proposta',
-                'url'         => url('/contato'),
+                'url'         => $this->buildCommercialWhatsAppUrl('Pacote Operacional para ONGs'),
             ],
         ];
     }

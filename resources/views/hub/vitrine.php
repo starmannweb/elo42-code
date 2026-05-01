@@ -56,7 +56,8 @@
                     <?php if ($isDisabled): ?>
                         <span class="showcase-card__button is-disabled" aria-disabled="true"><?= e((string) ($item['cta'] ?? 'Desativado')) ?></span>
                     <?php else: ?>
-                        <a href="<?= e((string) ($item['url'] ?? url('/contato'))) ?>" class="showcase-card__button"><?= e((string) ($item['cta'] ?? 'Ver detalhes')) ?></a>
+                        <?php $itemUrl = (string) ($item['url'] ?? url('/contato')); $isExternal = str_starts_with($itemUrl, 'http'); ?>
+                        <a href="<?= e($itemUrl) ?>" class="showcase-card__button"<?= $isExternal ? ' target="_blank" rel="noopener"' : '' ?>><?= e((string) ($item['cta'] ?? 'Ver detalhes')) ?></a>
                     <?php endif; ?>
                 </div>
             </article>
@@ -99,7 +100,8 @@
                     <h3 class="contract-package-card__title"><?= e((string) ($package['package'] ?? 'Pacote')) ?></h3>
                     <p class="contract-package-card__price"><?= e((string) ($package['price'] ?? 'Consulte')) ?></p>
                     <p class="contract-package-card__description"><?= e((string) ($package['description'] ?? 'Solicite uma proposta personalizada.')) ?></p>
-                    <a href="<?= e((string) ($package['url'] ?? url('/contato'))) ?>" class="btn btn--outline">
+                    <?php $packageUrl = (string) ($package['url'] ?? url('/contato')); $packageExternal = str_starts_with($packageUrl, 'http'); ?>
+                    <a href="<?= e($packageUrl) ?>" class="btn btn--outline"<?= $packageExternal ? ' target="_blank" rel="noopener"' : '' ?>>
                         <?= e((string) ($package['cta'] ?? 'Solicitar')) ?>
                     </a>
                 </article>
