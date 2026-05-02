@@ -8,7 +8,7 @@
 </form>
 
 <?php if (empty($logs)): ?>
-    <div class="mgmt-empty"><div class="mgmt-empty__icon">📋</div><h3 class="mgmt-empty__title">Nenhum log encontrado</h3><p class="mgmt-empty__text">Os logs de auditoria aparecerão aqui quando ações forem registradas.</p></div>
+    <div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div><h3 class="mgmt-empty__title">Nenhum log encontrado</h3><p class="mgmt-empty__text">Os logs de auditoria aparecerão aqui quando ações forem registradas.</p></div>
 <?php else: ?>
     <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Data/Hora</th><th>Usuário</th><th>Ação</th><th>Módulo</th><th>IP</th></tr></thead><tbody>
         <?php foreach ($logs as $l): ?><tr>

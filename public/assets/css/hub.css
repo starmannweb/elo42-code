@@ -1881,7 +1881,7 @@
 
 .site-step-nav {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-3);
     margin-bottom: var(--space-5);
 }
@@ -2900,19 +2900,10 @@ body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__user-av
     }
 }
 
-@media (max-width: 1280px) {
-    .site-step-nav {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
     .site-step-nav {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-}
-
-@media (max-width: 1100px) {
 
     .site-builder-header,
     .site-step-panel__head,

@@ -1,7 +1,7 @@
 <?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Plano de Ação</h1></div><div class="mgmt-header__actions"><a href="<?= url('/gestao/planos/novo') ?>" class="btn btn--primary">+ Novo plano</a></div></div>
-<?php if (empty($plans)): ?><div class="mgmt-empty"><div class="mgmt-empty__icon">🎯</div><h3 class="mgmt-empty__title">Nenhum plano</h3><p class="mgmt-empty__text">Crie planos de ação com objetivos e tarefas.</p></div>
+<?php if (empty($plans)): ?><div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></div><h3 class="mgmt-empty__title">Nenhum plano</h3><p class="mgmt-empty__text">Crie planos de ação com objetivos e tarefas.</p></div>
 <?php else: ?>
     <?php foreach ($plans as $p):
         $progress = $p['task_count'] > 0 ? round(($p['tasks_done'] / $p['task_count']) * 100) : 0;

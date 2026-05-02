@@ -13,7 +13,7 @@ $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'paused' => 'Paus
 </div>
 
 <?php if (empty($benefits)): ?>
-    <div class="mgmt-empty"><div class="mgmt-empty__icon">🎁</div><h3 class="mgmt-empty__title">Nenhuma cortesia</h3></div>
+    <div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"></rect><path d="M5 12v9h14v-9"></path><path d="M12 8v13"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9 3 12 8 12 8s3-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg></div><h3 class="mgmt-empty__title">Nenhuma cortesia</h3></div>
 <?php else: ?>
     <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Cortesia</th><th>Produto/serviço</th><th>Prazo</th><th>Utilizações</th><th>Limite</th><th>Válido até</th><th>Status</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($benefits as $b): ?><tr>

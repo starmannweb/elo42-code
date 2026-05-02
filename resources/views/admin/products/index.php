@@ -6,7 +6,7 @@
 </div>
 
 <?php if (empty($products)): ?>
-    <div class="mgmt-empty"><div class="mgmt-empty__icon">📦</div><h3 class="mgmt-empty__title">Nenhum produto</h3><p class="mgmt-empty__text">Cadastre o primeiro produto da plataforma.</p></div>
+    <div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div><h3 class="mgmt-empty__title">Nenhum produto</h3><p class="mgmt-empty__text">Cadastre o primeiro produto da plataforma.</p></div>
 <?php else: ?>
     <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Destaque</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($products as $p): ?><tr>

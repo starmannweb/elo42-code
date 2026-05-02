@@ -1,7 +1,7 @@
 <?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Visitas</h1></div><div class="mgmt-header__actions"><a href="<?= url('/gestao/visitas/nova') ?>" class="btn btn--primary">+ Nova visita</a></div></div>
-<?php if (empty($visits)): ?><div class="mgmt-empty"><div class="mgmt-empty__icon">🚪</div><h3 class="mgmt-empty__title">Nenhuma visita</h3><p class="mgmt-empty__text">Registre visitas recebidas.</p></div>
+<?php if (empty($visits)): ?><div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path><circle cx="10" cy="13" r="0.6" fill="currentColor"></circle></svg></div><h3 class="mgmt-empty__title">Nenhuma visita</h3><p class="mgmt-empty__text">Registre visitas recebidas.</p></div>
 <?php else: ?>
     <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Visitante</th><th>Contato</th><th>Data</th><th>Origem</th><th>Acompanhamento</th><th>Responsável</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($visits as $v): ?><tr>

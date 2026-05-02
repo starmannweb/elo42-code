@@ -28,8 +28,7 @@
         ['id' => 'dados-site', 'number' => '1', 'title' => 'Dados do site', 'text' => 'Informações públicas e contatos'],
         ['id' => 'modelos-site', 'number' => '2', 'title' => 'Escolher modelo', 'text' => 'Estrutura visual inicial'],
         ['id' => 'aparencia-site', 'number' => '3', 'title' => 'Definir aparência', 'text' => 'Logo, imagem e cores'],
-        ['id' => 'preview-site', 'number' => '4', 'title' => 'Preview', 'text' => 'Pré-visualização antes de publicar'],
-        ['id' => 'publicar-site', 'number' => '5', 'title' => 'Publicar', 'text' => 'Assinatura e domínio próprio'],
+        ['id' => 'publicar-site', 'number' => '4', 'title' => 'Publicar', 'text' => 'Preview, assinatura e domínio'],
     ];
 ?>
 
@@ -65,7 +64,7 @@
         <?php endforeach; ?>
     </nav>
 
-    <form id="site-builder-form" class="site-step-form" action="<?= url('/hub/sites/configurar') ?>" method="POST" data-loading>
+    <form id="site-builder-form" class="site-step-form" action="<?= url('/hub/sites/configurar') ?>" method="POST" enctype="multipart/form-data" data-loading>
         <?= csrf_field() ?>
         <input type="hidden" id="site-template-value" name="template" value="<?= e($templateValue) ?>">
 
@@ -212,12 +211,34 @@
 
             <div class="form-grid form-grid--2">
                 <div class="form-group">
-                    <label class="form-label" for="logo_image">URL da logo</label>
-                    <input id="logo_image" name="logo_image" class="form-input" value="<?= e((string) ($currentSite['logo_image'] ?? '')) ?>" placeholder="https://.../logo.png">
+                    <label class="form-label" for="logo_image">Logo</label>
+                    <input id="logo_image" name="logo_image" class="form-input" value="<?= e((string) ($currentSite['logo_image'] ?? '')) ?>" placeholder="Cole uma URL https://... ou envie um arquivo abaixo">
+                    <div style="display:flex;align-items:center;gap:.6rem;margin-top:.5rem;flex-wrap:wrap;">
+                        <label class="btn btn--outline btn--sm" for="logo_image_file" style="margin:0;cursor:pointer;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:.35rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            Enviar arquivo
+                        </label>
+                        <input type="file" id="logo_image_file" name="logo_image" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="display:none;" onchange="document.getElementById('logo_image').value=this.files[0]?this.files[0].name:'';this.previousElementSibling?.querySelector('.file-name')?.remove();">
+                        <?php if (!empty($currentSite['logo_image'])): ?>
+                            <img src="<?= e((string) $currentSite['logo_image']) ?>" alt="Logo atual" style="max-height:32px;border-radius:4px;border:1px solid var(--color-border-light, #dfe7f4);">
+                        <?php endif; ?>
+                    </div>
+                    <span class="form-hint" style="display:block;margin-top:.25rem;">PNG, JPG, WEBP, GIF ou SVG até 5 MB. O arquivo enviado tem prioridade sobre a URL.</span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="hero_image">URL da imagem principal</label>
-                    <input id="hero_image" name="hero_image" class="form-input" value="<?= e((string) ($currentSite['hero_image'] ?? '')) ?>" placeholder="https://.../foto-culto.jpg">
+                    <label class="form-label" for="hero_image">Imagem principal</label>
+                    <input id="hero_image" name="hero_image" class="form-input" value="<?= e((string) ($currentSite['hero_image'] ?? '')) ?>" placeholder="Cole uma URL https://... ou envie um arquivo abaixo">
+                    <div style="display:flex;align-items:center;gap:.6rem;margin-top:.5rem;flex-wrap:wrap;">
+                        <label class="btn btn--outline btn--sm" for="hero_image_file" style="margin:0;cursor:pointer;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:.35rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            Enviar arquivo
+                        </label>
+                        <input type="file" id="hero_image_file" name="hero_image" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="document.getElementById('hero_image').value=this.files[0]?this.files[0].name:'';">
+                        <?php if (!empty($currentSite['hero_image'])): ?>
+                            <img src="<?= e((string) $currentSite['hero_image']) ?>" alt="Imagem atual" style="max-height:32px;border-radius:4px;border:1px solid var(--color-border-light, #dfe7f4);">
+                        <?php endif; ?>
+                    </div>
+                    <span class="form-hint" style="display:block;margin-top:.25rem;">Recomendado: 1600×900px para o hero. PNG, JPG ou WEBP até 5 MB.</span>
                 </div>
             </div>
 
@@ -273,49 +294,6 @@
 
             <div class="site-step-panel__footer">
                 <button type="button" class="btn btn--ghost" data-site-step-button="#modelos-site">Voltar aos modelos</button>
-                <button type="button" class="btn btn--outline" data-site-step-button="#preview-site">Ver preview</button>
-            </div>
-        </section>
-
-        <section id="preview-site" class="site-step-panel" data-site-step-panel hidden>
-            <div class="site-step-panel__head">
-                <div>
-                    <h2 class="hub-panel__title">Preview do site</h2>
-                    <p class="hub-panel__text">Revise como ficou antes de avançar para a publicação.</p>
-                </div>
-                <?php if ($currentSite): ?>
-                    <span class="hub-badge <?= (($currentSite['status'] ?? '') === 'published') ? 'hub-badge--success' : 'hub-badge--warning' ?>">
-                        <?= e((string) ($currentSite['status_label'] ?? 'Rascunho')) ?>
-                    </span>
-                <?php endif; ?>
-            </div>
-
-            <article class="site-readiness-card">
-                <div class="site-readiness-card__head">
-                    <div>
-                        <h3 class="hub-panel__title">Prontidão do site</h3>
-                        <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos</p>
-                    </div>
-                    <strong><?= $completion ?>%</strong>
-                </div>
-                <div class="site-progress"><span style="width: <?= $completion ?>%;"></span></div>
-                <ul class="site-readiness-list">
-                    <?php foreach ($checklist as $item): ?>
-                        <li class="<?= !empty($item['done']) ? 'is-done' : 'is-pending' ?>">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
-                            </svg>
-                            <div>
-                                <strong><?= e((string) ($item['title'] ?? 'Item')) ?></strong>
-                                <span><?= e((string) ($item['text'] ?? '')) ?></span>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </article>
-
-            <div class="site-step-panel__footer">
-                <button type="button" class="btn btn--ghost" data-site-step-button="#aparencia-site">Voltar à aparência</button>
                 <button type="button" class="btn btn--outline" data-site-step-button="#publicar-site">Avançar para publicação</button>
             </div>
         </section>
@@ -371,6 +349,30 @@
                 </div>
             </article>
 
+            <article class="site-readiness-card" style="margin-bottom:var(--space-4);">
+                <div class="site-readiness-card__head">
+                    <div>
+                        <h3 class="hub-panel__title">Prontidão do site</h3>
+                        <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos</p>
+                    </div>
+                    <strong><?= $completion ?>%</strong>
+                </div>
+                <div class="site-progress"><span style="width: <?= $completion ?>%;"></span></div>
+                <ul class="site-readiness-list">
+                    <?php foreach ($checklist as $item): ?>
+                        <li class="<?= !empty($item['done']) ? 'is-done' : 'is-pending' ?>">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
+                            </svg>
+                            <div>
+                                <strong><?= e((string) ($item['title'] ?? 'Item')) ?></strong>
+                                <span><?= e((string) ($item['text'] ?? '')) ?></span>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </article>
+
             <article class="site-status-card">
                 <?php if (!$canPublish): ?>
                     <div class="site-publish-cta">
@@ -412,7 +414,7 @@
                 </div>
 
                 <div class="hub-page__actions" style="margin-top:1rem;">
-                    <button type="button" class="btn btn--ghost" data-site-step-button="#preview-site">Voltar ao preview</button>
+                    <button type="button" class="btn btn--ghost" data-site-step-button="#aparencia-site">Voltar à aparência</button>
                     <?php if ($canPublish && $hasSavedSite): ?>
                         <button class="btn btn--primary" type="submit" formaction="<?= url('/hub/sites/publicar') ?>">Publicar site</button>
                     <?php elseif ($canPublish): ?>

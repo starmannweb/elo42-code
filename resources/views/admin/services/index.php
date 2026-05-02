@@ -13,7 +13,7 @@ $recurrenceLabels = ['one_time' => 'Único', 'monthly' => 'Mensal', 'quarterly' 
 </div>
 
 <?php if (empty($services)): ?>
-    <div class="mgmt-empty"><div class="mgmt-empty__icon">🔧</div><h3 class="mgmt-empty__title">Nenhum serviço</h3></div>
+    <div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 1 5.4-5.4l-2.7 2.7-1.4-1.4 2.7-2.7z"></path></svg></div><h3 class="mgmt-empty__title">Nenhum serviço</h3></div>
 <?php else: ?>
     <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Serviço</th><th>Preço</th><th>Recorrência</th><th>Status</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($services as $s): ?><tr>

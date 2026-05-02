@@ -2,7 +2,7 @@
 <?php $__view->section('content'); ?>
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Solicitações</h1></div><div class="mgmt-header__actions"><a href="<?= url('/gestao/solicitacoes/nova') ?>" class="btn btn--primary">+ Nova solicitação</a></div></div>
 <?php if (empty($requests)): ?>
-    <div class="mgmt-empty"><div class="mgmt-empty__icon">📝</div><h3 class="mgmt-empty__title">Nenhuma solicitação</h3><p class="mgmt-empty__text">Registre solicitações da comunidade.</p></div>
+    <div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div><h3 class="mgmt-empty__title">Nenhuma solicitação</h3><p class="mgmt-empty__text">Registre solicitações da comunidade.</p></div>
 <?php else: ?>
     <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Título</th><th>Tipo</th><th>Prioridade</th><th>Membro</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($requests as $r): ?><tr>

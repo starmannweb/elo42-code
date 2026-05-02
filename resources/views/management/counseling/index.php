@@ -60,7 +60,7 @@ $statusFilter = (string) ($statusFilter ?? 'pending');
 </div>
 
 <?php if (empty($sessions)): ?>
-<div class="mgmt-empty"><div class="mgmt-empty__icon">🙏</div><h3 class="mgmt-empty__title">Nenhum pedido</h3><p class="mgmt-empty__text">Não há pedidos de cuidado pastoral no momento.</p></div>
+<div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div><h3 class="mgmt-empty__title">Nenhum pedido</h3><p class="mgmt-empty__text">Não há pedidos de cuidado pastoral no momento.</p></div>
 <?php else: ?>
 <div style="display: flex; flex-direction: column; gap: var(--space-4);">
     <?php foreach ($sessions as $s): ?>

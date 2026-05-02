@@ -902,6 +902,34 @@ class DashboardController extends Controller
         }
     }
 
+    private function resolveSiteImageInput(string $field, int $orgId, string $fallbackUrl): ?string
+    {
+        $upload = $_FILES[$field] ?? null;
+        if (is_array($upload) && (int) ($upload['error'] ?? \UPLOAD_ERR_NO_FILE) === \UPLOAD_ERR_OK && !empty($upload['tmp_name']) && is_uploaded_file((string) $upload['tmp_name'])) {
+            $size = (int) ($upload['size'] ?? 0);
+            if ($size > 0 && $size <= 5 * 1024 * 1024) {
+                $mime = function_exists('mime_content_type') ? (string) mime_content_type((string) $upload['tmp_name']) : '';
+                $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
+                if (in_array($mime, $allowedMimes, true)) {
+                    $extByMime = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif', 'image/svg+xml' => 'svg'];
+                    $ext = $extByMime[$mime];
+                    $relativeDir = '/uploads/sites/' . max(0, $orgId);
+                    $targetDir = dirname(__DIR__, 3) . '/public' . $relativeDir;
+                    if (!is_dir($targetDir)) {
+                        @mkdir($targetDir, 0775, true);
+                    }
+                    $filename = $field . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+                    $absolute = $targetDir . '/' . $filename;
+                    if (@move_uploaded_file((string) $upload['tmp_name'], $absolute)) {
+                        return url($relativeDir . '/' . $filename);
+                    }
+                }
+            }
+        }
+
+        return $this->normalizeSiteUrl($fallbackUrl);
+    }
+
     private function siteBuilderPayload(Request $request, array $organization): array
     {
         $siteTitle = trim((string) $request->input('site_title', $organization['name'] ?? 'Site institucional'));
@@ -910,14 +938,18 @@ class DashboardController extends Controller
         $slugSource = $domain !== '' ? preg_replace('/^https?:\/\//i', '', $domain) : $siteTitle;
         $slugSource = (string) preg_replace('/\/.*$/', '', (string) $slugSource);
 
+        $orgId = (int) ($organization['id'] ?? 0);
+        $heroImage = $this->resolveSiteImageInput('hero_image', $orgId, (string) $request->input('hero_image', ''));
+        $logoImage = $this->resolveSiteImageInput('logo_image', $orgId, (string) $request->input('logo_image', ''));
+
         return [
             'template' => trim((string) $request->input('template', 'Institucional Clássico')) ?: 'Institucional Clássico',
             'site_title' => $siteTitle,
             'slug' => $this->slugifySiteTitle($slugSource),
             'domain' => $this->nullableText($domain),
             'theme_color' => $this->normalizeThemeColor((string) $request->input('theme_color', '#0A4DFF')),
-            'hero_image' => $this->normalizeSiteUrl((string) $request->input('hero_image', '')),
-            'logo_image' => $this->normalizeSiteUrl((string) $request->input('logo_image', '')),
+            'hero_image' => $heroImage,
+            'logo_image' => $logoImage,
             'site_description' => $this->nullableText((string) $request->input('site_description', '')),
             'about_text' => $this->nullableText((string) $request->input('about_text', '')),
             'contact_email' => $this->nullableText((string) $request->input('contact_email', '')),
@@ -1854,6 +1886,13 @@ class DashboardController extends Controller
                 'status' => 'Disponível',
                 'highlight' => true,
                 'assets' => ['Logo', 'Foto principal da igreja', 'Fotos dos ministérios'],
+            ],
+            [
+                'name' => 'Comunidade Engajada',
+                'description' => 'Inspirado no padrão Igreja do Porto: hero com chamada, princípios, última mensagem, séries, eventos e blocos de convite (visite, voluntariado, discipulado, café com pastor).',
+                'status' => 'Disponível',
+                'highlight' => false,
+                'assets' => ['Foto da comunidade', 'Capas de séries', 'Cards de eventos', 'Banners de convite'],
             ],
             [
                 'name' => 'Campanhas e Eventos',
