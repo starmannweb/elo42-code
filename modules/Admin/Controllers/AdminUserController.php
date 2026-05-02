@@ -14,31 +14,42 @@ class AdminUserController extends Controller
 {
     public function index(Request $request): void
     {
-        $pdo = Database::connection();
         $search = $request->input('search', '');
         $status = $request->input('status', '');
         $page = (int) ($request->input('page', '1'));
         $perPage = 20;
 
-        $where = '1=1';
-        $params = [];
-        if ($search) { $where .= " AND (u.name LIKE :s OR u.email LIKE :s)"; $params['s'] = "%{$search}%"; }
-        if ($status) { $where .= " AND u.status = :st"; $params['st'] = $status; }
+        $users = [];
+        $total = 0;
+        $degraded = false;
 
-        $countStmt = $pdo->prepare("SELECT COUNT(*) FROM users u WHERE {$where}");
-        $countStmt->execute($params);
-        $total = (int) $countStmt->fetchColumn();
+        try {
+            $pdo = Database::connection();
+            $where = '1=1';
+            $params = [];
+            if ($search) { $where .= " AND (u.name LIKE :s OR u.email LIKE :s)"; $params['s'] = "%{$search}%"; }
+            if ($status) { $where .= " AND u.status = :st"; $params['st'] = $status; }
 
-        $offset = ($page - 1) * $perPage;
-        $stmt = $pdo->prepare("SELECT u.*, (SELECT COUNT(*) FROM organization_users ou WHERE ou.user_id = u.id) as org_count FROM users u WHERE {$where} ORDER BY u.created_at DESC LIMIT {$perPage} OFFSET {$offset}");
-        $stmt->execute($params);
+            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM users u WHERE {$where}");
+            $countStmt->execute($params);
+            $total = (int) $countStmt->fetchColumn();
+
+            $offset = ($page - 1) * $perPage;
+            $stmt = $pdo->prepare("SELECT u.*, (SELECT COUNT(*) FROM organization_users ou WHERE ou.user_id = u.id) as org_count FROM users u WHERE {$where} ORDER BY u.created_at DESC LIMIT {$perPage} OFFSET {$offset}");
+            $stmt->execute($params);
+            $users = $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_USERS] ' . $e->getMessage());
+        }
 
         $this->view('admin/users/index', [
             'pageTitle'  => 'Usuários — Admin',
             'breadcrumb' => 'Usuários',
-            'users'      => $stmt->fetchAll(),
-            'pagination' => ['total' => $total, 'page' => $page, 'perPage' => $perPage, 'totalPages' => (int) ceil($total / $perPage)],
+            'users'      => $users,
+            'pagination' => ['total' => $total, 'page' => $page, 'perPage' => $perPage, 'totalPages' => (int) ceil(max(1, $total) / $perPage)],
             'filters'    => ['search' => $search, 'status' => $status],
+            'degraded'   => $degraded,
         ]);
     }
 

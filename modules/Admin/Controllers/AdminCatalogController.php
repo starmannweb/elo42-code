@@ -52,11 +52,21 @@ class AdminCatalogController extends Controller
     // ---- Services ----
     public function services(Request $req): void
     {
-        $this->ensureDefaultServices();
+        $services = [];
+        $degraded = false;
+
+        try {
+            $this->ensureDefaultServices();
+            $services = Service::all('sort_order');
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_SERVICES] ' . $e->getMessage());
+        }
 
         $this->view('admin/services/index', [
             'pageTitle' => 'Serviços — Admin', 'breadcrumb' => 'Serviços',
-            'services' => Service::all('sort_order'),
+            'services' => $services,
+            'degraded' => $degraded,
         ]);
     }
 
@@ -96,18 +106,30 @@ class AdminCatalogController extends Controller
     // ---- Benefits ----
     public function benefits(Request $req): void
     {
-        $this->ensureDefaultServices();
+        $benefits = [];
+        $services = [];
+        $degraded = false;
+
+        try {
+            $this->ensureDefaultServices();
+            $benefits = Benefit::allWithUsageCount();
+            $services = Service::all('sort_order');
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_BENEFITS] ' . $e->getMessage());
+        }
 
         $this->view('admin/benefits/index', [
             'pageTitle' => 'Cortesias — Admin', 'breadcrumb' => 'Cortesias',
-            'benefits' => Benefit::allWithUsageCount(),
-            'services' => Service::all('sort_order'),
+            'benefits' => $benefits,
+            'services' => $services,
+            'degraded' => $degraded,
         ]);
     }
 
     public function createBenefit(Request $req): void
     {
-        $this->ensureDefaultServices();
+        try { $this->ensureDefaultServices(); } catch (\Throwable $e) { error_log('[ADMIN_BENEFITS_FORM] ' . $e->getMessage()); }
 
         $this->view('admin/benefits/form', [
             'pageTitle' => 'Nova cortesia', 'breadcrumb' => 'Cortesias / Nova', 'item' => null,
@@ -148,9 +170,20 @@ class AdminCatalogController extends Controller
     public function subscriptions(Request $req): void
     {
         $filters = ['status' => $req->input('status', '')];
+        $subscriptions = [];
+        $degraded = false;
+
+        try {
+            $subscriptions = Subscription::allWithOrg($filters);
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_SUBS] ' . $e->getMessage());
+        }
+
         $this->view('admin/subscriptions/index', [
             'pageTitle'     => 'Assinaturas — Admin', 'breadcrumb' => 'Assinaturas',
-            'subscriptions' => Subscription::allWithOrg($filters), 'filters' => $filters,
+            'subscriptions' => $subscriptions, 'filters' => $filters,
+            'degraded'      => $degraded,
         ]);
     }
 
@@ -186,9 +219,20 @@ class AdminCatalogController extends Controller
     public function tickets(Request $req): void
     {
         $filters = ['status' => $req->input('status', ''), 'priority' => $req->input('priority', '')];
+        $tickets = [];
+        $degraded = false;
+
+        try {
+            $tickets = Ticket::allAdmin($filters);
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_TICKETS] ' . $e->getMessage());
+        }
+
         $this->view('admin/tickets/index', [
             'pageTitle' => 'Tickets — Admin', 'breadcrumb' => 'Tickets',
-            'tickets' => Ticket::allAdmin($filters), 'filters' => $filters,
+            'tickets' => $tickets, 'filters' => $filters,
+            'degraded' => $degraded,
         ]);
     }
 
@@ -227,56 +271,90 @@ class AdminCatalogController extends Controller
     // ---- Reports ----
     public function reports(Request $req): void
     {
-        $pdo = Database::connection();
         $startDate = $req->input('start_date', date('Y-m-01'));
         $endDate = $req->input('end_date', date('Y-m-t'));
+        $totalUsers = 0; $totalOrgs = 0; $newUsers = 0; $newOrgs = 0;
+        $activeSubs = 0; $openTickets = 0;
+        $degraded = false;
 
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE created_at >= :s AND created_at <= :e");
-        $stmt->execute(['s' => $startDate, 'e' => $endDate . ' 23:59:59']);
-        $newUsers = (int) $stmt->fetchColumn();
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE created_at >= :s AND created_at <= :e");
+            $stmt->execute(['s' => $startDate, 'e' => $endDate . ' 23:59:59']);
+            $newUsers = (int) $stmt->fetchColumn();
 
-        $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM organizations WHERE created_at >= :s AND created_at <= :e");
-        $stmt2->execute(['s' => $startDate, 'e' => $endDate . ' 23:59:59']);
-        $newOrgs = (int) $stmt2->fetchColumn();
+            $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM organizations WHERE created_at >= :s AND created_at <= :e");
+            $stmt2->execute(['s' => $startDate, 'e' => $endDate . ' 23:59:59']);
+            $newOrgs = (int) $stmt2->fetchColumn();
+
+            $totalUsers = (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+            $totalOrgs = (int) $pdo->query("SELECT COUNT(*) FROM organizations")->fetchColumn();
+            $activeSubs = Subscription::countByStatus('active');
+            $openTickets = Ticket::countOpen();
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_REPORTS] ' . $e->getMessage());
+        }
 
         $this->view('admin/reports/index', [
             'pageTitle' => 'Relatórios — Admin', 'breadcrumb' => 'Relatórios',
-            'totalUsers' => (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(),
-            'totalOrgs' => (int) $pdo->query("SELECT COUNT(*) FROM organizations")->fetchColumn(),
+            'totalUsers' => $totalUsers,
+            'totalOrgs' => $totalOrgs,
             'newUsers' => $newUsers, 'newOrgs' => $newOrgs,
-            'activeSubs' => Subscription::countByStatus('active'),
-            'openTickets' => Ticket::countOpen(),
+            'activeSubs' => $activeSubs,
+            'openTickets' => $openTickets,
             'filters' => ['start_date' => $startDate, 'end_date' => $endDate],
+            'degraded' => $degraded,
         ]);
     }
 
     // ---- Logs ----
     public function logs(Request $req): void
     {
-        $pdo = Database::connection();
         $search = $req->input('search', '');
         $module = $req->input('module', '');
+        $logs = [];
+        $degraded = false;
 
-        $where = '1=1'; $params = [];
-        if ($search) { $where .= " AND (u.name LIKE :s OR al.action LIKE :s)"; $params['s'] = "%{$search}%"; }
-        if ($module) { $where .= " AND al.module = :m"; $params['m'] = $module; }
+        try {
+            $pdo = Database::connection();
+            $where = '1=1'; $params = [];
+            if ($search) { $where .= " AND (u.name LIKE :s OR al.action LIKE :s)"; $params['s'] = "%{$search}%"; }
+            if ($module) { $where .= " AND al.module = :m"; $params['m'] = $module; }
 
-        $stmt = $pdo->prepare("SELECT al.*, u.name as user_name, u.email as user_email FROM audit_logs al LEFT JOIN users u ON al.user_id = u.id WHERE {$where} ORDER BY al.created_at DESC LIMIT 100");
-        $stmt->execute($params);
+            $stmt = $pdo->prepare("SELECT al.*, u.name as user_name, u.email as user_email FROM audit_logs al LEFT JOIN users u ON al.user_id = u.id WHERE {$where} ORDER BY al.created_at DESC LIMIT 100");
+            $stmt->execute($params);
+            $logs = $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_LOGS] ' . $e->getMessage());
+        }
 
         $this->view('admin/logs/index', [
             'pageTitle' => 'Logs — Admin', 'breadcrumb' => 'Logs',
-            'logs' => $stmt->fetchAll(),
+            'logs' => $logs,
             'filters' => ['search' => $search, 'module' => $module],
+            'degraded' => $degraded,
         ]);
     }
 
     // ---- Settings ----
     public function settings(Request $req): void
     {
+        $settings = [];
+        $degraded = false;
+
+        try {
+            $settings = PlatformSetting::byGroup();
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_SETTINGS] ' . $e->getMessage());
+        }
+
         $this->view('admin/settings/index', [
             'pageTitle' => 'Configurações — Admin', 'breadcrumb' => 'Configurações',
-            'settings' => PlatformSetting::byGroup(),
+            'settings' => $settings,
+            'degraded' => $degraded,
         ]);
     }
 

@@ -14,43 +14,51 @@ class AdminOrganizationController extends Controller
 {
     public function index(Request $request): void
     {
-        $pdo = Database::connection();
         $search = $request->input('search', '');
         $status = $request->input('status', '');
+        $organizations = [];
+        $degraded = false;
 
-        $where = '1=1';
-        $params = [];
+        try {
+            $pdo = Database::connection();
+            $where = '1=1';
+            $params = [];
 
-        if ($search) {
-            $where .= ' AND (o.name LIKE :s OR o.document LIKE :s)';
-            $params['s'] = "%{$search}%";
+            if ($search) {
+                $where .= ' AND (o.name LIKE :s OR o.document LIKE :s)';
+                $params['s'] = "%{$search}%";
+            }
+
+            if ($status) {
+                $where .= ' AND o.status = :st';
+                $params['st'] = $status;
+            }
+
+            $stmt = $pdo->prepare("
+                SELECT o.*, o.document AS cnpj,
+                    (SELECT COUNT(*) FROM organization_users ou WHERE ou.organization_id = o.id) as user_count,
+                    (SELECT COUNT(*) FROM members m WHERE m.organization_id = o.id) as member_count
+                FROM organizations o
+                WHERE {$where}
+                ORDER BY o.created_at DESC
+            ");
+            $stmt->execute($params);
+
+            $organizations = array_map(
+                fn (array $organization): array => $this->hydrateOrganization($organization),
+                $stmt->fetchAll()
+            );
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_ORGS] ' . $e->getMessage());
         }
-
-        if ($status) {
-            $where .= ' AND o.status = :st';
-            $params['st'] = $status;
-        }
-
-        $stmt = $pdo->prepare("
-            SELECT o.*, o.document AS cnpj,
-                (SELECT COUNT(*) FROM organization_users ou WHERE ou.organization_id = o.id) as user_count,
-                (SELECT COUNT(*) FROM members m WHERE m.organization_id = o.id) as member_count
-            FROM organizations o
-            WHERE {$where}
-            ORDER BY o.created_at DESC
-        ");
-        $stmt->execute($params);
-
-        $organizations = array_map(
-            fn (array $organization): array => $this->hydrateOrganization($organization),
-            $stmt->fetchAll()
-        );
 
         $this->view('admin/organizations/index', [
             'pageTitle'     => 'Instituições — Admin',
             'breadcrumb'    => 'Instituições',
             'organizations' => $organizations,
             'filters'       => ['search' => $search, 'status' => $status],
+            'degraded'      => $degraded,
         ]);
     }
 

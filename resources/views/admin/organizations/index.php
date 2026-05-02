@@ -4,6 +4,11 @@
 $typeLabels = ['church' => 'Igreja', 'association' => 'Associação', 'ministry' => 'Ministério', 'ong' => 'ONG', 'other' => 'Outro'];
 $statusLabels = ['active' => 'Ativa', 'trial' => 'Teste', 'inactive' => 'Inativa', 'suspended' => 'Suspensa'];
 ?>
+<?php if (!empty($degraded)): ?>
+    <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
+        Não foi possível carregar as instituições agora. O serviço de dados está temporariamente indisponível — tente novamente em instantes.
+    </div>
+<?php endif; ?>
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Instituições</h1></div></div>
 <form method="GET" action="<?= url('/admin/organizacoes') ?>" class="mgmt-filters">
     <div class="mgmt-search"><span class="mgmt-search__icon">🔍</span><input type="text" name="search" class="form-input" placeholder="Buscar por nome ou CNPJ..." value="<?= e($filters['search']) ?>"></div>

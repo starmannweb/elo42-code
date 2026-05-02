@@ -1,6 +1,13 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
 <?php $priorityLabels = ['urgent' => 'Urgente', 'high' => 'Alta', 'normal' => 'Normal', 'low' => 'Baixa']; ?>
+
+<?php if (!empty($degraded)): ?>
+    <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
+        Não foi possível carregar os tickets agora. O serviço de dados está temporariamente indisponível — tente novamente em instantes.
+    </div>
+<?php endif; ?>
+
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Tickets</h1></div></div>
 <form method="GET" action="<?= url('/admin/tickets') ?>" class="mgmt-filters">
     <select name="status" class="form-select"><option value="">Todos</option><?php foreach (['open'=>'Abertos','in_progress'=>'Em andamento','waiting'=>'Aguardando','resolved'=>'Resolvidos','closed'=>'Fechados'] as $k=>$v): ?><option value="<?= $k ?>" <?= ($filters['status']??'')===$k?'selected':'' ?>><?= $v ?></option><?php endforeach; ?></select>

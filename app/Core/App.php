@@ -130,8 +130,10 @@ class App
             exit;
         }
 
-        // For Admin sub-pages: in debug mode, expose the underlying error so the
-        // dev panel actually surfaces what's broken instead of looping back to /admin.
+        // For Admin sub-pages: render a contained error page (no redirect loop back to /admin).
+        // Os controllers do admin tratam falhas de DB internamente com modo de contingência;
+        // se mesmo assim algo falhar, mostramos a página de erro contida para o usuário poder
+        // navegar pelo menu lateral sem perder o contexto.
         if (str_starts_with($uri, '/admin') && $uri !== '/admin' && $uri !== '/admin/') {
             $debug = (bool) (config('app')['debug'] ?? false);
             if ($debug) {
@@ -150,12 +152,18 @@ class App
                 echo '</div></body></html>';
                 exit;
             }
-            try {
-                Session::flash('error', 'Não foi possível carregar a página agora. Tente novamente em instantes.');
-            } catch (\Throwable $ignored) {}
-            if (!headers_sent()) {
-                header('Location: /admin', true, 302);
-            }
+
+            // Production: render contained error page that keeps admin navigation context.
+            http_response_code(500);
+            echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin — Erro temporário</title>';
+            echo '<style>body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#061a3a;color:#e7edf7;display:grid;place-items:center;min-height:100vh;padding:24px}';
+            echo '.card{max-width:640px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:28px;box-shadow:0 14px 44px rgba(0,0,0,.35)}';
+            echo 'h1{margin:0 0 12px;font-size:24px;color:#ffc56b}p{margin:0 0 12px;color:#b7c6df;line-height:1.6}';
+            echo 'a{color:#8ec1ff;text-decoration:none;font-weight:600;display:inline-block;margin-top:8px}</style></head><body>';
+            echo '<div class="card"><h1>Página administrativa indisponível</h1>';
+            echo '<p>Não foi possível carregar essa seção do painel administrativo neste momento. O serviço de dados pode estar temporariamente fora do ar — tente novamente em alguns instantes.</p>';
+            echo '<p>Se o problema persistir, verifique a conexão com o banco de dados ou abra um chamado de suporte.</p>';
+            echo '<a href="/admin">← Voltar ao painel</a></div></body></html>';
             exit;
         }
 
