@@ -69,10 +69,6 @@ class FinancialController extends Controller
             $summary = FinancialTransaction::summary($orgId, $filters['start_date'], $filters['end_date']);
             $categories = FinancialTransaction::getCategories($orgId);
 
-            if (($result['degraded'] ?? false) === true || ($summary['degraded'] ?? false) === true) {
-                Session::flash('warning', 'Financeiro indisponivel no momento. Exibindo modo de contingencia.');
-            }
-
             $this->view('management/financial/index', [
                 'pageTitle'    => 'Financeiro — Gestão',
                 'breadcrumb'   => 'Financeiro',
@@ -137,8 +133,16 @@ class FinancialController extends Controller
                 'totals'     => $totals,
             ]);
         } catch (\Throwable $e) {
-            Session::flash('error', 'Erro ao carregar categorias: ' . $e->getMessage());
-            redirect('/gestao');
+            error_log('[FinancialController.categories] ' . $e->getMessage());
+            $this->view('management/financial/categories', [
+                'pageTitle' => 'Categorias Financeiras — Gestão',
+                'breadcrumb' => 'Categorias Financeiras',
+                'activeMenu' => 'categorias-financeiras',
+                'categories' => [],
+                'filterType' => $filterType ?? 'all',
+                'totals'     => ['total' => 0, 'income' => 0, 'expense' => 0, 'used' => 0],
+                'degraded'   => true,
+            ]);
         }
     }
 

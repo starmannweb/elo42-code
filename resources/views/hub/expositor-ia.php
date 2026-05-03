@@ -124,6 +124,70 @@
         </article>
     </div>
 
+    <article class="hub-panel" style="margin-top:var(--space-5);">
+        <div class="hub-panel__row">
+            <div>
+                <h2 class="hub-panel__title">Planejamento rápido</h2>
+                <p class="hub-panel__text">Informe a passagem ou tema e gere um esboço inicial de planejamento ministerial em segundos.</p>
+            </div>
+            <div class="hub-badge <?= $canGenerate ? 'hub-badge--success' : 'hub-badge--warning' ?>">
+                <?= $canGenerate ? 'Geração liberada' : 'Sem créditos suficientes' ?>
+            </div>
+        </div>
+
+        <?php if (!$canGenerate): ?>
+            <div class="alert alert--warning" role="alert" style="margin-top:var(--space-3);">
+                Use as 3 gerações gratuitas do mês ou compre créditos para continuar.
+                <a href="<?= url('/hub/creditos') ?>" class="text-primary font-bold">Comprar créditos</a>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" data-loading style="margin-top:var(--space-4);">
+            <?= csrf_field() ?>
+            <input type="hidden" name="content_type" value="sermon">
+            <input type="hidden" name="resource_title" value="Planejamento rápido">
+
+            <div class="form-grid form-grid--2">
+                <div class="form-group">
+                    <label class="form-label" for="ia-plan-passage">Passagem ou tema</label>
+                    <input id="ia-plan-passage" type="text" name="passage" class="form-input" value="<?= e((string) ($form['passage'] ?? '')) ?>" placeholder="Ex.: Romanos 12 ou A graça transformadora" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ia-plan-theme">Ênfase pastoral</label>
+                    <input id="ia-plan-theme" type="text" name="theme" class="form-input" value="<?= e((string) ($form['theme'] ?? '')) ?>" placeholder="Ex.: Vida na Igreja">
+                </div>
+            </div>
+
+            <div class="form-grid form-grid--2">
+                <div class="form-group">
+                    <label class="form-label" for="ia-plan-confessional">Linha confessional</label>
+                    <select id="ia-plan-confessional" name="confessional" class="form-select">
+                        <?php foreach (($confessionalOptions ?? []) as $option): ?>
+                            <option value="<?= e((string) ($option['value'] ?? '')) ?>" <?= (($form['confessional'] ?? '') === ($option['value'] ?? '')) ? 'selected' : '' ?>>
+                                <?= e((string) ($option['label'] ?? '')) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ia-plan-depth">Profundidade</label>
+                    <select id="ia-plan-depth" name="depth" class="form-select">
+                        <?php foreach (($depthOptions ?? []) as $option): ?>
+                            <option value="<?= e((string) ($option['value'] ?? '')) ?>" <?= (($form['depth'] ?? 'pastoral') === ($option['value'] ?? '')) ? 'selected' : '' ?>>
+                                <?= e((string) ($option['label'] ?? '')) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="hub-page__actions" style="margin-top:var(--space-3);">
+                <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar planejamento</button>
+                <a href="<?= url('/hub/creditos') ?>" class="btn btn--ghost">Saldo de créditos</a>
+            </div>
+        </form>
+    </article>
+
     <div class="expositor-flow-grid">
         <article class="expositor-flow-card">
             <span>1</span>

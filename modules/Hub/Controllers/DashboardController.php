@@ -284,12 +284,49 @@ class DashboardController extends Controller
                 $stmt->execute($payload + ['org_id' => (int) $organization['id']]);
             }
 
+            $this->saveAppearanceSettings($request, (int) $organization['id']);
+
             Session::flash('success', 'Dados do site salvos. Abra o preview para revisar a página gerada.');
         } catch (\Throwable $e) {
             Session::flash('error', 'Não foi possível salvar o site agora. Verifique os dados e tente novamente.');
         }
 
         redirect('/hub/sites');
+    }
+
+    private function saveAppearanceSettings(Request $request, int $orgId): void
+    {
+        if ($orgId <= 0 || !$this->tableExists('settings')) {
+            return;
+        }
+
+        $primary = $this->normalizeThemeColor((string) $request->input('appearance_primary', ''));
+        $accent = $this->normalizeThemeColor((string) $request->input('appearance_accent', ''));
+
+        if ($primary === '' && $accent === '') {
+            return;
+        }
+
+        try {
+            $pdo = Database::connection();
+            $upsert = static function (string $key, string $value) use ($pdo, $orgId): void {
+                if ($value === '') return;
+                $stmt = $pdo->prepare('SELECT id FROM settings WHERE organization_id = :org AND `key` = :k LIMIT 1');
+                $stmt->execute(['org' => $orgId, 'k' => $key]);
+                $existing = (int) ($stmt->fetchColumn() ?: 0);
+                if ($existing > 0) {
+                    $up = $pdo->prepare('UPDATE settings SET value = :v WHERE id = :id');
+                    $up->execute(['v' => $value, 'id' => $existing]);
+                } else {
+                    $ins = $pdo->prepare('INSERT INTO settings (organization_id, `key`, value) VALUES (:org, :k, :v)');
+                    $ins->execute(['org' => $orgId, 'k' => $key, 'v' => $value]);
+                }
+            };
+            $upsert('appearance_primary', $primary);
+            $upsert('appearance_accent', $accent);
+        } catch (\Throwable $e) {
+            error_log('[saveAppearanceSettings] ' . $e->getMessage());
+        }
     }
 
     public function publicarSite(Request $request): void
@@ -2356,10 +2393,6 @@ class DashboardController extends Controller
         } catch (\Throwable $e) {
             error_log('[Hub.usuarios] roles load failed: ' . $e->getMessage());
             $degraded = true;
-        }
-
-        if ($degraded) {
-            \App\Core\Session::flash('warning', 'Não conseguimos carregar todos os dados da equipe agora. Tente novamente em instantes.');
         }
 
         $this->view('hub/usuarios', array_merge($context, [

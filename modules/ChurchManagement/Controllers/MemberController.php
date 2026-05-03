@@ -71,9 +71,6 @@ class MemberController extends Controller
             ];
 
             $result = Member::byOrg($orgId, $filters, $page);
-            if (($result['degraded'] ?? false) === true) {
-                Session::flash('warning', 'Membros indisponivel no momento. Exibindo modo de contingencia.');
-            }
 
             $this->view('management/members/index', [
                 'pageTitle'   => 'Membros - Gestao',

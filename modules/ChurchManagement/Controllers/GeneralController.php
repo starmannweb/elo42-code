@@ -160,7 +160,7 @@ class GeneralController extends Controller
             $stmt->execute(['org_id' => $this->orgId()]);
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
-            Session::flash('warning', 'Usuarios indisponiveis no momento. Exibindo modo de contingencia.');
+            error_log('[GeneralController.orgUsers] ' . $e->getMessage());
             return [];
         }
     }
@@ -612,10 +612,6 @@ class GeneralController extends Controller
             $result = Donation::byOrg($orgId, $filters, $page);
             $summary = Donation::summaryByType($orgId, $filters['start_date'], $filters['end_date']);
 
-            if (($result['degraded'] ?? false) === true) {
-                Session::flash('warning', 'Doacoes indisponiveis no momento. Exibindo modo de contingencia.');
-            }
-
             $this->view('management/donations/index', [
                 'pageTitle'  => 'Doações — Gestão', 'breadcrumb' => 'Doações',
                 'donations'  => $result['data'], 'pagination' => $result,
@@ -664,10 +660,6 @@ class GeneralController extends Controller
             $endDate = $req->input('end_date', date('Y-m-t'));
             $reportType = $req->input('type', 'overview');
             $financial = FinancialTransaction::summary($orgId, $startDate, $endDate);
-
-            if (($financial['degraded'] ?? false) === true) {
-                Session::flash('warning', 'Relatorios com dados parciais no momento. Exibindo modo de contingencia.');
-            }
 
             $data = [
                 'pageTitle'      => 'Relatórios — Gestão', 'breadcrumb' => 'Relatórios',

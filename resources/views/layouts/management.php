@@ -105,6 +105,27 @@
                 return '<a href="' . url($path) . '" class="hub-nav-link' . $active . '"' . $aria . '><span class="hub-nav-link__icon" aria-hidden="true">' . $icon($iconName) . '</span><span class="hub-nav-link__label">' . e($label) . '</span>' . ($premium ? $premiumIcon() : '') . '</a>';
             };
 
+            $subNavItem = static function(string $path, string $label, bool $premium = false, array $activePaths = []) use ($uri, $isActive, $premiumIcon): string {
+                $activePaths = $activePaths ?: [$path];
+                $active = $isActive($activePaths, $uri) ? ' active' : '';
+                $aria = $active ? ' aria-current="page"' : '';
+                return '<a href="' . url($path) . '" class="hub-nav-sublink' . $active . '"' . $aria . '><span class="hub-nav-sublink__dot" aria-hidden="true"></span><span class="hub-nav-sublink__label">' . e($label) . '</span>' . ($premium ? $premiumIcon() : '') . '</a>';
+            };
+
+            $navGroup = static function(string $key, string $label, string $iconName, array $children, array $activePaths) use ($uri, $isActive, $icon): string {
+                $isOpen = $isActive($activePaths, $uri);
+                $openClass = $isOpen ? ' is-open' : '';
+                $html = '<div class="hub-nav-group' . $openClass . '" data-nav-group="' . e($key) . '">';
+                $html .= '<button type="button" class="hub-nav-link hub-nav-link--group" aria-expanded="' . ($isOpen ? 'true' : 'false') . '" data-nav-toggle>';
+                $html .= '<span class="hub-nav-link__icon" aria-hidden="true">' . $icon($iconName) . '</span>';
+                $html .= '<span class="hub-nav-link__label">' . e($label) . '</span>';
+                $html .= '<svg class="hub-nav-link__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+                $html .= '</button>';
+                $html .= '<div class="hub-nav-sublist">' . implode('', $children) . '</div>';
+                $html .= '</div>';
+                return $html;
+            };
+
             $renderSection = static function(string $title): void {
                 echo '<p class="hub-sidebar__section-title">' . e($title) . '</p>';
             };
@@ -153,37 +174,75 @@
             </div>
 
             <nav class="hub-sidebar__nav" aria-label="Navegação da gestão">
-                <?php $renderSection('Geral'); ?>
                 <?= $navItem('/gestao', 'Dashboard', 'dashboard', false, ['/gestao']) ?>
 
-                <?php $renderSection('Pessoas'); ?>
-                <?= $navItem('/gestao/membros', 'Membros', 'users', false, ['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico']) ?>
-                <?= $navItem('/gestao/atendimento-pastoral', 'Atendimento pastoral', 'message', true, ['/gestao/atendimento-pastoral']) ?>
-                <?= $navItem('/gestao/celulas', 'Grupos Pequenos', 'home', true, ['/gestao/celulas']) ?>
-                <?= $navItem('/gestao/ministerios', 'Ministérios', 'ministries', true, ['/gestao/ministerios']) ?>
+                <?php
+                $peoplePaths = [
+                    '/gestao/membros',
+                    '/gestao/visitantes',
+                    '/gestao/novos-convertidos',
+                    '/gestao/aniversarios',
+                    '/gestao/jornadas',
+                    '/gestao/historico',
+                    '/gestao/atendimento-pastoral',
+                    '/gestao/celulas',
+                    '/gestao/ministerios',
+                ];
+                echo $navGroup('membros', 'Membros', 'users', [
+                    $subNavItem('/gestao/membros', 'Servos', false, ['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico']),
+                    $subNavItem('/gestao/atendimento-pastoral', 'Atendimento pastoral', true, ['/gestao/atendimento-pastoral']),
+                    $subNavItem('/gestao/celulas', 'Grupos Pequenos', true, ['/gestao/celulas']),
+                    $subNavItem('/gestao/ministerios', 'Ministérios', true, ['/gestao/ministerios']),
+                ], $peoplePaths);
 
-                <?php $renderSection('Financeiro'); ?>
-                <?= $navItem('/gestao/receitas', 'Receitas', 'income', false, ['/gestao/receitas', '/gestao/doacoes']) ?>
-                <?= $navItem('/gestao/despesas', 'Despesas', 'expense', false, ['/gestao/despesas']) ?>
-                <?= $navItem('/gestao/categorias-financeiras', 'Categorias', 'category', false, ['/gestao/categorias-financeiras']) ?>
-                <?= $navItem('/gestao/aprovacoes-despesas', 'Aprovações', 'check', true, ['/gestao/aprovacoes-despesas']) ?>
-                <?= $navItem('/gestao/auditoria', 'Auditoria', 'audit', true, ['/gestao/auditoria']) ?>
-                <?= $navItem('/gestao/contas', 'Contas / Caixas', 'wallet', true, ['/gestao/contas']) ?>
+                $treasuryPaths = [
+                    '/gestao/receitas',
+                    '/gestao/despesas',
+                    '/gestao/categorias-financeiras',
+                    '/gestao/aprovacoes-despesas',
+                    '/gestao/auditoria',
+                    '/gestao/contas',
+                    '/gestao/doacoes',
+                ];
+                echo $navGroup('tesouraria', 'Tesouraria', 'wallet', [
+                    $subNavItem('/gestao/receitas', 'Receitas', false, ['/gestao/receitas', '/gestao/doacoes']),
+                    $subNavItem('/gestao/despesas', 'Despesas', false, ['/gestao/despesas']),
+                    $subNavItem('/gestao/categorias-financeiras', 'Categorias', false, ['/gestao/categorias-financeiras']),
+                    $subNavItem('/gestao/aprovacoes-despesas', 'Aprovações', true, ['/gestao/aprovacoes-despesas']),
+                    $subNavItem('/gestao/auditoria', 'Auditoria', true, ['/gestao/auditoria']),
+                    $subNavItem('/gestao/contas', 'Contas / Caixas', true, ['/gestao/contas']),
+                ], $treasuryPaths);
 
-                <?php $renderSection('Comunicação'); ?>
-                <?= $navItem('/gestao/agenda', 'Agenda e Eventos', 'calendar', false, ['/gestao/agenda', '/gestao/eventos']) ?>
-                <?= $navItem('/gestao/plano-leitura', 'Planos de Leitura', 'book', false, ['/gestao/plano-leitura']) ?>
-                <?= $navItem('/gestao/banners', 'Banners', 'image', true, ['/gestao/banners']) ?>
-                <?= $navItem('/gestao/cursos', 'Cursos', 'courses', true, ['/gestao/cursos']) ?>
-                <?= $navItem('/gestao/campanhas', 'Campanhas', 'campaign', true, ['/gestao/campanhas']) ?>
-                <?= $navItem('/gestao/conquistas', 'Conquistas', 'award', true, ['/gestao/conquistas']) ?>
-                <?= $navItem('/gestao/pregadores', 'Pregadores', 'users', true, ['/gestao/pregadores']) ?>
-                <?= $navItem('/gestao/sermoes', 'Sermões', 'sermon', true, ['/gestao/sermoes']) ?>
+                $communicationPaths = [
+                    '/gestao/agenda',
+                    '/gestao/eventos',
+                    '/gestao/plano-leitura',
+                    '/gestao/banners',
+                    '/gestao/cursos',
+                    '/gestao/campanhas',
+                    '/gestao/conquistas',
+                ];
+                echo $navGroup('comunicacao', 'Comunicação', 'message', [
+                    $subNavItem('/gestao/agenda', 'Agenda e Eventos', false, ['/gestao/agenda', '/gestao/eventos']),
+                    $subNavItem('/gestao/plano-leitura', 'Planos de Leitura', false, ['/gestao/plano-leitura']),
+                    $subNavItem('/gestao/banners', 'Banners', true, ['/gestao/banners']),
+                    $subNavItem('/gestao/cursos', 'Cursos', true, ['/gestao/cursos']),
+                    $subNavItem('/gestao/campanhas', 'Campanhas', true, ['/gestao/campanhas']),
+                    $subNavItem('/gestao/conquistas', 'Conquistas', true, ['/gestao/conquistas']),
+                ], $communicationPaths);
 
-                <?php $renderSection('Análises'); ?>
-                <?= $navItem('/gestao/relatorios', 'Relatórios', 'reports', true, ['/gestao/relatorios']) ?>
+                $administrationPaths = [
+                    '/gestao/pregadores',
+                    '/gestao/sermoes',
+                    '/gestao/relatorios',
+                ];
+                echo $navGroup('administracao', 'Administração', 'admin', [
+                    $subNavItem('/gestao/pregadores', 'Pregadores', true, ['/gestao/pregadores']),
+                    $subNavItem('/gestao/sermoes', 'Sermões', true, ['/gestao/sermoes']),
+                    $subNavItem('/gestao/relatorios', 'Relatórios', true, ['/gestao/relatorios']),
+                ], $administrationPaths);
+                ?>
 
-                <?php $renderSection('Sistema'); ?>
                 <?= $navItem('/gestao/configuracoes/usuarios', 'Configurações', 'settings', false, ['/gestao/configuracoes', '/gestao/usuarios']) ?>
             </nav>
 
@@ -257,6 +316,15 @@
 
     <script src="<?= asset('js/app.js') ?>"></script>
     <script>
+        document.querySelectorAll('[data-nav-group]').forEach((group) => {
+            const toggle = group.querySelector('[data-nav-toggle]');
+            if (!toggle) return;
+            toggle.addEventListener('click', () => {
+                const open = group.classList.toggle('is-open');
+                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        });
+
         document.querySelectorAll('form[data-auto-submit], form[method="GET"]').forEach((form) => {
             if (!form.matches('[data-auto-submit]') && !form.querySelector('input[type="date"], input[type="month"], select')) {
                 return;

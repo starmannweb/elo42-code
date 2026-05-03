@@ -4,41 +4,40 @@
 <div class="mgmt-container">
     <div class="mgmt-header">
         <div>
-            <h1 class="mgmt-title">Grupos Pequenos</h1>
-            <p class="mgmt-subtitle">Gerencie grupos, líderes e encontros semanais</p>
+            <h1 class="mgmt-header__title">Grupos Pequenos</h1>
+            <p class="mgmt-header__subtitle">Gerencie grupos, líderes e encontros semanais</p>
         </div>
-        <button type="button" class="btn btn-primary" onclick="document.getElementById('addGroupModal').style.display='flex'">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.5rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Novo Grupo
-        </button>
+        <div class="mgmt-header__actions">
+            <button type="button" class="btn btn--primary" onclick="document.getElementById('addGroupModal').style.display='flex'">+ Novo Grupo</button>
+        </div>
     </div>
 
-    <div class="mgmt-stats" style="margin-bottom: 1.5rem;">
-        <div class="stat-card">
-            <div class="stat-card__icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>
-            </div>
+    <div class="mgmt-kpi-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: var(--space-5);">
+        <div class="mgmt-kpi-card" style="justify-content:space-between;">
             <div>
-                <div class="stat-card__label">Total de Grupos</div>
-                <div class="stat-card__value"><?= count($groups) ?></div>
+                <div class="mgmt-kpi-card__label">Total de Grupos</div>
+                <div class="mgmt-kpi-card__value"><?= count($groups) ?></div>
+            </div>
+            <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"></path></svg>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-card__icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-            </div>
+        <div class="mgmt-kpi-card" style="justify-content:space-between;">
             <div>
-                <div class="stat-card__label">Participantes</div>
-                <div class="stat-card__value"><?= array_sum(array_column($groups, 'members_count')) ?></div>
+                <div class="mgmt-kpi-card__label">Participantes</div>
+                <div class="mgmt-kpi-card__value"><?= array_sum(array_column($groups, 'members_count')) ?></div>
+            </div>
+            <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-card__icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-            </div>
+        <div class="mgmt-kpi-card" style="justify-content:space-between;">
             <div>
-                <div class="stat-card__label">Líderes Ativos</div>
-                <div class="stat-card__value"><?= count(array_filter($groups, fn($g) => !empty($g['leader_name']))) ?></div>
+                <div class="mgmt-kpi-card__label">Líderes Ativos</div>
+                <div class="mgmt-kpi-card__value"><?= count(array_filter($groups, fn($g) => !empty($g['leader_name']))) ?></div>
+            </div>
+            <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--gold" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
             </div>
         </div>
     </div>
@@ -46,15 +45,18 @@
     <div class="mgmt-card">
         <div class="mgmt-card__body">
             <?php if (empty($groups)): ?>
-                <div style="text-align: center; padding: 3rem 1rem; color: var(--hub-text-tertiary);">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem; opacity: 0.4;">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <circle cx="5" cy="7" r="2"></circle>
-                        <circle cx="19" cy="7" r="2"></circle>
-                        <circle cx="5" cy="17" r="2"></circle>
-                        <circle cx="19" cy="17" r="2"></circle>
-                    </svg>
-                    <p style="font-size: 0.875rem;">Nenhum grupo pequeno cadastrado</p>
+                <div class="mgmt-empty">
+                    <div class="mgmt-empty__icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <h3 class="mgmt-empty__title">Nenhum grupo pequeno cadastrado</h3>
+                    <p class="mgmt-empty__text">Crie o primeiro grupo, vincule um líder e organize os encontros semanais da comunidade.</p>
+                    <button type="button" class="btn btn--primary" onclick="document.getElementById('addGroupModal').style.display='flex'">+ Novo Grupo</button>
                 </div>
             <?php else: ?>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">

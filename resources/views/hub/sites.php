@@ -204,7 +204,7 @@
             <div class="site-step-panel__head">
                 <div>
                     <h2 class="hub-panel__title">Definir aparência</h2>
-                    <p class="hub-panel__text">Logo e imagem principal ficam aqui. As cores vêm das configurações da Gestão para Igrejas.</p>
+                    <p class="hub-panel__text">Logo, imagem principal e cores do site são personalizados aqui. As alterações entram em vigor após salvar.</p>
                 </div>
                 <button class="btn btn--primary" type="submit">Salvar aparência</button>
             </div>
@@ -242,42 +242,96 @@
                 </div>
             </div>
 
-            <input type="hidden" name="theme_color" value="<?= e($appearancePrimary !== '' ? $appearancePrimary : (string) ($currentSite['theme_color'] ?? '#0A4DFF')) ?>">
+            <?php
+                $primaryValue = $appearancePrimary !== '' ? $appearancePrimary : (string) ($currentSite['theme_color'] ?? '#1e3a8a');
+                $accentValue = $appearanceAccent !== '' ? $appearanceAccent : '#f59e0b';
+                $colorPresets = [
+                    'Azul royal'   => ['#1e3a8a', '#f59e0b'],
+                    'Bordô'        => ['#9f1239', '#fbbf24'],
+                    'Verde igreja' => ['#0f766e', '#fbbf24'],
+                    'Roxo majestoso' => ['#5b21b6', '#fcd34d'],
+                    'Preto e ouro' => ['#0f172a', '#d4af37'],
+                    'Marinho moderno' => ['#0a4dff', '#22d3ee'],
+                ];
+            ?>
+
+            <input type="hidden" name="theme_color" id="theme_color_input" value="<?= e($primaryValue) ?>">
 
             <div class="site-appearance-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
                     <div>
                         <h3 class="hub-panel__title" style="margin:0;">Cores do site</h3>
-                        <p class="hub-panel__text" style="margin:0;">As cores aplicadas vêm da aparência configurada na Gestão para Igrejas.</p>
+                        <p class="hub-panel__text" style="margin:0;">Escolha as cores que serão aplicadas no site público — escolha um preset ou personalize abaixo.</p>
                     </div>
-                    <a href="<?= url('/gestao/configuracoes/aparencia') ?>" class="btn btn--outline btn--sm" target="_blank" rel="noopener noreferrer">Editar cores na Gestão</a>
                 </div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:1rem;">
-                    <div style="display:flex;align-items:center;gap:.6rem;">
-                        <span style="width:28px;height:28px;border-radius:8px;background:<?= e($appearancePrimary !== '' ? $appearancePrimary : '#1e3a8a') ?>;border:1px solid rgba(0,0,0,.08);"></span>
-                        <div><strong>Cor primária</strong><div class="hub-panel__text" style="margin:0;font-size:.8rem;"><?= e($appearancePrimary !== '' ? $appearancePrimary : '#1e3a8a') ?></div></div>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:.6rem;">
-                        <span style="width:28px;height:28px;border-radius:8px;background:<?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?>;border:1px solid rgba(0,0,0,.08);"></span>
-                        <div><strong>Cor de destaque</strong><div class="hub-panel__text" style="margin:0;font-size:.8rem;"><?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?></div></div>
-                    </div>
-                    <?php if ($appearanceBackground !== ''): ?>
-                    <div style="display:flex;align-items:center;gap:.6rem;">
-                        <span style="width:28px;height:28px;border-radius:8px;background:<?= e($appearanceBackground) ?>;border:1px solid rgba(0,0,0,.08);"></span>
-                        <div><strong>Cor de fundo</strong><div class="hub-panel__text" style="margin:0;font-size:.8rem;"><?= e($appearanceBackground) ?></div></div>
-                    </div>
-                    <?php endif; ?>
-                    <?php if ($appearanceText !== ''): ?>
-                    <div style="display:flex;align-items:center;gap:.6rem;">
-                        <span style="width:28px;height:28px;border-radius:8px;background:<?= e($appearanceText) ?>;border:1px solid rgba(0,0,0,.08);"></span>
-                        <div><strong>Cor do texto</strong><div class="hub-panel__text" style="margin:0;font-size:.8rem;"><?= e($appearanceText) ?></div></div>
-                    </div>
-                    <?php endif; ?>
+
+                <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem;" data-color-presets>
+                    <?php foreach ($colorPresets as $label => $pair): ?>
+                        <button type="button" class="site-color-preset" data-primary="<?= e($pair[0]) ?>" data-accent="<?= e($pair[1]) ?>" title="<?= e($label) ?>" style="display:flex;align-items:center;gap:.4rem;padding:.45rem .65rem;border:1px solid rgba(148,178,230,.25);border-radius:999px;background:transparent;cursor:pointer;font-size:.8rem;color:inherit;">
+                            <span style="display:inline-flex;width:32px;height:14px;border-radius:7px;overflow:hidden;border:1px solid rgba(0,0,0,.08);">
+                                <span style="flex:1;background:<?= e($pair[0]) ?>;"></span>
+                                <span style="flex:1;background:<?= e($pair[1]) ?>;"></span>
+                            </span>
+                            <?= e($label) ?>
+                        </button>
+                    <?php endforeach; ?>
                 </div>
-                <?php if (!$hasAppearanceSettings): ?>
-                    <p class="hub-panel__text" style="margin-top:.75rem;color:#d97706;">Nenhuma cor configurada ainda. Defina as cores na <a href="<?= url('/gestao/configuracoes/aparencia') ?>" target="_blank" rel="noopener noreferrer">Aparência</a> da gestão.</p>
-                <?php endif; ?>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label" for="appearance_primary">Cor primária</label>
+                        <div style="display:flex;align-items:center;gap:.6rem;">
+                            <input type="color" id="appearance_primary" name="appearance_primary" value="<?= e($primaryValue) ?>" style="width:48px;height:42px;border:1px solid var(--color-border-light, #dfe7f4);border-radius:8px;padding:2px;cursor:pointer;background:transparent;">
+                            <input type="text" class="form-input" id="appearance_primary_text" value="<?= e($primaryValue) ?>" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" style="flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;">
+                        </div>
+                        <span class="form-hint">Aplicada em botões, links e cabeçalhos.</span>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label" for="appearance_accent">Cor de destaque</label>
+                        <div style="display:flex;align-items:center;gap:.6rem;">
+                            <input type="color" id="appearance_accent" name="appearance_accent" value="<?= e($accentValue) ?>" style="width:48px;height:42px;border:1px solid var(--color-border-light, #dfe7f4);border-radius:8px;padding:2px;cursor:pointer;background:transparent;">
+                            <input type="text" class="form-input" id="appearance_accent_text" value="<?= e($accentValue) ?>" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" style="flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;">
+                        </div>
+                        <span class="form-hint">Aplicada em CTAs e elementos de destaque.</span>
+                    </div>
+                </div>
             </div>
+
+            <script>
+            (function () {
+                var primary = document.getElementById('appearance_primary');
+                var primaryText = document.getElementById('appearance_primary_text');
+                var accent = document.getElementById('appearance_accent');
+                var accentText = document.getElementById('appearance_accent_text');
+                var hidden = document.getElementById('theme_color_input');
+                if (!primary) return;
+
+                function syncTextFromColor(colorInput, textInput) {
+                    textInput.value = colorInput.value.toUpperCase();
+                    if (colorInput === primary && hidden) hidden.value = colorInput.value;
+                }
+                function syncColorFromText(textInput, colorInput) {
+                    var v = textInput.value.trim();
+                    if (/^#[0-9A-Fa-f]{6}$/.test(v)) {
+                        colorInput.value = v;
+                        if (colorInput === primary && hidden) hidden.value = v;
+                    }
+                }
+                primary.addEventListener('input', function () { syncTextFromColor(primary, primaryText); });
+                accent.addEventListener('input', function () { syncTextFromColor(accent, accentText); });
+                primaryText.addEventListener('input', function () { syncColorFromText(primaryText, primary); });
+                accentText.addEventListener('input', function () { syncColorFromText(accentText, accent); });
+
+                document.querySelectorAll('[data-color-presets] .site-color-preset').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var p = btn.getAttribute('data-primary');
+                        var a = btn.getAttribute('data-accent');
+                        if (p) { primary.value = p; primaryText.value = p.toUpperCase(); if (hidden) hidden.value = p; }
+                        if (a) { accent.value = a; accentText.value = a.toUpperCase(); }
+                    });
+                });
+            })();
+            </script>
 
             <div class="site-preview-card" aria-label="Preview visual do site">
                 <?php if (!empty($currentSite['hero_image'])): ?>

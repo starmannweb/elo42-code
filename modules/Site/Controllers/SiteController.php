@@ -111,7 +111,52 @@ class SiteController extends Controller
             'site' => $site,
             'events' => $this->generatedSiteEvents($organizationId),
             'campaigns' => $this->generatedSiteCampaigns($organizationId),
+            'ministries' => $this->generatedSiteMinistries($organizationId),
+            'smallGroups' => $this->generatedSiteSmallGroups($organizationId),
+            'sermons' => $this->generatedSiteSermons($organizationId),
         ]);
+    }
+
+    private function generatedSiteMinistries(int $organizationId): array
+    {
+        if ($organizationId <= 0 || !$this->siteTableExists('ministries')) {
+            return [];
+        }
+        try {
+            $stmt = Database::connection()->prepare("SELECT name, description, leader_name FROM ministries WHERE organization_id = :organization_id ORDER BY created_at DESC LIMIT 4");
+            $stmt->execute(['organization_id' => $organizationId]);
+            return $stmt->fetchAll() ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    private function generatedSiteSmallGroups(int $organizationId): array
+    {
+        if ($organizationId <= 0 || !$this->siteTableExists('small_groups')) {
+            return [];
+        }
+        try {
+            $stmt = Database::connection()->prepare("SELECT name, leader_name, meeting_day, location FROM small_groups WHERE organization_id = :organization_id ORDER BY created_at DESC LIMIT 6");
+            $stmt->execute(['organization_id' => $organizationId]);
+            return $stmt->fetchAll() ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    private function generatedSiteSermons(int $organizationId): array
+    {
+        if ($organizationId <= 0 || !$this->siteTableExists('sermons')) {
+            return [];
+        }
+        try {
+            $stmt = Database::connection()->prepare("SELECT title, summary, series_name, sermon_date FROM sermons WHERE organization_id = :organization_id ORDER BY COALESCE(sermon_date, created_at) DESC LIMIT 3");
+            $stmt->execute(['organization_id' => $organizationId]);
+            return $stmt->fetchAll() ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     private function fallbackGeneratedSite(string $slug): array
