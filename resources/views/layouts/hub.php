@@ -80,7 +80,6 @@
                     <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42" class="logo-dark">
                     <img src="<?= url('/assets/img/logo-color-new.png') ?>" alt="Elo 42" class="logo-light">
                 </a>
-                <p class="hub-sidebar__brand-subtitle">Hub de membros</p>
             </div>
 
             <nav class="hub-sidebar__nav" aria-label="Navegação principal">

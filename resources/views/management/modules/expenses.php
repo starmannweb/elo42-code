@@ -74,14 +74,12 @@
     <div class="mgmt-card">
         <div class="mgmt-card__body">
             <?php if (empty($expenses)): ?>
-                <div style="text-align: center; padding: 3rem 1rem; color: var(--hub-text-tertiary);">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem; opacity: 0.4;">
-                        <path d="M9 14l6-6"></path>
-                        <circle cx="9.5" cy="8.5" r="1.5"></circle>
-                        <circle cx="14.5" cy="13.5" r="1.5"></circle>
-                        <rect x="2" y="2" width="20" height="20" rx="2.5"></rect>
-                    </svg>
-                    <p style="font-size: 0.875rem;">Nenhuma despesa registrada</p>
+                <div class="mgmt-empty">
+                    <div class="mgmt-empty__icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l6-6"></path><circle cx="9.5" cy="8.5" r="1.5"></circle><circle cx="14.5" cy="13.5" r="1.5"></circle><rect x="2" y="2" width="20" height="20" rx="2.5"></rect></svg>
+                    </div>
+                    <h3 class="mgmt-empty__title">Nenhuma despesa para aprovação</h3>
+                    <p class="mgmt-empty__text">Despesas registradas pelos colaboradores aparecem aqui aguardando aprovação financeira.</p>
                 </div>
             <?php else: ?>
                 <table class="data-table">

@@ -16,12 +16,12 @@
     <div class="mgmt-card">
         <div class="mgmt-card__body">
             <?php if (empty($plans)): ?>
-                <div style="text-align: center; padding: 3rem 1rem; color: var(--hub-text-tertiary);">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem; opacity: 0.4;">
-                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                    </svg>
-                    <p style="font-size: 0.875rem;">Nenhum plano de leitura cadastrado</p>
+                <div class="mgmt-empty">
+                    <div class="mgmt-empty__icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    </div>
+                    <h3 class="mgmt-empty__title">Nenhum plano de leitura cadastrado</h3>
+                    <p class="mgmt-empty__text">Crie planos diários, semanais ou temáticos para acompanhar a leitura bíblica dos membros.</p>
                 </div>
             <?php else: ?>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">

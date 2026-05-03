@@ -91,31 +91,36 @@
 
 .hub-sidebar__nav {
     flex: 1;
-    padding: var(--space-4);
+    padding: 16px 14px 18px;
     overflow-y: auto;
+    scrollbar-width: thin;
 }
 
 .hub-sidebar__section-title {
-    font-size: 0.68rem;
-    font-weight: 700;
+    font-size: 0.72rem;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: rgba(255, 255, 255, 0.38);
-    padding: var(--space-4) var(--space-3) var(--space-2);
+    color: rgba(255, 255, 255, 0.42);
+    padding: 14px 12px 6px;
+    margin: 0;
 }
 
 .hub-nav-link {
+    min-height: 44px;
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    color: rgba(255, 255, 255, 0.72);
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 12px;
+    font-size: 0.92rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.78);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
     margin-bottom: 2px;
     position: relative;
+    border: 1px solid transparent;
 }
 
 .hub-nav-link:hover {
@@ -141,11 +146,17 @@
 }
 
 .hub-nav-link__icon {
-    width: 20px;
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+}
+
+.hub-nav-link__icon svg {
+    width: 18px;
+    height: 18px;
 }
 
 .hub-nav-link__icon svg {
@@ -3148,28 +3159,25 @@ body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__user-av
     padding: 0 var(--space-5);
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     box-sizing: border-box;
 }
 
 .hub-sidebar__header .hub-sidebar__logo {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    width: 100%;
-    text-align: center;
+    justify-content: flex-start;
+    text-align: left;
 }
 
 .hub-sidebar__header .hub-sidebar__logo img {
-    max-height: 40px;
-    margin: 0 auto;
+    max-height: 38px;
+    object-position: left center;
 }
 
 .hub-sidebar__brand-subtitle {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     margin-top: 2px;
-    text-align: center;
 }
 
 /* Topbar matches the sidebar header height so the dividers align */

@@ -505,7 +505,9 @@ class DashboardController extends Controller
             redirect('/hub/creditos');
         }
 
-        $result = $this->buildExpositorResult($form);
+        $aiService = new \App\Services\OpenAiService();
+        $aiResult = $aiService->generateExpositorMaterial($form);
+        $result = $aiResult !== null ? $aiResult : $this->buildExpositorResult($form);
         $draft = $this->createExpositorDraft($organization, $user, $form, $result);
         $this->setIaCredits($organization, $user, $credits - self::IA_CREDIT_COST);
 
@@ -2197,6 +2199,7 @@ class DashboardController extends Controller
         $wa = fn (string $service): string => $this->buildCommercialWhatsAppUrl($service);
 
         return [
+            ['icon' => 'monitor', 'title' => 'Combo Sistema + Site', 'description' => 'Painel de Gestão e Site para Igrejas no mesmo plano — economiza R$ 17,90/mês comparado aos planos avulsos.', 'price' => 'R$ 99,00/mês · 7 dias grátis', 'badge' => 'Combo', 'badge_type' => 'hot', 'cta' => 'Quero o combo', 'url' => $wa('Combo Sistema + Site (R$ 99/mês)')],
             ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial com 7 dias gratuitos.', 'price' => 'R$ 49,90/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
             ['icon' => 'book', 'title' => 'Expositor IA', 'description' => 'Geração de esboços e estudos bíblicos para apoio pastoral e ministerial.', 'price' => 'Use com créditos', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Comprar créditos', 'url' => url('/hub/creditos')],
             ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação para captar até US$ 10.000/mês em anúncios.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('Google Ad Grants')],
@@ -2266,6 +2269,15 @@ class DashboardController extends Controller
     private function buildContractPackages(): array
     {
         return [
+            [
+                'product'     => 'Combo Sistema + Site',
+                'package'     => 'Painel de Gestão + Site para Igrejas',
+                'price'       => 'R$ 99,00/mês · 7 dias grátis',
+                'description' => 'Combo completo: gestão de membros, financeiro, eventos e site institucional publicado em domínio próprio. Economia de R$ 17,90/mês.',
+                'cta'         => 'Contratar combo',
+                'url'         => $this->buildCommercialWhatsAppUrl('Combo Sistema + Site (R$ 99/mês)'),
+                'highlight'   => true,
+            ],
             [
                 'product'     => 'Painel de Gestão de Igrejas',
                 'package'     => 'Plano mensal com 7 dias grátis',

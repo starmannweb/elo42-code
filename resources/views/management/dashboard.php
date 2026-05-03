@@ -170,9 +170,10 @@ $balance = (float) ($financial['balance'] ?? 0);
             <header class="mgmt-dashboard-card__header">
                 <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="#0a4dff"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> Atividade Recente</h2>
             </header>
-            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; color:var(--text-muted); font-size:13px; margin-top:8px;">
-                <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg></div>
-                Nenhuma atividade recente
+            <div class="mgmt-dashboard-empty">
+                <span class="mgmt-empty-circle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg></span>
+                <strong>Sem atividade recente</strong>
+                <span>Ações dos colaboradores aparecem aqui em tempo real.</span>
             </div>
         </article>
     </section>
@@ -187,9 +188,10 @@ $balance = (float) ($financial['balance'] ?? 0);
                 <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Próximos Eventos</h2>
                 <a href="<?= url('/gestao/eventos') ?>" style="font-size:12px; color:var(--text-muted); text-decoration:none;">Ver todos ›</a>
             </header>
-            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; color:var(--text-muted); font-size:13px;">
-                <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
-                Nenhum evento programado
+            <div class="mgmt-dashboard-empty">
+                <span class="mgmt-empty-circle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
+                <strong>Sem eventos programados</strong>
+                <span>Crie um evento na agenda para alimentar este painel.</span>
             </div>
         </article>
 
@@ -198,9 +200,10 @@ $balance = (float) ($financial['balance'] ?? 0);
                 <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="#d6a646"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Solicitações Recentes</h2>
                 <a href="<?= url('/gestao/solicitacoes') ?>" style="font-size:12px; color:var(--text-muted); text-decoration:none;">Ver todas ›</a>
             </header>
-            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; color:var(--text-muted); font-size:13px;">
-                <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
-                Nenhuma solicitação
+            <div class="mgmt-dashboard-empty">
+                <span class="mgmt-empty-circle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+                <strong>Nenhuma solicitação</strong>
+                <span>Pedidos pastorais e demandas aparecem aqui assim que forem registrados.</span>
             </div>
         </article>
     </section>

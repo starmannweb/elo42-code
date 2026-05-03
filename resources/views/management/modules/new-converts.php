@@ -78,11 +78,12 @@
     <div class="mgmt-card">
         <div class="mgmt-card__body">
             <?php if (empty($converts)): ?>
-                <div style="text-align: center; padding: 3rem 1rem; color: var(--hub-text-tertiary);">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem; opacity: 0.4;">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                    <p style="font-size: 0.875rem;">Nenhuma decisão de fé registrada</p>
+                <div class="mgmt-empty">
+                    <div class="mgmt-empty__icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    </div>
+                    <h3 class="mgmt-empty__title">Nenhuma decisão de fé registrada</h3>
+                    <p class="mgmt-empty__text">Cadastre as decisões para acompanhar o discipulado a partir delas.</p>
                 </div>
             <?php else: ?>
                 <table class="data-table">

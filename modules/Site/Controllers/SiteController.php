@@ -103,6 +103,17 @@ class SiteController extends Controller
             $site = $this->fallbackGeneratedSite($slug);
         }
 
+        $previewTemplate = trim((string) $request->input('template', ''));
+        if ($previewTemplate !== '') {
+            $site['template'] = $previewTemplate;
+            $palette = $this->paletteForTemplate($previewTemplate);
+            $hasCustomTheme = isset($site['theme_color']) && trim((string) $site['theme_color']) !== '' && trim((string) $site['theme_color']) !== '#0A4DFF';
+            if (!$hasCustomTheme || isset($_GET['preview'])) {
+                $site['theme_color'] = $palette['primary'];
+                $site['accent_color'] = $palette['accent'];
+            }
+        }
+
         $organizationId = (int) ($site['organization_id'] ?? 0);
 
         $this->view('site/generated', [
@@ -115,6 +126,21 @@ class SiteController extends Controller
             'smallGroups' => $this->generatedSiteSmallGroups($organizationId),
             'sermons' => $this->generatedSiteSermons($organizationId),
         ]);
+    }
+
+    private function paletteForTemplate(string $template): array
+    {
+        $name = mb_strtolower($template);
+        if (str_contains($name, 'comunidade')) {
+            return ['primary' => '#9f1239', 'accent' => '#fbbf24'];
+        }
+        if (str_contains($name, 'campanha') || str_contains($name, 'evento')) {
+            return ['primary' => '#0a4dff', 'accent' => '#fcd34d'];
+        }
+        if (str_contains($name, 'ong') || str_contains($name, 'capta')) {
+            return ['primary' => '#0f766e', 'accent' => '#fcd34d'];
+        }
+        return ['primary' => '#1e3a8a', 'accent' => '#f59e0b'];
     }
 
     private function generatedSiteMinistries(int $organizationId): array

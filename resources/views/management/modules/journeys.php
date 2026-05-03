@@ -17,10 +17,9 @@
         <div class="mgmt-card__body">
             <?php if (empty($journeys)): ?>
                 <div class="mgmt-empty">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem; opacity: 0.4;">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
+                    <div class="mgmt-empty__icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z"></path><path d="m12 7 4.5 4.5"></path><path d="M12 7v8"></path><path d="m12 17 4.5-4.5"></path></svg>
+                    </div>
                     <h3 class="mgmt-empty__title">Nenhuma jornada cadastrada</h3>
                     <p class="mgmt-empty__text">Crie trilhas como integração de novos membros, discipulado, batismo ou liderança.</p>
                     <button type="button" class="btn btn--primary" onclick="document.getElementById('addJourneyModal').style.display='flex'">Criar jornada</button>

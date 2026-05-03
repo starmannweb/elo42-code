@@ -29,10 +29,18 @@ class NotificationService
 
     /**
      * Send an email notification.
+     *
+     * Driver "resend" usa a API REST do Resend (RESEND_API_KEY).
+     * Os demais drivers caem em stub aguardando integração.
      */
     public function sendEmail(string $to, string $subject, string $htmlBody, array $options = []): array
     {
-        // TODO: Implement with mail driver (PHPMailer, SwiftMailer, or native)
+        $driver = strtolower((string) ($this->config['mail_driver'] ?? 'smtp'));
+
+        if ($driver === 'resend' || (env('RESEND_API_KEY', '') !== '' && in_array($driver, ['smtp', 'sendmail'], true))) {
+            return (new ResendService())->sendEmail($to, $subject, $htmlBody, $options);
+        }
+
         return [
             'success' => false,
             'message' => 'Email notification not yet configured.',

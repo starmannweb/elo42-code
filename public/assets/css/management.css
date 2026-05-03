@@ -652,6 +652,44 @@ body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-light {
     border-radius: var(--radius-xl);
 }
 
+.mgmt-dashboard-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 13px;
+    padding: var(--space-4);
+    gap: 6px;
+}
+
+.mgmt-dashboard-empty strong {
+    color: var(--color-text-primary);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.mgmt-dashboard-empty span {
+    color: var(--color-text-muted);
+    font-size: 12px;
+    max-width: 240px;
+    line-height: 1.5;
+}
+
+.mgmt-empty-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-bg-light);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #11284f;
+    margin-bottom: 4px;
+}
+
 .mgmt-empty__icon {
     font-size: 3rem;
     margin-bottom: var(--space-4);

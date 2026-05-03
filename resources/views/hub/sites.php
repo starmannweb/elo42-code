@@ -218,7 +218,7 @@
 
                         <div class="hub-page__actions" style="margin-top:auto;">
                             <a href="<?= e($previewUrl . (str_contains($previewUrl, '?') ? '&' : '?') . 'template=' . rawurlencode($name)) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Ver preview</a>
-                            <button type="submit" name="template" value="<?= e($name) ?>" class="btn btn--primary" data-site-template-choice="<?= e($name) ?>">Usar modelo</button>
+                            <button type="submit" name="template" value="<?= e($name) ?>" formaction="<?= url('/hub/sites/gerar') ?>" class="btn btn--primary" data-site-template-choice="<?= e($name) ?>">Usar modelo</button>
                         </div>
                     </article>
                 <?php endforeach; ?>
@@ -580,10 +580,21 @@
                 <div class="form-group" style="margin-top:<?= $canPublish ? '1.25rem' : '0' ?>;">
                     <label class="form-label" for="domain">Domínio próprio (opcional)</label>
                     <input id="domain" name="domain" class="form-input" value="<?= e((string) ($currentSite['domain'] ?? '')) ?>" placeholder="www.suaigreja.org.br" <?= $canPublish ? '' : 'disabled' ?>>
+                    <?php
+                        $dnsCname = (string) env('SITES_DNS_CNAME', 'sites.elo42.com.br');
+                        $dnsA = (string) env('SITES_DNS_A', '185.158.133.1');
+                        $verifyTxtName = '_elo42-verify';
+                        $verifyTxtValue = 'elo42-org-' . (int) ($organization['id'] ?? 0);
+                    ?>
                     <?php if ($canPublish): ?>
                         <details class="site-publish-dns">
-                            <summary>Como apontar o DNS</summary>
-                            <p>Crie um registro <code>CNAME</code> apontando seu domínio para <code>sites.elo42.com.br</code>. Se preferir registro <code>A</code>, use <code>185.158.133.1</code>. A propagação pode levar até 24h. Sem domínio próprio, o site fica em <code><?= e($publicSiteUrl) ?></code>.</p>
+                            <summary>Como apontar o DNS do domínio próprio</summary>
+                            <p style="margin-bottom:.7rem;">Adicione os registros abaixo no painel da sua hospedagem. A propagação pode levar até 24h. Enquanto isso, o site continua acessível em <code><?= e($publicSiteUrl) ?></code>.</p>
+                            <div class="site-publish-dns__row"><span>Tipo</span><span>Nome</span><span>Valor</span></div>
+                            <div class="site-publish-dns__row site-publish-dns__row--data"><strong>CNAME</strong><code>www / @</code><code><?= e($dnsCname) ?></code></div>
+                            <div class="site-publish-dns__row site-publish-dns__row--data"><strong>A</strong><code>@</code><code><?= e($dnsA) ?></code></div>
+                            <div class="site-publish-dns__row site-publish-dns__row--data"><strong>TXT</strong><code><?= e($verifyTxtName) ?></code><code><?= e($verifyTxtValue) ?></code></div>
+                            <p style="margin-top:.7rem;font-size:.8rem;color:#6b7892;">Use CNAME quando seu provedor permitir flatten do registro raiz, caso contrário use o A. O TXT é opcional e ajuda a confirmar a posse do domínio.</p>
                         </details>
                     <?php else: ?>
                         <span class="form-hint">Disponível para assinantes. Ative o plano para configurar domínio próprio.</span>
@@ -639,6 +650,10 @@
                 .site-publish-dns summary { cursor: pointer; color: var(--color-bright-blue, #0a4dff); font-weight: 700; }
                 .site-publish-dns p { color: #4b5d7c; line-height: 1.6; margin: .55rem 0 0; }
                 .site-publish-dns code { background: var(--color-bg-light, #f4f7fd); padding: 1px 6px; border-radius: 4px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+                .site-publish-dns__row { display: grid; grid-template-columns: 80px 110px 1fr; gap: .6rem; padding: .45rem .6rem; border-bottom: 1px solid var(--color-border-light, #dfe7f4); align-items: center; font-size: .78rem; color: #6b7892; }
+                .site-publish-dns__row:first-of-type { font-weight: 700; text-transform: uppercase; letter-spacing: .04em; background: var(--color-bg-light, #f4f7fd); border-radius: 6px 6px 0 0; }
+                .site-publish-dns__row--data { font-family: inherit; color: #11284f; }
+                .site-publish-dns__row--data strong { font-weight: 700; }
 
                 @media (max-width: 860px) {
                     .site-publish-summary { grid-template-columns: 1fr; }

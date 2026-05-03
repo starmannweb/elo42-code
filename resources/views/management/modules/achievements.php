@@ -16,12 +16,12 @@
     <div class="mgmt-card">
         <div class="mgmt-card__body">
             <?php if (empty($achievements)): ?>
-                <div style="text-align: center; padding: 3rem 1rem; color: var(--hub-text-tertiary);">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem; opacity: 0.4;">
-                        <circle cx="12" cy="8" r="7"></circle>
-                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                    </svg>
-                    <p style="font-size: 0.875rem;">Nenhuma conquista cadastrada</p>
+                <div class="mgmt-empty">
+                    <div class="mgmt-empty__icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                    </div>
+                    <h3 class="mgmt-empty__title">Nenhuma conquista cadastrada</h3>
+                    <p class="mgmt-empty__text">Defina marcos para acompanhar discipulado, batismo e participação em ministérios.</p>
                 </div>
             <?php else: ?>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">

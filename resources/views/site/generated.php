@@ -208,24 +208,45 @@ $heroBadge = $templateBadges[$templateKey];
         .contact-section { background: var(--ink); color: #fff; padding: clamp(3rem, 6vw, 5rem) 0; }
         .contact-section .section-eyebrow { color: var(--accent); }
         .contact-section .section-title, .contact-section h3 { color: #fff; }
-        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 2rem; align-items: start; }
-        .contact-info p { color: rgba(255,255,255,.78); line-height: 1.7; margin: .5rem 0; }
-        .contact-info strong { display: block; color: var(--accent); font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; margin-top: 1rem; }
-        .contact-socials { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
-        .contact-socials a { padding: .55rem 1rem; border-radius: 999px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); color: #fff; font-weight: 700; font-size: .85rem; }
+        .contact-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(1.5rem, 4vw, 3rem); margin-top: 2rem; align-items: start; }
+        .contact-info > p { color: rgba(255,255,255,.78); line-height: 1.7; margin: 0 0 1.4rem; }
+        .contact-info__list { list-style: none; padding: 0; margin: 0; display: grid; gap: .85rem; }
+        .contact-info__list li { display: flex; align-items: flex-start; gap: .85rem; }
+        .contact-info__icon { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.08); color: var(--accent); border: 1px solid rgba(255,255,255,.12); }
+        .contact-info__list li > div { display: grid; gap: 2px; }
+        .contact-info__list li span { color: var(--accent); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+        .contact-info__list li strong { color: #fff; font-size: .95rem; font-weight: 600; }
+        .contact-socials { display: flex; flex-wrap: wrap; gap: .55rem; }
+        .contact-socials a { padding: .5rem .95rem; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); color: #fff; font-weight: 600; font-size: .82rem; transition: background .18s ease; }
         .contact-socials a:hover { background: rgba(255,255,255,.18); }
-        .contact-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 1.6rem; }
+        .contact-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 1.7rem; }
         .contact-card h3 { font-size: 1.2rem; margin-bottom: 1rem; }
         .contact-card p { color: rgba(255,255,255,.85); line-height: 1.6; margin: .4rem 0; }
 
-        footer.site-footer { background: #060d1f; color: rgba(255,255,255,.6); padding: 1.5rem 0; text-align: center; font-size: .85rem; }
+        footer.site-footer { background: #060d1f; color: rgba(255,255,255,.66); padding: clamp(2rem, 4vw, 3rem) 0 0; font-size: .9rem; }
+        .site-footer__inner { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); padding-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,.08); align-items: start; }
+        .site-footer__brand { display: flex; align-items: center; gap: .8rem; }
+        .site-footer__brand img { width: 44px; height: 44px; object-fit: contain; background: rgba(255,255,255,.92); border-radius: 10px; padding: 4px; }
+        .site-footer__initial { width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); display: grid; place-items: center; font-family: 'Saira'; font-weight: 800; font-size: 1.1rem; color: #fff; }
+        .site-footer__brand strong { display: block; color: #fff; font-family: 'Saira'; font-size: 1.05rem; font-weight: 700; }
+        .site-footer__brand span { display: block; color: rgba(255,255,255,.6); font-size: .8rem; line-height: 1.5; max-width: 320px; margin-top: 4px; }
+        .site-footer__nav { display: flex; flex-direction: column; gap: .55rem; }
+        .site-footer__nav a { color: rgba(255,255,255,.7); font-size: .88rem; transition: color .18s ease; }
+        .site-footer__nav a:hover { color: #fff; }
+        .site-footer__socials { display: flex; flex-wrap: wrap; gap: .5rem; }
+        .site-footer__socials a { padding: .45rem .9rem; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.85); font-size: .78rem; font-weight: 600; }
+        .site-footer__socials a:hover { background: rgba(255,255,255,.14); color: #fff; }
+        .site-footer__base { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0 1.5rem; gap: 1rem; flex-wrap: wrap; font-size: .78rem; color: rgba(255,255,255,.5); }
+        .site-footer__base a { color: var(--accent); font-weight: 700; }
+        .site-footer__base a:hover { color: #fff; }
 
         @media (max-width: 1024px) {
             .principles__grid, .highlights__grid, .connect__grid { grid-template-columns: repeat(2, 1fr); }
             .events__grid, .series__grid { grid-template-columns: repeat(2, 1fr); }
+            .site-footer__inner { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 720px) {
-            .principles__grid, .highlights__grid, .connect__grid, .events__grid, .series__grid, .contact-grid { grid-template-columns: 1fr; }
+            .principles__grid, .highlights__grid, .connect__grid, .events__grid, .series__grid, .contact-grid, .site-footer__inner { grid-template-columns: 1fr; }
             .site-nav__inner { gap: .8rem; }
             .site-nav nav { gap: 1rem; font-size: .85rem; }
         }
@@ -487,12 +508,30 @@ $heroBadge = $templateBadges[$templateKey];
                 <div class="contact-grid">
                     <div class="contact-info">
                         <p><?= e($description) ?></p>
-                        <?php if ($contactPhone !== ''): ?><strong>Telefone</strong><p><?= e($contactPhone) ?></p><?php endif; ?>
-                        <?php if ($contactEmail !== ''): ?><strong>E-mail</strong><p><?= e($contactEmail) ?></p><?php endif; ?>
-                        <?php if ($address !== ''): ?><strong>Endereço</strong><p><?= e($address) ?></p><?php endif; ?>
+                        <?php if ($contactPhone !== '' || $contactEmail !== '' || $address !== ''): ?>
+                            <ul class="contact-info__list">
+                                <?php if ($contactPhone !== ''): ?>
+                                    <li>
+                                        <span class="contact-info__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+                                        <div><span>Telefone</span><strong><?= e($contactPhone) ?></strong></div>
+                                    </li>
+                                <?php endif; ?>
+                                <?php if ($contactEmail !== ''): ?>
+                                    <li>
+                                        <span class="contact-info__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+                                        <div><span>E-mail</span><strong><?= e($contactEmail) ?></strong></div>
+                                    </li>
+                                <?php endif; ?>
+                                <?php if ($address !== ''): ?>
+                                    <li>
+                                        <span class="contact-info__icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+                                        <div><span>Endereço</span><strong><?= e($address) ?></strong></div>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                        <?php endif; ?>
                         <?php if (!empty($socialLinks)): ?>
-                            <strong>Redes sociais</strong>
-                            <div class="contact-socials">
+                            <div class="contact-socials" style="margin-top:1.4rem;">
                                 <?php foreach ($socialLinks as $label => $href): ?>
                                     <a href="<?= e($href) ?>" target="_blank" rel="noopener noreferrer"><?= e($label) ?></a>
                                 <?php endforeach; ?>
@@ -513,8 +552,35 @@ $heroBadge = $templateBadges[$templateKey];
     </main>
 
     <footer class="site-footer">
-        <div class="container">
-            <span><?= e($title) ?> · Site publicado pela Elo 42</span>
+        <div class="container site-footer__inner">
+            <div class="site-footer__brand">
+                <?php if ($logoImage !== ''): ?>
+                    <img src="<?= e($logoImage) ?>" alt="<?= e($title) ?>">
+                <?php else: ?>
+                    <span class="site-footer__initial"><?= e(strtoupper(mb_substr($title, 0, 1, 'UTF-8'))) ?></span>
+                <?php endif; ?>
+                <div>
+                    <strong><?= e($title) ?></strong>
+                    <span><?= e($description) ?></span>
+                </div>
+            </div>
+            <nav class="site-footer__nav" aria-label="Rodapé">
+                <a href="#sobre">Quem Somos</a>
+                <a href="#agenda">Agenda</a>
+                <a href="#conexoes">Conexões</a>
+                <a href="#contato">Contato</a>
+            </nav>
+            <?php if (!empty($socialLinks)): ?>
+                <div class="site-footer__socials" aria-label="Redes sociais">
+                    <?php foreach ($socialLinks as $label => $href): ?>
+                        <a href="<?= e($href) ?>" target="_blank" rel="noopener noreferrer" aria-label="<?= e($label) ?>"><?= e($label) ?></a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+        <div class="container site-footer__base">
+            <span>© <?= date('Y') ?> <?= e($title) ?>. Todos os direitos reservados.</span>
+            <span>Site publicado com <a href="<?= e(url('/')) ?>" target="_blank" rel="noopener noreferrer">Elo 42</a></span>
         </div>
     </footer>
 </body>

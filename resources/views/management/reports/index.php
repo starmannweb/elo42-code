@@ -37,26 +37,39 @@
     </form>
 </div>
 
-<?php 
+<?php
 $taxaCativante = $totalMembers > 0 ? round(($activeMembers / $totalMembers) * 100) : 0;
+$reportType = $selectedReport ?? 'overview';
+$showFinancial = in_array($reportType, ['overview', 'financial'], true);
+$showMembers   = in_array($reportType, ['overview', 'members'], true);
+$showEvents    = in_array($reportType, ['overview', 'events'], true);
 ?>
 
+<div class="mgmt-report-banner" style="background: rgba(10,77,255,.05); border:1px solid rgba(10,77,255,.18); border-radius:12px; padding: 12px 16px; margin-bottom: var(--space-5); font-size: 13px; color: var(--color-text-primary);">
+    <strong><?= e($reportTypes[$reportType] ?? 'Relatório') ?></strong>
+    · <?= e(date('d/m/Y', strtotime((string) ($filters['start_date'] ?? date('Y-m-01'))))) ?>
+    a <?= e(date('d/m/Y', strtotime((string) ($filters['end_date'] ?? date('Y-m-t'))))) ?>
+</div>
+
 <div class="mgmt-kpi-grid" style="grid-template-columns: repeat(4, 1fr);">
+    <?php if ($showMembers): ?>
     <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">TOTAL MEMBROS</div>
             <div class="mgmt-kpi-card__value"><?= $totalMembers ?></div>
-            <div style="font-size: 11px; color: #10b981; margin-top: 2px;">+12% vs período anterior</div>
+            <div style="font-size: 11px; color: #10b981; margin-top: 2px;"><?= (int) ($newMembers ?? 0) ?> novo(s) no per&iacute;odo</div>
         </div>
         <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
         </div>
     </div>
+    <?php endif; ?>
+    <?php if ($showFinancial): ?>
     <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
             <div class="mgmt-kpi-card__label">RECEITAS TOTAIS</div>
             <div class="mgmt-kpi-card__value" style="color: #10b981;">R$ <?= number_format($financial['income'] ?? 0, 2, ',', '.') ?></div>
-            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Acumulado do ano</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">No per&iacute;odo selecionado</div>
         </div>
         <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--green">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
@@ -66,25 +79,41 @@ $taxaCativante = $totalMembers > 0 ? round(($activeMembers / $totalMembers) * 10
         <div>
             <div class="mgmt-kpi-card__label">DESPESAS TOTAIS</div>
             <div class="mgmt-kpi-card__value" style="color: #ef4444;">R$ <?= number_format($financial['expense'] ?? 0, 2, ',', '.') ?></div>
-            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Acumulado do ano</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">No per&iacute;odo selecionado</div>
         </div>
         <div class="mgmt-kpi-card__icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
         </div>
     </div>
+    <?php endif; ?>
+    <?php if ($showEvents): ?>
     <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
-            <div class="mgmt-kpi-card__label">TAXA CATIVANTE</div>
+            <div class="mgmt-kpi-card__label">EVENTOS ATIVOS</div>
+            <div class="mgmt-kpi-card__value"><?= (int) ($activeEvents ?? 0) ?></div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Agenda e celebra&ccedil;&otilde;es</div>
+        </div>
+        <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--indigo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </div>
+    </div>
+    <?php endif; ?>
+    <?php if ($showMembers): ?>
+    <div class="mgmt-kpi-card" style="justify-content:space-between;">
+        <div>
+            <div class="mgmt-kpi-card__label">TAXA DE ATIVOS</div>
             <div class="mgmt-kpi-card__value"><?= $taxaCativante ?>%</div>
-            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Frequência média em eventos</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Membros ativos no total</div>
         </div>
         <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--indigo">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
         </div>
     </div>
+    <?php endif; ?>
 </div>
 
 <div class="mgmt-dashboard-grid" style="margin-top: var(--space-6);">
+    <?php if ($showFinancial): ?>
     <article class="mgmt-dashboard-card">
         <header class="mgmt-dashboard-card__header" style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;">
             <h2 style="margin:0;">Receitas vs Despesas</h2>
@@ -114,11 +143,13 @@ $taxaCativante = $totalMembers > 0 ? round(($activeMembers / $totalMembers) * 10
             <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #ef4444; border-radius: 2px;"></span> Despesas (R$)</span>
         </div>
     </article>
+    <?php endif; ?>
 
+    <?php if ($showMembers || $showEvents): ?>
     <article class="mgmt-dashboard-card">
         <header class="mgmt-dashboard-card__header">
-            <h2 style="display:flex;align-items:center;gap:8px;">Taxa de Adesão & Visitantes</h2>
-            <span style="font-size: 12px; color: var(--text-muted);">Pessoas conectadas nos cultos</span>
+            <h2 style="display:flex;align-items:center;gap:8px;"><?= $showEvents && !$showMembers ? 'Frequência em eventos' : 'Taxa de Adesão & Visitantes' ?></h2>
+            <span style="font-size: 12px; color: var(--text-muted);"><?= $showEvents && !$showMembers ? 'Inscrições e check-ins' : 'Pessoas conectadas nos cultos' ?></span>
         </header>
         <div style="display: flex; align-items: flex-end; justify-content: space-around; height: 200px; padding: var(--space-4) 0;">
             <?php 
@@ -140,8 +171,10 @@ $taxaCativante = $totalMembers > 0 ? round(($activeMembers / $totalMembers) * 10
             <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #d6a646; border-radius: 2px;"></span> Novos Visitantes</span>
         </div>
     </article>
+    <?php endif; ?>
 </div>
 
+<?php if ($showMembers): ?>
 <article class="mgmt-dashboard-card" style="margin-top: var(--space-6);">
     <header class="mgmt-dashboard-card__header">
         <h2 style="display:flex;align-items:center;gap:8px;">Status de Membresia</h2>
@@ -176,4 +209,36 @@ $taxaCativante = $totalMembers > 0 ? round(($activeMembers / $totalMembers) * 10
         </div>
     </div>
 </article>
+<?php endif; ?>
+
+<?php if ($showFinancial && $reportType === 'financial'): ?>
+<article class="mgmt-dashboard-card" style="margin-top: var(--space-6);">
+    <header class="mgmt-dashboard-card__header">
+        <h2 style="display:flex;align-items:center;gap:8px;">Receitas por categoria</h2>
+        <span style="font-size:12px;color:var(--text-muted);">Distribuição das entradas no período</span>
+    </header>
+    <div style="padding: var(--space-3) 0; display:grid; gap: var(--space-3);">
+        <?php
+            $donationSummary = is_array($donationSummary ?? null) ? $donationSummary : [];
+            if (empty($donationSummary)):
+        ?>
+            <div class="mgmt-dashboard-empty">
+                <span class="mgmt-empty-circle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg></span>
+                <strong>Sem categorias movimentadas</strong>
+                <span>Registre receitas para visualizar a quebra por categoria.</span>
+            </div>
+        <?php else:
+            $totalIncome = max(1, array_sum(array_map(static fn($r) => (float) ($r['total'] ?? 0), $donationSummary)));
+            foreach ($donationSummary as $row):
+                $value = (float) ($row['total'] ?? 0);
+                $pct = round(($value / $totalIncome) * 100);
+        ?>
+            <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><strong><?= e((string) ($row['type'] ?? 'Categoria')) ?></strong><span>R$ <?= number_format($value, 2, ',', '.') ?> · <?= $pct ?>%</span></div>
+                <div style="height:8px;background:rgba(10,77,255,.08);border-radius:999px;overflow:hidden;"><span style="display:block;height:100%;width:<?= $pct ?>%;background:linear-gradient(90deg,#0a4dff,#10b981);"></span></div>
+            </div>
+        <?php endforeach; endif; ?>
+    </div>
+</article>
+<?php endif; ?>
 <?php $__view->endSection(); ?>

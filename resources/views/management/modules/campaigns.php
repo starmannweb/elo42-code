@@ -17,11 +17,12 @@
     <div class="mgmt-card">
         <div class="mgmt-card__body">
             <?php if (empty($campaigns)): ?>
-                <div style="text-align: center; padding: 3rem 1rem; color: var(--hub-text-tertiary);">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem; opacity: 0.4;">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg>
-                    <p style="font-size: 0.875rem;">Nenhuma campanha cadastrada</p>
+                <div class="mgmt-empty">
+                    <div class="mgmt-empty__icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 0 0 2 2h2l7 4V5l-7 4H5a2 2 0 0 0-2 2z"></path><path d="M17 9.5a3.5 3.5 0 0 1 0 5"></path></svg>
+                    </div>
+                    <h3 class="mgmt-empty__title">Nenhuma campanha cadastrada</h3>
+                    <p class="mgmt-empty__text">Crie campanhas com meta, destino da oferta e prazo para acompanhar a arrecadação.</p>
                 </div>
             <?php else: ?>
                 <div style="display: grid; gap: 1.5rem;">

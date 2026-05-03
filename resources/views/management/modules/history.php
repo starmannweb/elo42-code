@@ -46,12 +46,12 @@
     <div class="mgmt-card">
         <div class="mgmt-card__body">
             <?php if (empty($activities)): ?>
-                <div style="text-align: center; padding: 3rem 1rem; color: var(--hub-text-tertiary);">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem; opacity: 0.4;">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <p style="font-size: 0.875rem;">Nenhuma atividade encontrada</p>
+                <div class="mgmt-empty">
+                    <div class="mgmt-empty__icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <h3 class="mgmt-empty__title">Nenhuma atividade encontrada</h3>
+                    <p class="mgmt-empty__text">Os eventos do sistema aparecerão aqui conforme o uso.</p>
                 </div>
             <?php else: ?>
                 <div class="timeline">

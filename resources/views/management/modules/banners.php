@@ -16,13 +16,12 @@
     <div class="mgmt-card">
         <div class="mgmt-card__body">
             <?php if (empty($banners)): ?>
-                <div style="text-align: center; padding: 3rem 1rem; color: var(--hub-text-tertiary);">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem; opacity: 0.4;">
-                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                        <line x1="8" y1="21" x2="16" y2="21"></line>
-                        <line x1="12" y1="17" x2="12" y2="21"></line>
-                    </svg>
-                    <p style="font-size: 0.875rem;">Nenhum banner cadastrado</p>
+                <div class="mgmt-empty">
+                    <div class="mgmt-empty__icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    </div>
+                    <h3 class="mgmt-empty__title">Nenhum banner cadastrado</h3>
+                    <p class="mgmt-empty__text">Suba banners para o site e a área do membro com chamadas, eventos ou campanhas.</p>
                 </div>
             <?php else: ?>
                 <div style="display: grid; gap: 1.5rem;">
