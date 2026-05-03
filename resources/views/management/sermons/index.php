@@ -11,7 +11,10 @@
         <p class="mgmt-header__subtitle">Cadastre mensagens, pregadores, séries e referências bíblicas para aparecerem como ministrações ao membro.</p>
     </div>
     <div class="mgmt-header__actions">
-        <a href="<?= url('/gestao/pregadores') ?>" class="btn btn--ghost">Pregadores</a>
+        <a href="<?= url('/gestao/pregadores') ?>" class="btn btn--outline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:.4rem;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
+            Pregadores
+        </a>
         <button type="button" class="btn btn--primary" onclick="document.getElementById('sermon-modal').style.display='flex'">+ Novo sermão</button>
     </div>
 </div>
@@ -23,7 +26,10 @@
         </span>
         <input type="text" name="search" class="form-input" placeholder="Buscar por título, pregador ou referência..." value="<?= e($_GET['search'] ?? '') ?>">
     </div>
-    <button type="submit" class="btn btn--ghost">Buscar</button>
+    <button type="submit" class="btn btn--primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-right:.4rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        Buscar
+    </button>
 </form>
 
 <?php if (empty($sermons)): ?>

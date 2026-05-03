@@ -146,7 +146,7 @@ body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-light {
 .mgmt-kpi-card__icon {
     width: 48px;
     height: 48px;
-    border-radius: var(--radius-md);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1422,9 +1422,9 @@ body[data-hub-theme="dark"] .mgmt-layout .modal textarea::placeholder {
 }
 
 .stat-card__icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;

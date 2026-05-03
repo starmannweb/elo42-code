@@ -171,14 +171,50 @@
                 <button class="btn btn--primary" type="submit">Salvar modelo</button>
             </div>
 
+            <?php
+                $templateThumbs = [
+                    'Institucional Clássico' => ['gradient' => 'linear-gradient(135deg,#1e3a8a 0%,#2563eb 60%,#f59e0b 100%)', 'tone' => 'azul royal · simples e formal'],
+                    'Comunidade Engajada'    => ['gradient' => 'linear-gradient(135deg,#7c1d3a 0%,#9f1239 50%,#1e3a8a 100%)', 'tone' => 'bordô · multimídia e calorosa'],
+                    'Campanhas e Eventos'    => ['gradient' => 'linear-gradient(135deg,#0f172a 0%,#0a4dff 60%,#fcd34d 100%)', 'tone' => 'preto e ouro · foco em CTA'],
+                    'Captação para ONGs'     => ['gradient' => 'linear-gradient(135deg,#0f766e 0%,#14b8a6 50%,#fcd34d 100%)', 'tone' => 'verde · impacto social'],
+                ];
+                $templateLayouts = [
+                    'Institucional Clássico' => ['Hero centralizado', 'Sobre · Ministérios · Agenda', 'Footer com contato e mapa'],
+                    'Comunidade Engajada'    => ['Hero pleno c/ overlay', 'Princípios + Destaques + Séries', 'Bloco "Conecte-se" + cultos'],
+                    'Campanhas e Eventos'    => ['Hero com contagem regressiva', 'Programação por dia + palestrantes', 'Inscrição direta no topo'],
+                    'Captação para ONGs'     => ['Hero institucional', 'Projetos + Impacto + Histórias', 'Doação recorrente em destaque'],
+                ];
+            ?>
+
             <div class="site-template-grid">
                 <?php foreach (($siteTemplates ?? []) as $template): ?>
-                    <?php $name = (string) ($template['name'] ?? 'Modelo'); ?>
+                    <?php
+                        $name = (string) ($template['name'] ?? 'Modelo');
+                        $thumb = $templateThumbs[$name] ?? ['gradient' => 'linear-gradient(135deg,#1e3a8a,#0a4dff)', 'tone' => 'modelo institucional'];
+                        $layout = $templateLayouts[$name] ?? [];
+                        $initial = strtoupper(mb_substr($name, 0, 1, 'UTF-8'));
+                    ?>
                     <article class="site-template-card <?= ($templateValue === $name || !empty($template['highlight'])) ? 'is-highlight' : '' ?>" data-site-template-card="<?= e($name) ?>">
+                        <div class="site-template-card__thumb" style="background: <?= e($thumb['gradient']) ?>;">
+                            <span class="site-template-card__thumb-frame">
+                                <span class="site-template-card__thumb-bar"></span>
+                                <span class="site-template-card__thumb-bar site-template-card__thumb-bar--short"></span>
+                                <span class="site-template-card__thumb-tag"><?= e($initial) ?></span>
+                            </span>
+                            <small><?= e($thumb['tone']) ?></small>
+                        </div>
                         <div>
                             <h3 class="hub-mini-card__title"><?= e($name) ?></h3>
                             <p class="hub-mini-card__text"><?= e((string) ($template['description'] ?? '')) ?></p>
                         </div>
+
+                        <?php if (!empty($layout)): ?>
+                            <ul class="site-template-card__asset-list site-template-card__asset-list--layout">
+                                <?php foreach ($layout as $section): ?>
+                                    <li><?= e($section) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
 
                         <ul class="site-template-card__asset-list">
                             <?php foreach (($template['assets'] ?? []) as $asset): ?>
@@ -193,6 +229,18 @@
                     </article>
                 <?php endforeach; ?>
             </div>
+
+            <style>
+                .site-template-card { display: flex; flex-direction: column; gap: .75rem; }
+                .site-template-card__thumb { position: relative; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; padding: 1rem; color: #fff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 12px 28px rgba(15,35,75,.18); }
+                .site-template-card__thumb small { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; opacity: .85; }
+                .site-template-card__thumb-frame { position: relative; height: 100%; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: .35rem; }
+                .site-template-card__thumb-bar { display: block; height: 8px; width: 70%; background: rgba(255,255,255,.45); border-radius: 4px; }
+                .site-template-card__thumb-bar--short { width: 38%; background: rgba(255,255,255,.3); }
+                .site-template-card__thumb-tag { position: absolute; top: 0; right: 0; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.4); border-radius: 6px; width: 26px; height: 26px; display: grid; place-items: center; font-family: 'Saira'; font-weight: 800; font-size: .85rem; }
+                .site-template-card__asset-list--layout { background: rgba(10,77,255,.05); border-left: 3px solid var(--color-bright-blue, #0a4dff); padding: .55rem .8rem; border-radius: 0 8px 8px 0; }
+                .site-template-card__asset-list--layout li::marker { color: var(--color-bright-blue, #0a4dff); }
+            </style>
 
             <div class="site-step-panel__footer">
                 <button type="button" class="btn btn--ghost" data-site-step-button="#dados-site">Voltar aos dados</button>
@@ -210,7 +258,7 @@
             </div>
 
             <div class="form-grid form-grid--2">
-                <div class="form-group">
+                <div class="form-group" data-image-uploader>
                     <label class="form-label" for="logo_image">Logo</label>
                     <input id="logo_image" name="logo_image" class="form-input" value="<?= e((string) ($currentSite['logo_image'] ?? '')) ?>" placeholder="Cole uma URL https://... ou envie um arquivo abaixo">
                     <div style="display:flex;align-items:center;gap:.6rem;margin-top:.5rem;flex-wrap:wrap;">
@@ -218,29 +266,76 @@
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:.35rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                             Enviar arquivo
                         </label>
-                        <input type="file" id="logo_image_file" name="logo_image" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="display:none;" onchange="document.getElementById('logo_image').value=this.files[0]?this.files[0].name:'';this.previousElementSibling?.querySelector('.file-name')?.remove();">
+                        <input type="file" id="logo_image_file" name="logo_image" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="display:none;" data-file-input>
+                        <span class="file-chip" data-file-chip hidden>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"></path></svg>
+                            <span data-file-name>Arquivo selecionado</span>
+                        </span>
+                    </div>
+                    <div class="image-preview" data-image-preview <?= empty($currentSite['logo_image']) ? 'hidden' : '' ?>>
                         <?php if (!empty($currentSite['logo_image'])): ?>
-                            <img src="<?= e((string) $currentSite['logo_image']) ?>" alt="Logo atual" style="max-height:32px;border-radius:4px;border:1px solid var(--color-border-light, #dfe7f4);">
+                            <img src="<?= e((string) $currentSite['logo_image']) ?>" alt="Logo atual">
                         <?php endif; ?>
                     </div>
-                    <span class="form-hint" style="display:block;margin-top:.25rem;">PNG, JPG, WEBP, GIF ou SVG até 5 MB. O arquivo enviado tem prioridade sobre a URL.</span>
+                    <span class="form-hint" style="display:block;margin-top:.35rem;">PNG, JPG, WEBP, GIF ou SVG até 5 MB. O arquivo enviado tem prioridade sobre a URL.</span>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="hero_image">Imagem principal</label>
+                <div class="form-group" data-image-uploader>
+                    <label class="form-label" for="hero_image">Banner principal (hero)</label>
                     <input id="hero_image" name="hero_image" class="form-input" value="<?= e((string) ($currentSite['hero_image'] ?? '')) ?>" placeholder="Cole uma URL https://... ou envie um arquivo abaixo">
                     <div style="display:flex;align-items:center;gap:.6rem;margin-top:.5rem;flex-wrap:wrap;">
                         <label class="btn btn--outline btn--sm" for="hero_image_file" style="margin:0;cursor:pointer;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:.35rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                             Enviar arquivo
                         </label>
-                        <input type="file" id="hero_image_file" name="hero_image" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="document.getElementById('hero_image').value=this.files[0]?this.files[0].name:'';">
+                        <input type="file" id="hero_image_file" name="hero_image" accept="image/png,image/jpeg,image/webp" style="display:none;" data-file-input>
+                        <span class="file-chip" data-file-chip hidden>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"></path></svg>
+                            <span data-file-name>Arquivo selecionado</span>
+                        </span>
+                    </div>
+                    <div class="image-preview image-preview--hero" data-image-preview <?= empty($currentSite['hero_image']) ? 'hidden' : '' ?>>
                         <?php if (!empty($currentSite['hero_image'])): ?>
-                            <img src="<?= e((string) $currentSite['hero_image']) ?>" alt="Imagem atual" style="max-height:32px;border-radius:4px;border:1px solid var(--color-border-light, #dfe7f4);">
+                            <img src="<?= e((string) $currentSite['hero_image']) ?>" alt="Banner atual">
                         <?php endif; ?>
                     </div>
-                    <span class="form-hint" style="display:block;margin-top:.25rem;">Recomendado: 1600×900px para o hero. PNG, JPG ou WEBP até 5 MB.</span>
+                    <span class="form-hint" style="display:block;margin-top:.35rem;">Recomendado: 1600×900px. PNG, JPG ou WEBP até 5 MB. O arquivo enviado tem prioridade sobre a URL.</span>
                 </div>
             </div>
+
+            <style>
+                .file-chip { display:inline-flex; align-items:center; gap:.35rem; padding:.35rem .7rem; border-radius:999px; background: rgba(16,185,129,.1); color:#0e9f6e; font-size:.78rem; font-weight:700; }
+                .image-preview { margin-top:.7rem; border:1px dashed var(--color-border-light, #dfe7f4); border-radius:12px; overflow:hidden; background: var(--color-bg-light, #f4f7fd); padding:.5rem; max-width:100%; }
+                .image-preview img { display:block; max-width:100%; max-height:140px; margin:0 auto; object-fit:contain; }
+                .image-preview--hero img { max-height:180px; width:100%; object-fit:cover; border-radius:8px; }
+                .image-preview[hidden] { display:none; }
+            </style>
+            <script>
+            (function () {
+                document.querySelectorAll('[data-image-uploader]').forEach(function (group) {
+                    var input = group.querySelector('[data-file-input]');
+                    var chip = group.querySelector('[data-file-chip]');
+                    var chipName = group.querySelector('[data-file-name]');
+                    var preview = group.querySelector('[data-image-preview]');
+                    if (!input) return;
+                    input.addEventListener('change', function () {
+                        var file = input.files && input.files[0];
+                        if (!file) return;
+                        if (chip && chipName) {
+                            chipName.textContent = file.name;
+                            chip.hidden = false;
+                        }
+                        if (preview) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                preview.innerHTML = '<img src="' + e.target.result + '" alt="Pré-visualização">';
+                                preview.hidden = false;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
+            })();
+            </script>
 
             <?php
                 $primaryValue = $appearancePrimary !== '' ? $appearancePrimary : (string) ($currentSite['theme_color'] ?? '#1e3a8a');

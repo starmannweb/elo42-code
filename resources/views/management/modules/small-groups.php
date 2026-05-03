@@ -19,7 +19,7 @@
                 <div class="mgmt-kpi-card__value"><?= count($groups) ?></div>
             </div>
             <div class="mgmt-kpi-card__icon mgmt-kpi-card__icon--blue" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"></path></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><circle cx="5" cy="6" r="2"></circle><circle cx="19" cy="6" r="2"></circle><circle cx="5" cy="18" r="2"></circle><circle cx="19" cy="18" r="2"></circle><path d="M9.5 10.5 6.5 7.5"></path><path d="M14.5 10.5 17.5 7.5"></path><path d="M9.5 13.5 6.5 16.5"></path><path d="M14.5 13.5 17.5 16.5"></path></svg>
             </div>
         </div>
         <div class="mgmt-kpi-card" style="justify-content:space-between;">

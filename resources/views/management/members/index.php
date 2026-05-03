@@ -65,25 +65,13 @@ foreach ($members as $m) {
 
 <div class="mgmt-dashboard-card" style="padding:0; overflow:hidden;">
     <div style="display:flex; align-items:center; justify-content:space-between; padding: var(--space-4); border-bottom: 1px solid var(--color-border-light); flex-wrap:wrap; gap: var(--space-3);">
-        <form method="GET" action="<?= url('/gestao/membros') ?>" style="display:flex; align-items:center; gap:0; margin:0;">
+        <form method="GET" action="<?= url('/gestao/membros') ?>" style="display:flex; align-items:center; gap:0; margin:0; flex:1;">
             <input type="hidden" name="status" value="<?= e($filters['status'] ?? '') ?>">
-            <div class="mgmt-search" style="max-width:260px;">
+            <div class="mgmt-search" style="max-width:320px;width:100%;">
                 <span class="mgmt-search__icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
                 <input type="text" name="search" class="form-input" placeholder="Buscar por nome, email..." value="<?= e($filters['search']) ?>" style="font-size:13px;">
             </div>
         </form>
-        <div style="display:flex; gap:2px; align-items:center; flex-wrap:wrap;">
-            <?php 
-            $currentStatus = $filters['status'] ?? '';
-            $tabs = ['' => 'Todos', 'active' => 'Ativos', 'visitor' => 'Visitantes', 'new' => 'Novos Convertidos'];
-            foreach ($tabs as $val => $label): 
-                $isActive = $currentStatus === $val;
-            ?>
-            <a href="<?= url('/gestao/membros?status=' . $val . '&search=' . urlencode($filters['search'])) ?>" style="padding: 6px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; text-decoration:none; <?= $isActive ? 'background: var(--color-primary); color: white;' : 'color: var(--text-muted); background: transparent;' ?>"><?= $label ?></a>
-            <?php endforeach; ?>
-            <a href="<?= url('/gestao/membros?status=birthday&search=' . urlencode($filters['search'])) ?>" style="padding: 6px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; text-decoration:none; display:flex; align-items:center; gap:4px; <?= $currentStatus === 'birthday' ? 'background: var(--color-primary); color: white;' : 'color: var(--text-muted); background: transparent;' ?>"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Aniversariantes</a>
-            <a href="<?= url('/gestao/membros?status=teams&search=' . urlencode($filters['search'])) ?>" style="padding: 6px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; text-decoration:none; <?= $currentStatus === 'teams' ? 'background: var(--color-primary); color: white;' : 'color: var(--text-muted); background: transparent;' ?>">Equipes / Células</a>
-        </div>
     </div>
 
 <?php if (empty($members)): ?>

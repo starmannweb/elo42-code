@@ -58,6 +58,22 @@ $connectActions = [
 ];
 
 $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18h30. Grupos Pequenos: Segunda, Quarta e Sexta às 20h.'));
+
+$templateName = (string) ($site['template'] ?? 'Institucional Clássico');
+$templateKey = match (true) {
+    str_contains(mb_strtolower($templateName), 'comunidade') => 'comunidade',
+    str_contains(mb_strtolower($templateName), 'campanha')   => 'campanha',
+    str_contains(mb_strtolower($templateName), 'ong')        => 'ong',
+    default                                                  => 'classico',
+};
+
+$templateBadges = [
+    'classico'    => 'Comunidade de fé',
+    'comunidade'  => 'Igreja em comunidade',
+    'campanha'    => 'Inscrições abertas',
+    'ong'         => 'Causa social',
+];
+$heroBadge = $templateBadges[$templateKey];
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -74,15 +90,20 @@ $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18
             --primary: <?= e($primary) ?>;
             --primary-dark: color-mix(in srgb, <?= e($primary) ?> 78%, #000 22%);
             --accent: <?= e($accent) ?>;
-            --ink: #0b1730;
-            --muted: #5b6b88;
-            --line: #e2e8f3;
+            /* Tipografia e cores alinhadas com a Área do Membro */
+            --ink: #06183a;
+            --ink-soft: #4b5d7c;
+            --muted: #7a89a4;
+            --line: #dfe7f4;
+            --line-strong: #c8d7ee;
             --soft: #f4f7fd;
-            --bg: #fbfcfe;
+            --surface: #ffffff;
+            --bg: #f4f7fd;
         }
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Inter', sans-serif; color: var(--ink); background: var(--bg); }
-        h1, h2, h3, h4 { font-family: 'Saira', 'Inter', sans-serif; letter-spacing: -0.01em; margin: 0; }
+        body { margin: 0; font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+        h1, h2, h3, h4 { font-family: 'Saira', 'Inter', sans-serif; letter-spacing: -0.01em; margin: 0; color: var(--ink); }
+        p { color: var(--ink-soft); }
         a { color: inherit; text-decoration: none; }
         img { max-width: 100%; display: block; }
 
@@ -108,7 +129,12 @@ $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18
         /* === Hero === */
         .hero { position: relative; overflow: hidden; min-height: clamp(420px, 70vh, 720px); display: grid; align-items: end; color: #fff; }
         .hero::before { content: ''; position: absolute; inset: 0; background-size: cover; background-position: center; <?php if ($heroImage !== ''): ?>background-image: url('<?= e($heroImage) ?>');<?php else: ?>background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, var(--accent) 100%);<?php endif; ?> }
-        .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,23,48,.05) 0%, rgba(11,23,48,.65) 60%, rgba(11,23,48,.85) 100%); }
+        .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,24,58,.05) 0%, rgba(6,24,58,.6) 55%, rgba(6,24,58,.88) 100%); }
+        .hero--classico { min-height: clamp(360px, 55vh, 540px); align-items: center; text-align: center; }
+        .hero--classico .hero__content { max-width: 780px; margin: 0 auto; padding-top: clamp(3rem, 8vw, 5rem); padding-bottom: clamp(3rem, 8vw, 5rem); }
+        .hero--classico .hero__actions { justify-content: center; }
+        .hero--campanha::after { background: linear-gradient(135deg, rgba(15,23,42,.85) 0%, rgba(10,77,255,.6) 60%, rgba(252,211,77,.4) 100%); }
+        .hero--ong::after { background: linear-gradient(180deg, rgba(15,118,110,.55) 0%, rgba(6,24,58,.85) 100%); }
         .hero__content { position: relative; z-index: 2; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 4rem); max-width: 760px; }
         .hero__pill { display: inline-flex; align-items: center; padding: .35rem .85rem; border-radius: 999px; background: rgba(255,255,255,.18); color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.3); font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; }
         .hero__title { margin-top: 1.2rem; font-size: clamp(2.2rem, 5.5vw, 4.4rem); line-height: 1; font-weight: 800; }
@@ -237,22 +263,36 @@ $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18
     </header>
 
     <main id="topo">
-        <section class="hero">
+        <section class="hero hero--<?= e($templateKey) ?>">
             <div class="container hero__content">
-                <span class="hero__pill"><?= e((string) ($site['template'] ?? 'Comunidade de fé')) ?></span>
+                <span class="hero__pill"><?= e($heroBadge) ?></span>
                 <h1 class="hero__title"><?= e($title) ?></h1>
                 <p class="hero__text"><?= e($description) ?></p>
                 <div class="hero__actions">
                     <a class="btn btn--primary" href="<?= e($ctaUrl) ?>"><?= e($ctaLabel) ?></a>
-                    <a class="btn btn--ghost" href="#agenda">Ver eventos</a>
+                    <a class="btn btn--ghost" href="#agenda">
+                        <?= match ($templateKey) {
+                            'campanha' => 'Inscreva-se',
+                            'ong'      => 'Conhecer projetos',
+                            'classico' => 'Saiba mais',
+                            default    => 'Ver eventos',
+                        } ?>
+                    </a>
                 </div>
             </div>
         </section>
 
         <section id="sobre" class="principles">
             <div class="container">
-                <span class="section-eyebrow">Princípios</span>
-                <h2 class="section-title">Nossa essência em quatro convicções</h2>
+                <span class="section-eyebrow"><?= $templateKey === 'ong' ? 'Quem somos' : ($templateKey === 'campanha' ? 'Por que participar' : 'Princípios') ?></span>
+                <h2 class="section-title">
+                    <?= match ($templateKey) {
+                        'ong'      => 'Causa, propósito e impacto',
+                        'campanha' => 'Quatro motivos para você estar lá',
+                        'classico' => 'Sobre a nossa comunidade',
+                        default    => 'Nossa essência em quatro convicções',
+                    } ?>
+                </h2>
                 <p class="section-lede"><?= e($about) ?></p>
                 <div class="principles__grid">
                     <?php foreach ($principles as $principle): ?>
@@ -274,8 +314,21 @@ $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18
 
         <section id="conexoes" class="highlights">
             <div class="container">
-                <span class="section-eyebrow">Destaques</span>
-                <h2 class="section-title">Áreas que movem nossa comunidade</h2>
+                <span class="section-eyebrow">
+                    <?= match ($templateKey) {
+                        'ong'      => 'Projetos em andamento',
+                        'campanha' => 'Atividades do evento',
+                        default    => 'Destaques',
+                    } ?>
+                </span>
+                <h2 class="section-title">
+                    <?= match ($templateKey) {
+                        'ong'      => 'Onde a sua doação chega',
+                        'campanha' => 'Programação e palestrantes',
+                        'classico' => 'Ministérios e atividades',
+                        default    => 'Áreas que movem nossa comunidade',
+                    } ?>
+                </h2>
                 <div class="highlights__grid">
                     <?php
                     $cardsToRender = $highlights;
@@ -304,6 +357,7 @@ $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18
             </div>
         </section>
 
+        <?php if ($templateKey !== 'ong' && $templateKey !== 'campanha'): ?>
         <section id="mensagens" class="series">
             <div class="container">
                 <span class="section-eyebrow">Séries e devocionais</span>
@@ -326,11 +380,24 @@ $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18
                 </div>
             </div>
         </section>
+        <?php endif; ?>
 
         <section id="agenda" class="events">
             <div class="container">
-                <span class="section-eyebrow">Próximos eventos</span>
-                <h2 class="section-title">Encontros para participar</h2>
+                <span class="section-eyebrow">
+                    <?= match ($templateKey) {
+                        'campanha' => 'Programação completa',
+                        'ong'      => 'Próximas ações',
+                        default    => 'Próximos eventos',
+                    } ?>
+                </span>
+                <h2 class="section-title">
+                    <?= match ($templateKey) {
+                        'campanha' => 'Garanta sua participação',
+                        'ong'      => 'Como participar dos projetos',
+                        default    => 'Encontros para participar',
+                    } ?>
+                </h2>
                 <div class="events__grid">
                     <?php if (empty($events)): ?>
                         <article class="event-card">
@@ -382,10 +449,23 @@ $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18
         </section>
         <?php endif; ?>
 
+        <?php if ($templateKey !== 'campanha'): ?>
         <section class="connect">
             <div class="container">
-                <span class="section-eyebrow">Conecte-se</span>
-                <h2 class="section-title">Caminhos para começar com a gente</h2>
+                <span class="section-eyebrow">
+                    <?= match ($templateKey) {
+                        'ong'      => 'Apoie',
+                        'classico' => 'Próximos passos',
+                        default    => 'Conecte-se',
+                    } ?>
+                </span>
+                <h2 class="section-title">
+                    <?= match ($templateKey) {
+                        'ong'      => 'Maneiras de fazer parte',
+                        'classico' => 'Como participar da comunidade',
+                        default    => 'Caminhos para começar com a gente',
+                    } ?>
+                </h2>
                 <div class="connect__grid">
                     <?php foreach ($connectActions as $action): ?>
                         <article class="connect-card">
@@ -398,6 +478,7 @@ $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18
                 </div>
             </div>
         </section>
+        <?php endif; ?>
 
         <section id="contato" class="contact-section">
             <div class="container">

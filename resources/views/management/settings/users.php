@@ -93,13 +93,22 @@
                     <div class="form-group modal-grid__full">
                         <label class="form-label" for="settings-user-role">Perfil de acesso *</label>
                         <select id="settings-user-role" name="role_id" class="form-select" required>
-                            <?php if (empty($availableRoles)): ?>
-                                <option value="">Carregando perfis...</option>
-                            <?php else: ?>
-                                <?php foreach ($availableRoles as $role): ?>
-                                    <option value="<?= e((string) ($role['id'] ?? '')) ?>"><?= e((string) ($role['name'] ?? 'Perfil')) ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                            <?php
+                                $rolesForSelect = is_array($availableRoles ?? null) ? $availableRoles : [];
+                                if (empty($rolesForSelect)) {
+                                    $rolesForSelect = [
+                                        ['id' => 'org-admin', 'name' => 'Administrador da organização'],
+                                        ['id' => 'org-pastor', 'name' => 'Pastor / Liderança'],
+                                        ['id' => 'org-tesoureiro', 'name' => 'Tesoureiro'],
+                                        ['id' => 'org-secretaria', 'name' => 'Secretaria'],
+                                        ['id' => 'org-member', 'name' => 'Membro / Colaborador'],
+                                    ];
+                                }
+                            ?>
+                            <option value="" disabled selected>Selecione um perfil</option>
+                            <?php foreach ($rolesForSelect as $role): ?>
+                                <option value="<?= e((string) ($role['id'] ?? '')) ?>"><?= e((string) ($role['name'] ?? 'Perfil')) ?></option>
+                            <?php endforeach; ?>
                         </select>
                         <span class="mgmt-auto-note">Define quais áreas da Gestão o usuário poderá acessar.</span>
                     </div>
