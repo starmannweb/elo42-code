@@ -1411,6 +1411,7 @@ class DashboardController extends Controller
                 if (is_array($site) && !empty($site)) {
                     $site['status_label'] = $this->formatSiteStatusLabel((string) ($site['status'] ?? 'draft'));
                     $site['generated_at_label'] = $this->formatDateTimeLabel((string) ($site['generated_at'] ?? ''));
+                    $site['published_at_label'] = $this->formatDateTimeLabel((string) ($site['published_at'] ?? ''));
                     $site['public_url'] = $this->sitePublicUrl($site);
                     return $site;
                 }

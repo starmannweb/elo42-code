@@ -41,14 +41,8 @@
             </p>
         </div>
         <div class="hub-page__actions site-builder-header__actions">
-            <a href="<?= e($previewUrl) ?>" class="btn btn--outline btn--lg" target="_blank" rel="noopener noreferrer">Preview</a>
-            <?php if ($canPublish && $hasSavedSite): ?>
-                <button class="btn btn--primary btn--lg" type="submit" form="site-builder-form" formaction="<?= url('/hub/sites/publicar') ?>">Publicar site</button>
-            <?php elseif ($canPublish): ?>
-                <button class="btn btn--primary btn--lg" type="submit" form="site-builder-form">Salvar para publicar</button>
-            <?php else: ?>
-                <a href="#publicar-site" class="btn btn--primary btn--lg" data-site-step-link>Ver publicação</a>
-            <?php endif; ?>
+            <a href="<?= e($previewUrl) ?>" class="btn btn--outline btn--lg" target="_blank" rel="noopener noreferrer">Abrir preview</a>
+            <a href="#publicar-site" class="btn btn--primary btn--lg" data-site-step-link>Ir para publicação</a>
         </div>
     </header>
 
@@ -448,53 +442,83 @@
         </section>
 
         <section id="publicar-site" class="site-step-panel" data-site-step-panel hidden>
+            <?php
+                $isPublished = ($currentSite['status'] ?? 'draft') === 'published';
+                $publishStateLabel = $isPublished ? 'Site publicado' : ($hasSavedSite ? 'Rascunho salvo' : 'Aguardando geração');
+                $publishStateClass = $isPublished ? 'hub-badge--success' : ($hasSavedSite ? 'hub-badge--warning' : 'hub-badge--neutral');
+                $slugFallback = (string) ($currentSite['slug'] ?? 'minha-igreja');
+                $publicSiteUrl = $publishedUrl !== '' ? $publishedUrl : url('/site/' . rawurlencode($slugFallback));
+                $organizationLabel = trim((string) ($organization['name'] ?? 'sua organização'));
+                $checklistAnchors = [
+                    'Dados da organização' => '#dados-site',
+                    'Texto do site'        => '#dados-site',
+                    'Imagens'              => '#aparencia-site',
+                    'Contato'              => '#dados-site',
+                    'Redes sociais'        => '#dados-site',
+                    'Mensalidade de publicação' => null,
+                ];
+                $monthlyFee = trim((string) ($siteBuilderAccess['monthly_fee_label'] ?? ''));
+                $isCourtesy = strcasecmp($monthlyFee, 'Cortesia Elo 42') === 0 || ($siteBuilderAccess['status'] ?? '') === 'granted';
+            ?>
+
             <div class="site-step-panel__head">
                 <div>
-                    <h2 class="hub-panel__title">Publicar</h2>
-                    <p class="hub-panel__text">Publicação exige assinatura ativa. Configure o domínio próprio quando o plano estiver liberado.</p>
+                    <h2 class="hub-panel__title">Publicação</h2>
+                    <p class="hub-panel__text">Revise o material, garanta os ajustes pendentes e publique o site na URL pública.</p>
                 </div>
-                <span class="hub-badge <?= e($statusClass) ?>">
-                    <?= $canPublish ? 'Publicação liberada' : 'Publicação bloqueada' ?>
-                </span>
+                <span class="hub-badge <?= e($publishStateClass) ?>"><?= e($publishStateLabel) ?></span>
             </div>
 
-            <article class="site-status-card site-publish-card" style="margin-bottom:var(--space-4);">
-                <div class="hub-panel__row">
-                    <div>
-                        <h3 class="hub-panel__title">Site atual</h3>
-                        <p class="hub-panel__text">
-                            <?= $currentSite ? ($hasSavedSite ? 'Rascunho salvo e pronto para revisão visual.' : 'Preview montado com os dados cadastrais da igreja.') : 'Nenhum site foi gerado ainda.' ?>
-                        </p>
-                    </div>
-                </div>
-
-                <div class="site-preview-card" aria-label="Preview visual do site">
+            <article class="site-publish-summary" style="margin-bottom:var(--space-4);">
+                <div class="site-publish-summary__preview" style="--preview-primary: <?= e($appearancePrimary !== '' ? $appearancePrimary : ((string) ($currentSite['theme_color'] ?? '#1e3a8a'))) ?>; --preview-accent: <?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?>;">
                     <?php if (!empty($currentSite['hero_image'])): ?>
-                        <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
+                        <div class="site-publish-summary__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>');"></div>
                     <?php else: ?>
-                        <div class="site-preview-card__hero"></div>
+                        <div class="site-publish-summary__hero site-publish-summary__hero--gradient"></div>
                     <?php endif; ?>
-                    <div>
-                        <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>
-                        <p class="hub-mini-card__text"><?= e($templateValue) ?></p>
-                    </div>
-                    <div class="site-preview-card__lines"><span></span><span></span><span></span></div>
-                </div>
-
-                <div class="site-status-card__meta" style="grid-template-columns:1fr 1fr;">
-                    <div>
-                        <span>Última geração</span>
-                        <strong><?= e((string) ($currentSite['generated_at_label'] ?? 'Ainda não gerado')) ?></strong>
-                    </div>
-                    <div>
-                        <span>URL de revisão</span>
-                        <strong><?= e($publishedUrl !== '' ? $publishedUrl : 'Após salvar o site') ?></strong>
+                    <div class="site-publish-summary__overlay">
+                        <div class="site-publish-summary__brand">
+                            <?php if (!empty($currentSite['logo_image'])): ?>
+                                <img src="<?= e((string) $currentSite['logo_image']) ?>" alt="Logo">
+                            <?php else: ?>
+                                <span class="site-publish-summary__initial"><?= e(strtoupper(mb_substr($siteTitle, 0, 1, 'UTF-8'))) ?></span>
+                            <?php endif; ?>
+                            <div>
+                                <strong><?= e($siteTitle) ?></strong>
+                                <span><?= e($templateValue) ?></span>
+                            </div>
+                        </div>
+                        <p><?= e(mb_substr($siteDescription !== '' ? $siteDescription : $defaultDescription, 0, 160, 'UTF-8')) ?><?= mb_strlen($siteDescription) > 160 ? '…' : '' ?></p>
                     </div>
                 </div>
 
-                <div class="hub-page__actions">
-                    <button class="btn btn--outline" type="submit" formaction="<?= url('/hub/sites/gerar') ?>"><?= $currentSite ? 'Atualizar rascunho' : 'Gerar rascunho' ?></button>
-                    <a href="<?= e($previewUrl) ?>" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Abrir preview</a>
+                <div class="site-publish-summary__body">
+                    <h3 class="hub-panel__title" style="margin:0;">Visão geral</h3>
+                    <p class="hub-panel__text" style="margin:.4rem 0 1rem;">
+                        <?= $currentSite ? ($hasSavedSite ? 'Rascunho atualizado e pronto para revisão pública.' : 'Pré-visualização montada com os dados cadastrais da organização.') : 'Nenhum rascunho foi gerado ainda — escolha um modelo para começar.' ?>
+                    </p>
+                    <dl class="site-publish-summary__meta">
+                        <div>
+                            <dt>Última atualização</dt>
+                            <dd><?= e((string) ($currentSite['generated_at_label'] ?? 'Ainda não gerado')) ?></dd>
+                        </div>
+                        <div>
+                            <dt>Endereço público</dt>
+                            <dd>
+                                <span class="site-publish-summary__url" data-publish-url><?= e($publicSiteUrl) ?></span>
+                                <button type="button" class="site-publish-summary__copy" data-copy-url="<?= e($publicSiteUrl) ?>" aria-label="Copiar URL">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                </button>
+                            </dd>
+                        </div>
+                    </dl>
+                    <div class="hub-page__actions">
+                        <a href="<?= e($previewUrl) ?>" class="btn btn--outline" target="_blank" rel="noopener noreferrer">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:.4rem;"><path d="M14 3h7v7"/><path d="M21 3l-9 9"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+                            Abrir preview
+                        </a>
+                        <button class="btn btn--ghost" type="submit" formaction="<?= url('/hub/sites/gerar') ?>"><?= $currentSite ? 'Regenerar rascunho' : 'Gerar rascunho' ?></button>
+                    </div>
                 </div>
             </article>
 
@@ -502,77 +526,142 @@
                 <div class="site-readiness-card__head">
                     <div>
                         <h3 class="hub-panel__title">Prontidão do site</h3>
-                        <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos</p>
+                        <p class="hub-panel__text"><?= $doneCount ?> de <?= $totalCount ?> itens concluídos · clique para ajustar</p>
                     </div>
                     <strong><?= $completion ?>%</strong>
                 </div>
                 <div class="site-progress"><span style="width: <?= $completion ?>%;"></span></div>
                 <ul class="site-readiness-list">
-                    <?php foreach ($checklist as $item): ?>
+                    <?php foreach ($checklist as $item):
+                        $title = (string) ($item['title'] ?? 'Item');
+                        $anchor = $checklistAnchors[$title] ?? null;
+                        $tag = $anchor ? 'button' : 'div';
+                    ?>
                         <li class="<?= !empty($item['done']) ? 'is-done' : 'is-pending' ?>">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
-                            </svg>
-                            <div>
-                                <strong><?= e((string) ($item['title'] ?? 'Item')) ?></strong>
-                                <span><?= e((string) ($item['text'] ?? '')) ?></span>
-                            </div>
+                            <<?= $tag ?>
+                                class="site-readiness-list__row"
+                                <?= $tag === 'button' ? 'type="button" data-site-step-button="' . e($anchor) . '"' : '' ?>
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <?= !empty($item['done']) ? '<path d="M20 6 9 17l-5-5"></path>' : '<circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>' ?>
+                                </svg>
+                                <div>
+                                    <strong><?= e($title) ?></strong>
+                                    <span><?= e((string) ($item['text'] ?? '')) ?></span>
+                                </div>
+                                <?php if ($anchor && empty($item['done'])): ?>
+                                    <span class="site-readiness-list__chevron" aria-hidden="true">→</span>
+                                <?php endif; ?>
+                            </<?= $tag ?>>
                         </li>
                     <?php endforeach; ?>
                 </ul>
             </article>
 
-            <article class="site-status-card">
+            <article class="site-publish-controls">
                 <?php if (!$canPublish): ?>
                     <div class="site-publish-cta">
                         <div>
-                            <h3 class="hub-panel__title">Plano "Site para Igrejas"</h3>
-                            <p class="hub-panel__text">Para publicar e usar domínio próprio é necessário assinar o plano. Os dados e o preview ficam salvos enquanto você ativa.</p>
+                            <h3 class="hub-panel__title">Ative a mensalidade do construtor</h3>
+                            <p class="hub-panel__text">A publicação em domínio real depende da mensalidade ativa. Os dados e o preview ficam salvos enquanto você ativa o plano "Site para Igrejas".</p>
                         </div>
-                        <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary btn--lg">Tornar-se assinante</a>
+                        <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary btn--lg">Ativar assinatura</a>
                     </div>
                 <?php else: ?>
-                    <p class="hub-panel__text">Sua assinatura está ativa. Configure o domínio próprio (opcional) e publique quando estiver pronto.</p>
+                    <div class="site-publish-controls__head">
+                        <h3 class="hub-panel__title">Pronto para publicar</h3>
+                        <span class="hub-panel__text">
+                            <?= $isCourtesy ? 'Publicação cortesia Elo 42 ativa.' : 'Mensalidade ' . e($monthlyFee !== '' ? $monthlyFee : 'do construtor') . ' ativa.' ?>
+                            <?= $isPublished ? ' Última publicação: ' . e((string) ($currentSite['published_at_label'] ?? '')) : '' ?>
+                        </span>
+                    </div>
                 <?php endif; ?>
 
-                <div class="site-status-card__meta">
-                    <div>
-                        <span>Plano</span>
-                        <strong><?= e((string) ($siteBuilderAccess['plan_name'] ?? 'Site para Igrejas')) ?></strong>
-                    </div>
-                    <div>
-                        <span>Mensalidade</span>
-                        <strong><?= e((string) ($siteBuilderAccess['monthly_fee_label'] ?? 'Consulte valores')) ?></strong>
-                    </div>
-                    <div>
-                        <span>Situação</span>
-                        <strong><?= e((string) ($siteBuilderAccess['status_label'] ?? 'Sem assinatura ativa')) ?></strong>
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-top:1.25rem;">
-                    <label class="form-label" for="domain">Domínio próprio</label>
+                <div class="form-group" style="margin-top:<?= $canPublish ? '1.25rem' : '0' ?>;">
+                    <label class="form-label" for="domain">Domínio próprio (opcional)</label>
                     <input id="domain" name="domain" class="form-input" value="<?= e((string) ($currentSite['domain'] ?? '')) ?>" placeholder="www.suaigreja.org.br" <?= $canPublish ? '' : 'disabled' ?>>
-                    <span class="form-hint">
-                        <?php if ($canPublish): ?>
-                            Aponte o DNS A/CNAME desse domínio para os servidores Elo 42. Se ficar vazio, usamos <code><?= e(url('/site/' . rawurlencode((string) ($currentSite['slug'] ?? 'minha-igreja')))) ?></code>.
-                        <?php else: ?>
-                            Disponível para assinantes. Ative a assinatura para liberar o domínio próprio.
-                        <?php endif; ?>
-                    </span>
+                    <?php if ($canPublish): ?>
+                        <details class="site-publish-dns">
+                            <summary>Como apontar o DNS</summary>
+                            <p>Crie um registro <code>CNAME</code> apontando seu domínio para <code>sites.elo42.com.br</code>. Se preferir registro <code>A</code>, use <code>185.158.133.1</code>. A propagação pode levar até 24h. Sem domínio próprio, o site fica em <code><?= e($publicSiteUrl) ?></code>.</p>
+                        </details>
+                    <?php else: ?>
+                        <span class="form-hint">Disponível para assinantes. Ative o plano para configurar domínio próprio.</span>
+                    <?php endif; ?>
                 </div>
 
-                <div class="hub-page__actions" style="margin-top:1rem;">
+                <div class="hub-page__actions" style="margin-top:1rem;justify-content:flex-end;">
                     <button type="button" class="btn btn--ghost" data-site-step-button="#aparencia-site">Voltar à aparência</button>
                     <?php if ($canPublish && $hasSavedSite): ?>
-                        <button class="btn btn--primary" type="submit" formaction="<?= url('/hub/sites/publicar') ?>">Publicar site</button>
+                        <button class="btn btn--primary btn--lg" type="submit" formaction="<?= url('/hub/sites/publicar') ?>">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:.4rem;"><path d="M5 12l5 5L20 7"/></svg>
+                            <?= $isPublished ? 'Republicar site' : 'Publicar site' ?>
+                        </button>
                     <?php elseif ($canPublish): ?>
-                        <button class="btn btn--primary" type="submit">Salvar para publicar</button>
+                        <button class="btn btn--primary btn--lg" type="submit">Salvar e gerar rascunho</button>
                     <?php else: ?>
-                        <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary">Ativar assinatura</a>
+                        <a href="<?= url('/gestao/assinatura') ?>" class="btn btn--primary btn--lg">Ativar assinatura</a>
                     <?php endif; ?>
                 </div>
             </article>
+
+            <style>
+                .site-publish-summary { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); border: 1px solid var(--color-border); border-radius: 18px; overflow: hidden; background: #fff; box-shadow: 0 14px 32px rgba(15,35,75,.06); }
+                .site-publish-summary__preview { position: relative; min-height: 220px; color: #fff; overflow: hidden; }
+                .site-publish-summary__hero { position: absolute; inset: 0; background-size: cover; background-position: center; }
+                .site-publish-summary__hero--gradient { background: linear-gradient(135deg, var(--preview-primary, #1e3a8a) 0%, color-mix(in srgb, var(--preview-primary, #1e3a8a) 70%, #000 30%) 60%, var(--preview-accent, #f59e0b) 100%); }
+                .site-publish-summary__overlay { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.4rem; gap: .8rem; background: linear-gradient(180deg, rgba(8,18,45,.05) 0%, rgba(8,18,45,.7) 100%); }
+                .site-publish-summary__brand { display: flex; align-items: center; gap: .8rem; }
+                .site-publish-summary__brand img { width: 44px; height: 44px; object-fit: contain; background: rgba(255,255,255,.92); border-radius: 10px; padding: 4px; }
+                .site-publish-summary__initial { width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.4); display: grid; place-items: center; font-family: 'Saira'; font-weight: 800; font-size: 1.1rem; }
+                .site-publish-summary__brand strong { display: block; font-family: 'Saira'; font-size: 1.05rem; color: #fff; }
+                .site-publish-summary__brand span { display: block; font-size: .78rem; color: rgba(255,255,255,.78); }
+                .site-publish-summary__overlay p { margin: 0; color: rgba(255,255,255,.85); font-size: .9rem; line-height: 1.5; }
+                .site-publish-summary__body { padding: 1.5rem; display: flex; flex-direction: column; }
+                .site-publish-summary__meta { display: grid; gap: .8rem; margin: 0 0 1rem; }
+                .site-publish-summary__meta div { display: grid; gap: 4px; }
+                .site-publish-summary__meta dt { color: #6b7892; font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin: 0; }
+                .site-publish-summary__meta dd { margin: 0; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+                .site-publish-summary__url { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85rem; color: var(--color-bright-blue, #0a4dff); word-break: break-all; }
+                .site-publish-summary__copy { background: var(--color-bg-light, #f4f7fd); border: 1px solid var(--color-border-light, #dfe7f4); border-radius: 6px; padding: 4px 6px; cursor: pointer; color: #6b7892; transition: background .18s ease, color .18s ease; }
+                .site-publish-summary__copy:hover { background: rgba(10,77,255,.12); color: var(--color-bright-blue, #0a4dff); }
+                .site-publish-summary__copy.is-copied { background: rgba(16,185,129,.18); color: #0e9f6e; }
+
+                .site-readiness-list__row { display: flex; align-items: flex-start; gap: 10px; width: 100%; background: transparent; border: none; padding: 0; cursor: default; text-align: left; color: inherit; font: inherit; }
+                .site-readiness-list li button.site-readiness-list__row { cursor: pointer; }
+                .site-readiness-list li:has(button.site-readiness-list__row):hover { background: rgba(10,77,255,.06); border-color: rgba(10,77,255,.22); }
+                .site-readiness-list__chevron { margin-left: auto; color: #6b7892; font-weight: 800; font-size: 1.05rem; }
+
+                .site-publish-controls { border: 1px solid var(--color-border); border-radius: 16px; background: #fff; padding: var(--space-5); }
+                .site-publish-controls__head { display: flex; flex-direction: column; gap: .25rem; }
+                .site-publish-controls__head .hub-panel__title { margin: 0; }
+                .site-publish-dns { margin-top: .5rem; font-size: .85rem; }
+                .site-publish-dns summary { cursor: pointer; color: var(--color-bright-blue, #0a4dff); font-weight: 700; }
+                .site-publish-dns p { color: #4b5d7c; line-height: 1.6; margin: .55rem 0 0; }
+                .site-publish-dns code { background: var(--color-bg-light, #f4f7fd); padding: 1px 6px; border-radius: 4px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+                @media (max-width: 860px) {
+                    .site-publish-summary { grid-template-columns: 1fr; }
+                    .site-publish-summary__preview { min-height: 180px; }
+                }
+            </style>
+
+            <script>
+            (function () {
+                document.querySelectorAll('[data-copy-url]').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var value = btn.getAttribute('data-copy-url') || '';
+                        if (!value) return;
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(value).then(function () {
+                                btn.classList.add('is-copied');
+                                setTimeout(function () { btn.classList.remove('is-copied'); }, 1500);
+                            });
+                        }
+                    });
+                });
+            })();
+            </script>
         </section>
     </form>
 </section>
