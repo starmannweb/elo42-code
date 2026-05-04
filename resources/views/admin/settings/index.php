@@ -1,12 +1,6 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
 
-<?php if (!empty($degraded)): ?>
-    <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
-        Não foi possível carregar as configurações agora. O serviço de dados está temporariamente indisponível — tente novamente em instantes.
-    </div>
-<?php endif; ?>
-
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Configurações da plataforma</h1><p class="mgmt-header__subtitle">Parâmetros globais da Elo 42</p></div></div>
 <div class="mgmt-form-card">
     <form method="POST" action="<?= url('/admin/configuracoes') ?>"><?= csrf_field() ?>

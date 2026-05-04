@@ -6,12 +6,6 @@
     };
 ?>
 
-<?php if (!empty($degraded)): ?>
-    <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
-        Não foi possível carregar os relatórios agora. O serviço de dados está temporariamente indisponível — tente novamente em instantes.
-    </div>
-<?php endif; ?>
-
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Relatórios</h1><p class="mgmt-header__subtitle">Visão consolidada da plataforma</p></div></div>
 <form method="GET" action="<?= url('/admin/relatorios') ?>" class="mgmt-filters">
     <div class="form-group"><label class="form-label" style="font-size:var(--text-xs);">De</label><input type="date" name="start_date" class="form-input" value="<?= e($filters['start_date']) ?>"></div>

@@ -125,7 +125,22 @@ class SiteController extends Controller
             'ministries' => $this->generatedSiteMinistries($organizationId),
             'smallGroups' => $this->generatedSiteSmallGroups($organizationId),
             'sermons' => $this->generatedSiteSermons($organizationId),
+            'banners' => $this->generatedSiteBanners($organizationId),
         ]);
+    }
+
+    private function generatedSiteBanners(int $organizationId): array
+    {
+        if ($organizationId <= 0 || !$this->siteTableExists('banners')) {
+            return [];
+        }
+        try {
+            $stmt = Database::connection()->prepare("SELECT title, image_url, link_url, description FROM banners WHERE organization_id = :organization_id AND status = 'active' ORDER BY priority DESC, created_at DESC LIMIT 6");
+            $stmt->execute(['organization_id' => $organizationId]);
+            return $stmt->fetchAll() ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     private function paletteForTemplate(string $template): array

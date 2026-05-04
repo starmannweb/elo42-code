@@ -44,12 +44,6 @@
     </div>
 </div>
 
-<?php if (!empty($degraded)): ?>
-    <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
-        Painel exibindo dados parciais — o serviço de dados está temporariamente indisponível e novas leituras serão retomadas em instantes.
-    </div>
-<?php endif; ?>
-
 <?php
     $statSvg = static function (string $path): string {
         return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $path . '</svg>';

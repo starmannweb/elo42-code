@@ -95,7 +95,7 @@
         ['href' => '/membro/planos-leitura', 'label' => 'Planos de leitura', 'icon' => 'plans', 'active' => $linkClass('/membro/planos-leitura', $uri, true)],
         ['href' => '/membro/eventos', 'label' => 'Eventos', 'icon' => 'events', 'active' => $linkClass('/membro/eventos', $uri, true)],
         ['section' => 'Recursos premium'],
-        ['href' => '/membro/ministracoes', 'label' => 'Ministrações', 'icon' => 'sermons', 'premium' => true, 'active' => $linkClass('/membro/ministracoes', $uri, true)],
+        ['href' => '/membro/ministracoes', 'label' => 'Séries e Ministrações', 'icon' => 'sermons', 'premium' => true, 'active' => $linkClass('/membro/ministracoes', $uri, true)],
         ['href' => '/membro/cursos', 'label' => 'Cursos', 'icon' => 'courses', 'premium' => true, 'active' => $linkClass('/membro/cursos', $uri, true)],
         ['href' => '/membro/solicitacoes', 'label' => 'Solicitações', 'icon' => 'requests', 'premium' => true, 'active' => $linkClass('/membro/solicitacoes', $uri, true) ?: $linkClass('/membro/pedidos', $uri, true)],
         ['href' => '/membro/conquistas', 'label' => 'Conquistas', 'icon' => 'achievements', 'premium' => true, 'active' => $linkClass('/membro/conquistas', $uri, true)],

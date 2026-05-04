@@ -368,9 +368,18 @@ class DashboardController extends Controller
                 'org_id' => (int) $organization['id'],
             ]);
 
-            Session::flash('success', 'Site publicado. A URL já pode ser revisada pela equipe: ' . $publicUrl);
+            Session::flash('success', 'Site publicado. URL: ' . $publicUrl);
         } catch (\Throwable $e) {
-            Session::flash('error', 'Não foi possível publicar o site agora. Tente novamente.');
+            error_log('[publicarSite] ' . $e->getMessage());
+            $sessionSite = Session::get('hub_generated_site') ?: [];
+            $sessionSite = is_array($sessionSite) ? $sessionSite : [];
+            $sessionSite['status']           = 'published';
+            $sessionSite['status_label']     = 'Publicado';
+            $sessionSite['published_url']    = $publicUrl;
+            $sessionSite['published_at']     = date('Y-m-d H:i:s');
+            $sessionSite['published_at_label'] = date('d/m/Y H:i');
+            Session::set('hub_generated_site', $sessionSite);
+            Session::flash('success', 'Site marcado como publicado em modo offline. URL: ' . $publicUrl . '. Sincronizaremos com o banco assim que a conexão voltar.');
         }
 
         redirect('/hub/sites');

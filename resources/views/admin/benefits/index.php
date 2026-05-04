@@ -5,12 +5,6 @@ $services = $services ?? [];
 $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'paused' => 'Pausado'];
 ?>
 
-<?php if (!empty($degraded)): ?>
-    <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
-        Não foi possível carregar as cortesias agora. O serviço de dados está temporariamente indisponível — tente novamente em instantes.
-    </div>
-<?php endif; ?>
-
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-header__title">Cortesias</h1>

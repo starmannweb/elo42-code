@@ -5,6 +5,7 @@ $campaigns = is_array($campaigns ?? null) ? $campaigns : [];
 $ministries = is_array($ministries ?? null) ? $ministries : [];
 $smallGroups = is_array($smallGroups ?? null) ? $smallGroups : [];
 $sermons = is_array($sermons ?? null) ? $sermons : [];
+$banners = is_array($banners ?? null) ? $banners : [];
 
 $title = trim((string) ($site['site_title'] ?? $site['organization_name'] ?? 'Site institucional'));
 $title = $title !== '' ? $title : 'Site institucional';
@@ -43,19 +44,35 @@ $principles = [
     ['icon' => 'M12 2v20M5 6h14M7 22h10', 'title' => 'Fé e Prática', 'text' => 'Aqui, a espiritualidade não é abstrata: ela transforma decisões, relacionamentos e o jeito de viver no dia a dia.'],
 ];
 
-$highlights = [
-    ['title' => 'Pequenos Grupos', 'text' => 'Conexão, partilha e estudo da Palavra durante a semana.', 'gradient' => 'linear-gradient(135deg,#9f1239,#7c1d3a)'],
-    ['title' => 'Kids', 'text' => 'Ensinar e divertir as crianças com histórias bíblicas, brincadeiras e músicas.', 'gradient' => 'linear-gradient(135deg,#1d4ed8,#0f3878)'],
-    ['title' => 'Encontro de Casais', 'text' => 'Movimentamos nossa fé em projetos sociais que alcançam vidas e geram transformação consistente.', 'gradient' => 'linear-gradient(135deg,#92400e,#78350f)'],
-    ['title' => 'Ações Sociais', 'text' => 'Movimentamos nossa fé em projetos sociais que alcançam vidas e geram transformação consistente.', 'gradient' => 'linear-gradient(135deg,#0f766e,#134e4a)'],
+$gradientPalette = [
+    'linear-gradient(135deg,#9f1239,#7c1d3a)',
+    'linear-gradient(135deg,#1d4ed8,#0f3878)',
+    'linear-gradient(135deg,#92400e,#78350f)',
+    'linear-gradient(135deg,#0f766e,#134e4a)',
+    'linear-gradient(135deg,#5b21b6,#312e81)',
+    'linear-gradient(135deg,#0a4dff,#1e3a8a)',
 ];
 
-$connectActions = [
-    ['title' => 'Visite a nossa igreja', 'text' => 'Chegue alguns minutos antes para encontrar um café e conhecer gente nova!', 'cta' => 'Clique aqui', 'href' => $ctaUrl, 'gradient' => 'linear-gradient(135deg,#1e3a8a,#0b1d52)'],
-    ['title' => 'Seja um voluntário', 'text' => 'Sirva com seus dons: recepção, louvor, infantil, organização e mais.', 'cta' => 'Clique aqui', 'href' => $whatsappUrl !== '' ? $whatsappUrl : '#contato', 'gradient' => 'linear-gradient(135deg,#9f1239,#6d1b2a)'],
-    ['title' => 'Agende um discipulado', 'text' => 'Faça um acompanhamento espiritual.', 'cta' => 'Clique aqui', 'href' => $whatsappUrl !== '' ? $whatsappUrl : '#contato', 'gradient' => 'linear-gradient(135deg,#0f766e,#134e4a)'],
-    ['title' => 'Marcar um café com pastor', 'text' => 'Um espaço leve para tirar dúvidas, conversar e orar com o pastor.', 'cta' => 'Clique aqui', 'href' => $whatsappUrl !== '' ? $whatsappUrl : '#contato', 'gradient' => 'linear-gradient(135deg,#312e81,#1e1b4b)'],
-];
+$ministryCards = [];
+foreach ($ministries as $idx => $ministry) {
+    $ministryCards[] = [
+        'title'    => trim((string) ($ministry['name'] ?? 'Ministério')),
+        'text'     => trim((string) ($ministry['description'] ?? '')),
+        'gradient' => $gradientPalette[$idx % count($gradientPalette)],
+    ];
+}
+
+$connectActions = [];
+$connectContact = $whatsappUrl !== '' ? $whatsappUrl : '#contato';
+if ($ctaUrl !== '#contato') {
+    $connectActions[] = ['title' => 'Visite a nossa igreja', 'text' => 'Chegue alguns minutos antes para tomar um café e conhecer a comunidade.', 'cta' => $ctaLabel, 'href' => $ctaUrl, 'gradient' => $gradientPalette[0]];
+}
+if ($whatsappUrl !== '') {
+    $connectActions[] = ['title' => 'Fale pelo WhatsApp', 'text' => 'Tire dúvidas sobre cultos, ministérios e como começar a frequentar.', 'cta' => 'Abrir WhatsApp', 'href' => $whatsappUrl, 'gradient' => $gradientPalette[1]];
+}
+if ($contactEmail !== '') {
+    $connectActions[] = ['title' => 'Envie um e-mail', 'text' => 'Compartilhe um pedido de oração ou agende uma conversa pastoral.', 'cta' => $contactEmail, 'href' => 'mailto:' . $contactEmail, 'gradient' => $gradientPalette[2]];
+}
 
 $serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18h30. Grupos Pequenos: Segunda, Quarta e Sexta às 20h.'));
 
@@ -101,9 +118,9 @@ $heroBadge = $templateBadges[$templateKey];
             --bg: #f4f7fd;
         }
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
-        h1, h2, h3, h4 { font-family: 'Saira', 'Inter', sans-serif; letter-spacing: -0.01em; margin: 0; color: var(--ink); }
-        p { color: var(--ink-soft); }
+        body { margin: 0; font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; font-size: 17px; line-height: 1.65; }
+        h1, h2, h3, h4 { font-family: 'Saira', 'Inter', sans-serif; letter-spacing: -0.01em; margin: 0; color: var(--ink); font-weight: 800; }
+        p { color: var(--ink-soft); font-size: 1.02rem; }
         a { color: inherit; text-decoration: none; }
         img { max-width: 100%; display: block; }
 
@@ -136,9 +153,9 @@ $heroBadge = $templateBadges[$templateKey];
         .hero--campanha::after { background: linear-gradient(135deg, rgba(15,23,42,.85) 0%, rgba(10,77,255,.6) 60%, rgba(252,211,77,.4) 100%); }
         .hero--ong::after { background: linear-gradient(180deg, rgba(15,118,110,.55) 0%, rgba(6,24,58,.85) 100%); }
         .hero__content { position: relative; z-index: 2; padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 4rem); max-width: 760px; }
-        .hero__pill { display: inline-flex; align-items: center; padding: .35rem .85rem; border-radius: 999px; background: rgba(255,255,255,.18); color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.3); font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; }
-        .hero__title { margin-top: 1.2rem; font-size: clamp(2.2rem, 5.5vw, 4.4rem); line-height: 1; font-weight: 800; }
-        .hero__text { margin-top: 1.2rem; font-size: clamp(1rem, 1.5vw, 1.15rem); line-height: 1.7; max-width: 580px; opacity: .92; }
+        .hero__pill { display: inline-flex; align-items: center; padding: .4rem 1rem; border-radius: 999px; background: rgba(255,255,255,.18); color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.32); font-weight: 700; font-size: .82rem; text-transform: uppercase; letter-spacing: .1em; }
+        .hero__title { margin-top: 1.2rem; font-size: clamp(2.6rem, 6.2vw, 5rem); line-height: .98; font-weight: 900; letter-spacing: -.018em; color: #fff; }
+        .hero__text { margin-top: 1.4rem; font-size: clamp(1.1rem, 1.55vw, 1.25rem); line-height: 1.7; max-width: 620px; color: rgba(255,255,255,.94); font-weight: 400; }
         .hero__actions { display: flex; flex-wrap: wrap; gap: .85rem; margin-top: 1.6rem; }
         .btn { display: inline-flex; align-items: center; justify-content: center; padding: .9rem 1.5rem; border-radius: 12px; font-weight: 700; font-size: .95rem; transition: all .2s ease; border: none; cursor: pointer; }
         .btn--primary { background: var(--primary); color: #fff; }
@@ -147,18 +164,34 @@ $heroBadge = $templateBadges[$templateKey];
         .btn--ghost:hover { background: rgba(255,255,255,.22); }
 
         /* === Sections === */
-        section { padding: clamp(3rem, 6vw, 5rem) 0; }
-        .section-eyebrow { display: inline-block; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: .12em; font-size: .8rem; margin-bottom: .8rem; }
-        .section-title { font-size: clamp(1.8rem, 3.4vw, 2.8rem); font-weight: 800; max-width: 760px; line-height: 1.1; }
-        .section-lede { color: var(--muted); margin-top: 1rem; line-height: 1.7; max-width: 720px; font-size: 1.02rem; }
+        section { padding: clamp(3.2rem, 6vw, 5.5rem) 0; }
+        .section-eyebrow { display: inline-block; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: .14em; font-size: .85rem; margin-bottom: 1rem; }
+        .section-title { font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 800; max-width: 820px; line-height: 1.08; letter-spacing: -.012em; }
+        .section-lede { color: var(--ink-soft); margin-top: 1.2rem; line-height: 1.7; max-width: 760px; font-size: 1.08rem; }
+
+        .empty-state { display: flex; flex-direction: column; align-items: center; gap: .55rem; text-align: center; padding: clamp(2rem, 5vw, 3rem); border-radius: 18px; border: 1px dashed var(--line-strong); background: #fff; max-width: 540px; margin: 2rem auto 0; }
+        .empty-state__icon { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); color: var(--primary); }
+        .empty-state strong { font-family: 'Saira'; font-size: 1.15rem; color: var(--ink); }
+        .empty-state span { color: var(--muted); font-size: .95rem; }
+
+        /* === Banners === */
+        .banners { background: #fff; }
+        .banners__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+        .banner-card { display: grid; grid-template-columns: 200px 1fr; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; transition: transform .2s ease, box-shadow .2s ease; }
+        .banner-card:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(15,35,75,.1); }
+        .banner-card__media { background-size: cover; background-position: center; min-height: 140px; }
+        .banner-card__media--gradient { background: linear-gradient(135deg, var(--primary), var(--accent)); }
+        .banner-card__body { padding: 1.2rem 1.4rem; display: flex; flex-direction: column; justify-content: center; gap: .35rem; }
+        .banner-card__body strong { font-family: 'Saira'; font-size: 1.05rem; color: var(--ink); }
+        .banner-card__body p { font-size: .92rem; color: var(--ink-soft); margin: 0; line-height: 1.55; }
 
         /* === Principles (4 columns with icons) === */
         .principles { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-        .principles__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(1rem, 2vw, 2rem); margin-top: 2rem; }
+        .principles__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(1.2rem, 2.5vw, 2.4rem); margin-top: 2.4rem; }
         .principle { text-align: left; }
-        .principle__icon { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: color-mix(in srgb, var(--primary) 12%, #fff); color: var(--primary); margin-bottom: 1rem; }
-        .principle h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: .4rem; color: var(--primary-dark); }
-        .principle p { color: var(--muted); line-height: 1.6; font-size: .92rem; }
+        .principle__icon { width: 60px; height: 60px; border-radius: 16px; display: grid; place-items: center; background: color-mix(in srgb, var(--primary) 12%, #fff); color: var(--primary); margin-bottom: 1.2rem; }
+        .principle h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: .5rem; color: var(--primary-dark); letter-spacing: -.012em; }
+        .principle p { color: var(--ink-soft); line-height: 1.6; font-size: .98rem; }
 
         /* === Highlights (4 cards with gradient backgrounds) === */
         .highlights { background: var(--soft); }
@@ -168,8 +201,8 @@ $heroBadge = $templateBadges[$templateKey];
         .highlight::before { content: ''; position: absolute; inset: 0; }
         .highlight::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,.7) 100%); }
         .highlight > * { position: relative; z-index: 2; }
-        .highlight strong { font-size: 1.15rem; font-family: 'Saira'; }
-        .highlight p { font-size: .85rem; line-height: 1.45; opacity: .92; margin-top: .4rem; }
+        .highlight strong { font-size: 1.3rem; font-family: 'Saira'; font-weight: 800; letter-spacing: -.012em; color: #fff; }
+        .highlight p { font-size: .94rem; line-height: 1.5; color: rgba(255,255,255,.9); margin-top: .5rem; }
 
         /* === Series === */
         .series { background: #fff; }
@@ -223,32 +256,40 @@ $heroBadge = $templateBadges[$templateKey];
         .contact-card h3 { font-size: 1.2rem; margin-bottom: 1rem; }
         .contact-card p { color: rgba(255,255,255,.85); line-height: 1.6; margin: .4rem 0; }
 
-        footer.site-footer { background: #060d1f; color: rgba(255,255,255,.66); padding: clamp(2rem, 4vw, 3rem) 0 0; font-size: .9rem; }
-        .site-footer__inner { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); padding-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,.08); align-items: start; }
-        .site-footer__brand { display: flex; align-items: center; gap: .8rem; }
-        .site-footer__brand img { width: 44px; height: 44px; object-fit: contain; background: rgba(255,255,255,.92); border-radius: 10px; padding: 4px; }
-        .site-footer__initial { width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); display: grid; place-items: center; font-family: 'Saira'; font-weight: 800; font-size: 1.1rem; color: #fff; }
-        .site-footer__brand strong { display: block; color: #fff; font-family: 'Saira'; font-size: 1.05rem; font-weight: 700; }
-        .site-footer__brand span { display: block; color: rgba(255,255,255,.6); font-size: .8rem; line-height: 1.5; max-width: 320px; margin-top: 4px; }
+        footer.site-footer { background: #060d1f; color: rgba(255,255,255,.7); padding: clamp(2.5rem, 5vw, 3.5rem) 0 0; font-size: .92rem; }
+        .site-footer__inner { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(1.5rem, 4vw, 3rem); padding-bottom: 2.2rem; border-bottom: 1px solid rgba(255,255,255,.08); align-items: flex-start; }
+        .site-footer__col h4 { color: #fff; font-family: 'Saira'; font-size: .85rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; margin: 0 0 1rem; }
+        .site-footer__brand { display: flex; align-items: center; gap: .9rem; margin-bottom: .9rem; }
+        .site-footer__brand img { width: 48px; height: 48px; object-fit: contain; background: rgba(255,255,255,.92); border-radius: 12px; padding: 5px; }
+        .site-footer__initial { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: grid; place-items: center; font-family: 'Saira'; font-weight: 900; font-size: 1.2rem; color: #fff; }
+        .site-footer__brand strong { display: block; color: #fff; font-family: 'Saira'; font-size: 1.15rem; font-weight: 800; }
+        .site-footer__brand-tagline { color: rgba(255,255,255,.6); font-size: .88rem; line-height: 1.6; margin: 0; max-width: 320px; }
         .site-footer__nav { display: flex; flex-direction: column; gap: .55rem; }
-        .site-footer__nav a { color: rgba(255,255,255,.7); font-size: .88rem; transition: color .18s ease; }
+        .site-footer__nav a { color: rgba(255,255,255,.72); font-size: .92rem; transition: color .18s ease; }
         .site-footer__nav a:hover { color: #fff; }
-        .site-footer__socials { display: flex; flex-wrap: wrap; gap: .5rem; }
-        .site-footer__socials a { padding: .45rem .9rem; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.85); font-size: .78rem; font-weight: 600; }
-        .site-footer__socials a:hover { background: rgba(255,255,255,.14); color: #fff; }
-        .site-footer__base { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0 1.5rem; gap: 1rem; flex-wrap: wrap; font-size: .78rem; color: rgba(255,255,255,.5); }
+        .site-footer__contact { display: flex; flex-direction: column; gap: .5rem; }
+        .site-footer__contact span { color: rgba(255,255,255,.55); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+        .site-footer__contact strong, .site-footer__contact a { color: #fff; font-size: .92rem; font-weight: 600; line-height: 1.5; }
+        .site-footer__contact a:hover { color: var(--accent); }
+        .site-footer__socials { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
+        .site-footer__socials a { padding: .5rem .95rem; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: rgba(255,255,255,.92); font-size: .82rem; font-weight: 600; }
+        .site-footer__socials a:hover { background: rgba(255,255,255,.18); color: #fff; }
+        .site-footer__base { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 0 1.6rem; gap: 1rem; flex-wrap: wrap; font-size: .8rem; color: rgba(255,255,255,.55); }
         .site-footer__base a { color: var(--accent); font-weight: 700; }
         .site-footer__base a:hover { color: #fff; }
 
         @media (max-width: 1024px) {
             .principles__grid, .highlights__grid, .connect__grid { grid-template-columns: repeat(2, 1fr); }
-            .events__grid, .series__grid { grid-template-columns: repeat(2, 1fr); }
+            .events__grid, .series__grid, .banners__grid { grid-template-columns: repeat(2, 1fr); }
             .site-footer__inner { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 720px) {
-            .principles__grid, .highlights__grid, .connect__grid, .events__grid, .series__grid, .contact-grid, .site-footer__inner { grid-template-columns: 1fr; }
+            .principles__grid, .highlights__grid, .connect__grid, .events__grid, .series__grid, .banners__grid, .contact-grid, .site-footer__inner { grid-template-columns: 1fr; }
+            .banner-card { grid-template-columns: 1fr; }
+            .banner-card__media { min-height: 180px; }
             .site-nav__inner { gap: .8rem; }
             .site-nav nav { gap: 1rem; font-size: .85rem; }
+            .site-footer__base { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -350,51 +391,78 @@ $heroBadge = $templateBadges[$templateKey];
                         default    => 'Áreas que movem nossa comunidade',
                     } ?>
                 </h2>
-                <div class="highlights__grid">
-                    <?php
-                    $cardsToRender = $highlights;
-                    if (!empty($ministries)) {
-                        $cardsToRender = [];
-                        $palette = ['linear-gradient(135deg,#9f1239,#7c1d3a)', 'linear-gradient(135deg,#1d4ed8,#0f3878)', 'linear-gradient(135deg,#92400e,#78350f)', 'linear-gradient(135deg,#0f766e,#134e4a)'];
-                        foreach (array_slice($ministries, 0, 4) as $idx => $ministry) {
-                            $cardsToRender[] = [
-                                'title'    => (string) ($ministry['name'] ?? 'Ministério'),
-                                'text'     => (string) ($ministry['description'] ?? 'Conheça este ministério da nossa igreja.'),
-                                'gradient' => $palette[$idx % count($palette)],
-                            ];
-                        }
-                        while (count($cardsToRender) < 4) {
-                            $cardsToRender[] = $highlights[count($cardsToRender)];
-                        }
-                    }
-                    foreach ($cardsToRender as $highlight): ?>
-                        <article class="highlight" style="--bg: <?= e($highlight['gradient']) ?>;">
-                            <span style="position:absolute;inset:0;background:<?= e($highlight['gradient']) ?>;"></span>
-                            <strong><?= e($highlight['title']) ?></strong>
-                            <p><?= e($highlight['text']) ?></p>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
+                <?php if (empty($ministryCards)): ?>
+                    <div class="empty-state">
+                        <span class="empty-state__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg></span>
+                        <strong>Em breve</strong>
+                        <span>Os ministérios da comunidade aparecerão aqui assim que forem cadastrados na plataforma.</span>
+                    </div>
+                <?php else: ?>
+                    <div class="highlights__grid">
+                        <?php foreach ($ministryCards as $highlight): ?>
+                            <article class="highlight">
+                                <span style="position:absolute;inset:0;background:<?= e($highlight['gradient']) ?>;"></span>
+                                <strong><?= e($highlight['title']) ?></strong>
+                                <?php if ($highlight['text'] !== ''): ?><p><?= e($highlight['text']) ?></p><?php endif; ?>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
 
         <?php if ($templateKey !== 'ong' && $templateKey !== 'campanha'): ?>
         <section id="mensagens" class="series">
             <div class="container">
-                <span class="section-eyebrow">Séries e devocionais</span>
+                <span class="section-eyebrow">Séries e sermões</span>
                 <h2 class="section-title">Continue caminhando na Palavra</h2>
-                <div class="series__grid">
-                    <?php
-                    $sermonsForCards = !empty($sermons) ? array_slice($sermons, 0, 3) : [
-                        ['title' => 'Vivendo com saúde mental na era digital', 'subtitle' => 'Especial · Comunhão e cuidado'],
-                        ['title' => 'Efésios — Uma vida de santidade em meio à cultura libertina', 'subtitle' => 'Série em curso'],
-                        ['title' => 'Provérbios — Sabedoria para todos os dias', 'subtitle' => 'Devocional pastoral'],
-                    ];
-                    foreach ($sermonsForCards as $idx => $sermon): ?>
-                        <a href="#mensagens" class="series-card">
-                            <div>
-                                <span><?= e((string) ($sermon['subtitle'] ?? ($sermon['series_name'] ?? 'Mensagem'))) ?></span>
-                                <strong><?= e((string) ($sermon['title'] ?? 'Mensagem')) ?></strong>
+                <?php if (empty($sermons)): ?>
+                    <div class="empty-state">
+                        <span class="empty-state__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span>
+                        <strong>Sem mensagens publicadas</strong>
+                        <span>Os sermões e devocionais cadastrados pela igreja aparecerão aqui automaticamente.</span>
+                    </div>
+                <?php else: ?>
+                    <div class="series__grid">
+                        <?php foreach (array_slice($sermons, 0, 3) as $sermon):
+                            $serieName = trim((string) ($sermon['series_name'] ?? ''));
+                            $eyebrow = $serieName !== '' ? 'Série · ' . $serieName : 'Mensagem';
+                            $sermonDate = !empty($sermon['sermon_date']) ? date('d/m/Y', strtotime((string) $sermon['sermon_date'])) : '';
+                        ?>
+                            <a href="#mensagens" class="series-card">
+                                <div>
+                                    <span><?= e($eyebrow) ?><?= $sermonDate !== '' ? ' · ' . e($sermonDate) : '' ?></span>
+                                    <strong><?= e((string) ($sermon['title'] ?? 'Mensagem')) ?></strong>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
+        <?php endif; ?>
+
+        <?php if (!empty($banners)): ?>
+        <section class="banners">
+            <div class="container">
+                <span class="section-eyebrow">Em destaque</span>
+                <h2 class="section-title">Acompanhe os anúncios da igreja</h2>
+                <div class="banners__grid">
+                    <?php foreach ($banners as $banner):
+                        $bannerLink = trim((string) ($banner['link_url'] ?? '')) !== '' ? (string) $banner['link_url'] : ($whatsappUrl !== '' ? $whatsappUrl : '#contato');
+                        $bannerImage = trim((string) ($banner['image_url'] ?? ''));
+                    ?>
+                        <a class="banner-card" href="<?= e($bannerLink) ?>" <?= $bannerLink !== '#contato' ? 'target="_blank" rel="noopener noreferrer"' : '' ?>>
+                            <?php if ($bannerImage !== ''): ?>
+                                <span class="banner-card__media" style="background-image:url('<?= e($bannerImage) ?>');"></span>
+                            <?php else: ?>
+                                <span class="banner-card__media banner-card__media--gradient"></span>
+                            <?php endif; ?>
+                            <div class="banner-card__body">
+                                <strong><?= e((string) ($banner['title'] ?? 'Anúncio')) ?></strong>
+                                <?php if (!empty($banner['description'])): ?>
+                                    <p><?= e((string) $banner['description']) ?></p>
+                                <?php endif; ?>
                             </div>
                         </a>
                     <?php endforeach; ?>
@@ -470,7 +538,7 @@ $heroBadge = $templateBadges[$templateKey];
         </section>
         <?php endif; ?>
 
-        <?php if ($templateKey !== 'campanha'): ?>
+        <?php if ($templateKey !== 'campanha' && !empty($connectActions)): ?>
         <section class="connect">
             <div class="container">
                 <span class="section-eyebrow">
@@ -493,7 +561,7 @@ $heroBadge = $templateBadges[$templateKey];
                             <span style="position:absolute;inset:0;background:<?= e($action['gradient']) ?>;"></span>
                             <strong><?= e($action['title']) ?></strong>
                             <p><?= e($action['text']) ?></p>
-                            <a href="<?= e($action['href']) ?>" target="_blank" rel="noopener noreferrer"><?= e($action['cta']) ?></a>
+                            <a href="<?= e($action['href']) ?>" <?= str_starts_with($action['href'], 'http') ? 'target="_blank" rel="noopener noreferrer"' : '' ?>><?= e($action['cta']) ?></a>
                         </article>
                     <?php endforeach; ?>
                 </div>
@@ -553,30 +621,59 @@ $heroBadge = $templateBadges[$templateKey];
 
     <footer class="site-footer">
         <div class="container site-footer__inner">
-            <div class="site-footer__brand">
-                <?php if ($logoImage !== ''): ?>
-                    <img src="<?= e($logoImage) ?>" alt="<?= e($title) ?>">
-                <?php else: ?>
-                    <span class="site-footer__initial"><?= e(strtoupper(mb_substr($title, 0, 1, 'UTF-8'))) ?></span>
-                <?php endif; ?>
-                <div>
+            <div class="site-footer__col">
+                <div class="site-footer__brand">
+                    <?php if ($logoImage !== ''): ?>
+                        <img src="<?= e($logoImage) ?>" alt="<?= e($title) ?>">
+                    <?php else: ?>
+                        <span class="site-footer__initial"><?= e(strtoupper(mb_substr($title, 0, 1, 'UTF-8'))) ?></span>
+                    <?php endif; ?>
                     <strong><?= e($title) ?></strong>
-                    <span><?= e($description) ?></span>
                 </div>
+                <p class="site-footer__brand-tagline"><?= e($description) ?></p>
+                <?php if (!empty($socialLinks)): ?>
+                    <div class="site-footer__socials" aria-label="Redes sociais">
+                        <?php foreach ($socialLinks as $label => $href): ?>
+                            <a href="<?= e($href) ?>" target="_blank" rel="noopener noreferrer" aria-label="<?= e($label) ?>"><?= e($label) ?></a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
-            <nav class="site-footer__nav" aria-label="Rodapé">
-                <a href="#sobre">Quem Somos</a>
-                <a href="#agenda">Agenda</a>
-                <a href="#conexoes">Conexões</a>
-                <a href="#contato">Contato</a>
-            </nav>
-            <?php if (!empty($socialLinks)): ?>
-                <div class="site-footer__socials" aria-label="Redes sociais">
-                    <?php foreach ($socialLinks as $label => $href): ?>
-                        <a href="<?= e($href) ?>" target="_blank" rel="noopener noreferrer" aria-label="<?= e($label) ?>"><?= e($label) ?></a>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            <div class="site-footer__col">
+                <h4>Navegação</h4>
+                <nav class="site-footer__nav" aria-label="Rodapé">
+                    <a href="#sobre">Quem Somos</a>
+                    <a href="#conexoes">Ministérios</a>
+                    <?php if ($templateKey !== 'ong' && $templateKey !== 'campanha'): ?>
+                        <a href="#mensagens">Séries e Sermões</a>
+                    <?php endif; ?>
+                    <a href="#agenda">Agenda</a>
+                    <a href="#contato">Contato</a>
+                </nav>
+            </div>
+            <div class="site-footer__col">
+                <h4>Cultos</h4>
+                <p style="color: rgba(255,255,255,.7); margin: 0; line-height: 1.6;"><?= e($serviceTimes) ?></p>
+            </div>
+            <div class="site-footer__col site-footer__contact">
+                <h4>Fale com a igreja</h4>
+                <?php if ($contactPhone !== ''): ?>
+                    <span>Telefone</span>
+                    <strong><?= e($contactPhone) ?></strong>
+                <?php endif; ?>
+                <?php if ($contactEmail !== ''): ?>
+                    <span>E-mail</span>
+                    <a href="mailto:<?= e($contactEmail) ?>"><?= e($contactEmail) ?></a>
+                <?php endif; ?>
+                <?php if ($whatsappUrl !== ''): ?>
+                    <span>WhatsApp</span>
+                    <a href="<?= e($whatsappUrl) ?>" target="_blank" rel="noopener noreferrer">Abrir conversa</a>
+                <?php endif; ?>
+                <?php if ($address !== ''): ?>
+                    <span>Endereço</span>
+                    <strong><?= e($address) ?></strong>
+                <?php endif; ?>
+            </div>
         </div>
         <div class="container site-footer__base">
             <span>© <?= date('Y') ?> <?= e($title) ?>. Todos os direitos reservados.</span>

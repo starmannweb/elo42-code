@@ -239,7 +239,7 @@
                 ];
                 echo $navGroup('administracao', 'Administração', 'admin', [
                     $subNavItem('/gestao/pregadores', 'Pregadores', true, ['/gestao/pregadores']),
-                    $subNavItem('/gestao/sermoes', 'Sermões', true, ['/gestao/sermoes']),
+                    $subNavItem('/gestao/sermoes', 'Séries e Sermões', true, ['/gestao/sermoes']),
                     $subNavItem('/gestao/relatorios', 'Relatórios', true, ['/gestao/relatorios']),
                 ], $administrationPaths);
                 ?>

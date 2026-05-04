@@ -7,8 +7,8 @@
 
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-header__title">Sermões</h1>
-        <p class="mgmt-header__subtitle">Cadastre mensagens, pregadores, séries e referências bíblicas para aparecerem como ministrações ao membro.</p>
+        <h1 class="mgmt-header__title">Séries e Sermões</h1>
+        <p class="mgmt-header__subtitle">Cadastre mensagens, séries, pregadores e referências bíblicas para aparecerem como Séries e Ministrações na área do membro.</p>
     </div>
     <div class="mgmt-header__actions">
         <a href="<?= url('/gestao/pregadores') ?>" class="btn btn--outline">

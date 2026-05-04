@@ -16,8 +16,8 @@
 <div class="portal-page portal-page--wide">
     <div class="portal-page-header">
         <div>
-            <h2 class="portal-title">Ministrações</h2>
-            <p class="portal-subtitle">Biblioteca de mensagens para estudo, revisão e compartilhamento.</p>
+            <h2 class="portal-title">Séries e Ministrações</h2>
+            <p class="portal-subtitle">Biblioteca de séries, sermões e devocionais para estudo, revisão e compartilhamento.</p>
         </div>
         <div class="portal-actions">
             <input class="portal-input" style="width:min(100%,320px);" type="search" placeholder="Buscar ministração">

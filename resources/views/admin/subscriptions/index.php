@@ -2,12 +2,6 @@
 <?php $__view->section('content'); ?>
 <?php $statusLabels = ['trial' => 'Teste', 'active' => 'Ativa', 'past_due' => 'Pendente', 'cancelled' => 'Cancelada', 'expired' => 'Expirada']; ?>
 
-<?php if (!empty($degraded)): ?>
-    <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
-        Não foi possível carregar as assinaturas agora. O serviço de dados está temporariamente indisponível — tente novamente em instantes.
-    </div>
-<?php endif; ?>
-
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Assinaturas</h1></div></div>
 <form method="GET" action="<?= url('/admin/assinaturas') ?>" class="mgmt-filters">
     <select name="status" class="form-select" onchange="this.form.submit()"><option value="">Todos</option><?php foreach (['trial'=>'Trial','active'=>'Ativa','past_due'=>'Pendente','cancelled'=>'Cancelada','expired'=>'Expirada'] as $k=>$v): ?><option value="<?= $k ?>" <?= ($filters['status']??'')===$k?'selected':'' ?>><?= $v ?></option><?php endforeach; ?></select>

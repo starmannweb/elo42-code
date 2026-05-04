@@ -46,7 +46,7 @@
                     <span class="portal-soft-icon"><?= $icon('audio') ?></span>
                     <div>
                         <p class="portal-stat__value"><?= count($featuredSermons ?? []) ?></p>
-                        <p class="portal-stat__label">Ministrações</p>
+                        <p class="portal-stat__label">Séries e Ministrações</p>
                     </div>
                 </div>
                 <div class="portal-card portal-stat">
@@ -117,8 +117,8 @@
             <div class="portal-card">
                 <div class="portal-card__header">
                     <div>
-                        <h3 class="portal-card__title">Ministrações em destaque</h3>
-                        <p class="portal-card__subtitle">Conteúdos recentes para assistir e revisar.</p>
+                        <h3 class="portal-card__title">Séries e Ministrações em destaque</h3>
+                        <p class="portal-card__subtitle">Séries, sermões e devocionais recentes para assistir e revisar.</p>
                     </div>
                 </div>
                 <div class="portal-card__body">

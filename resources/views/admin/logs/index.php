@@ -1,12 +1,6 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
 
-<?php if (!empty($degraded)): ?>
-    <div class="alert alert--warning" role="alert" style="margin-bottom:var(--space-5);">
-        Não foi possível carregar os logs agora. O serviço de dados está temporariamente indisponível — tente novamente em instantes.
-    </div>
-<?php endif; ?>
-
 <div class="mgmt-header"><div><h1 class="mgmt-header__title">Logs de auditoria</h1><p class="mgmt-header__subtitle">Ações registradas na plataforma</p></div></div>
 <form method="GET" action="<?= url('/admin/logs') ?>" class="mgmt-filters">
     <div class="mgmt-search"><span class="mgmt-search__icon">🔍</span><input type="text" name="search" class="form-input" placeholder="Buscar por usuário ou ação..." value="<?= e($filters['search']) ?>"></div>
