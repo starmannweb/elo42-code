@@ -26,6 +26,11 @@
     $appearanceTitleFont = trim((string) ($appearance['appearance_title_font'] ?? ''));
     $appearanceBodyFont = trim((string) ($appearance['appearance_body_font'] ?? ''));
     $hasAppearanceSettings = ($appearancePrimary !== '' || $appearanceAccent !== '');
+    $initialSiteStep = (string) ($initialSiteStep ?? 'dados-site');
+    $validSiteSteps = ['dados-site', 'modelos-site', 'aparencia-site', 'publicar-site'];
+    if (!in_array($initialSiteStep, $validSiteSteps, true)) {
+        $initialSiteStep = 'dados-site';
+    }
     $galleryRaw = trim((string) ($currentSite['gallery_images'] ?? ''));
     $galleryDecoded = $galleryRaw !== '' ? json_decode($galleryRaw, true) : null;
     $galleryValue = is_array($galleryDecoded) ? implode("\n", array_map('strval', $galleryDecoded)) : $galleryRaw;
@@ -37,10 +42,10 @@
     ];
 ?>
 
-<section class="hub-page site-builder-page" data-site-builder-flow>
+<section class="hub-page site-builder-page" data-site-builder-flow data-initial-step="<?= e($initialSiteStep) ?>">
     <header class="hub-page__header site-builder-header">
         <div>
-            <h1 class="hub-page__title">Meus sites</h1>
+            <h1 class="hub-page__title">Meu site</h1>
             <p class="hub-page__subtitle">
                 Configure o site em etapas, revise o preview e publique quando a mensalidade e o domínio estiverem prontos.
             </p>
@@ -53,7 +58,7 @@
 
     <nav class="site-step-nav" aria-label="Etapas do site">
         <?php foreach ($steps as $index => $step): ?>
-            <a href="#<?= e($step['id']) ?>" class="site-step-link <?= $index === 0 ? 'is-active' : '' ?>" data-site-step-link>
+            <a href="#<?= e($step['id']) ?>" class="site-step-link <?= $initialSiteStep === $step['id'] ? 'is-active' : '' ?>" data-site-step-link>
                 <span class="site-step-link__number"><?= e($step['number']) ?></span>
                 <span>
                     <strong><?= e($step['title']) ?></strong>
@@ -67,7 +72,7 @@
         <?= csrf_field() ?>
         <input type="hidden" id="site-template-value" name="template" value="<?= e($templateValue) ?>">
 
-        <section id="dados-site" class="site-step-panel is-active" data-site-step-panel>
+        <section id="dados-site" class="site-step-panel <?= $initialSiteStep === 'dados-site' ? 'is-active' : '' ?>" data-site-step-panel <?= $initialSiteStep === 'dados-site' ? '' : 'hidden' ?>>
             <div class="site-step-panel__head">
                 <div>
                     <h2 class="hub-panel__title">Dados do site</h2>
@@ -167,7 +172,7 @@
             </div>
         </section>
 
-        <section id="modelos-site" class="site-step-panel" data-site-step-panel hidden>
+        <section id="modelos-site" class="site-step-panel <?= $initialSiteStep === 'modelos-site' ? 'is-active' : '' ?>" data-site-step-panel <?= $initialSiteStep === 'modelos-site' ? '' : 'hidden' ?>>
             <div class="site-step-panel__head">
                 <div>
                     <h2 class="hub-panel__title">Modelos disponíveis</h2>
@@ -178,9 +183,9 @@
 
             <?php
                 $templateThumbs = [
-                    'Institucional Clássico' => ['gradient' => 'linear-gradient(135deg,#164e63 0%,#0f766e 58%,#d6a646 100%)', 'tone' => 'editorial clássico com leitura serena'],
+                    'Institucional Clássico' => ['gradient' => 'linear-gradient(135deg,#f8fafc 0%,#dbeafe 50%,#334155 100%)', 'tone' => 'editorial claro com hierarquia serena'],
                     'Comunidade Engajada'    => ['gradient' => 'linear-gradient(135deg,#7c1d3a 0%,#9f1239 50%,#1e3a8a 100%)', 'tone' => 'bordô · multimídia e calorosa'],
-                    'Campanhas e Eventos'    => ['gradient' => 'linear-gradient(135deg,#7f1d1d 0%,#dc2626 58%,#f97316 100%)', 'tone' => 'campanha dinâmica com foco em conversão'],
+                    'Campanhas e Eventos'    => ['gradient' => 'linear-gradient(135deg,#111827 0%,#e11d48 45%,#facc15 100%)', 'tone' => 'evento vibrante com urgência visual'],
                     'Captação para ONGs'     => ['gradient' => 'linear-gradient(135deg,#0f766e 0%,#14b8a6 50%,#fcd34d 100%)', 'tone' => 'verde · impacto social'],
                 ];
                 $templateLayouts = [
@@ -253,7 +258,7 @@
             </div>
         </section>
 
-        <section id="aparencia-site" class="site-step-panel" data-site-step-panel hidden>
+        <section id="aparencia-site" class="site-step-panel <?= $initialSiteStep === 'aparencia-site' ? 'is-active' : '' ?>" data-site-step-panel <?= $initialSiteStep === 'aparencia-site' ? '' : 'hidden' ?>>
             <div class="site-step-panel__head">
                 <div>
                     <h2 class="hub-panel__title">Definir aparência</h2>
@@ -264,7 +269,7 @@
 
             <div class="form-grid form-grid--2">
                 <div class="form-group" data-image-uploader>
-                    <label class="form-label" for="logo_image">Logo</label>
+                    <label class="form-label" for="logo_image">Marca / logo</label>
                     <input id="logo_image" name="logo_image" class="form-input" value="<?= e((string) ($currentSite['logo_image'] ?? '')) ?>" placeholder="Cole uma URL https://... ou envie um arquivo abaixo">
                     <div style="display:flex;align-items:center;gap:.6rem;margin-top:.5rem;flex-wrap:wrap;">
                         <label class="btn btn--outline btn--sm" for="logo_image_file" style="margin:0;cursor:pointer;">
@@ -316,7 +321,7 @@
             </style>
             <div class="site-appearance-card">
                 <div>
-                    <h3 class="hub-panel__title" style="margin:0;">Imagens adicionais</h3>
+                    <h3 class="hub-panel__title" style="margin:0;">Galeria e imagens de apoio</h3>
                     <p class="hub-panel__text" style="margin:0;">Cole uma URL por linha para fotos de cultos, comunidade, ministérios ou eventos. O site usa essas imagens como apoio visual quando houver conteúdo para destacar.</p>
                 </div>
                 <div class="form-group" style="margin-top:1rem;">
@@ -407,11 +412,17 @@
                     </div>
                     <div class="form-group" style="margin:0;">
                         <label class="form-label" for="appearance_background">Cor de fundo</label>
-                        <input type="color" id="appearance_background" name="appearance_background" value="<?= e($appearanceBackground !== '' ? $appearanceBackground : '#f4f7fd') ?>" style="width:100%;height:42px;border:1px solid var(--color-border-light, #dfe7f4);border-radius:8px;padding:2px;cursor:pointer;background:transparent;">
+                        <div style="display:flex;align-items:center;gap:.6rem;">
+                            <input type="color" id="appearance_background" name="appearance_background" value="<?= e($appearanceBackground !== '' ? $appearanceBackground : '#f4f7fd') ?>" style="width:48px;height:42px;border:1px solid var(--color-border-light, #dfe7f4);border-radius:8px;padding:2px;cursor:pointer;background:transparent;">
+                            <input type="text" class="form-input" id="appearance_background_text" value="<?= e($appearanceBackground !== '' ? $appearanceBackground : '#f4f7fd') ?>" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" style="flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;">
+                        </div>
                     </div>
                     <div class="form-group" style="margin:0;">
                         <label class="form-label" for="appearance_text">Cor dos textos</label>
-                        <input type="color" id="appearance_text" name="appearance_text" value="<?= e($appearanceText !== '' ? $appearanceText : '#06183a') ?>" style="width:100%;height:42px;border:1px solid var(--color-border-light, #dfe7f4);border-radius:8px;padding:2px;cursor:pointer;background:transparent;">
+                        <div style="display:flex;align-items:center;gap:.6rem;">
+                            <input type="color" id="appearance_text" name="appearance_text" value="<?= e($appearanceText !== '' ? $appearanceText : '#06183a') ?>" style="width:48px;height:42px;border:1px solid var(--color-border-light, #dfe7f4);border-radius:8px;padding:2px;cursor:pointer;background:transparent;">
+                            <input type="text" class="form-input" id="appearance_text_text" value="<?= e($appearanceText !== '' ? $appearanceText : '#06183a') ?>" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" style="flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;">
+                        </div>
                     </div>
                     <div class="form-group" style="margin:0;">
                         <label class="form-label" for="appearance_title_font">Fonte de títulos</label>
@@ -438,6 +449,10 @@
                 var primaryText = document.getElementById('appearance_primary_text');
                 var accent = document.getElementById('appearance_accent');
                 var accentText = document.getElementById('appearance_accent_text');
+                var background = document.getElementById('appearance_background');
+                var backgroundText = document.getElementById('appearance_background_text');
+                var text = document.getElementById('appearance_text');
+                var textText = document.getElementById('appearance_text_text');
                 var hidden = document.getElementById('theme_color_input');
                 if (!primary) return;
 
@@ -456,6 +471,14 @@
                 accent.addEventListener('input', function () { syncTextFromColor(accent, accentText); });
                 primaryText.addEventListener('input', function () { syncColorFromText(primaryText, primary); });
                 accentText.addEventListener('input', function () { syncColorFromText(accentText, accent); });
+                if (background && backgroundText) {
+                    background.addEventListener('input', function () { syncTextFromColor(background, backgroundText); });
+                    backgroundText.addEventListener('input', function () { syncColorFromText(backgroundText, background); });
+                }
+                if (text && textText) {
+                    text.addEventListener('input', function () { syncTextFromColor(text, textText); });
+                    textText.addEventListener('input', function () { syncColorFromText(textText, text); });
+                }
 
                 document.querySelectorAll('[data-color-presets] .site-color-preset').forEach(function (btn) {
                     btn.addEventListener('click', function () {
@@ -487,7 +510,7 @@
             </div>
         </section>
 
-        <section id="publicar-site" class="site-step-panel" data-site-step-panel hidden>
+        <section id="publicar-site" class="site-step-panel <?= $initialSiteStep === 'publicar-site' ? 'is-active' : '' ?>" data-site-step-panel <?= $initialSiteStep === 'publicar-site' ? '' : 'hidden' ?>>
             <?php
                 $isPublished = ($currentSite['status'] ?? 'draft') === 'published';
                 $publishStateLabel = $isPublished ? 'Site publicado' : ($hasSavedSite ? 'Rascunho salvo' : 'Aguardando geração');
@@ -637,7 +660,7 @@
                             <summary>Como apontar o DNS do domínio próprio</summary>
                             <p style="margin-bottom:.7rem;">Adicione os registros abaixo no painel da sua hospedagem. A propagação pode levar até 24h. Enquanto isso, o site continua acessível em <code><?= e($publicSiteUrl) ?></code>.</p>
                             <div class="site-publish-dns__row"><span>Tipo</span><span>Nome</span><span>Valor</span></div>
-                            <div class="site-publish-dns__row site-publish-dns__row--data"><strong>CNAME</strong><code>www / @</code><code><?= e($dnsCname) ?></code></div>
+                            <div class="site-publish-dns__row site-publish-dns__row--data"><strong>CNAME</strong><code>www</code><code><?= e($dnsCname) ?></code></div>
                             <div class="site-publish-dns__row site-publish-dns__row--data"><strong>A</strong><code>@</code><code><?= e($dnsA) ?></code></div>
                             <div class="site-publish-dns__row site-publish-dns__row--data"><strong>TXT</strong><code><?= e($verifyTxtName) ?></code><code><?= e($verifyTxtValue) ?></code></div>
                             <p style="margin-top:.7rem;font-size:.8rem;color:#6b7892;">Use CNAME quando seu provedor permitir flatten do registro raiz, caso contrário use o A. O TXT é opcional e ajuda a confirmar a posse do domínio.</p>
@@ -693,7 +716,8 @@
                 .site-publish-controls__head { display: flex; flex-direction: column; gap: .25rem; }
                 .site-publish-controls__head .hub-panel__title { margin: 0; }
                 .site-publish-dns { margin-top: .5rem; font-size: .85rem; }
-                .site-publish-dns summary { cursor: pointer; color: var(--color-bright-blue, #0a4dff); font-weight: 700; }
+                .site-publish-dns summary { cursor: pointer; color: var(--color-bright-blue, #0a4dff); font-weight: 700; outline: none; }
+                .site-publish-dns summary:focus-visible { box-shadow: 0 0 0 3px rgba(10,77,255,.18); border-radius: 6px; }
                 .site-publish-dns p { color: #4b5d7c; line-height: 1.6; margin: .55rem 0 0; }
                 .site-publish-dns code { background: var(--color-bg-light, #f4f7fd); padding: 1px 6px; border-radius: 4px; font-family: ui-monospace, Menlo, Consolas, monospace; }
                 .site-publish-dns__row { display: grid; grid-template-columns: 80px 110px 1fr; gap: .6rem; padding: .45rem .6rem; border-bottom: 1px solid var(--color-border-light, #dfe7f4); align-items: center; font-size: .78rem; color: #6b7892; }
@@ -777,7 +801,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    var initialHash = window.location.hash && root.querySelector(window.location.hash) ? window.location.hash : '#dados-site';
+    var initialStep = root.getAttribute('data-initial-step') || 'dados-site';
+    var initialHash = window.location.hash && root.querySelector(window.location.hash) ? window.location.hash : '#' + initialStep;
     showStep(initialHash, false);
 });
 </script>

@@ -4,14 +4,27 @@
     $preachers = is_array($preachers ?? null) ? $preachers : [];
     $units = is_array($units ?? null) ? $units : [];
     $sermons = is_array($sermons ?? null) ? $sermons : [];
+    $seriesList = is_array($seriesList ?? null) ? $seriesList : [];
     $seriesGroups = [];
+    foreach ($seriesList as $series) {
+        $seriesName = trim((string) ($series['title'] ?? ''));
+        if ($seriesName === '') {
+            continue;
+        }
+        $seriesGroups[$seriesName] = [
+            'name' => $seriesName,
+            'count' => 0,
+            'latest' => null,
+            'reference' => trim((string) ($series['bible_reference'] ?? '')),
+        ];
+    }
     foreach ($sermons as $sermon) {
         $seriesName = trim((string) ($sermon['series_name'] ?? ''));
         if ($seriesName === '') {
             continue;
         }
         if (!isset($seriesGroups[$seriesName])) {
-            $seriesGroups[$seriesName] = ['name' => $seriesName, 'count' => 0, 'latest' => null];
+            $seriesGroups[$seriesName] = ['name' => $seriesName, 'count' => 0, 'latest' => null, 'reference' => ''];
         }
         $seriesGroups[$seriesName]['count']++;
         $date = (string) ($sermon['sermon_date'] ?? '');
@@ -27,6 +40,7 @@
         <p class="mgmt-header__subtitle">Cadastre mensagens, séries, pregadores e referências bíblicas para aparecerem como Séries e Ministrações na área do membro.</p>
     </div>
     <div class="mgmt-header__actions">
+        <button type="button" class="btn btn--outline" onclick="document.getElementById('series-modal').style.display='flex'">+ Nova série</button>
         <a href="<?= url('/gestao/pregadores') ?>" class="btn btn--outline">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:.4rem;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
             Pregadores
@@ -101,6 +115,37 @@
         </table>
     </div>
 <?php endif; ?>
+
+<div id="series-modal" class="modal" style="display:none;">
+    <div class="modal__content">
+        <div class="modal__header">
+            <h2 class="modal__title">Nova série</h2>
+            <button type="button" class="modal__close" onclick="document.getElementById('series-modal').style.display='none'" aria-label="Fechar">×</button>
+        </div>
+        <form method="POST" action="<?= url('/gestao/sermoes/series') ?>" data-loading>
+            <?= csrf_field() ?>
+            <div class="modal__body">
+                <div class="form-group">
+                    <label class="form-label">Nome da série *</label>
+                    <input type="text" name="title" class="form-input" placeholder="Ex.: Sermão do Monte" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Referência bíblica</label>
+                    <input type="text" name="bible_reference" class="form-input" placeholder="Ex.: Mateus 5-7">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea name="description" class="form-input" rows="3" placeholder="Objetivo pastoral, quantidade prevista de mensagens e observações."></textarea>
+                </div>
+                <input type="hidden" name="status" value="active">
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" onclick="document.getElementById('series-modal').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Salvar série</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <div id="sermon-modal" class="modal" style="display:none;">
     <div class="modal__content modal__content--wide">

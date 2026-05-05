@@ -29,6 +29,7 @@
                     <select id="payment_gateway" name="payment_gateway" class="form-control">
                         <option value="">Selecione</option>
                         <?php foreach ([
+                            'pagou' => 'Pagou (em breve)',
                             'mercado_pago' => 'Mercado Pago',
                             'pagarme' => 'Pagar.me',
                             'asaas' => 'Asaas',

@@ -58,8 +58,12 @@ class AdminCatalogController extends Controller
         try {
             $this->ensureDefaultServices();
             $services = Service::all('sort_order');
+            if (empty($services)) {
+                $services = $this->defaultServices(true);
+            }
         } catch (\Throwable $e) {
             $degraded = true;
+            $services = $this->defaultServices(true);
             error_log('[ADMIN_SERVICES] ' . $e->getMessage());
         }
 
@@ -403,10 +407,28 @@ class AdminCatalogController extends Controller
 
     private function ensureDefaultServices(): void
     {
+        $defaults = $this->defaultServices();
+
+        foreach ($defaults as $index => $service) {
+            $service['sort_order'] = ($index + 1) * 10;
+            $existing = Service::first('slug', $service['slug']);
+            if ($existing) {
+                if ((int) ($existing['sort_order'] ?? 0) !== (int) $service['sort_order']) {
+                    Service::update((int) $existing['id'], ['sort_order' => $service['sort_order']]);
+                }
+                continue;
+            }
+
+            Service::create($service);
+        }
+    }
+
+    private function defaultServices(bool $withIds = false): array
+    {
         $defaults = [
             ['name' => 'Painel de Gestao para Igrejas', 'slug' => 'painel-gestao-igrejas', 'description' => 'Sistema completo para membros, financas, ministerios, eventos, relatorios e rotina pastoral. Inclui ate 100 usuarios da plataforma de gestao.', 'rules' => 'Acesso por assinatura da igreja responsavel. Acima de 100 usuarios pode haver custo adicional.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
-            ['name' => 'Expositor IA', 'slug' => 'expositor-ia', 'description' => 'Criacao assistida de sermoes, estudos biblicos, series, ministracoes e planos de leitura.', 'rules' => 'Materiais publicados aparecem no sistema de gestao e na area do membro.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
             ['name' => 'Site para Igrejas', 'slug' => 'site-para-igrejas', 'description' => 'Construtor de site institucional com modelos, dados cadastrais, preview e publicacao para assinantes.', 'rules' => 'Plano avulso de site por R$ 67,00/mes. No combo com gestao, o total fica R$ 99,90/mes.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Expositor IA', 'slug' => 'expositor-ia', 'description' => 'Criacao assistida de sermoes, estudos biblicos, series, ministracoes e planos de leitura.', 'rules' => 'Materiais publicados aparecem no sistema de gestao e na area do membro.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
             ['name' => 'Google Ad Grants', 'slug' => 'google-ad-grants', 'description' => 'Apoio para elegibilidade, configuracao e gestao de campanhas para ONGs e igrejas.', 'rules' => 'Disponibilidade depende das regras do programa e validacao da instituicao.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
             ['name' => 'Google para ONGs', 'slug' => 'google-para-ongs', 'description' => 'Orientacao para ativar ferramentas Google Workspace e recursos para organizacoes elegiveis.', 'rules' => 'Sujeito a aprovacao externa do programa.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
             ['name' => 'Gestao de Trafego Pago', 'slug' => 'gestao-trafego-pago', 'description' => 'Planejamento, criacao e acompanhamento de campanhas pagas para comunicacao e captacao.', 'rules' => 'Investimento de midia nao incluso no servico.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
@@ -417,14 +439,15 @@ class AdminCatalogController extends Controller
             ['name' => 'Workshop de Capacitacao', 'slug' => 'workshop-capacitacao', 'description' => 'Treinamentos para lideranca, comunicacao, tecnologia e uso da plataforma.', 'rules' => 'Formato e duracao definidos por demanda.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
         ];
 
-        foreach ($defaults as $index => $service) {
-            if (Service::first('slug', $service['slug'])) {
-                continue;
-            }
-
+        foreach ($defaults as $index => &$service) {
             $service['sort_order'] = ($index + 1) * 10;
-            Service::create($service);
+            if ($withIds) {
+                $service['id'] = -($index + 1);
+            }
         }
+        unset($service);
+
+        return $defaults;
     }
 
     private function ensureDefaultPlatformSettings(): void

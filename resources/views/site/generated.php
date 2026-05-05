@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $site = is_array($site ?? null) ? $site : [];
 $events = is_array($events ?? null) ? $events : [];
 $campaigns = is_array($campaigns ?? null) ? $campaigns : [];
@@ -9,10 +9,9 @@ $banners = is_array($banners ?? null) ? $banners : [];
 
 $title = trim((string) ($site['site_title'] ?? $site['organization_name'] ?? 'Site institucional'));
 $title = $title !== '' ? $title : 'Site institucional';
-$description = trim((string) ($site['site_description'] ?? 'Uma comunidade para acolher, servir e caminhar em fé.'));
-$description = $description !== '' ? $description : 'Uma comunidade para acolher, servir e caminhar em fé.';
+$description = trim((string) ($site['site_description'] ?? ''));
+$description = $description !== '' ? $description : $title;
 $about = trim((string) ($site['about_text'] ?? ''));
-$about = $about !== '' ? $about : $description;
 $primary = trim((string) ($site['theme_color'] ?? '#0A4DFF'));
 $primary = preg_match('/^#[0-9a-fA-F]{6}$/', $primary) ? $primary : '#0A4DFF';
 $accent = trim((string) ($site['accent_color'] ?? '#d6a646'));
@@ -50,12 +49,7 @@ if ($galleryRaw !== '') {
     $galleryImages = is_array($decodedGallery) ? array_values(array_filter(array_map('strval', $decodedGallery))) : array_values(array_filter(preg_split('/\r\n|\r|\n|,/', $galleryRaw) ?: []));
 }
 
-$principles = [
-    ['icon' => 'M3 8h18M3 16h18M9 4l-2 16M17 4l-2 16', 'title' => 'Começamos diferentes', 'text' => 'Cada pessoa é valorizada, cada história importa e todo mundo tem um lugar.'],
-    ['icon' => 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2|M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8|M22 21v-2a4 4 0 0 0-3-3.87|M16 3.13a4 4 0 0 1 0 7.75', 'title' => 'Um lugar para recomeçar', 'text' => 'Você está cansado? Aqui você encontra acolhimento, comunhão e um coração disposto.'],
-    ['icon' => 'M3 12c0-4.97 4.03-9 9-9s9 4.03 9 9-4.03 9-9 9-9-4.03-9-9z|M9 12l2 2 4-4', 'title' => 'Um evangelho que escuta', 'text' => 'Falamos sobre temas atuais com simplicidade e profundidade, mostrando como a fé tem sentido no mundo de hoje.'],
-    ['icon' => 'M12 2v20M5 6h14M7 22h10', 'title' => 'Fé e Prática', 'text' => 'Aqui, a espiritualidade não é abstrata: ela transforma decisões, relacionamentos e o jeito de viver no dia a dia.'],
-];
+$principles = [];
 
 $gradientPalette = [
     'linear-gradient(135deg,#9f1239,#7c1d3a)',
@@ -87,7 +81,10 @@ if ($contactEmail !== '') {
     $connectActions[] = ['title' => 'Envie um e-mail', 'text' => 'Compartilhe um pedido de oração ou agende uma conversa pastoral.', 'cta' => $contactEmail, 'href' => 'mailto:' . $contactEmail, 'gradient' => $gradientPalette[2]];
 }
 
-$serviceTimes = trim((string) ($site['service_times'] ?? 'Cultos: Domingo às 18h30. Grupos Pequenos: Segunda, Quarta e Sexta às 20h.'));
+$serviceTimes = trim((string) ($site['service_times'] ?? ''));
+$hasAboutContent = $about !== '' || !empty($principles);
+$hasContactContent = $contactPhone !== '' || $contactEmail !== '' || $address !== '' || $whatsappUrl !== '' || $serviceTimes !== '' || !empty($socialLinks);
+$contactIntro = $about !== '' ? $about : ($description !== $title ? $description : '');
 
 $templateName = (string) ($site['template'] ?? 'Institucional Clássico');
 $templateKey = match (true) {
@@ -329,11 +326,11 @@ $heroBadge = $templateBadges[$templateKey];
                 <span><?= e($title) ?></span>
             </a>
             <nav aria-label="Navegação principal">
-                <a href="#sobre">Quem Somos</a>
+                <?php if ($hasAboutContent): ?><a href="#sobre">Quem Somos</a><?php endif; ?>
                 <a href="#agenda">Agenda</a>
                 <a href="#conexoes">Conexões</a>
                 <a href="#mensagens">Mensagens</a>
-                <a href="#contato">Contato</a>
+                <?php if ($hasContactContent): ?><a href="#contato">Contato</a><?php endif; ?>
             </nav>
             <a class="site-nav__cta" href="<?= e($ctaUrl) ?>"><?= e($ctaLabel) ?></a>
         </div>
@@ -344,7 +341,9 @@ $heroBadge = $templateBadges[$templateKey];
             <div class="container hero__content">
                 <span class="hero__pill"><?= e($heroBadge) ?></span>
                 <h1 class="hero__title"><?= e($title) ?></h1>
-                <p class="hero__text"><?= e($description) ?></p>
+                <?php if ($description !== $title): ?>
+                    <p class="hero__text"><?= e($description) ?></p>
+                <?php endif; ?>
                 <div class="hero__actions">
                     <a class="btn btn--primary" href="<?= e($ctaUrl) ?>"><?= e($ctaLabel) ?></a>
                     <a class="btn btn--ghost" href="#agenda">
@@ -359,6 +358,7 @@ $heroBadge = $templateBadges[$templateKey];
             </div>
         </section>
 
+        <?php if ($hasAboutContent): ?>
         <section id="sobre" class="principles">
             <div class="container">
                 <span class="section-eyebrow"><?= $templateKey === 'ong' ? 'Quem somos' : ($templateKey === 'campanha' ? 'Por que participar' : 'Princípios') ?></span>
@@ -370,24 +370,29 @@ $heroBadge = $templateBadges[$templateKey];
                         default    => 'Nossa essência em quatro convicções',
                     } ?>
                 </h2>
-                <p class="section-lede"><?= e($about) ?></p>
-                <div class="principles__grid">
-                    <?php foreach ($principles as $principle): ?>
-                        <article class="principle">
-                            <div class="principle__icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <?php foreach (explode('|', (string) $principle['icon']) as $path): ?>
-                                        <path d="<?= e($path) ?>"></path>
-                                    <?php endforeach; ?>
-                                </svg>
-                            </div>
-                            <h3><?= e($principle['title']) ?></h3>
-                            <p><?= e($principle['text']) ?></p>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
+                <?php if ($about !== ''): ?>
+                    <p class="section-lede"><?= e($about) ?></p>
+                <?php endif; ?>
+                <?php if (!empty($principles)): ?>
+                    <div class="principles__grid">
+                        <?php foreach ($principles as $principle): ?>
+                            <article class="principle">
+                                <div class="principle__icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <?php foreach (explode('|', (string) $principle['icon']) as $path): ?>
+                                            <path d="<?= e($path) ?>"></path>
+                                        <?php endforeach; ?>
+                                    </svg>
+                                </div>
+                                <h3><?= e($principle['title']) ?></h3>
+                                <p><?= e($principle['text']) ?></p>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
+        <?php endif; ?>
 
         <section id="conexoes" class="highlights">
             <div class="container">
@@ -604,13 +609,14 @@ $heroBadge = $templateBadges[$templateKey];
         </section>
         <?php endif; ?>
 
+        <?php if ($hasContactContent): ?>
         <section id="contato" class="contact-section">
             <div class="container">
                 <span class="section-eyebrow">Contato</span>
-                <h2 class="section-title">Estamos aqui para te receber</h2>
+                <h2 class="section-title">Contato e próximos passos</h2>
                 <div class="contact-grid">
                     <div class="contact-info">
-                        <p><?= e($description) ?></p>
+                        <?php if ($contactIntro !== ''): ?><p><?= e($contactIntro) ?></p><?php endif; ?>
                         <?php if ($contactPhone !== '' || $contactEmail !== '' || $address !== ''): ?>
                             <ul class="contact-info__list">
                                 <?php if ($contactPhone !== ''): ?>
@@ -641,17 +647,22 @@ $heroBadge = $templateBadges[$templateKey];
                             </div>
                         <?php endif; ?>
                     </div>
-                    <article class="contact-card">
-                        <h3>Horários e cultos</h3>
-                        <p><?= e($serviceTimes) ?></p>
-                        <p style="margin-top:1rem;">Quer agendar uma visita ou conversar com um pastor? Fale com a gente pelo WhatsApp.</p>
-                        <?php if ($whatsappUrl !== ''): ?>
-                            <a class="btn btn--primary" href="<?= e($whatsappUrl) ?>" style="margin-top:1.2rem;">Falar pelo WhatsApp</a>
-                        <?php endif; ?>
-                    </article>
+                    <?php if ($serviceTimes !== '' || $whatsappUrl !== ''): ?>
+                        <article class="contact-card">
+                            <?php if ($serviceTimes !== ''): ?>
+                                <h3>Horários e cultos</h3>
+                                <p><?= e($serviceTimes) ?></p>
+                            <?php endif; ?>
+                            <?php if ($whatsappUrl !== ''): ?>
+                                <p style="margin-top:1rem;">Quer agendar uma visita ou conversar com a igreja? Fale pelo WhatsApp.</p>
+                                <a class="btn btn--primary" href="<?= e($whatsappUrl) ?>" style="margin-top:1.2rem;">Falar pelo WhatsApp</a>
+                            <?php endif; ?>
+                        </article>
+                    <?php endif; ?>
                 </div>
             </div>
         </section>
+        <?php endif; ?>
     </main>
 
     <footer class="site-footer">
@@ -665,7 +676,9 @@ $heroBadge = $templateBadges[$templateKey];
                     <?php endif; ?>
                     <strong><?= e($title) ?></strong>
                 </div>
-                <p class="site-footer__brand-tagline"><?= e($description) ?></p>
+                <?php if ($description !== $title): ?>
+                    <p class="site-footer__brand-tagline"><?= e($description) ?></p>
+                <?php endif; ?>
                 <?php if (!empty($socialLinks)): ?>
                     <div class="site-footer__socials" aria-label="Redes sociais">
                         <?php foreach ($socialLinks as $label => $href): ?>
@@ -677,19 +690,22 @@ $heroBadge = $templateBadges[$templateKey];
             <div class="site-footer__col">
                 <h4>Navegação</h4>
                 <nav class="site-footer__nav" aria-label="Rodapé">
-                    <a href="#sobre">Quem Somos</a>
+                    <?php if ($hasAboutContent): ?><a href="#sobre">Quem Somos</a><?php endif; ?>
                     <a href="#conexoes">Ministérios</a>
                     <?php if ($templateKey !== 'ong' && $templateKey !== 'campanha'): ?>
                         <a href="#mensagens">Séries e Sermões</a>
                     <?php endif; ?>
                     <a href="#agenda">Agenda</a>
-                    <a href="#contato">Contato</a>
+                    <?php if ($hasContactContent): ?><a href="#contato">Contato</a><?php endif; ?>
                 </nav>
             </div>
-            <div class="site-footer__col">
-                <h4>Cultos</h4>
-                <p style="color: rgba(255,255,255,.7); margin: 0; line-height: 1.6;"><?= e($serviceTimes) ?></p>
-            </div>
+            <?php if ($serviceTimes !== ''): ?>
+                <div class="site-footer__col">
+                    <h4>Cultos</h4>
+                    <p style="color: rgba(255,255,255,.7); margin: 0; line-height: 1.6;"><?= e($serviceTimes) ?></p>
+                </div>
+            <?php endif; ?>
+            <?php if ($contactPhone !== '' || $contactEmail !== '' || $whatsappUrl !== '' || $address !== ''): ?>
             <div class="site-footer__col site-footer__contact">
                 <h4>Fale com a igreja</h4>
                 <?php if ($contactPhone !== ''): ?>
@@ -709,6 +725,7 @@ $heroBadge = $templateBadges[$templateKey];
                     <strong><?= e($address) ?></strong>
                 <?php endif; ?>
             </div>
+            <?php endif; ?>
         </div>
         <div class="container site-footer__base">
             <span>© <?= date('Y') ?> <?= e($title) ?>. Todos os direitos reservados.</span>

@@ -14,6 +14,9 @@
     </header>
 
     <div class="hub-panel">
+        <?php if (!empty($degraded)): ?>
+            <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponivel agora. Exibindo o usuario atual como referencia.</div>
+        <?php endif; ?>
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -40,7 +43,7 @@
                                         <div class="hub-sidebar__user-avatar" style="width: 32px; height: 32px; font-size: 11px;">
                                             <?= e(strtoupper(substr($member['name'], 0, 1))) ?>
                                         </div>
-                                        <div class="font-semibold"><?= e($member['name']) ?></div>
+                                        <div class="font-semibold"><?= e($member['name']) ?><?= !empty($member['is_session_fallback']) ? ' <span class="hub-badge">Sessao</span>' : '' ?></div>
                                     </div>
                                 </td>
                                 <td><?= e($member['email']) ?></td>

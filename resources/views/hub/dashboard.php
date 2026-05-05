@@ -206,7 +206,7 @@ $nextPendingStep = $pendingSteps[0] ?? null;
                 <a href="<?= url('/gestao') ?>" class="church-link-card">Painel de gestão</a>
                 <a href="<?= url('/gestao/agenda') ?>" class="church-link-card">Agenda da igreja</a>
                 <a href="<?= url('/gestao/relatorios') ?>" class="church-link-card">Relatórios</a>
-                <a href="<?= url('/hub/sites') ?>" class="church-link-card">Meus sites</a>
+                <a href="<?= url('/hub/sites') ?>" class="church-link-card">Meu site</a>
                 <a href="<?= url('/hub/expositor-ia') ?>" class="church-link-card">Expositor IA</a>
                 <a href="<?= url('/hub/configuracoes') ?>" class="church-link-card">Configurações</a>
             </div>

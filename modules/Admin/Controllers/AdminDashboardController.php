@@ -7,6 +7,7 @@ namespace Modules\Admin\Controllers;
 use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Database;
+use App\Core\Session;
 use App\Models\Subscription;
 use App\Models\Ticket;
 
@@ -236,13 +237,13 @@ class AdminDashboardController extends Controller
             }
 
             $pdo->commit();
-            \App\Core\Session::flash('success', 'Dados de demo populados (2 organizações, 3 usuários). Senha padrão: demo@2026');
+            Session::flash('success', 'Dados de demo populados (2 organizações, 3 usuários). Senha padrão: demo@2026');
         } catch (\Throwable $e) {
             if (isset($pdo) && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
             error_log('[AdminDashboard.seedDemo] ' . $e->getMessage());
-            \App\Core\Session::flash('error', 'Erro ao popular dados de demo: ' . $e->getMessage());
+            Session::flash('error', $this->friendlyDatabaseError($e, 'popular os dados de demo'));
         }
 
         redirect('/admin');
@@ -265,15 +266,25 @@ class AdminDashboardController extends Controller
             $pdo->prepare("DELETE FROM organizations WHERE slug IN ('demo-esperanca', 'demo-vida')")->execute();
 
             $pdo->commit();
-            \App\Core\Session::flash('success', 'Dados de demo removidos.');
+            Session::flash('success', 'Dados de demo removidos.');
         } catch (\Throwable $e) {
             if (isset($pdo) && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
             error_log('[AdminDashboard.unseedDemo] ' . $e->getMessage());
-            \App\Core\Session::flash('error', 'Erro ao remover dados de demo: ' . $e->getMessage());
+            Session::flash('error', $this->friendlyDatabaseError($e, 'remover os dados de demo'));
         }
 
         redirect('/admin');
+    }
+
+    private function friendlyDatabaseError(\Throwable $e, string $action): string
+    {
+        $message = $e->getMessage();
+        if (str_contains($message, 'SQLSTATE[HY000] [2002]') || stripos($message, 'Connection refused') !== false) {
+            return 'Nao foi possivel ' . $action . ': o banco de dados recusou a conexao. Verifique se o MySQL esta ativo e se DB_HOST/DB_PORT/DB_DATABASE/DB_USERNAME/DB_PASSWORD ou DATABASE_URL estao corretos no ambiente.';
+        }
+
+        return 'Erro ao ' . $action . ': ' . $message;
     }
 }

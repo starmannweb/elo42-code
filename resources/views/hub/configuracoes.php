@@ -146,7 +146,7 @@ $orgTypeOptions = [
 
             <article class="hub-mini-card">
                 <h3 class="hub-mini-card__title">Pagamentos</h3>
-                <p class="hub-mini-card__text">Configure gateway, chaves e webhooks nas integrações da gestão. A assinatura escolhida acima fica registrada no Hub para cobrança recorrente.</p>
+                <p class="hub-mini-card__text">Configure gateway, chaves e webhooks nas integrações da gestão. A assinatura escolhida acima fica registrada no Hub para cobrança recorrente. Integração Pagou prevista para a próxima etapa.</p>
                 <a href="<?= url('/gestao/configuracoes/integracoes') ?>" class="btn btn--outline">Configurar pagamentos</a>
             </article>
         </div>

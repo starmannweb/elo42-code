@@ -53,12 +53,44 @@ class AdminOrganizationController extends Controller
             error_log('[ADMIN_ORGS] ' . $e->getMessage());
         }
 
+        if (empty($organizations) && $search === '' && $status === '') {
+            $fallback = $this->currentSessionOrganizationRow();
+            if (!empty($fallback)) {
+                $organizations = [$fallback];
+            }
+        }
+
         $this->view('admin/organizations/index', [
             'pageTitle'     => 'Instituições — Admin',
             'breadcrumb'    => 'Instituições',
             'organizations' => $organizations,
             'filters'       => ['search' => $search, 'status' => $status],
             'degraded'      => $degraded,
+        ]);
+    }
+
+    private function currentSessionOrganizationRow(): array
+    {
+        $organization = Session::get('organization');
+        $organization = is_array($organization) ? $organization : [];
+
+        if (empty($organization['id']) && trim((string) ($organization['name'] ?? '')) === '') {
+            return [];
+        }
+
+        return $this->hydrateOrganization([
+            'id' => (int) ($organization['id'] ?? 0),
+            'name' => (string) ($organization['name'] ?? 'Organizacao atual'),
+            'slug' => (string) ($organization['slug'] ?? ''),
+            'type' => (string) ($organization['type'] ?? 'church'),
+            'document' => $organization['document'] ?? null,
+            'plan' => (string) ($organization['plan'] ?? 'free'),
+            'status' => (string) ($organization['status'] ?? 'active'),
+            'created_at' => (string) ($organization['created_at'] ?? date('Y-m-d H:i:s')),
+            'settings' => $organization['settings'] ?? null,
+            'user_count' => 1,
+            'member_count' => 0,
+            'is_session_fallback' => true,
         ]);
     }
 

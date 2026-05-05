@@ -11,6 +11,10 @@
     background: linear-gradient(135deg, #dc2626, #f97316);
 }
 
+.admin-sidebar .hub-nav-link {
+    font-size: 1rem;
+}
+
 .hub-sidebar__user-avatar.admin-avatar {
     background: linear-gradient(135deg, #dc2626, #f97316);
 }

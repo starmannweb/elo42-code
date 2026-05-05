@@ -26,13 +26,22 @@
     <button type="submit" class="btn btn--secondary">Filtrar</button>
 </form>
 
+<?php if (!empty($degraded)): ?>
+    <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponivel agora. Exibindo o usuario da sessao como referencia.</div>
+<?php endif; ?>
+
 <div class="mgmt-table-container">
     <table class="mgmt-table">
         <thead><tr><th>Nome</th><th>E-mail</th><th>Orgs</th><th>Status</th><th>Último login</th><th>Ações</th></tr></thead>
         <tbody>
+            <?php if (empty($users)): ?>
+                <tr>
+                    <td colspan="6" style="text-align:center;color:var(--text-muted);padding:1.25rem;">Nenhum usuario encontrado.</td>
+                </tr>
+            <?php endif; ?>
             <?php foreach ($users as $u): ?>
                 <tr>
-                    <td class="mgmt-table__name"><?= e($u['name']) ?></td>
+                    <td class="mgmt-table__name"><?= e($u['name']) ?><?= !empty($u['is_session_fallback']) ? ' <span class="badge badge--inactive">Sessao</span>' : '' ?></td>
                     <td class="mgmt-table__sub"><?= e($u['email']) ?></td>
                     <td><?= $u['org_count'] ?></td>
                     <td><span class="badge badge--<?= e($u['status']) ?>"><?= e($statusLabels[$u['status'] ?? ''] ?? ($u['status'] ?? '-')) ?></span></td>

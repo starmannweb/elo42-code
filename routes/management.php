@@ -57,6 +57,7 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
         $router->get('/sermoes', [GeneralController::class, 'sermons']);
         $router->get('/sermoes/novo', [GeneralController::class, 'createSermon']);
         $router->post('/sermoes', [GeneralController::class, 'storeSermon']);
+        $router->post('/sermoes/series', [GeneralController::class, 'storeSermonSeries']);
         $router->get('/sermoes/expositor-ia', [\Modules\Hub\Controllers\DashboardController::class, 'expositorIa']);
         $router->get('/relatorios', [GeneralController::class, 'reports']);
 

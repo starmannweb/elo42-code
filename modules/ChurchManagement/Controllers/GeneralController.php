@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 declare(strict_types=1);
 
@@ -12,6 +12,7 @@ use App\Models\ChurchRequest;
 use App\Models\Visit;
 use App\Models\CounselingSession;
 use App\Models\Sermon;
+use App\Models\SermonSeries;
 use App\Models\ActionPlan;
 use App\Models\Donation;
 use App\Models\Member;
@@ -103,9 +104,6 @@ class GeneralController extends Controller
             'pix_name',
             'pix_beneficiary',
             'pix_instruction',
-            'openai_key',
-            'model_analysis',
-            'model_generation',
             'seo_title',
             'seo_desc',
             'seo_keywords',
@@ -158,11 +156,35 @@ class GeneralController extends Controller
                 ORDER BY u.name ASC
             ");
             $stmt->execute(['org_id' => $this->orgId()]);
-            return $stmt->fetchAll();
+            $users = $stmt->fetchAll();
+            return !empty($users) ? $users : $this->sessionOrgUserFallback();
         } catch (\Throwable $e) {
             error_log('[GeneralController.orgUsers] ' . $e->getMessage());
+            return $this->sessionOrgUserFallback();
+        }
+    }
+
+    private function sessionOrgUserFallback(): array
+    {
+        $user = Session::user();
+        if (!is_array($user) || empty($user['id'])) {
             return [];
         }
+
+        $organization = Session::get('organization');
+        $organization = is_array($organization) ? $organization : [];
+
+        return [[
+            'id' => (int) $user['id'],
+            'name' => (string) ($user['name'] ?? 'Usuario atual'),
+            'email' => (string) ($user['email'] ?? ''),
+            'phone' => (string) ($user['phone'] ?? ''),
+            'role_id' => (int) ($organization['role_id'] ?? 0),
+            'role_name' => (string) ($organization['role_name'] ?? 'Proprietario'),
+            'role_slug' => (string) ($organization['role_slug'] ?? 'org-manager'),
+            'org_user_id' => 0,
+            'is_session_fallback' => true,
+        ]];
     }
 
     private function settingValues(array $keys = []): array
@@ -458,6 +480,7 @@ class GeneralController extends Controller
             $this->view('management/sermons/index', [
                 'pageTitle' => 'Sermões — Gestão', 'breadcrumb' => 'Sermões',
                 'sermons' => Sermon::byOrg($this->orgId(), $req->input('search')),
+                'seriesList' => SermonSeries::byOrg($this->orgId()),
                 'preachers' => $this->preachersList(),
                 'units' => $this->churchUnits(),
             ]);
@@ -474,6 +497,7 @@ class GeneralController extends Controller
                 'pageTitle' => 'Novo sermão', 'breadcrumb' => 'Sermões / Novo', 'item' => null,
                 'preachers' => $this->preachersList(),
                 'units' => $this->churchUnits(),
+                'seriesList' => SermonSeries::byOrg($this->orgId()),
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
@@ -503,6 +527,26 @@ class GeneralController extends Controller
             'preacher' => $preacher !== '' ? $preacher : null,
         ]));
         Session::flash('success', 'Sermão registrado.');
+        redirect('/gestao/sermoes');
+    }
+
+    public function storeSermonSeries(Request $req): void
+    {
+        $this->validate($req, ['title' => 'required']);
+
+        try {
+            SermonSeries::create([
+                'organization_id' => $this->orgId(),
+                'title' => trim((string) $req->input('title')),
+                'description' => trim((string) $req->input('description', '')) ?: null,
+                'bible_reference' => trim((string) $req->input('bible_reference', '')) ?: null,
+                'status' => trim((string) $req->input('status', 'active')) ?: 'active',
+            ]);
+            Session::flash('success', 'Serie criada. Agora voce pode vincular sermoes a ela.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel criar a serie: ' . $e->getMessage());
+        }
+
         redirect('/gestao/sermoes');
     }
 
@@ -900,6 +944,7 @@ class GeneralController extends Controller
     {
         $payload = $_POST;
         unset($payload['_token'], $payload['csrf_token'], $payload['redirect_to']);
+        unset($payload['openai_key'], $payload['model_analysis'], $payload['model_generation']);
 
         if ($this->containsPremiumSetting($payload) && !$this->hasPremiumAccess()) {
             Session::flash('warning', 'Este recurso é exclusivo do Plano Premium. Assine agora para desbloquear!');
@@ -977,7 +1022,7 @@ class GeneralController extends Controller
         try {
             $context = $this->buildBaseContext('Configurações / Integrações', 'configuracoes/integracoes');
             $this->view('management/settings/integrations', array_merge($context, [
-                'pageTitle' => 'Integrações e IA — Gestão',
+                'pageTitle' => 'Integrações — Gestão',
                 'activeTab' => 'integracoes',
                 'settings' => $this->settingValues()
             ]));

@@ -43,6 +43,14 @@ class AdminUserController extends Controller
             error_log('[ADMIN_USERS] ' . $e->getMessage());
         }
 
+        if ($total === 0 && $search === '' && $status === '') {
+            $fallback = $this->currentSessionUserRow();
+            if (!empty($fallback)) {
+                $users = [$fallback];
+                $total = 1;
+            }
+        }
+
         $this->view('admin/users/index', [
             'pageTitle'  => 'Usuários — Admin',
             'breadcrumb' => 'Usuários',
@@ -51,6 +59,27 @@ class AdminUserController extends Controller
             'filters'    => ['search' => $search, 'status' => $status],
             'degraded'   => $degraded,
         ]);
+    }
+
+    private function currentSessionUserRow(): array
+    {
+        $user = Session::user();
+        if (!is_array($user) || empty($user['id'])) {
+            return [];
+        }
+
+        $organization = Session::get('organization');
+        $organization = is_array($organization) ? $organization : [];
+
+        return [
+            'id' => (int) $user['id'],
+            'name' => (string) ($user['name'] ?? 'Usuario atual'),
+            'email' => (string) ($user['email'] ?? ''),
+            'status' => (string) ($user['status'] ?? 'active'),
+            'last_login_at' => $user['last_login_at'] ?? null,
+            'org_count' => !empty($organization['id']) ? 1 : 0,
+            'is_session_fallback' => true,
+        ];
     }
 
     public function show(Request $request): void

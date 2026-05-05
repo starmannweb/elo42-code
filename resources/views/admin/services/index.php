@@ -16,13 +16,22 @@ $recurrenceLabels = ['one_time' => 'Único', 'monthly' => 'Mensal', 'quarterly' 
 <?php if (empty($services)): ?>
     <div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 1 5.4-5.4l-2.7 2.7-1.4-1.4 2.7-2.7z"></path></svg></div><h3 class="mgmt-empty__title">Nenhum serviço</h3></div>
 <?php else: ?>
+    <?php if (!empty($degraded)): ?>
+        <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponivel agora. Exibindo o catalogo base para referencia.</div>
+    <?php endif; ?>
     <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Serviço</th><th>Preço</th><th>Recorrência</th><th>Status</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($services as $s): ?><tr>
             <td><div class="mgmt-table__name"><?= e($s['name']) ?></div><div class="mgmt-table__sub"><?= e($s['slug']) ?></div></td>
             <td style="font-weight:700;">R$ <?= number_format((float)($s['price'] ?? 0), 2, ',', '.') ?></td>
             <td><?= e($recurrenceLabels[$s['recurrence'] ?? ''] ?? ($s['recurrence'] ?? '-')) ?></td>
             <td><span class="badge badge--<?= e($s['status']) ?>"><?= e($statusLabels[$s['status'] ?? ''] ?? ($s['status'] ?? '-')) ?></span></td>
-            <td class="mgmt-table__actions"><a href="<?= url('/admin/servicos/' . $s['id'] . '/editar') ?>">Editar</a></td>
+            <td class="mgmt-table__actions">
+                <?php if ((int) ($s['id'] ?? 0) > 0): ?>
+                    <a href="<?= url('/admin/servicos/' . $s['id'] . '/editar') ?>">Editar</a>
+                <?php else: ?>
+                    <span class="badge badge--inactive">Base</span>
+                <?php endif; ?>
+            </td>
         </tr><?php endforeach; ?>
     </tbody></table></div>
 <?php endif; ?>

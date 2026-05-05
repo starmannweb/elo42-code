@@ -1,4 +1,4 @@
-<?php $__view->extends('hub'); ?>
+﻿<?php $__view->extends('hub'); ?>
 
 <?php $__view->section('content'); ?>
 
@@ -13,25 +13,9 @@
     $activeExpositorTab = match ($contentType) {
         'study', 'reading_plan' => 'estudos',
         'series' => 'series',
-        'resource' => 'treinamento',
+        'resource' => 'planejamento',
         default => !empty($lastResult) ? 'pregacao' : 'planejamento',
     };
-    $resourceIcons = [
-        'ebd' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path></svg>',
-        'discipulado' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="m16 11 2 2 4-4"></path></svg>',
-        'casais' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 12 5a5.5 5.5 0 0 0-10 3.5c0 2.29 1.51 4.04 3 5.5l7 7Z"></path></svg>',
-        'lideranca' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4z"></path><path d="M9 12l2 2 4-4"></path></svg>',
-        'pg' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
-        'anual' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m12 6 2 6 4 2-6 2-2 4-2-4-6-2 6-2 2-6z"></path></svg>',
-    ];
-    $resources = [
-        ['key' => 'ebd', 'title' => 'Currículo Escola Dominical', 'text' => 'Séries bíblicas com progressão pedagógica para classes e faixas etárias.', 'accent' => 'green', 'action' => 'Gerar visão da série'],
-        ['key' => 'discipulado', 'title' => 'Roteiro de Discipulado', 'text' => 'Trilhas de encontros adaptadas ao perfil espiritual do discípulo.', 'accent' => 'green', 'action' => 'Gerar trilha'],
-        ['key' => 'casais', 'title' => 'Discipulado de Casais', 'text' => 'Curso de preparação bíblica para aliança matrimonial e vida familiar.', 'accent' => 'rose', 'action' => 'Gerar curso'],
-        ['key' => 'lideranca', 'title' => 'Treinamento de Liderança', 'text' => 'Formação para presbíteros, diáconos, líderes de jovens, EBD e PG.', 'accent' => 'green', 'action' => 'Gerar treinamento'],
-        ['key' => 'pg', 'title' => 'Planejamento de Pequenos Grupos', 'text' => 'Ciclos fechados com comunhão, Palavra, aplicação e oração.', 'accent' => 'violet', 'action' => 'Gerar ciclo'],
-        ['key' => 'anual', 'title' => 'Plano Anual da Igreja', 'text' => 'Discernimento pastoral assistido para tema, pilares e diretrizes do ano.', 'accent' => 'amber', 'action' => 'Gerar esboço macro'],
-    ];
 ?>
 
 <section class="hub-page" data-expositor-workbench>
@@ -47,7 +31,6 @@
         <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'series' ? 'active' : '' ?>" data-expositor-tab="series" aria-controls="expositor-panel-series">Séries</button>
         <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'pregacao' ? 'active' : '' ?>" data-expositor-tab="pregacao" aria-controls="expositor-panel-pregacao">Pregação</button>
         <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'estudos' ? 'active' : '' ?>" data-expositor-tab="estudos" aria-controls="expositor-panel-estudos">Estudos</button>
-        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'treinamento' ? 'active' : '' ?>" data-expositor-tab="treinamento" aria-controls="expositor-panel-treinamento">Treinamento</button>
     </nav>
 
     <div class="expositor-usage">
@@ -243,6 +226,29 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label class="form-label" for="ia-series-duration">Quantidade de mensagens</label>
+                    <select id="ia-series-duration" name="duration" class="form-select">
+                        <option>3 mensagens</option>
+                        <option selected>4 mensagens</option>
+                        <option>6 mensagens</option>
+                        <option>8 mensagens</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ia-series-audience">Público-alvo</label>
+                    <select id="ia-series-audience" name="audience" class="form-select">
+                        <option>Geral</option>
+                        <option>Liderança</option>
+                        <option>Jovens</option>
+                        <option>Casais</option>
+                        <option>Novos convertidos</option>
+                    </select>
+                </div>
+                <div class="form-group form-grid__full" style="grid-column:1 / -1;">
+                    <label class="form-label" for="ia-series-notes">Ênfase e observações</label>
+                    <textarea id="ia-series-notes" name="notes" class="form-input" rows="3" placeholder="Ex.: tom doutrinário, aplicações para pequenos grupos, datas especiais ou textos que devem entrar na série."></textarea>
+                </div>
             </div>
             <input type="hidden" name="confessional" value="biblico-evangelico">
             <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar série</button>
@@ -373,6 +379,23 @@
                     </div>
                     <button type="submit" class="btn btn--outline" style="width:100%;" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar culto ocasional</button>
                 </form>
+
+                <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" data-loading style="margin-top:1rem;">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="content_type" value="sermon">
+                    <input type="hidden" name="resource_title" value="Aula EBD">
+                    <input type="hidden" name="depth" value="pastoral">
+                    <input type="hidden" name="confessional" value="biblico-evangelico">
+                    <div class="form-group">
+                        <label class="form-label" for="ia-ebd-passage">Passagem ou tema da aula</label>
+                        <input id="ia-ebd-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Efésios 2:1-10" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="ia-ebd-theme">Classe / faixa</label>
+                        <input id="ia-ebd-theme" type="text" name="theme" class="form-input" placeholder="Ex.: Adultos, jovens, adolescentes">
+                    </div>
+                    <button type="submit" class="btn btn--outline" style="width:100%;" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar aula EBD</button>
+                </form>
             </article>
 
             <article class="hub-mini-card">
@@ -451,19 +474,19 @@
             <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
                 <?= csrf_field() ?>
                 <input type="hidden" name="content_type" value="study">
-                <input type="hidden" name="resource_title" value="Aula EBD avulsa">
+                <input type="hidden" name="resource_title" value="Estudo biblico">
                 <input type="hidden" name="depth" value="pastoral">
                 <input type="hidden" name="confessional" value="biblico-evangelico">
-                <h3 class="hub-mini-card__title">Aula EBD avulsa</h3>
+                <h3 class="hub-mini-card__title">Estudo bíblico</h3>
                 <div class="form-group">
-                    <label class="form-label" for="ia-ebd-passage">Passagem ou tema</label>
-                    <input id="ia-ebd-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Efésios 2:1-10" required>
+                    <label class="form-label" for="ia-study-bible-passage">Passagem ou tema</label>
+                    <input id="ia-study-bible-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Efésios 2:1-10" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="ia-ebd-theme">Público-alvo</label>
-                    <input id="ia-ebd-theme" type="text" name="theme" class="form-input" placeholder="Ex.: Classe de adultos">
+                    <label class="form-label" for="ia-study-bible-theme">Objetivo do estudo</label>
+                    <input id="ia-study-bible-theme" type="text" name="theme" class="form-input" placeholder="Ex.: estudo para pequenos grupos ou discipulado">
                 </div>
-                <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar aula</button>
+                <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar estudo bíblico</button>
             </form>
 
             <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
@@ -484,55 +507,6 @@
                 <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar plano</button>
             </form>
         </div>
-    </section>
-
-    <section id="expositor-panel-treinamento" class="hub-panel expositor-panel" data-expositor-panel="treinamento" <?= $activeExpositorTab === 'treinamento' ? '' : 'hidden' ?>>
-        <div class="hub-panel__row">
-            <div>
-                <h2 class="hub-panel__title">Recursos do ministério</h2>
-                <p class="hub-panel__text">Caminhos independentes para gerar material pastoral com a mesma identidade visual do painel.</p>
-            </div>
-        </div>
-        <div class="expositor-resource-grid">
-            <?php foreach ($resources as $resource): ?>
-                <article class="expositor-resource-card expositor-resource-card--<?= e($resource['accent']) ?>">
-                    <span class="expositor-resource-card__icon" aria-hidden="true"><?= $resourceIcons[$resource['key']] ?? $resourceIcons['ebd'] ?></span>
-                    <h3><?= e($resource['title']) ?></h3>
-                    <p><?= e($resource['text']) ?></p>
-                    <button
-                        type="button"
-                        class="expositor-link-button"
-                        data-expositor-resource
-                        data-resource-title="<?= e($resource['title']) ?>"
-                        data-resource-text="<?= e($resource['text']) ?>"
-                        data-resource-action="<?= e($resource['action']) ?>"
-                    >Acessar</button>
-                </article>
-            <?php endforeach; ?>
-        </div>
-        <article class="expositor-resource-detail" id="expositor-resource-detail" hidden>
-            <div>
-                <span class="hub-badge hub-badge--success">Recurso selecionado</span>
-                <h3 data-resource-detail-title>Escolha um recurso</h3>
-                <p data-resource-detail-text>Selecione uma opção acima para preparar o fluxo ministerial.</p>
-            </div>
-            <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" data-loading>
-                <?= csrf_field() ?>
-                <input type="hidden" name="content_type" value="resource">
-                <input type="hidden" name="resource_title" value="" data-resource-detail-input>
-                <input type="hidden" name="confessional" value="biblico-evangelico">
-                <input type="hidden" name="depth" value="pastoral">
-                <div class="form-group">
-                    <label class="form-label" for="ia-resource-context">Contexto ministerial</label>
-                    <textarea id="ia-resource-context" name="passage" class="form-input" rows="4" placeholder="Descreva público, objetivo, etapa atual e necessidade pastoral." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-resource-theme">Tema ou foco</label>
-                    <input id="ia-resource-theme" name="theme" class="form-input" placeholder="Ex.: Família e aliança">
-                </div>
-                <button type="submit" class="btn btn--primary" data-resource-detail-action <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar recurso</button>
-            </form>
-        </article>
     </section>
 </section>
 

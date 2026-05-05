@@ -59,7 +59,7 @@ class DashboardController extends Controller
 
     public function sites(Request $request): void
     {
-        $context = $this->buildBaseContext('Meus Sites', 'sites');
+        $context = $this->buildBaseContext('Meu Site', 'sites');
         $access = $this->resolveSiteBuilderAccess($context['organization'], $context['user']);
         $organization = is_array($context['organization'] ?? null) ? $context['organization'] : [];
         $currentSite = $this->applyOrganizationSiteDefaults(
@@ -78,13 +78,14 @@ class DashboardController extends Controller
         ]);
 
         $this->view('hub/sites', array_merge($context, [
-            'pageTitle'          => 'Meus Sites — Hub Elo 42',
+            'pageTitle'          => 'Meu Site - Hub Elo 42',
             'siteBuilderAccess'  => $access,
             'currentSite'        => $currentSite,
             'siteTemplates'      => $this->buildSiteTemplates(),
             'publishChecklist'   => $this->buildSitePublishChecklist($context['organization'], $currentSite, $access),
             'publishedUrl'       => $this->sitePublicUrl($currentSite),
             'appearanceSettings' => $appearanceSettings,
+            'initialSiteStep'    => Session::getFlash('site_builder_step', 'dados-site'),
         ]));
     }
 
@@ -141,7 +142,7 @@ class DashboardController extends Controller
 
     public function gerarSite(Request $request): void
     {
-        $context = $this->buildBaseContext('Meus Sites', 'sites');
+        $context = $this->buildBaseContext('Meu Site', 'sites');
         $organization = $context['organization'];
         
         if (empty($organization['id'])) {
@@ -219,12 +220,13 @@ class DashboardController extends Controller
             Session::flash('success', 'Site gerado com sucesso em modo local. Modelo: ' . $template . '.');
         }
         
+        Session::flash('site_builder_step', 'aparencia-site');
         redirect('/hub/sites#aparencia-site');
     }
 
     public function configurarSite(Request $request): void
     {
-        $context = $this->buildBaseContext('Meus Sites', 'sites');
+        $context = $this->buildBaseContext('Meu Site', 'sites');
         $organization = $context['organization'];
 
         if (empty($organization['id'])) {
@@ -347,7 +349,7 @@ class DashboardController extends Controller
 
     public function publicarSite(Request $request): void
     {
-        $context = $this->buildBaseContext('Meus Sites', 'sites');
+        $context = $this->buildBaseContext('Meu Site', 'sites');
         $organization = $context['organization'];
         $access = $this->resolveSiteBuilderAccess($organization, $context['user']);
 
@@ -1210,7 +1212,7 @@ class DashboardController extends Controller
             'theme_color' => $this->normalizeThemeColor($fromSettings('appearance_primary') ?: '#0A4DFF'),
             'hero_image' => null,
             'logo_image' => $this->normalizeSiteUrl((string) ($organization['logo'] ?? '')),
-            'site_description' => $this->nullableText($fromSettings('seo_desc') ?: 'Uma página institucional para acolher visitantes, apresentar a igreja e facilitar o contato.'),
+            'site_description' => $this->nullableText($fromSettings('seo_desc')),
             'about_text' => $this->nullableText((string) ($organization['about'] ?? '')),
             'contact_email' => $this->nullableText((string) ($organization['email'] ?? '')),
             'contact_phone' => $this->nullableText($phone),
@@ -2398,15 +2400,15 @@ class DashboardController extends Controller
         $wa = fn (string $service): string => $this->buildCommercialWhatsAppUrl($service);
 
         return [
-            ['icon' => 'monitor', 'title' => 'Combo Sistema + Site', 'description' => 'Painel de Gestão e Site para Igrejas no mesmo plano, com publicação do site inclusa.', 'price' => 'R$ 99,90/mês · 7 dias grátis', 'badge' => 'Combo', 'badge_type' => 'hot', 'cta' => 'Quero o combo', 'url' => $wa('Combo Sistema + Site (R$ 99,90/mês)')],
+            ['icon' => 'monitor', 'title' => 'Combo Sistema + Site', 'description' => 'Painel de Gestão e Site para Igrejas no mesmo plano, com publicação do site inclusa.', 'price' => 'R$ 99,90/mês', 'badge' => 'Combo', 'badge_type' => 'hot', 'cta' => 'Quero o combo', 'url' => $wa('Combo Sistema + Site (R$ 99,90/mês)')],
             ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial. Inclui até 100 usuários da plataforma de gestão.', 'price' => 'R$ 67,00/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
+            ['icon' => 'globe', 'title' => 'Site para Igrejas', 'description' => 'Sites profissionais para publicação com identidade visual da organização.', 'price' => 'R$ 67,00/mês', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/hub/sites')],
             ['icon' => 'book', 'title' => 'Expositor IA', 'description' => 'Geração de esboços e estudos bíblicos para apoio pastoral e ministerial.', 'price' => 'Use com créditos', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Comprar créditos', 'url' => url('/hub/creditos')],
             ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação para captar até US$ 10.000/mês em anúncios.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('Google Ad Grants')],
             ['icon' => 'gift', 'title' => 'Google para ONGs', 'description' => 'Trilha guiada para aprovação e criação do Google Workspace gratuito.', 'price' => 'R$ 297,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Falar com comercial', 'url' => $wa('Google para ONGs')],
             ['icon' => 'megaphone', 'title' => 'Gestão de Tráfego Pago', 'description' => 'Planejamento e operação de campanhas para ampliar alcance e resultados.', 'price' => 'Consulte', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Falar com comercial', 'url' => $wa('Gestão de Tráfego Pago')],
             ['icon' => 'briefcase', 'title' => 'TechSoup Brasil', 'description' => 'Registro e validação para liberar benefícios de filantropia digital.', 'price' => 'R$ 197,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('TechSoup Brasil')],
             ['icon' => 'briefcase', 'title' => 'Microsoft, Canva e Slack para ONGs', 'description' => 'Liberação de contas premium para ganho real de produtividade.', 'price' => 'R$ 147,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Falar com comercial', 'url' => $wa('Microsoft, Canva e Slack para ONGs')],
-            ['icon' => 'globe', 'title' => 'Site para Igrejas', 'description' => 'Sites profissionais para publicação com identidade visual da organização.', 'price' => 'R$ 67,00/mês', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/hub/sites')],
             ['icon' => 'hand', 'title' => 'Implantação Acompanhada', 'description' => 'Implementação do painel com apoio personalizado da equipe Elo 42.', 'price' => 'Em breve', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('Implantação Acompanhada')],
             ['icon' => 'diagnostic', 'title' => 'Diagnóstico Organizacional', 'description' => 'Análise completa da operação com recomendações práticas e plano de ação.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('Diagnóstico Organizacional')],
             ['icon' => 'calendar', 'title' => 'Workshop: Gestão Eficiente para Igrejas', 'description' => 'Treinamento prático para líderes e equipes de gestão eclesiástica.', 'price' => 'Em breve', 'badge' => 'Em breve', 'badge_type' => 'coming', 'cta' => 'Em breve', 'url' => '#', 'is_disabled' => true],
@@ -2442,17 +2444,17 @@ class DashboardController extends Controller
                 'highlight'   => true,
             ],
             [
+                'title'       => 'Construtor de Sites',
+                'description' => 'Crie e teste modelos. A publicação fica liberada após ativar a mensalidade.',
+                'cta'         => 'Abrir Meu Site',
+                'url'         => url('/hub/sites'),
+                'highlight'   => false,
+            ],
+            [
                 'title'       => 'Expositor IA',
                 'description' => 'Abra o módulo, preencha a passagem bíblica e gere o esboço com consumo de crédito.',
                 'cta'         => 'Acessar Expositor IA',
                 'url'         => url('/hub/expositor-ia'),
-                'highlight'   => false,
-            ],
-            [
-                'title'       => 'Construtor de Sites',
-                'description' => 'Crie e teste modelos. A publicação fica liberada após ativar a mensalidade.',
-                'cta'         => 'Abrir Meus Sites',
-                'url'         => url('/hub/sites'),
                 'highlight'   => false,
             ],
             [
@@ -2471,7 +2473,7 @@ class DashboardController extends Controller
             [
                 'product'     => 'Combo Sistema + Site',
                 'package'     => 'Painel de Gestão + Site para Igrejas',
-                'price'       => 'R$ 99,90/mês · 7 dias grátis',
+                'price'       => 'R$ 99,90/mês',
                 'description' => 'Combo completo: gestão de membros, financeiro, eventos e site institucional publicado em domínio próprio.',
                 'cta'         => 'Contratar combo',
                 'url'         => $this->buildCommercialWhatsAppUrl('Combo Sistema + Site (R$ 99,90/mês)'),
@@ -2597,6 +2599,21 @@ class DashboardController extends Controller
             $degraded = true;
         }
 
+        if (empty($teamMembers) && $currentUserId > 0) {
+            $teamMembers[] = [
+                'id' => $currentUserId,
+                'name' => (string) ($context['user']['name'] ?? 'Usuario atual'),
+                'email' => (string) ($context['user']['email'] ?? ''),
+                'phone' => (string) ($context['user']['phone'] ?? ''),
+                'user_status' => (string) ($context['user']['status'] ?? 'active'),
+                'org_status' => 'active',
+                'role_id' => (int) ($organization['role_id'] ?? 0),
+                'role_name' => (string) ($organization['role_name'] ?? 'Proprietario'),
+                'role_slug' => (string) ($organization['role_slug'] ?? 'org-manager'),
+                'is_session_fallback' => true,
+            ];
+        }
+
         try {
             $pdo = \App\Core\Database::connection();
             $stmt = $pdo->prepare("SELECT id, name FROM roles WHERE slug LIKE 'org-%' ORDER BY name ASC");
@@ -2611,6 +2628,7 @@ class DashboardController extends Controller
             'pageTitle'      => 'Minha Equipe — Hub Elo 42',
             'teamMembers'    => $teamMembers,
             'availableRoles' => $availableRoles,
+            'degraded'       => $degraded,
         ]));
     }
 

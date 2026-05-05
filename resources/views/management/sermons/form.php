@@ -1,8 +1,9 @@
-<?php $__view->extends('management'); ?>
+﻿<?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
 <?php
     $preachers = is_array($preachers ?? null) ? $preachers : [];
     $units = is_array($units ?? null) ? $units : [];
+    $seriesList = is_array($seriesList ?? null) ? $seriesList : [];
 ?>
 
 <div class="mgmt-header">
@@ -60,7 +61,15 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Série</label>
-                <input type="text" name="series_name" class="form-input" placeholder="Nome da série">
+                <input type="text" name="series_name" class="form-input" list="sermon-series-form-list" placeholder="Escolha ou digite o nome da série">
+                <datalist id="sermon-series-form-list">
+                    <?php foreach ($seriesList as $series): ?>
+                        <?php $seriesTitle = trim((string) ($series['title'] ?? '')); ?>
+                        <?php if ($seriesTitle !== ''): ?>
+                            <option value="<?= e($seriesTitle) ?>"></option>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </datalist>
             </div>
         </div>
 
