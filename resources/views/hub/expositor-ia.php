@@ -12,6 +12,7 @@
     $contentType = (string) ($form['content_type'] ?? 'sermon');
     $activeExpositorTab = match ($contentType) {
         'study', 'reading_plan' => 'estudos',
+        'series' => 'series',
         'resource' => 'treinamento',
         default => !empty($lastResult) ? 'pregacao' : 'planejamento',
     };
@@ -43,6 +44,7 @@
 
     <nav class="expositor-workbench-tabs" aria-label="Fluxos do Expositor IA">
         <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'planejamento' ? 'active' : '' ?>" data-expositor-tab="planejamento" aria-controls="expositor-panel-planejamento">Planejamento</button>
+        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'series' ? 'active' : '' ?>" data-expositor-tab="series" aria-controls="expositor-panel-series">Séries</button>
         <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'pregacao' ? 'active' : '' ?>" data-expositor-tab="pregacao" aria-controls="expositor-panel-pregacao">Pregação</button>
         <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'estudos' ? 'active' : '' ?>" data-expositor-tab="estudos" aria-controls="expositor-panel-estudos">Estudos</button>
         <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'treinamento' ? 'active' : '' ?>" data-expositor-tab="treinamento" aria-controls="expositor-panel-treinamento">Treinamento</button>
@@ -113,7 +115,7 @@
             <small>Caminho ministerial</small>
             <h2>Planejar uma série</h2>
             <p>Crie séries com PG e EBD alinhados, mantendo direção teológica em todos os encontros.</p>
-            <button type="button" class="expositor-link-button" data-expositor-target="treinamento">Ver recursos</button>
+            <button type="button" class="expositor-link-button" data-expositor-target="series">Planejar série</button>
         </article>
         <article class="expositor-choice-card">
             <span class="expositor-choice-card__icon">⌕</span>
@@ -207,6 +209,46 @@
     </div>
     </div>
 
+    <div id="expositor-panel-series" class="hub-panel expositor-panel" data-expositor-panel="series" <?= $activeExpositorTab === 'series' ? '' : 'hidden' ?>>
+        <div class="hub-panel__row">
+            <div>
+                <h2 class="hub-panel__title">Série de sermões</h2>
+                <p class="hub-panel__text">Crie a série, defina a linha bíblica e salve o primeiro rascunho vinculado à série em Sermões.</p>
+            </div>
+            <div class="hub-badge <?= $canGenerate ? 'hub-badge--success' : 'hub-badge--warning' ?>">
+                <?= $canGenerate ? 'Geração liberada' : 'Sem créditos suficientes' ?>
+            </div>
+        </div>
+        <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
+            <?= csrf_field() ?>
+            <input type="hidden" name="content_type" value="series">
+            <div class="form-grid form-grid--2">
+                <div class="form-group">
+                    <label class="form-label" for="ia-series-title">Nome da série</label>
+                    <input id="ia-series-title" type="text" name="resource_title" class="form-input" placeholder="Ex.: Sermão do Monte" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ia-series-passage">Livro, passagem ou tema base</label>
+                    <input id="ia-series-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Mateus 5-7" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ia-series-theme">Objetivo pastoral</label>
+                    <input id="ia-series-theme" type="text" name="theme" class="form-input" placeholder="Ex.: formar discípulos no Reino">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ia-series-depth">Profundidade</label>
+                    <select id="ia-series-depth" name="depth" class="form-select">
+                        <?php foreach (($depthOptions ?? []) as $option): ?>
+                            <option value="<?= e((string) ($option['value'] ?? '')) ?>"><?= e((string) ($option['label'] ?? '')) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" name="confessional" value="biblico-evangelico">
+            <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar série</button>
+        </form>
+    </div>
+
     <div id="expositor-panel-pregacao" class="hub-panel expositor-panel" data-expositor-panel="pregacao" <?= $activeExpositorTab === 'pregacao' ? '' : 'hidden' ?>>
         <div class="hub-panel__row">
             <div>
@@ -239,6 +281,11 @@
                 <div class="form-group">
                     <label class="form-label" for="ia-theme">Tema / Ênfase</label>
                     <input id="ia-theme" type="text" name="theme" class="form-input" value="<?= e((string) ($form['theme'] ?? '')) ?>" placeholder="Ex.: Salvos pela graça">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="ia-notes">Rascunho, objetivo ou observações</label>
+                    <textarea id="ia-notes" name="notes" class="form-input" rows="3" placeholder="Cole um rascunho para refinar ou descreva o culto, ocasião e direção pastoral."><?= e((string) ($form['notes'] ?? '')) ?></textarea>
                 </div>
 
                 <div class="form-group">
@@ -292,6 +339,43 @@
             </form>
 
             <article class="hub-mini-card">
+                <h2 class="hub-mini-card__title">Fluxos rápidos</h2>
+                <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" data-loading>
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="content_type" value="sermon">
+                    <input type="hidden" name="resource_title" value="Refinar rascunho de sermão">
+                    <input type="hidden" name="depth" value="pastoral">
+                    <input type="hidden" name="confessional" value="biblico-evangelico">
+                    <div class="form-group">
+                        <label class="form-label" for="ia-refine-passage">Texto base</label>
+                        <input id="ia-refine-passage" type="text" name="passage" class="form-input" placeholder="Ex.: João 15:1-8" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="ia-refine-notes">Rascunho para refinar</label>
+                        <textarea id="ia-refine-notes" name="notes" class="form-input" rows="4" placeholder="Cole o rascunho atual, pontos ou anotações." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn--primary" style="width:100%;" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Refinar rascunho</button>
+                </form>
+
+                <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" data-loading style="margin-top:1rem;">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="content_type" value="sermon">
+                    <input type="hidden" name="resource_title" value="Culto ocasional">
+                    <input type="hidden" name="depth" value="pastoral">
+                    <input type="hidden" name="confessional" value="biblico-evangelico">
+                    <div class="form-group">
+                        <label class="form-label" for="ia-occasion-passage">Passagem ou tema</label>
+                        <input id="ia-occasion-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Salmo 23 ou gratidão" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="ia-occasion-theme">Ocasião</label>
+                        <input id="ia-occasion-theme" type="text" name="theme" class="form-input" placeholder="Ex.: funeral, casamento, ceia, batismo">
+                    </div>
+                    <button type="submit" class="btn btn--outline" style="width:100%;" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar culto ocasional</button>
+                </form>
+            </article>
+
+            <article class="hub-mini-card">
                 <h2 class="hub-mini-card__title">Resultado</h2>
                 <?php if (!empty($lastResult)): ?>
                     <div class="expositor-empty-result">
@@ -334,7 +418,7 @@
                 <input type="hidden" name="resource_title" value="">
                 <input type="hidden" name="depth" value="teologico">
                 <input type="hidden" name="confessional" value="biblico-evangelico">
-                <h3 class="hub-mini-card__title">Estudo do texto</h3>
+                <h3 class="hub-mini-card__title">Estudo do texto pastoral</h3>
                 <div class="form-group">
                     <label class="form-label" for="ia-study-passage">Passagem bíblica</label>
                     <input id="ia-study-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Romanos 8:28-39" required>
@@ -344,6 +428,24 @@
                     <input id="ia-study-theme" type="text" name="theme" class="form-input" placeholder="Ex.: Segurança do crente">
                 </div>
                 <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar estudo</button>
+            </form>
+
+            <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
+                <?= csrf_field() ?>
+                <input type="hidden" name="content_type" value="study">
+                <input type="hidden" name="resource_title" value="Estudo de texto academico">
+                <input type="hidden" name="depth" value="academico">
+                <input type="hidden" name="confessional" value="biblico-evangelico">
+                <h3 class="hub-mini-card__title">Estudo do texto acadêmico</h3>
+                <div class="form-group">
+                    <label class="form-label" for="ia-study-academic-passage">Passagem bíblica</label>
+                    <input id="ia-study-academic-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Romanos 5:1-11" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ia-study-academic-theme">Recorte de pesquisa</label>
+                    <input id="ia-study-academic-theme" type="text" name="theme" class="form-input" placeholder="Ex.: justificação e paz com Deus">
+                </div>
+                <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar estudo acadêmico</button>
             </form>
 
             <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>

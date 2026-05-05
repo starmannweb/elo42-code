@@ -22,11 +22,24 @@ class OpenAiService
 
     public function __construct()
     {
-        $this->apiKey      = (string) env('OPENAI_API_KEY', '');
-        $this->model       = (string) env('OPENAI_MODEL', 'gpt-4o-mini');
+        $this->apiKey      = (string) (env('OPENAI_API_KEY', '') ?: $this->platformSetting('openai_api_key', ''));
+        $this->model       = (string) (env('OPENAI_MODEL', '') ?: $this->platformSetting('openai_model', 'gpt-4o-mini'));
         $this->endpoint    = rtrim((string) env('OPENAI_BASE_URL', 'https://api.openai.com/v1'), '/') . '/chat/completions';
-        $this->timeout     = (int) env('OPENAI_TIMEOUT', 60);
-        $this->temperature = (float) env('OPENAI_TEMPERATURE', 0.6);
+        $this->timeout     = (int) (env('OPENAI_TIMEOUT', '') ?: $this->platformSetting('openai_timeout', '60'));
+        $this->temperature = (float) (env('OPENAI_TEMPERATURE', '') ?: $this->platformSetting('openai_temperature', '0.6'));
+    }
+
+    private function platformSetting(string $key, string $default = ''): string
+    {
+        try {
+            if (!class_exists(\App\Models\PlatformSetting::class)) {
+                return $default;
+            }
+
+            return (string) (\App\Models\PlatformSetting::get($key, $default) ?? $default);
+        } catch (\Throwable $e) {
+            return $default;
+        }
     }
 
     public function isEnabled(): bool
@@ -51,10 +64,14 @@ class OpenAiService
         $depth        = trim((string) ($form['depth'] ?? 'pastoral'));
         $contentType  = trim((string) ($form['content_type'] ?? 'sermon'));
         $resource     = trim((string) ($form['resource_title'] ?? ''));
+        $duration     = trim((string) ($form['duration'] ?? ''));
+        $audience     = trim((string) ($form['audience'] ?? ''));
+        $notes        = trim((string) ($form['notes'] ?? ''));
 
         $contentLabel = match ($contentType) {
             'study'        => 'Estudo bíblico',
             'reading_plan' => 'Plano de leitura',
+            'series'       => 'Série de sermões',
             'resource'     => 'Recurso ministerial',
             default        => 'Sermão expositivo',
         };
@@ -77,6 +94,9 @@ PROMPT;
         if ($resource !== '') { $userPrompt .= "Recurso/aplicação: {$resource}\n"; }
         $userPrompt .= "Passagem ou contexto: " . ($passage !== '' ? $passage : 'não informado') . "\n";
         $userPrompt .= "Tema/ênfase: " . ($theme !== '' ? $theme : 'livre') . "\n";
+        if ($duration !== '') { $userPrompt .= "Duracao desejada: {$duration}\n"; }
+        if ($audience !== '') { $userPrompt .= "Publico-alvo: {$audience}\n"; }
+        if ($notes !== '') { $userPrompt .= "Observacoes ou rascunho-base: {$notes}\n"; }
         $userPrompt .= "Linha confessional: {$confessional}\n";
         $userPrompt .= "Profundidade: {$depthLabel}\n\n";
         $userPrompt .= "Estruture a resposta com:\n";

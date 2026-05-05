@@ -73,6 +73,8 @@ class DashboardController extends Controller
             'appearance_accent',
             'appearance_background',
             'appearance_text',
+            'appearance_title_font',
+            'appearance_body_font',
         ]);
 
         $this->view('hub/sites', array_merge($context, [
@@ -188,12 +190,12 @@ class DashboardController extends Controller
                         organization_id, template, status, site_title, slug, domain, theme_color,
                         hero_image, logo_image, site_description, about_text, contact_email,
                         contact_phone, whatsapp_url, instagram_url, facebook_url, youtube_url,
-                        address_line, city, state, cta_label, cta_url, generated_at, created_at, updated_at
+                        address_line, city, state, cta_label, cta_url, service_times, gallery_images, generated_at, created_at, updated_at
                     ) VALUES (
                         :org_id, :template, 'draft', :site_title, :slug, :domain, :theme_color,
                         :hero_image, :logo_image, :site_description, :about_text, :contact_email,
                         :contact_phone, :whatsapp_url, :instagram_url, :facebook_url, :youtube_url,
-                        :address_line, :city, :state, :cta_label, :cta_url, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+                        :address_line, :city, :state, :cta_label, :cta_url, :service_times, :gallery_images, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
                     )
                 ");
                 $stmt->execute($defaults + [
@@ -217,7 +219,7 @@ class DashboardController extends Controller
             Session::flash('success', 'Site gerado com sucesso em modo local. Modelo: ' . $template . '.');
         }
         
-        redirect('/hub/sites');
+        redirect('/hub/sites#aparencia-site');
     }
 
     public function configurarSite(Request $request): void
@@ -263,6 +265,8 @@ class DashboardController extends Controller
                         state = :state,
                         cta_label = :cta_label,
                         cta_url = :cta_url,
+                        service_times = :service_times,
+                        gallery_images = :gallery_images,
                         updated_at = CURRENT_TIMESTAMP
                     WHERE organization_id = :org_id
                 ");
@@ -273,12 +277,12 @@ class DashboardController extends Controller
                         organization_id, template, status, site_title, slug, domain, theme_color,
                         hero_image, logo_image, site_description, about_text, contact_email,
                         contact_phone, whatsapp_url, instagram_url, facebook_url, youtube_url,
-                        address_line, city, state, cta_label, cta_url, generated_at, created_at, updated_at
+                        address_line, city, state, cta_label, cta_url, service_times, gallery_images, generated_at, created_at, updated_at
                     ) VALUES (
                         :org_id, :template, 'draft', :site_title, :slug, :domain, :theme_color,
                         :hero_image, :logo_image, :site_description, :about_text, :contact_email,
                         :contact_phone, :whatsapp_url, :instagram_url, :facebook_url, :youtube_url,
-                        :address_line, :city, :state, :cta_label, :cta_url, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+                        :address_line, :city, :state, :cta_label, :cta_url, :service_times, :gallery_images, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
                     )
                 ");
                 $stmt->execute($payload + ['org_id' => (int) $organization['id']]);
@@ -300,10 +304,14 @@ class DashboardController extends Controller
             return;
         }
 
-        $primary = $this->normalizeThemeColor((string) $request->input('appearance_primary', ''));
-        $accent = $this->normalizeThemeColor((string) $request->input('appearance_accent', ''));
+        $primary = $this->normalizeThemeColorOptional((string) $request->input('appearance_primary', ''));
+        $accent = $this->normalizeThemeColorOptional((string) $request->input('appearance_accent', ''));
+        $background = $this->normalizeThemeColorOptional((string) $request->input('appearance_background', ''));
+        $text = $this->normalizeThemeColorOptional((string) $request->input('appearance_text', ''));
+        $titleFont = trim((string) $request->input('appearance_title_font', ''));
+        $bodyFont = trim((string) $request->input('appearance_body_font', ''));
 
-        if ($primary === '' && $accent === '') {
+        if ($primary === '' && $accent === '' && $background === '' && $text === '' && $titleFont === '' && $bodyFont === '') {
             return;
         }
 
@@ -324,6 +332,14 @@ class DashboardController extends Controller
             };
             $upsert('appearance_primary', $primary);
             $upsert('appearance_accent', $accent);
+            $upsert('appearance_background', $background);
+            $upsert('appearance_text', $text);
+            if ($titleFont !== '') {
+                $upsert('appearance_title_font', $titleFont);
+            }
+            if ($bodyFont !== '') {
+                $upsert('appearance_body_font', $bodyFont);
+            }
         } catch (\Throwable $e) {
             error_log('[saveAppearanceSettings] ' . $e->getMessage());
         }
@@ -499,6 +515,9 @@ class DashboardController extends Controller
             'depth'        => trim((string) $request->input('depth')),
             'content_type' => $this->normalizeExpositorContentType(trim((string) $request->input('content_type'))),
             'resource_title' => trim((string) $request->input('resource_title')),
+            'duration' => trim((string) $request->input('duration')),
+            'audience' => trim((string) $request->input('audience')),
+            'notes' => trim((string) $request->input('notes')),
         ];
 
         if ($form['passage'] === '') {
@@ -763,6 +782,95 @@ class DashboardController extends Controller
         redirect('/hub/configuracoes');
     }
 
+    public function atualizarPlano(Request $request): void
+    {
+        $context = $this->buildBaseContext('ConfiguraÃ§Ãµes', 'configuracoes');
+        $organization = $context['organization'];
+
+        if (empty($organization['id'])) {
+            Session::flash('warning', 'Cadastre a organizaÃ§Ã£o antes de escolher um plano.');
+            redirect('/onboarding/organizacao');
+        }
+
+        $plan = trim((string) $request->input('plan'));
+        $packages = $this->buildHubPlanOptions();
+        if (!isset($packages[$plan])) {
+            Session::flash('error', 'Plano invÃ¡lido.');
+            redirect('/hub/configuracoes#planos-pagamento');
+        }
+
+        $selected = $packages[$plan];
+        $orgId = (int) $organization['id'];
+        $now = date('Y-m-d H:i:s');
+        $trialEndsAt = date('Y-m-d H:i:s', strtotime('+7 days'));
+
+        try {
+            $pdo = Database::connection();
+            $existing = Subscription::where('organization_id', $orgId);
+            usort($existing, static function (array $a, array $b): int {
+                return strtotime((string) ($b['updated_at'] ?? $b['created_at'] ?? '1970-01-01'))
+                    <=> strtotime((string) ($a['updated_at'] ?? $a['created_at'] ?? '1970-01-01'));
+            });
+
+            if (!empty($existing[0]['id'])) {
+                $stmt = $pdo->prepare(
+                    'UPDATE subscriptions
+                     SET plan_name = :plan_name, plan_slug = :plan_slug, price = :price, billing_cycle = :billing_cycle,
+                         status = :status, trial_ends_at = :trial_ends_at, starts_at = :starts_at, updated_at = :updated_at
+                     WHERE id = :id AND organization_id = :organization_id'
+                );
+                $stmt->execute([
+                    'plan_name' => $selected['name'],
+                    'plan_slug' => $selected['slug'],
+                    'price' => $selected['price'],
+                    'billing_cycle' => 'monthly',
+                    'status' => 'trial',
+                    'trial_ends_at' => $trialEndsAt,
+                    'starts_at' => $now,
+                    'updated_at' => $now,
+                    'id' => (int) $existing[0]['id'],
+                    'organization_id' => $orgId,
+                ]);
+            } else {
+                $stmt = $pdo->prepare(
+                    'INSERT INTO subscriptions (organization_id, plan_name, plan_slug, price, billing_cycle, status, trial_ends_at, starts_at, created_at, updated_at)
+                     VALUES (:organization_id, :plan_name, :plan_slug, :price, :billing_cycle, :status, :trial_ends_at, :starts_at, :created_at, :updated_at)'
+                );
+                $stmt->execute([
+                    'organization_id' => $orgId,
+                    'plan_name' => $selected['name'],
+                    'plan_slug' => $selected['slug'],
+                    'price' => $selected['price'],
+                    'billing_cycle' => 'monthly',
+                    'status' => 'trial',
+                    'trial_ends_at' => $trialEndsAt,
+                    'starts_at' => $now,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }
+
+            $orgPlan = $selected['includes_management'] ? 'professional' : 'starter';
+            $pdo->prepare('UPDATE organizations SET plan = :plan, updated_at = :updated_at WHERE id = :id')->execute([
+                'plan' => $orgPlan,
+                'updated_at' => $now,
+                'id' => $orgId,
+            ]);
+
+            $sessionOrg = Session::get('organization', []);
+            if (is_array($sessionOrg)) {
+                $sessionOrg['plan'] = $orgPlan;
+                Session::set('organization', $sessionOrg);
+            }
+
+            Session::flash('success', 'Plano ' . $selected['name'] . ' selecionado. Configure o meio de pagamento para ativar cobranca recorrente.');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Nao foi possivel definir o plano agora: ' . $e->getMessage());
+        }
+
+        redirect('/hub/configuracoes#planos-pagamento');
+    }
+
     private function buildBaseContext(string $breadcrumb, string $activeMenu): array
     {
         $user = Session::user() ?? [];
@@ -1011,6 +1119,8 @@ class DashboardController extends Controller
             'state' => $this->nullableText((string) $request->input('state', '')),
             'cta_label' => $this->nullableText((string) $request->input('cta_label', '')),
             'cta_url' => $this->normalizeSiteUrl((string) $request->input('cta_url', '')),
+            'service_times' => $this->nullableText((string) $request->input('service_times', '')),
+            'gallery_images' => $this->normalizeGalleryImages((string) $request->input('gallery_images', '')),
         ];
     }
 
@@ -1059,6 +1169,11 @@ class DashboardController extends Controller
             'social_youtube',
             'social_whatsapp',
             'appearance_primary',
+            'appearance_accent',
+            'appearance_background',
+            'appearance_text',
+            'appearance_title_font',
+            'appearance_body_font',
         ]);
 
         $jsonSettings = [];
@@ -1096,7 +1211,7 @@ class DashboardController extends Controller
             'hero_image' => null,
             'logo_image' => $this->normalizeSiteUrl((string) ($organization['logo'] ?? '')),
             'site_description' => $this->nullableText($fromSettings('seo_desc') ?: 'Uma página institucional para acolher visitantes, apresentar a igreja e facilitar o contato.'),
-            'about_text' => $this->nullableText('Conheça a comunidade, acompanhe eventos, ministérios e campanhas cadastradas pela igreja.'),
+            'about_text' => $this->nullableText((string) ($organization['about'] ?? '')),
             'contact_email' => $this->nullableText((string) ($organization['email'] ?? '')),
             'contact_phone' => $this->nullableText($phone),
             'whatsapp_url' => $this->normalizeSiteUrl($whatsapp),
@@ -1108,13 +1223,37 @@ class DashboardController extends Controller
             'state' => $this->nullableText((string) ($organization['state'] ?? '')),
             'cta_label' => $whatsapp !== '' ? 'Falar no WhatsApp' : 'Falar com a igreja',
             'cta_url' => $this->normalizeSiteUrl($whatsapp),
+            'service_times' => $this->nullableText($fromSettings('service_times')),
+            'gallery_images' => $this->nullableText($fromSettings('gallery_images')),
         ];
+    }
+
+    private function normalizeGalleryImages(string $value): ?string
+    {
+        $lines = preg_split('/\r\n|\r|\n|,/', $value) ?: [];
+        $urls = [];
+
+        foreach ($lines as $line) {
+            $url = $this->normalizeSiteUrl((string) $line);
+            if ($url !== null && trim($url) !== '') {
+                $urls[] = $url;
+            }
+        }
+
+        $urls = array_values(array_unique($urls));
+        return !empty($urls) ? json_encode($urls, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null;
     }
 
     private function normalizeThemeColor(string $value): string
     {
         $value = trim($value);
         return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? $value : '#0A4DFF';
+    }
+
+    private function normalizeThemeColorOptional(string $value): string
+    {
+        $value = trim($value);
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? $value : '';
     }
 
     private function normalizeSiteUrl(string $value): ?string
@@ -1244,6 +1383,8 @@ class DashboardController extends Controller
                     state TEXT NULL,
                     cta_label TEXT NULL,
                     cta_url TEXT NULL,
+                    service_times TEXT NULL,
+                    gallery_images TEXT NULL,
                     published_url TEXT NULL,
                     generated_at TEXT DEFAULT CURRENT_TIMESTAMP,
                     published_at TEXT NULL,
@@ -1282,6 +1423,8 @@ class DashboardController extends Controller
                     state VARCHAR(80) NULL,
                     cta_label VARCHAR(120) NULL,
                     cta_url VARCHAR(500) NULL,
+                    service_times TEXT NULL,
+                    gallery_images TEXT NULL,
                     published_url VARCHAR(500) NULL,
                     generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     published_at TIMESTAMP NULL,
@@ -1319,6 +1462,8 @@ class DashboardController extends Controller
                 state VARCHAR(80) NULL,
                 cta_label VARCHAR(120) NULL,
                 cta_url VARCHAR(500) NULL,
+                service_times TEXT NULL,
+                gallery_images TEXT NULL,
                 published_url VARCHAR(500) NULL,
                 generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 published_at TIMESTAMP NULL,
@@ -1348,6 +1493,8 @@ class DashboardController extends Controller
                 'state' => 'TEXT NULL',
                 'cta_label' => 'TEXT NULL',
                 'cta_url' => 'TEXT NULL',
+                'service_times' => 'TEXT NULL',
+                'gallery_images' => 'TEXT NULL',
                 'published_url' => 'TEXT NULL',
             ],
             'default' => [
@@ -1364,6 +1511,8 @@ class DashboardController extends Controller
                 'state' => 'VARCHAR(80) NULL',
                 'cta_label' => 'VARCHAR(120) NULL',
                 'cta_url' => 'VARCHAR(500) NULL',
+                'service_times' => 'TEXT NULL',
+                'gallery_images' => 'TEXT NULL',
                 'published_url' => 'VARCHAR(500) NULL',
             ],
         ];
@@ -1756,7 +1905,7 @@ class DashboardController extends Controller
 
     private function resolveFinancialSummary(?array $organization): array
     {
-        $summary = ['subscription_status' => 'Sem assinatura', 'subscription_value' => 'Consulte valores', 'billing_cycle' => 'Mensal', 'publish_status' => 'Bloqueado sem mensalidade'];
+        $summary = ['subscription_status' => 'Sem assinatura', 'subscription_value' => 'Consulte valores', 'billing_cycle' => 'Mensal', 'publish_status' => 'Bloqueado sem mensalidade', 'plan_slug' => ''];
 
         if (empty($organization['id'])) {
             return $summary;
@@ -1778,6 +1927,7 @@ class DashboardController extends Controller
             $price = isset($current['price']) ? (float) $current['price'] : 0.0;
             $cycle = (string) ($current['billing_cycle'] ?? 'monthly');
             $status = (string) ($current['status'] ?? 'inactive');
+            $summary['plan_slug'] = (string) ($current['plan_slug'] ?? '');
 
             $summary['subscription_status'] = $this->translateSubscriptionStatus($status);
             $summary['subscription_value'] = $this->formatMoney($price);
@@ -1876,6 +2026,30 @@ class DashboardController extends Controller
         ];
     }
 
+    private function buildHubPlanOptions(): array
+    {
+        return [
+            'management' => [
+                'name' => 'Gestao de membros',
+                'slug' => 'management',
+                'price' => 67.00,
+                'includes_management' => true,
+            ],
+            'site' => [
+                'name' => 'Site avulso',
+                'slug' => 'site',
+                'price' => 67.00,
+                'includes_management' => false,
+            ],
+            'combo' => [
+                'name' => 'Combo gestao + site',
+                'slug' => 'combo',
+                'price' => 99.90,
+                'includes_management' => true,
+            ],
+        ];
+    }
+
     private function resolveAccessMode(?array $organization, array $user): string
     {
         $key = $this->resolveAccessModeSettingKey($organization, $user);
@@ -1931,7 +2105,7 @@ class DashboardController extends Controller
         return [
             [
                 'name' => 'Institucional Clássico',
-                'description' => 'Home, sobre, ministérios, agenda, ofertas e contato em um site institucional limpo.',
+                'description' => 'Layout sereno e editorial para apresentar história, cultos, ministérios e contato com leitura clara.',
                 'status' => 'Disponível',
                 'highlight' => true,
                 'assets' => ['Logo', 'Foto principal da igreja', 'Fotos dos ministérios'],
@@ -1945,7 +2119,7 @@ class DashboardController extends Controller
             ],
             [
                 'name' => 'Campanhas e Eventos',
-                'description' => 'Páginas para congressos, conferências, campanhas e inscrições com chamada direta.',
+                'description' => 'Layout de evento com hero de impacto, agenda, chamadas de inscrição e blocos de urgência visual.',
                 'status' => 'Disponível',
                 'highlight' => false,
                 'assets' => ['Banner do evento', 'Imagem dos palestrantes', 'Identidade da campanha'],
@@ -2005,6 +2179,7 @@ class DashboardController extends Controller
         return match ($type) {
             'study' => 'study',
             'reading_plan' => 'reading_plan',
+            'series' => 'series',
             'resource' => 'resource',
             default => 'sermon',
         };
@@ -2015,6 +2190,7 @@ class DashboardController extends Controller
         return match ($this->normalizeExpositorContentType($type)) {
             'study' => 'Estudo',
             'reading_plan' => 'Plano de leitura',
+            'series' => 'Série de sermões',
             'resource' => 'Recurso ministerial',
             default => 'Sermão',
         };
@@ -2038,6 +2214,10 @@ class DashboardController extends Controller
             return $theme !== '' ? $resourceTitle . ': ' . $theme : $resourceTitle;
         }
 
+        if ($type === 'series' && $resourceTitle !== '') {
+            return $resourceTitle;
+        }
+
         if ($theme !== '') {
             return $theme;
         }
@@ -2045,6 +2225,7 @@ class DashboardController extends Controller
         return match ($type) {
             'study' => 'Estudo bíblico sobre ' . ($passage !== '' ? $passage : 'texto bíblico'),
             'reading_plan' => 'Plano de leitura: ' . ($passage !== '' ? $passage : 'jornada bíblica'),
+            'series' => 'Série: ' . ($theme !== '' ? $theme : ($passage !== '' ? $passage : 'nova série')),
             'resource' => $resourceTitle !== '' ? $resourceTitle : 'Recurso ministerial',
             default => 'Sermão sobre ' . ($passage !== '' ? $passage : 'texto bíblico'),
         };
@@ -2101,7 +2282,7 @@ class DashboardController extends Controller
                     'sermon_date' => date('Y-m-d'),
                     'bible_reference' => $reference,
                     'summary' => $result,
-                    'series_name' => $type === 'resource' ? trim((string) ($form['resource_title'] ?? '')) : null,
+                    'series_name' => in_array($type, ['resource', 'series'], true) ? (trim((string) ($form['resource_title'] ?? '')) ?: $title) : null,
                     'tags' => 'Expositor IA, ' . $label,
                     'status' => 'draft',
                     'created_at' => $now,
@@ -2162,6 +2343,9 @@ class DashboardController extends Controller
         $type = $this->normalizeExpositorContentType((string) ($form['content_type'] ?? 'sermon'));
         $contentLabel = $this->expositorContentTypeLabel($type);
         $resourceTitle = trim((string) ($form['resource_title'] ?? ''));
+        $duration = trim((string) ($form['duration'] ?? ''));
+        $audience = trim((string) ($form['audience'] ?? ''));
+        $notes = trim((string) ($form['notes'] ?? ''));
 
         $depthLabel = match ((string) ($form['depth'] ?? 'pastoral')) {
             'teologico' => 'Aprofundamento Teológico',
@@ -2170,9 +2354,15 @@ class DashboardController extends Controller
         };
 
         $resourceLine = $resourceTitle !== '' ? "Recurso: {$resourceTitle}\n" : '';
+        $durationLine = $duration !== '' ? "Duracao: {$duration}\n" : '';
+        $audienceLine = $audience !== '' ? "Publico-alvo: {$audience}\n" : '';
+        $notesLine = $notes !== '' ? "Observacoes/rascunho-base: {$notes}\n" : '';
 
         return "Tipo de material: {$contentLabel}\n"
             . $resourceLine
+            . $durationLine
+            . $audienceLine
+            . $notesLine
             . "Passagem/contexto: {$passage}\n"
             . "Tema/Ênfase: {$theme}\n"
             . "Linha teológica: {$confessionalLabel}\n"
@@ -2208,8 +2398,8 @@ class DashboardController extends Controller
         $wa = fn (string $service): string => $this->buildCommercialWhatsAppUrl($service);
 
         return [
-            ['icon' => 'monitor', 'title' => 'Combo Sistema + Site', 'description' => 'Painel de Gestão e Site para Igrejas no mesmo plano — economiza R$ 17,90/mês comparado aos planos avulsos.', 'price' => 'R$ 99,00/mês · 7 dias grátis', 'badge' => 'Combo', 'badge_type' => 'hot', 'cta' => 'Quero o combo', 'url' => $wa('Combo Sistema + Site (R$ 99/mês)')],
-            ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial com 7 dias gratuitos.', 'price' => 'R$ 49,90/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
+            ['icon' => 'monitor', 'title' => 'Combo Sistema + Site', 'description' => 'Painel de Gestão e Site para Igrejas no mesmo plano, com publicação do site inclusa.', 'price' => 'R$ 99,90/mês · 7 dias grátis', 'badge' => 'Combo', 'badge_type' => 'hot', 'cta' => 'Quero o combo', 'url' => $wa('Combo Sistema + Site (R$ 99,90/mês)')],
+            ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial. Inclui até 100 usuários da plataforma de gestão.', 'price' => 'R$ 67,00/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
             ['icon' => 'book', 'title' => 'Expositor IA', 'description' => 'Geração de esboços e estudos bíblicos para apoio pastoral e ministerial.', 'price' => 'Use com créditos', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Comprar créditos', 'url' => url('/hub/creditos')],
             ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação para captar até US$ 10.000/mês em anúncios.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('Google Ad Grants')],
             ['icon' => 'gift', 'title' => 'Google para ONGs', 'description' => 'Trilha guiada para aprovação e criação do Google Workspace gratuito.', 'price' => 'R$ 297,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Falar com comercial', 'url' => $wa('Google para ONGs')],
@@ -2281,17 +2471,17 @@ class DashboardController extends Controller
             [
                 'product'     => 'Combo Sistema + Site',
                 'package'     => 'Painel de Gestão + Site para Igrejas',
-                'price'       => 'R$ 99,00/mês · 7 dias grátis',
-                'description' => 'Combo completo: gestão de membros, financeiro, eventos e site institucional publicado em domínio próprio. Economia de R$ 17,90/mês.',
+                'price'       => 'R$ 99,90/mês · 7 dias grátis',
+                'description' => 'Combo completo: gestão de membros, financeiro, eventos e site institucional publicado em domínio próprio.',
                 'cta'         => 'Contratar combo',
-                'url'         => $this->buildCommercialWhatsAppUrl('Combo Sistema + Site (R$ 99/mês)'),
+                'url'         => $this->buildCommercialWhatsAppUrl('Combo Sistema + Site (R$ 99,90/mês)'),
                 'highlight'   => true,
             ],
             [
                 'product'     => 'Painel de Gestão de Igrejas',
                 'package'     => 'Plano mensal com 7 dias grátis',
-                'price'       => 'R$ 49,90/mês',
-                'description' => 'Acesso ao sistema de gestão com suporte inicial para implantação.',
+                'price'       => 'R$ 67,00/mês',
+                'description' => 'Acesso ao sistema de gestão com suporte inicial para implantação e até 100 usuários da plataforma.',
                 'cta'         => 'Solicitar contratação',
                 'url'         => $this->buildCommercialWhatsAppUrl('Painel de Gestão de Igrejas — Plano mensal'),
             ],
@@ -2477,6 +2667,45 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             if ($pdo->inTransaction()) $pdo->rollBack();
             \App\Core\Session::flash('error', 'Erro ao adicionar membro: ' . $e->getMessage());
+        }
+
+        $this->redirect('/hub/usuarios');
+    }
+
+    public function editarUsuario(Request $request): void
+    {
+        $context = $this->buildBaseContext('Minha Equipe', 'usuarios');
+        $organization = $context['organization'];
+        $memberId = (int) $request->param('id');
+        $roleId = (int) $request->input('role_id');
+        $status = trim((string) $request->input('status', 'active'));
+
+        if (empty($organization['id']) || $memberId <= 0 || $roleId <= 0) {
+            \App\Core\Session::flash('error', 'Informe o usuario e o perfil de acesso.');
+            $this->redirect('/hub/usuarios');
+        }
+
+        if (!in_array($status, ['active', 'inactive'], true)) {
+            $status = 'active';
+        }
+
+        try {
+            $pdo = \App\Core\Database::connection();
+            $stmt = $pdo->prepare(
+                'UPDATE organization_users
+                 SET role_id = :role_id, status = :status
+                 WHERE organization_id = :org_id AND user_id = :user_id'
+            );
+            $stmt->execute([
+                'role_id' => $roleId,
+                'status' => $status,
+                'org_id' => (int) $organization['id'],
+                'user_id' => $memberId,
+            ]);
+
+            \App\Core\Session::flash('success', 'Nivel de acesso atualizado.');
+        } catch (\Throwable $e) {
+            \App\Core\Session::flash('error', 'Erro ao atualizar usuario: ' . $e->getMessage());
         }
 
         $this->redirect('/hub/usuarios');

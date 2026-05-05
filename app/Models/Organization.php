@@ -81,6 +81,8 @@ class Organization extends Model
             JOIN users u ON ou.user_id = u.id
             LEFT JOIN roles r ON ou.role_id = r.id
             WHERE ou.organization_id = :org_id
+              AND ou.status = 'active'
+              AND u.status = 'active'
             ORDER BY u.name ASC
         ");
         $stmt->execute(['org_id' => $orgId]);

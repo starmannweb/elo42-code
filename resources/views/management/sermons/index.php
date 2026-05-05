@@ -3,6 +3,22 @@
 <?php
     $preachers = is_array($preachers ?? null) ? $preachers : [];
     $units = is_array($units ?? null) ? $units : [];
+    $sermons = is_array($sermons ?? null) ? $sermons : [];
+    $seriesGroups = [];
+    foreach ($sermons as $sermon) {
+        $seriesName = trim((string) ($sermon['series_name'] ?? ''));
+        if ($seriesName === '') {
+            continue;
+        }
+        if (!isset($seriesGroups[$seriesName])) {
+            $seriesGroups[$seriesName] = ['name' => $seriesName, 'count' => 0, 'latest' => null];
+        }
+        $seriesGroups[$seriesName]['count']++;
+        $date = (string) ($sermon['sermon_date'] ?? '');
+        if ($date !== '' && ($seriesGroups[$seriesName]['latest'] === null || strtotime($date) > strtotime((string) $seriesGroups[$seriesName]['latest']))) {
+            $seriesGroups[$seriesName]['latest'] = $date;
+        }
+    }
 ?>
 
 <div class="mgmt-header">
@@ -31,6 +47,20 @@
         Buscar
     </button>
 </form>
+
+<?php if (!empty($seriesGroups)): ?>
+    <section class="mgmt-grid mgmt-grid--3" style="margin-bottom:1rem;">
+        <?php foreach ($seriesGroups as $series): ?>
+            <article class="mgmt-card">
+                <h3 class="mgmt-card__title"><?= e((string) $series['name']) ?></h3>
+                <p class="mgmt-card__text"><?= (int) $series['count'] ?> sermão(ões) nesta série</p>
+                <small class="text-muted">
+                    Última mensagem: <?= !empty($series['latest']) ? date('d/m/Y', strtotime((string) $series['latest'])) : 'sem data' ?>
+                </small>
+            </article>
+        <?php endforeach; ?>
+    </section>
+<?php endif; ?>
 
 <?php if (empty($sermons)): ?>
     <div class="mgmt-empty">
@@ -124,7 +154,12 @@
 
                     <div class="form-group">
                         <label class="form-label">Série</label>
-                        <input type="text" name="series_name" class="form-input" placeholder="Nome da série">
+                        <input type="text" name="series_name" class="form-input" list="sermon-series-list" placeholder="Nome da série">
+                        <datalist id="sermon-series-list">
+                            <?php foreach (array_keys($seriesGroups) as $seriesName): ?>
+                                <option value="<?= e((string) $seriesName) ?>"></option>
+                            <?php endforeach; ?>
+                        </datalist>
                     </div>
 
                     <div class="form-group">

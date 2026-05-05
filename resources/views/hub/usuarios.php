@@ -127,6 +127,38 @@
     </div>
 </div>
 
+<div id="modal-edit-user" class="hub-modal-overlay" style="display: none;">
+    <div class="hub-modal">
+        <div class="hub-modal__header">
+            <h3 class="hub-modal__title">Editar nível de acesso</h3>
+            <button class="hub-modal__close" onclick="this.closest('.hub-modal-overlay').style.display='none'">&times;</button>
+        </div>
+        <form id="edit-user-form" action="<?= url('/hub/usuarios/editar/0') ?>" method="POST" class="hub-modal__body">
+            <?= csrf_field() ?>
+            <p class="form-hint" id="edit-user-name" style="margin-bottom: var(--space-4);"></p>
+            <div class="form-group">
+                <label class="form-label" for="edit-role">Perfil de acesso</label>
+                <select id="edit-role" name="role_id" class="form-select" required>
+                    <?php foreach ($rolesForSelect as $role): ?>
+                        <option value="<?= e((string) ($role['id'] ?? '')) ?>"><?= e((string) ($role['name'] ?? 'Perfil')) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="edit-status">Status</label>
+                <select id="edit-status" name="status" class="form-select">
+                    <option value="active">Ativo</option>
+                    <option value="inactive">Inativo</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-3 mt-4">
+                <button type="button" class="btn btn--ghost" onclick="this.closest('.hub-modal-overlay').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn btn--gold">Salvar nível</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <style>
 .hub-modal-overlay {
     position: fixed;
@@ -180,8 +212,28 @@ body[data-hub-theme="dark"] .hub-modal {
 
 <script>
 function openEditModal(member) {
-    // Implementar modal de edição se necessário
-    alert('Função de edição para: ' + member.name);
+    var modal = document.getElementById('modal-edit-user');
+    var form = document.getElementById('edit-user-form');
+    var name = document.getElementById('edit-user-name');
+    var role = document.getElementById('edit-role');
+    var status = document.getElementById('edit-status');
+
+    if (!modal || !form || !member) {
+        return;
+    }
+
+    form.action = "<?= url('/hub/usuarios/editar') ?>/" + encodeURIComponent(member.id || '');
+    if (name) {
+        name.textContent = (member.name || 'Usuário') + ' · ' + (member.email || '');
+    }
+    if (role && member.role_id) {
+        role.value = String(member.role_id);
+    }
+    if (status) {
+        status.value = member.org_status || 'active';
+    }
+
+    modal.style.display = 'flex';
 }
 </script>
 

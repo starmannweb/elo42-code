@@ -158,7 +158,13 @@ class Migrator
     private function executeSql(string $sql): void
     {
         if ($this->driver !== 'sqlite') {
-            $this->pdo->exec($sql);
+            foreach ($this->splitSqlStatements($sql) as $statement) {
+                $statement = $this->translateGenericStatement($statement);
+                if ($statement === null || trim($statement) === '') {
+                    continue;
+                }
+                $this->pdo->exec($statement);
+            }
             return;
         }
 
@@ -169,6 +175,42 @@ class Migrator
             }
 
             $this->pdo->exec($statement);
+        }
+    }
+
+    private function translateGenericStatement(string $statement): ?string
+    {
+        $statement = trim($statement);
+        if ($statement === '') {
+            return null;
+        }
+
+        if (preg_match('/^ALTER\s+TABLE\s+([A-Za-z0-9_]+)\s+ADD\s+COLUMN\s+IF\s+NOT\s+EXISTS\s+([A-Za-z0-9_]+)\s+(.+)$/is', $statement, $matches)) {
+            if ($this->genericColumnExists($matches[1], $matches[2])) {
+                return null;
+            }
+
+            $definition = trim($matches[3]);
+            return 'ALTER TABLE ' . $matches[1] . ' ADD COLUMN ' . $matches[2] . ' ' . $definition;
+        }
+
+        return $statement;
+    }
+
+    private function genericColumnExists(string $table, string $column): bool
+    {
+        try {
+            if ($this->driver === 'pgsql') {
+                $stmt = $this->pdo->prepare('SELECT column_name FROM information_schema.columns WHERE table_name = :table AND column_name = :column LIMIT 1');
+                $stmt->execute(['table' => $table, 'column' => $column]);
+                return (bool) $stmt->fetchColumn();
+            }
+
+            $stmt = $this->pdo->prepare('SHOW COLUMNS FROM ' . $table . ' LIKE :column');
+            $stmt->execute(['column' => $column]);
+            return (bool) $stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            return false;
         }
     }
 

@@ -115,6 +115,8 @@ class SiteController extends Controller
         }
 
         $organizationId = (int) ($site['organization_id'] ?? 0);
+        $settings = $this->manifestSettings($organizationId);
+        $site = $this->applyPublicSiteSettings($site, $settings);
 
         $this->view('site/generated', [
             'pageTitle' => (string) ($site['site_title'] ?? $site['organization_name'] ?? 'Site institucional') . ' — Elo 42',
@@ -127,6 +129,33 @@ class SiteController extends Controller
             'sermons' => $this->generatedSiteSermons($organizationId),
             'banners' => $this->generatedSiteBanners($organizationId),
         ]);
+    }
+
+    private function applyPublicSiteSettings(array $site, array $settings): array
+    {
+        $map = [
+            'appearance_primary' => 'theme_color',
+            'appearance_accent' => 'accent_color',
+            'appearance_background' => 'background_color',
+            'appearance_text' => 'text_color',
+            'appearance_title_font' => 'title_font',
+            'appearance_body_font' => 'body_font',
+            'service_times' => 'service_times',
+            'gallery_images' => 'gallery_images',
+        ];
+
+        foreach ($map as $settingKey => $siteKey) {
+            $value = trim((string) ($settings[$settingKey] ?? ''));
+            if ($value === '') {
+                continue;
+            }
+
+            if (!isset($site[$siteKey]) || trim((string) $site[$siteKey]) === '') {
+                $site[$siteKey] = $value;
+            }
+        }
+
+        return $site;
     }
 
     private function generatedSiteBanners(int $organizationId): array
@@ -150,12 +179,12 @@ class SiteController extends Controller
             return ['primary' => '#9f1239', 'accent' => '#fbbf24'];
         }
         if (str_contains($name, 'campanha') || str_contains($name, 'evento')) {
-            return ['primary' => '#0a4dff', 'accent' => '#fcd34d'];
+            return ['primary' => '#dc2626', 'accent' => '#f97316'];
         }
         if (str_contains($name, 'ong') || str_contains($name, 'capta')) {
             return ['primary' => '#0f766e', 'accent' => '#fcd34d'];
         }
-        return ['primary' => '#1e3a8a', 'accent' => '#f59e0b'];
+        return ['primary' => '#164e63', 'accent' => '#d6a646'];
     }
 
     private function generatedSiteMinistries(int $organizationId): array

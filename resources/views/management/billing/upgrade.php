@@ -86,13 +86,17 @@
         <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.5rem; min-height: 40px;">Desbloqueie todo o poder da Elo 42 e prepare sua igreja para crescer sem fronteiras.</p>
         
         <div style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 2rem;">
-            R$ 49,90<span style="font-size: 1rem; color: var(--text-secondary); font-weight: 400;">/mês</span>
+            R$ 67,00<span style="font-size: 1rem; color: var(--text-secondary); font-weight: 400;">/mês</span>
         </div>
         
         <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem;">
             <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-primary); font-weight: 500;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-color);"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 Tudo do Plano Free
+            </li>
+            <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-primary);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-color);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Até 100 usuários da plataforma de gestão
             </li>
             <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-primary);">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-color);"><polyline points="20 6 9 17 4 12"></polyline></svg>

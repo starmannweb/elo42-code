@@ -23,6 +23,18 @@ $services = $services ?? [];
             </div>
             <div class="form-group"><label class="form-label">Duração da cortesia</label><input type="number" name="duration_days" class="form-input" min="1" value="<?= e($isEdit ? ($item['duration_days'] ?? '') : '') ?>" placeholder="Ex.: 30 dias"></div>
         </div>
+        <div class="mgmt-form-row">
+            <div class="form-group">
+                <label class="form-label">Vincular a</label>
+                <select name="target_type" class="form-select">
+                    <option value="">Definir depois</option>
+                    <option value="organization" <?= $isEdit && ($item['target_type'] ?? '') === 'organization' ? 'selected' : '' ?>>Instituição</option>
+                    <option value="user" <?= $isEdit && ($item['target_type'] ?? '') === 'user' ? 'selected' : '' ?>>Usuário</option>
+                </select>
+            </div>
+            <div class="form-group"><label class="form-label">ID do vínculo</label><input type="number" name="target_id" class="form-input" value="<?= e($isEdit ? ($item['target_id'] ?? '') : '') ?>" placeholder="ID da instituição ou usuário"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Nome exibido do vínculo</label><input type="text" name="target_label" class="form-input" value="<?= e($isEdit ? ($item['target_label'] ?? '') : '') ?>" placeholder="Ex.: Igreja Central ou Maria Silva"></div>
         <div class="form-group"><label class="form-label">Descrição</label><textarea name="description" class="form-input" rows="3"><?= e($isEdit ? $item['description'] : '') ?></textarea></div>
         <div class="form-group"><label class="form-label">Requisitos</label><textarea name="requirements" class="form-input" rows="3"><?= e($isEdit ? $item['requirements'] : '') ?></textarea></div>
         <div class="mgmt-form-row">

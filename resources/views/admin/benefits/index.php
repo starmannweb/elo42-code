@@ -16,10 +16,11 @@ $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'paused' => 'Paus
 <?php if (empty($benefits)): ?>
     <div class="mgmt-empty"><div class="mgmt-empty__icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"></rect><path d="M5 12v9h14v-9"></path><path d="M12 8v13"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9 3 12 8 12 8s3-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg></div><h3 class="mgmt-empty__title">Nenhuma cortesia</h3></div>
 <?php else: ?>
-    <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Cortesia</th><th>Produto/serviço</th><th>Prazo</th><th>Utilizações</th><th>Limite</th><th>Válido até</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+    <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Cortesia</th><th>Produto/serviço</th><th>Vínculo</th><th>Prazo</th><th>Utilizações</th><th>Limite</th><th>Válido até</th><th>Status</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($benefits as $b): ?><tr>
             <td><div class="mgmt-table__name"><?= e($b['name']) ?></div><div class="mgmt-table__sub"><?= e($b['slug']) ?></div></td>
             <td><?= e($b['service_name'] ?? 'Qualquer serviço') ?></td>
+            <td><?= e(($b['target_label'] ?? '') ?: (($b['target_type'] ?? '') === 'user' ? 'Usuário' : (($b['target_type'] ?? '') === 'organization' ? 'Instituição' : 'Livre'))) ?></td>
             <td><?= $b['duration_days'] ? (int) $b['duration_days'] . ' dias' : 'Sem prazo automático' ?></td>
             <td><?= $b['usage_count'] ?? 0 ?></td>
             <td><?= $b['max_usage'] ?? 'Ilimitado' ?></td>
@@ -40,6 +41,9 @@ $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'paused' => 'Paus
                     <div class="form-group"><label class="form-label">Nome *</label><input type="text" name="name" class="form-input" required></div>
                     <div class="form-group"><label class="form-label">Slug *</label><input type="text" name="slug" class="form-input" required></div>
                     <div class="form-group"><label class="form-label">Produto/serviço liberado</label><select name="service_id" class="form-select"><option value="">Qualquer serviço</option><?php foreach ($services as $service): ?><option value="<?= $service['id'] ?>"><?= e($service['name']) ?></option><?php endforeach; ?></select></div>
+                    <div class="form-group"><label class="form-label">Vincular a</label><select name="target_type" class="form-select"><option value="">Definir depois</option><option value="organization">Instituição</option><option value="user">Usuário</option></select></div>
+                    <div class="form-group"><label class="form-label">ID do vínculo</label><input type="number" name="target_id" class="form-input" placeholder="ID da instituição ou usuário"></div>
+                    <div class="form-group"><label class="form-label">Nome exibido do vínculo</label><input type="text" name="target_label" class="form-input" placeholder="Ex.: Igreja Central ou Maria Silva"></div>
                     <div class="form-group"><label class="form-label">Duração da cortesia</label><input type="number" name="duration_days" class="form-input" min="1" placeholder="Ex.: 30 dias"></div>
                     <div class="form-group"><label class="form-label">Limite de uso</label><input type="number" name="max_usage" class="form-input" placeholder="Vazio = ilimitado"></div>
                     <div class="form-group"><label class="form-label">Válido até</label><input type="date" name="valid_until" class="form-input"></div>

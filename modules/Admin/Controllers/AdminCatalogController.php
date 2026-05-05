@@ -345,6 +345,7 @@ class AdminCatalogController extends Controller
         $degraded = false;
 
         try {
+            $this->ensureDefaultPlatformSettings();
             $settings = PlatformSetting::byGroup();
         } catch (\Throwable $e) {
             $degraded = true;
@@ -360,9 +361,18 @@ class AdminCatalogController extends Controller
 
     public function updateSettings(Request $req): void
     {
+        try {
+            $this->ensureDefaultPlatformSettings();
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_SETTINGS_DEFAULTS] ' . $e->getMessage());
+        }
+
         $settings = $req->input('settings', []);
         if (is_array($settings)) {
             foreach ($settings as $key => $value) {
+                if (in_array((string) $key, ['openai_api_key'], true) && trim((string) $value) === '') {
+                    continue;
+                }
                 PlatformSetting::set($key, $value, (int) Session::user()['id']);
             }
         }
@@ -372,12 +382,16 @@ class AdminCatalogController extends Controller
 
     private function benefitPayload(Request $req): array
     {
-        $data = $req->only(['name','slug','description','requirements','status','max_usage','valid_until','service_id','duration_days']);
+        $data = $req->only(['name','slug','description','requirements','status','max_usage','valid_until','service_id','duration_days','target_type','target_id','target_label']);
 
-        foreach (['max_usage', 'service_id', 'duration_days'] as $field) {
+        foreach (['max_usage', 'service_id', 'duration_days', 'target_id'] as $field) {
             if (($data[$field] ?? '') === '') {
                 $data[$field] = null;
             }
+        }
+
+        if (!in_array((string) ($data['target_type'] ?? ''), ['organization', 'user'], true)) {
+            $data['target_type'] = null;
         }
 
         if (($data['valid_until'] ?? '') === '') {
@@ -390,9 +404,9 @@ class AdminCatalogController extends Controller
     private function ensureDefaultServices(): void
     {
         $defaults = [
-            ['name' => 'Painel de Gestao para Igrejas', 'slug' => 'painel-gestao-igrejas', 'description' => 'Sistema completo para membros, financas, ministerios, eventos, relatorios e rotina pastoral.', 'rules' => 'Acesso por assinatura da igreja responsavel.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Painel de Gestao para Igrejas', 'slug' => 'painel-gestao-igrejas', 'description' => 'Sistema completo para membros, financas, ministerios, eventos, relatorios e rotina pastoral. Inclui ate 100 usuarios da plataforma de gestao.', 'rules' => 'Acesso por assinatura da igreja responsavel. Acima de 100 usuarios pode haver custo adicional.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
             ['name' => 'Expositor IA', 'slug' => 'expositor-ia', 'description' => 'Criacao assistida de sermoes, estudos biblicos, series, ministracoes e planos de leitura.', 'rules' => 'Materiais publicados aparecem no sistema de gestao e na area do membro.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
-            ['name' => 'Site para Igrejas', 'slug' => 'site-para-igrejas', 'description' => 'Construtor de site institucional com modelos, dados cadastrais, preview e publicacao para assinantes.', 'rules' => 'Publicacao liberada para assinatura ativa.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Site para Igrejas', 'slug' => 'site-para-igrejas', 'description' => 'Construtor de site institucional com modelos, dados cadastrais, preview e publicacao para assinantes.', 'rules' => 'Plano avulso de site por R$ 67,00/mes. No combo com gestao, o total fica R$ 99,90/mes.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
             ['name' => 'Google Ad Grants', 'slug' => 'google-ad-grants', 'description' => 'Apoio para elegibilidade, configuracao e gestao de campanhas para ONGs e igrejas.', 'rules' => 'Disponibilidade depende das regras do programa e validacao da instituicao.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
             ['name' => 'Google para ONGs', 'slug' => 'google-para-ongs', 'description' => 'Orientacao para ativar ferramentas Google Workspace e recursos para organizacoes elegiveis.', 'rules' => 'Sujeito a aprovacao externa do programa.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
             ['name' => 'Gestao de Trafego Pago', 'slug' => 'gestao-trafego-pago', 'description' => 'Planejamento, criacao e acompanhamento de campanhas pagas para comunicacao e captacao.', 'rules' => 'Investimento de midia nao incluso no servico.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
@@ -410,6 +424,39 @@ class AdminCatalogController extends Controller
 
             $service['sort_order'] = ($index + 1) * 10;
             Service::create($service);
+        }
+    }
+
+    private function ensureDefaultPlatformSettings(): void
+    {
+        $defaults = [
+            ['openai_api_key', '', 'ai', 'Chave da OpenAI usada pelo Expositor IA'],
+            ['openai_model', 'gpt-4o-mini', 'ai', 'Modelo principal do Expositor IA'],
+            ['openai_temperature', '0.6', 'ai', 'Temperatura de geração do Expositor IA'],
+            ['openai_timeout', '60', 'ai', 'Tempo limite das chamadas OpenAI em segundos'],
+            ['plan_management_monthly_price', '67.00', 'billing', 'Plano de gestão mensal até 100 usuários'],
+            ['plan_site_monthly_price', '67.00', 'billing', 'Plano avulso do site'],
+            ['plan_combo_monthly_price', '99.90', 'billing', 'Combo gestão + site'],
+            ['management_included_users', '100', 'billing', 'Usuários incluídos no plano de gestão'],
+        ];
+
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare("
+            INSERT INTO platform_settings (setting_key, setting_value, setting_group, description)
+            VALUES (:key, :value, :group_name, :description)
+        ");
+
+        foreach ($defaults as [$key, $value, $group, $description]) {
+            if (PlatformSetting::first('setting_key', $key)) {
+                continue;
+            }
+
+            $stmt->execute([
+                'key' => $key,
+                'value' => $value,
+                'group_name' => $group,
+                'description' => $description,
+            ]);
         }
     }
 }

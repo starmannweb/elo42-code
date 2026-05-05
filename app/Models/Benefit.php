@@ -10,7 +10,7 @@ use App\Core\Database;
 class Benefit extends Model
 {
     protected static string $table = 'benefits';
-    protected static array $fillable = ['name','slug','service_id','description','requirements','status','max_usage','duration_days','valid_until'];
+    protected static array $fillable = ['name','slug','service_id','target_type','target_id','target_label','description','requirements','status','max_usage','duration_days','valid_until'];
 
     public static function allWithUsageCount(): array
     {

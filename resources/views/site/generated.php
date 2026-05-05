@@ -11,11 +11,18 @@ $title = trim((string) ($site['site_title'] ?? $site['organization_name'] ?? 'Si
 $title = $title !== '' ? $title : 'Site institucional';
 $description = trim((string) ($site['site_description'] ?? 'Uma comunidade para acolher, servir e caminhar em fé.'));
 $description = $description !== '' ? $description : 'Uma comunidade para acolher, servir e caminhar em fé.';
-$about = trim((string) ($site['about_text'] ?? 'Conheça nossa comunidade, acompanhe os eventos e participe das campanhas cadastradas pela organização.'));
+$about = trim((string) ($site['about_text'] ?? ''));
+$about = $about !== '' ? $about : $description;
 $primary = trim((string) ($site['theme_color'] ?? '#0A4DFF'));
 $primary = preg_match('/^#[0-9a-fA-F]{6}$/', $primary) ? $primary : '#0A4DFF';
 $accent = trim((string) ($site['accent_color'] ?? '#d6a646'));
 $accent = preg_match('/^#[0-9a-fA-F]{6}$/', $accent) ? $accent : '#d6a646';
+$backgroundColor = trim((string) ($site['background_color'] ?? '#f4f7fd'));
+$backgroundColor = preg_match('/^#[0-9a-fA-F]{6}$/', $backgroundColor) ? $backgroundColor : '#f4f7fd';
+$textColor = trim((string) ($site['text_color'] ?? '#06183a'));
+$textColor = preg_match('/^#[0-9a-fA-F]{6}$/', $textColor) ? $textColor : '#06183a';
+$titleFont = trim((string) ($site['title_font'] ?? 'Saira')) ?: 'Saira';
+$bodyFont = trim((string) ($site['body_font'] ?? 'Inter')) ?: 'Inter';
 $heroImage = trim((string) ($site['hero_image'] ?? ''));
 $logoImage = trim((string) ($site['logo_image'] ?? ''));
 $contactEmail = trim((string) ($site['contact_email'] ?? ''));
@@ -36,6 +43,12 @@ $socialLinks = array_filter([
     'Facebook' => trim((string) ($site['facebook_url'] ?? '')),
     'YouTube' => trim((string) ($site['youtube_url'] ?? '')),
 ]);
+$galleryRaw = trim((string) ($site['gallery_images'] ?? ''));
+$galleryImages = [];
+if ($galleryRaw !== '') {
+    $decodedGallery = json_decode($galleryRaw, true);
+    $galleryImages = is_array($decodedGallery) ? array_values(array_filter(array_map('strval', $decodedGallery))) : array_values(array_filter(preg_split('/\r\n|\r|\n|,/', $galleryRaw) ?: []));
+}
 
 $principles = [
     ['icon' => 'M3 8h18M3 16h18M9 4l-2 16M17 4l-2 16', 'title' => 'Começamos diferentes', 'text' => 'Cada pessoa é valorizada, cada história importa e todo mundo tem um lugar.'],
@@ -101,25 +114,27 @@ $heroBadge = $templateBadges[$templateKey];
     <title><?= e($title) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lato:wght@400;700;900&family=Merriweather:wght@400;700;900&family=Montserrat:wght@500;600;700;800&family=Saira:wght@600;700;800;900&family=Source+Sans+3:wght@400;600;700;800&display=swap">
     <style>
         :root {
             --primary: <?= e($primary) ?>;
             --primary-dark: color-mix(in srgb, <?= e($primary) ?> 78%, #000 22%);
             --accent: <?= e($accent) ?>;
             /* Tipografia e cores alinhadas com a Área do Membro */
-            --ink: #06183a;
+            --ink: <?= e($textColor) ?>;
             --ink-soft: #4b5d7c;
             --muted: #7a89a4;
             --line: #dfe7f4;
             --line-strong: #c8d7ee;
             --soft: #f4f7fd;
             --surface: #ffffff;
-            --bg: #f4f7fd;
+            --bg: <?= e($backgroundColor) ?>;
+            --title-font: '<?= e($titleFont) ?>', 'Inter', sans-serif;
+            --body-font: '<?= e($bodyFont) ?>', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; font-size: 17px; line-height: 1.65; }
-        h1, h2, h3, h4 { font-family: 'Saira', 'Inter', sans-serif; letter-spacing: -0.01em; margin: 0; color: var(--ink); font-weight: 800; }
+        body { margin: 0; font-family: var(--body-font); color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; font-size: 17px; line-height: 1.65; }
+        h1, h2, h3, h4 { font-family: var(--title-font); letter-spacing: 0; margin: 0; color: var(--ink); font-weight: 800; }
         p { color: var(--ink-soft); font-size: 1.02rem; }
         a { color: inherit; text-decoration: none; }
         img { max-width: 100%; display: block; }
@@ -465,6 +480,26 @@ $heroBadge = $templateBadges[$templateKey];
                                 <?php endif; ?>
                             </div>
                         </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+        <?php endif; ?>
+
+        <?php if (!empty($galleryImages)): ?>
+        <section class="banners">
+            <div class="container">
+                <span class="section-eyebrow">Galeria</span>
+                <h2 class="section-title">Imagens da comunidade</h2>
+                <div class="banners__grid">
+                    <?php foreach (array_slice($galleryImages, 0, 6) as $imageUrl): ?>
+                        <article class="banner-card">
+                            <span class="banner-card__media" style="background-image:url('<?= e(trim((string) $imageUrl)) ?>');"></span>
+                            <div class="banner-card__body">
+                                <strong><?= e($title) ?></strong>
+                                <p>Imagem cadastrada no painel Meu Site.</p>
+                            </div>
+                        </article>
                     <?php endforeach; ?>
                 </div>
             </div>

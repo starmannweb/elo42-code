@@ -105,7 +105,7 @@ $orgTypeOptions = [
                     Ciclo: <strong><?= e((string) ($financial['billing_cycle'] ?? 'Mensal')) ?></strong><br>
                     Publicação: <strong><?= e((string) ($financial['publish_status'] ?? 'Bloqueado sem mensalidade')) ?></strong>
                 </p>
-                <a href="<?= url('/contato') ?>" class="btn btn--outline">Ativar mensalidade</a>
+                <a href="#planos-pagamento" class="btn btn--outline">Ativar mensalidade</a>
             </article>
 
             <article class="hub-mini-card">
@@ -115,6 +115,39 @@ $orgTypeOptions = [
                     Consumo: <strong>1 crédito por geração</strong>
                 </p>
                 <a href="<?= url('/hub/creditos') ?>" class="btn btn--gold">Comprar créditos</a>
+            </article>
+        </div>
+
+        <div id="planos-pagamento" class="hub-cards-grid" style="margin-top:1rem;">
+            <?php
+                $currentPlanSlug = (string) ($financial['plan_slug'] ?? '');
+                $hubPlans = [
+                    ['slug' => 'management', 'name' => 'Gestão de membros', 'price' => 'R$ 67,00/mês', 'description' => 'Inclui até 100 usuários da plataforma de gestão. Usuários adicionais podem gerar custo extra.'],
+                    ['slug' => 'site', 'name' => 'Site avulso', 'price' => 'R$ 67,00/mês', 'description' => 'Plano do site solo, sem o painel de gestão no combo.'],
+                    ['slug' => 'combo', 'name' => 'Combo gestão + site', 'price' => 'R$ 99,90/mês', 'description' => 'Gestão de membros e site publicados no mesmo pacote mensal.'],
+                ];
+            ?>
+            <?php foreach ($hubPlans as $plan): ?>
+                <article class="hub-mini-card">
+                    <h3 class="hub-mini-card__title"><?= e($plan['name']) ?></h3>
+                    <p class="hub-mini-card__text">
+                        <strong><?= e($plan['price']) ?></strong><br>
+                        <?= e($plan['description']) ?>
+                    </p>
+                    <form method="POST" action="<?= url('/hub/configuracoes/plano') ?>" data-loading>
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="plan" value="<?= e($plan['slug']) ?>">
+                        <button type="submit" class="btn <?= $currentPlanSlug === $plan['slug'] ? 'btn--gold' : 'btn--primary' ?>" style="width:100%;">
+                            <?= $currentPlanSlug === $plan['slug'] ? 'Plano selecionado' : 'Selecionar mensalidade' ?>
+                        </button>
+                    </form>
+                </article>
+            <?php endforeach; ?>
+
+            <article class="hub-mini-card">
+                <h3 class="hub-mini-card__title">Pagamentos</h3>
+                <p class="hub-mini-card__text">Configure gateway, chaves e webhooks nas integrações da gestão. A assinatura escolhida acima fica registrada no Hub para cobrança recorrente.</p>
+                <a href="<?= url('/gestao/configuracoes/integracoes') ?>" class="btn btn--outline">Configurar pagamentos</a>
             </article>
         </div>
     </div>

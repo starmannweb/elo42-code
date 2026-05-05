@@ -25,6 +25,7 @@ $router->group(['prefix' => 'hub', 'middleware' => ['csrf', 'auth']], function($
         $router->get('/creditos', [DashboardController::class, 'creditos']);
         $router->post('/creditos/comprar', [DashboardController::class, 'comprarCreditos']);
         $router->post('/configuracoes/perfil-acesso', [DashboardController::class, 'atualizarPerfilAcesso']);
+        $router->post('/configuracoes/plano', [DashboardController::class, 'atualizarPlano']);
 
         // Gestão de Equipe (Usuários)
         $router->get('/usuarios', [DashboardController::class, 'usuarios']);

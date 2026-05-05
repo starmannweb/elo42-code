@@ -6,10 +6,10 @@
 <div class="mgmt-container">
     <div class="mgmt-header">
         <div>
-            <h1 class="mgmt-title">Integrações e IA</h1>
-            <p class="mgmt-subtitle">Conecte pagamentos, comunicação, automações, serviços externos e recursos de inteligência artificial.</p>
+            <h1 class="mgmt-title">Integrações</h1>
+            <p class="mgmt-subtitle">Conecte pagamentos, comunicação, automações e serviços externos da igreja.</p>
         </div>
-        <button type="submit" form="form-integrations" class="btn btn--primary">Salvar integrações e IA</button>
+        <button type="submit" form="form-integrations" class="btn btn--primary">Salvar integrações</button>
     </div>
 
     <form id="form-integrations" method="POST" action="<?= url('/gestao/configuracoes') ?>">
@@ -93,44 +93,12 @@
                 </div>
             </section>
 
-            <section class="mgmt-panel">
+            <section class="mgmt-panel" style="grid-column:1 / -1;">
                 <h3 style="display:flex;align-items:center;gap:.5rem;margin:0 0 1rem;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><path d="M12 3v3"></path><path d="M12 18v3"></path><path d="M3 12h3"></path><path d="M18 12h3"></path></svg>
-                    Inteligência Artificial
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33"></path><path d="M4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6"></path></svg>
+                    IA centralizada no Admin
                 </h3>
-                <p class="mgmt-subtitle" style="margin-bottom:1rem;">Configure a chave e os modelos usados em transcrição, análise e geração ministerial.</p>
-
-                <div class="form-group">
-                    <label class="form-label" for="openai_key">Chave API OpenAI</label>
-                    <input id="openai_key" name="openai_key" class="form-control" type="password" value="<?= e((string) ($settings['openai_key'] ?? '')) ?>" placeholder="sk-...">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="model_analysis">Modelo para análise</label>
-                    <select id="model_analysis" name="model_analysis" class="form-control">
-                        <option value="gpt-4o-mini" <?= (($settings['model_analysis'] ?? '') === 'gpt-4o-mini') ? 'selected' : '' ?>>GPT-4o Mini</option>
-                        <option value="gpt-4o" <?= (($settings['model_analysis'] ?? '') === 'gpt-4o') ? 'selected' : '' ?>>GPT-4o</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="model_generation">Modelo para geração</label>
-                    <select id="model_generation" name="model_generation" class="form-control">
-                        <option value="gpt-4o" <?= (($settings['model_generation'] ?? 'gpt-4o') === 'gpt-4o') ? 'selected' : '' ?>>GPT-4o</option>
-                        <option value="gpt-4o-mini" <?= (($settings['model_generation'] ?? '') === 'gpt-4o-mini') ? 'selected' : '' ?>>GPT-4o Mini</option>
-                    </select>
-                </div>
-            </section>
-
-            <section class="mgmt-panel">
-                <h3 style="display:flex;align-items:center;gap:.5rem;margin:0 0 1rem;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
-                    Uso da IA
-                </h3>
-                <p class="mgmt-subtitle" style="margin-bottom:1rem;">Essas credenciais ficam centralizadas nas integrações. Recursos específicos, como o Expositor IA, continuam no Hub.</p>
-                <div class="mgmt-auto-note">
-                    Dica: mantenha esta área apenas para conexões técnicas. Redes sociais e dados públicos do site são gerenciados em <strong>Hub &gt; Meus sites</strong>.
-                </div>
+                <p class="mgmt-subtitle" style="margin-bottom:0;">Chave OpenAI, modelo e limites do Expositor IA são parâmetros globais do gestor master DEV em <strong>Admin &gt; Configurações</strong>. Esta área fica apenas com integrações da igreja.</p>
             </section>
         </div>
     </form>

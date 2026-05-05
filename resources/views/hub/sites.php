@@ -23,7 +23,12 @@
     $appearanceAccent = trim((string) ($appearance['appearance_accent'] ?? ''));
     $appearanceBackground = trim((string) ($appearance['appearance_background'] ?? ''));
     $appearanceText = trim((string) ($appearance['appearance_text'] ?? ''));
+    $appearanceTitleFont = trim((string) ($appearance['appearance_title_font'] ?? ''));
+    $appearanceBodyFont = trim((string) ($appearance['appearance_body_font'] ?? ''));
     $hasAppearanceSettings = ($appearancePrimary !== '' || $appearanceAccent !== '');
+    $galleryRaw = trim((string) ($currentSite['gallery_images'] ?? ''));
+    $galleryDecoded = $galleryRaw !== '' ? json_decode($galleryRaw, true) : null;
+    $galleryValue = is_array($galleryDecoded) ? implode("\n", array_map('strval', $galleryDecoded)) : $galleryRaw;
     $steps = [
         ['id' => 'dados-site', 'number' => '1', 'title' => 'Dados do site', 'text' => 'Informações públicas e contatos'],
         ['id' => 'modelos-site', 'number' => '2', 'title' => 'Escolher modelo', 'text' => 'Estrutura visual inicial'],
@@ -133,6 +138,12 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="form-label" for="service_times">Horários de cultos e encontros</label>
+                <textarea id="service_times" name="service_times" class="form-textarea" rows="3" placeholder="Ex.: Domingo às 10h e 18h30. Pequenos grupos durante a semana."><?= e((string) ($currentSite['service_times'] ?? '')) ?></textarea>
+                <span class="form-hint">O site público usa este texto nos blocos de contato e rodapé.</span>
+            </div>
+
             <h3 class="hub-panel__title" style="margin-top:1.5rem;">Redes sociais</h3>
             <p class="hub-panel__text">Esses links aparecem no rodapé e cabeçalho do site público.</p>
             <div class="form-grid form-grid--3">
@@ -167,9 +178,9 @@
 
             <?php
                 $templateThumbs = [
-                    'Institucional Clássico' => ['gradient' => 'linear-gradient(135deg,#1e3a8a 0%,#2563eb 60%,#f59e0b 100%)', 'tone' => 'azul royal · simples e formal'],
+                    'Institucional Clássico' => ['gradient' => 'linear-gradient(135deg,#164e63 0%,#0f766e 58%,#d6a646 100%)', 'tone' => 'editorial clássico com leitura serena'],
                     'Comunidade Engajada'    => ['gradient' => 'linear-gradient(135deg,#7c1d3a 0%,#9f1239 50%,#1e3a8a 100%)', 'tone' => 'bordô · multimídia e calorosa'],
-                    'Campanhas e Eventos'    => ['gradient' => 'linear-gradient(135deg,#0f172a 0%,#0a4dff 60%,#fcd34d 100%)', 'tone' => 'preto e ouro · foco em CTA'],
+                    'Campanhas e Eventos'    => ['gradient' => 'linear-gradient(135deg,#7f1d1d 0%,#dc2626 58%,#f97316 100%)', 'tone' => 'campanha dinâmica com foco em conversão'],
                     'Captação para ONGs'     => ['gradient' => 'linear-gradient(135deg,#0f766e 0%,#14b8a6 50%,#fcd34d 100%)', 'tone' => 'verde · impacto social'],
                 ];
                 $templateLayouts = [
@@ -303,6 +314,17 @@
                 .image-preview--hero img { max-height:180px; width:100%; object-fit:cover; border-radius:8px; }
                 .image-preview[hidden] { display:none; }
             </style>
+            <div class="site-appearance-card">
+                <div>
+                    <h3 class="hub-panel__title" style="margin:0;">Imagens adicionais</h3>
+                    <p class="hub-panel__text" style="margin:0;">Cole uma URL por linha para fotos de cultos, comunidade, ministérios ou eventos. O site usa essas imagens como apoio visual quando houver conteúdo para destacar.</p>
+                </div>
+                <div class="form-group" style="margin-top:1rem;">
+                    <label class="form-label" for="gallery_images">Galeria do site</label>
+                    <textarea id="gallery_images" name="gallery_images" class="form-textarea" rows="4" placeholder="https://.../foto-culto.jpg&#10;https://.../ministerio.jpg"><?= e($galleryValue) ?></textarea>
+                </div>
+            </div>
+
             <script>
             (function () {
                 document.querySelectorAll('[data-image-uploader]').forEach(function (group) {
@@ -382,6 +404,30 @@
                             <input type="text" class="form-input" id="appearance_accent_text" value="<?= e($accentValue) ?>" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" style="flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;">
                         </div>
                         <span class="form-hint">Aplicada em CTAs e elementos de destaque.</span>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label" for="appearance_background">Cor de fundo</label>
+                        <input type="color" id="appearance_background" name="appearance_background" value="<?= e($appearanceBackground !== '' ? $appearanceBackground : '#f4f7fd') ?>" style="width:100%;height:42px;border:1px solid var(--color-border-light, #dfe7f4);border-radius:8px;padding:2px;cursor:pointer;background:transparent;">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label" for="appearance_text">Cor dos textos</label>
+                        <input type="color" id="appearance_text" name="appearance_text" value="<?= e($appearanceText !== '' ? $appearanceText : '#06183a') ?>" style="width:100%;height:42px;border:1px solid var(--color-border-light, #dfe7f4);border-radius:8px;padding:2px;cursor:pointer;background:transparent;">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label" for="appearance_title_font">Fonte de títulos</label>
+                        <select id="appearance_title_font" name="appearance_title_font" class="form-select">
+                            <?php foreach (['Saira' => 'Saira', 'Inter' => 'Inter', 'Merriweather' => 'Merriweather', 'Montserrat' => 'Montserrat'] as $fontValue => $fontLabel): ?>
+                                <option value="<?= e($fontValue) ?>" <?= ($appearanceTitleFont ?: 'Saira') === $fontValue ? 'selected' : '' ?>><?= e($fontLabel) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label" for="appearance_body_font">Fonte de textos</label>
+                        <select id="appearance_body_font" name="appearance_body_font" class="form-select">
+                            <?php foreach (['Inter' => 'Inter', 'Saira' => 'Saira', 'Lato' => 'Lato', 'Source Sans 3' => 'Source Sans 3'] as $fontValue => $fontLabel): ?>
+                                <option value="<?= e($fontValue) ?>" <?= ($appearanceBodyFont ?: 'Inter') === $fontValue ? 'selected' : '' ?>><?= e($fontLabel) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
             </div>

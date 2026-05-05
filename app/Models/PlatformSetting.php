@@ -21,8 +21,16 @@ class PlatformSetting extends Model
     public static function set(string $key, ?string $value, ?int $userId = null): void
     {
         $pdo = Database::connection();
-        $pdo->prepare("UPDATE platform_settings SET setting_value = :val, updated_by = :uid WHERE setting_key = :key")
-            ->execute(['val' => $value, 'uid' => $userId, 'key' => $key]);
+        $stmt = $pdo->prepare("UPDATE platform_settings SET setting_value = :val, updated_by = :uid WHERE setting_key = :key");
+        $stmt->execute(['val' => $value, 'uid' => $userId, 'key' => $key]);
+
+        if ($stmt->rowCount() === 0 && !static::first('setting_key', $key)) {
+            $insert = $pdo->prepare("
+                INSERT INTO platform_settings (setting_key, setting_value, setting_group, description, updated_by)
+                VALUES (:key, :val, 'general', '', :uid)
+            ");
+            $insert->execute(['key' => $key, 'val' => $value, 'uid' => $userId]);
+        }
     }
 
     public static function byGroup(?string $group = null): array
