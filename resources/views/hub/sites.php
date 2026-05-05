@@ -318,6 +318,7 @@
                 .image-preview img { display:block; max-width:100%; max-height:140px; margin:0 auto; object-fit:contain; }
                 .image-preview--hero img { max-height:180px; width:100%; object-fit:cover; border-radius:8px; }
                 .image-preview[hidden] { display:none; }
+                .site-gallery-uploader { display:flex; align-items:center; gap:.6rem; margin-top:.65rem; flex-wrap:wrap; }
             </style>
             <div class="site-appearance-card">
                 <div>
@@ -327,6 +328,12 @@
                 <div class="form-group" style="margin-top:1rem;">
                     <label class="form-label" for="gallery_images">Galeria do site</label>
                     <textarea id="gallery_images" name="gallery_images" class="form-textarea" rows="4" placeholder="https://.../foto-culto.jpg&#10;https://.../ministerio.jpg"><?= e($galleryValue) ?></textarea>
+                    <div class="site-gallery-uploader" data-gallery-uploader>
+                        <label class="btn btn--outline btn--sm" for="gallery_image_files" style="margin:0;cursor:pointer;">Enviar imagens</label>
+                        <input type="file" id="gallery_image_files" name="gallery_image_files[]" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden data-gallery-input>
+                        <span class="file-chip" data-gallery-chip hidden><span data-gallery-count>0 imagens selecionadas</span></span>
+                    </div>
+                    <span class="form-hint">Você pode misturar links e uploads. PNG, JPG, WEBP ou GIF até 5 MB por imagem.</span>
                 </div>
             </div>
 
@@ -355,6 +362,21 @@
                         }
                     });
                 });
+                var gallery = document.querySelector('[data-gallery-uploader]');
+                if (gallery) {
+                    var galleryInput = gallery.querySelector('[data-gallery-input]');
+                    var galleryChip = gallery.querySelector('[data-gallery-chip]');
+                    var galleryCount = gallery.querySelector('[data-gallery-count]');
+                    if (galleryInput) {
+                        galleryInput.addEventListener('change', function () {
+                            var count = galleryInput.files ? galleryInput.files.length : 0;
+                            if (galleryChip && galleryCount && count > 0) {
+                                galleryCount.textContent = count === 1 ? '1 imagem selecionada' : count + ' imagens selecionadas';
+                                galleryChip.hidden = false;
+                            }
+                        });
+                    }
+                }
             })();
             </script>
 

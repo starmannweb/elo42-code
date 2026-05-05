@@ -1,4 +1,4 @@
-﻿<?php $__view->extends('management'); ?>
+<?php $__view->extends('management'); ?>
 <?php $__view->section('content'); ?>
 <?php
     $preachers = is_array($preachers ?? null) ? $preachers : [];

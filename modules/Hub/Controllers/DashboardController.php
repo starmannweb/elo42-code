@@ -1088,6 +1088,67 @@ class DashboardController extends Controller
         return $this->normalizeSiteUrl($fallbackUrl);
     }
 
+    private function uploadedSiteImageUrl(array $upload, string $prefix, int $orgId, array $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']): ?string
+    {
+        if ((int) ($upload['error'] ?? \UPLOAD_ERR_NO_FILE) !== \UPLOAD_ERR_OK || empty($upload['tmp_name']) || !is_uploaded_file((string) $upload['tmp_name'])) {
+            return null;
+        }
+
+        $size = (int) ($upload['size'] ?? 0);
+        if ($size <= 0 || $size > 5 * 1024 * 1024) {
+            return null;
+        }
+
+        $mime = function_exists('mime_content_type') ? (string) mime_content_type((string) $upload['tmp_name']) : '';
+        if (!in_array($mime, $allowedMimes, true)) {
+            return null;
+        }
+
+        $extByMime = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif', 'image/svg+xml' => 'svg'];
+        $ext = $extByMime[$mime] ?? 'jpg';
+        $relativeDir = '/uploads/sites/' . max(0, $orgId);
+        $targetDir = dirname(__DIR__, 3) . '/public' . $relativeDir;
+
+        if (!is_dir($targetDir)) {
+            @mkdir($targetDir, 0775, true);
+        }
+
+        $filename = preg_replace('/[^a-z0-9_-]+/i', '-', $prefix) . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+        $absolute = $targetDir . '/' . $filename;
+
+        if (@move_uploaded_file((string) $upload['tmp_name'], $absolute)) {
+            return url($relativeDir . '/' . $filename);
+        }
+
+        return null;
+    }
+
+    private function normalizeGalleryImagesWithUploads(string $value, int $orgId): ?string
+    {
+        $existing = json_decode((string) $this->normalizeGalleryImages($value), true);
+        $urls = is_array($existing) ? array_values(array_filter(array_map('strval', $existing))) : [];
+        $files = $_FILES['gallery_image_files'] ?? null;
+
+        if (is_array($files) && is_array($files['name'] ?? null)) {
+            foreach (array_keys($files['name']) as $index) {
+                $upload = [
+                    'name' => $files['name'][$index] ?? '',
+                    'type' => $files['type'][$index] ?? '',
+                    'tmp_name' => $files['tmp_name'][$index] ?? '',
+                    'error' => $files['error'][$index] ?? \UPLOAD_ERR_NO_FILE,
+                    'size' => $files['size'][$index] ?? 0,
+                ];
+                $url = $this->uploadedSiteImageUrl($upload, 'gallery', $orgId);
+                if ($url !== null) {
+                    $urls[] = $url;
+                }
+            }
+        }
+
+        $urls = array_values(array_unique(array_filter($urls)));
+        return !empty($urls) ? json_encode($urls, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null;
+    }
+
     private function siteBuilderPayload(Request $request, array $organization): array
     {
         $siteTitle = trim((string) $request->input('site_title', $organization['name'] ?? 'Site institucional'));
@@ -1122,7 +1183,7 @@ class DashboardController extends Controller
             'cta_label' => $this->nullableText((string) $request->input('cta_label', '')),
             'cta_url' => $this->normalizeSiteUrl((string) $request->input('cta_url', '')),
             'service_times' => $this->nullableText((string) $request->input('service_times', '')),
-            'gallery_images' => $this->normalizeGalleryImages((string) $request->input('gallery_images', '')),
+            'gallery_images' => $this->normalizeGalleryImagesWithUploads((string) $request->input('gallery_images', ''), $orgId),
         ];
     }
 
@@ -2114,7 +2175,7 @@ class DashboardController extends Controller
             ],
             [
                 'name' => 'Comunidade Engajada',
-                'description' => 'Inspirado no padrão Igreja do Porto: hero com chamada, princípios, última mensagem, séries, eventos e blocos de convite (visite, voluntariado, discipulado, café com pastor).',
+                'description' => 'Layout caloroso e comunitário: hero com chamada, princípios, última mensagem, séries, eventos e blocos de convite (visite, voluntariado, discipulado, café com pastor).',
                 'status' => 'Disponível',
                 'highlight' => false,
                 'assets' => ['Foto da comunidade', 'Capas de séries', 'Cards de eventos', 'Banners de convite'],

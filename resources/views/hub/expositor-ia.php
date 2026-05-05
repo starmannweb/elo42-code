@@ -1,4 +1,4 @@
-﻿<?php $__view->extends('hub'); ?>
+<?php $__view->extends('hub'); ?>
 
 <?php $__view->section('content'); ?>
 
@@ -172,6 +172,47 @@
             </div>
         </form>
     </article>
+
+    <?php
+        $planningResources = [
+            ['title' => 'Currículo de Escola Dominical', 'text' => 'Série bíblica com progressão pedagógica, objetivo por aula e perguntas de aplicação.', 'placeholder' => 'Ex.: Evangelho de João para adultos', 'theme' => 'Adultos, jovens ou adolescentes'],
+            ['title' => 'Roteiro de Discipulado', 'text' => 'Trilha de encontros adaptada ao perfil espiritual, maturidade e objetivo pastoral.', 'placeholder' => 'Ex.: novos membros em 12 encontros', 'theme' => 'Fundamentos da fé'],
+            ['title' => 'Preparação Bíblica para Casamento', 'text' => 'Curso de noivos com encontros, textos bíblicos, alertas pastorais e exercícios.', 'placeholder' => 'Ex.: casal jovem, 7 encontros', 'theme' => 'Aliança, comunicação e finanças'],
+            ['title' => 'Planejamento de Pequenos Grupos', 'text' => 'Ciclo completo com título, visão pastoral, encontros e perguntas para líderes.', 'placeholder' => 'Ex.: PGs em fase de crescimento', 'theme' => 'Comunhão, Palavra e oração'],
+            ['title' => 'Plano Anual da Igreja', 'text' => 'Esboço macro para organizar ênfases, calendário pastoral, ministérios e indicadores.', 'placeholder' => 'Ex.: ano de consolidação e discipulado', 'theme' => '2027'],
+        ];
+    ?>
+    <section class="hub-panel" style="margin-top:var(--space-5);">
+        <div class="hub-panel__row">
+            <div>
+                <h2 class="hub-panel__title">Hub ministerial</h2>
+                <p class="hub-panel__text">Crie materiais que já nascem com destino prático para gestão, área de membros, séries e rotinas da igreja.</p>
+            </div>
+            <span class="hub-badge <?= $canGenerate ? 'hub-badge--success' : 'hub-badge--warning' ?>"><?= $canGenerate ? 'Pronto para gerar' : 'Sem créditos' ?></span>
+        </div>
+        <div class="expositor-resource-grid">
+            <?php foreach ($planningResources as $resource): ?>
+                <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="content_type" value="resource">
+                    <input type="hidden" name="resource_title" value="<?= e($resource['title']) ?>">
+                    <input type="hidden" name="confessional" value="biblico-evangelico">
+                    <input type="hidden" name="depth" value="pastoral">
+                    <h3 class="hub-mini-card__title"><?= e($resource['title']) ?></h3>
+                    <p class="hub-mini-card__text"><?= e($resource['text']) ?></p>
+                    <div class="form-group">
+                        <label class="form-label">Contexto principal</label>
+                        <input type="text" name="passage" class="form-input" placeholder="<?= e($resource['placeholder']) ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ênfase / público</label>
+                        <input type="text" name="theme" class="form-input" placeholder="<?= e($resource['theme']) ?>">
+                    </div>
+                    <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar visão geral</button>
+                </form>
+            <?php endforeach; ?>
+        </div>
+    </section>
 
     <div class="expositor-flow-grid">
         <article class="expositor-flow-card">

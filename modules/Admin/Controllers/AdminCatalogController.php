@@ -351,8 +351,12 @@ class AdminCatalogController extends Controller
         try {
             $this->ensureDefaultPlatformSettings();
             $settings = PlatformSetting::byGroup();
+            if (empty($settings)) {
+                $settings = $this->defaultPlatformSettings();
+            }
         } catch (\Throwable $e) {
             $degraded = true;
+            $settings = $this->defaultPlatformSettings();
             error_log('[ADMIN_SETTINGS] ' . $e->getMessage());
         }
 
@@ -461,6 +465,11 @@ class AdminCatalogController extends Controller
             ['plan_site_monthly_price', '67.00', 'billing', 'Plano avulso do site'],
             ['plan_combo_monthly_price', '99.90', 'billing', 'Combo gestão + site'],
             ['management_included_users', '100', 'billing', 'Usuários incluídos no plano de gestão'],
+            ['ia_free_generations_monthly', '3', 'ai', 'Geracoes gratuitas mensais por workspace'],
+            ['ia_credit_cost', '1', 'ai', 'Creditos consumidos por geracao do Expositor IA'],
+            ['site_publish_cname_target', 'sites.elo42.com.br', 'sites', 'Destino CNAME recomendado para www ou subdominios'],
+            ['site_publish_apex_ip', '185.158.133.1', 'sites', 'IP usado quando o provedor exigir registro A no dominio raiz'],
+            ['site_domain_verify_prefix', '_elo42-verify', 'sites', 'Prefixo do TXT opcional para validar posse do dominio'],
         ];
 
         $pdo = Database::connection();
@@ -481,5 +490,23 @@ class AdminCatalogController extends Controller
                 'description' => $description,
             ]);
         }
+    }
+    private function defaultPlatformSettings(): array
+    {
+        return [
+            ['setting_key' => 'openai_api_key', 'setting_value' => '', 'setting_group' => 'ai', 'description' => 'Chave da OpenAI usada pelo Expositor IA. Deixe em branco para manter a chave atual.'],
+            ['setting_key' => 'openai_model', 'setting_value' => 'gpt-4o-mini', 'setting_group' => 'ai', 'description' => 'Modelo principal usado pelo Expositor IA.'],
+            ['setting_key' => 'openai_temperature', 'setting_value' => '0.6', 'setting_group' => 'ai', 'description' => 'Criatividade das respostas. Valores menores deixam o material mais conservador.'],
+            ['setting_key' => 'openai_timeout', 'setting_value' => '60', 'setting_group' => 'ai', 'description' => 'Tempo limite das chamadas OpenAI em segundos.'],
+            ['setting_key' => 'ia_free_generations_monthly', 'setting_value' => '3', 'setting_group' => 'ai', 'description' => 'Geracoes gratuitas mensais por workspace.'],
+            ['setting_key' => 'ia_credit_cost', 'setting_value' => '1', 'setting_group' => 'ai', 'description' => 'Creditos consumidos por geracao do Expositor IA.'],
+            ['setting_key' => 'plan_management_monthly_price', 'setting_value' => '67.00', 'setting_group' => 'billing', 'description' => 'Plano de gestao mensal com ate 100 usuarios da plataforma.'],
+            ['setting_key' => 'plan_site_monthly_price', 'setting_value' => '67.00', 'setting_group' => 'billing', 'description' => 'Plano avulso do site para igrejas.'],
+            ['setting_key' => 'plan_combo_monthly_price', 'setting_value' => '99.90', 'setting_group' => 'billing', 'description' => 'Combo gestao + site.'],
+            ['setting_key' => 'management_included_users', 'setting_value' => '100', 'setting_group' => 'billing', 'description' => 'Usuarios incluidos no plano de gestao. Acima disso, cobrar adicional.'],
+            ['setting_key' => 'site_publish_cname_target', 'setting_value' => 'sites.elo42.com.br', 'setting_group' => 'sites', 'description' => 'Destino CNAME recomendado para www ou subdominios.'],
+            ['setting_key' => 'site_publish_apex_ip', 'setting_value' => '185.158.133.1', 'setting_group' => 'sites', 'description' => 'IP usado quando o provedor exigir registro A no dominio raiz.'],
+            ['setting_key' => 'site_domain_verify_prefix', 'setting_value' => '_elo42-verify', 'setting_group' => 'sites', 'description' => 'Prefixo do TXT opcional para validar posse do dominio.'],
+        ];
     }
 }

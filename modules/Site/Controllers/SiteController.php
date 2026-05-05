@@ -246,8 +246,8 @@ class SiteController extends Controller
             'about_text' => 'Este site foi reservado pela organização e está pronto para receber identidade visual, conteúdo, eventos e informações públicas.',
             'template' => 'Em construção',
             'theme_color' => '#0A4DFF',
-            'cta_label' => 'Voltar ao Elo 42',
-            'cta_url' => url('/'),
+            'cta_label' => 'Falar com a igreja',
+            'cta_url' => '#contato',
         ];
     }
 

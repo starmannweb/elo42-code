@@ -125,6 +125,10 @@ PROMPT;
             return 'Planejamento de série de sermões';
         }
 
+        if ($contentType === 'resource' && $resource !== '') {
+            return $resource;
+        }
+
         if ($contentType === 'study' && str_contains($resource, 'academico')) {
             return 'Estudo de texto acadêmico';
         }
@@ -166,6 +170,65 @@ Estruture a resposta com:
 TEXT;
         }
 
+        if ($contentType === 'resource') {
+            if (str_contains($resource, 'curr')) {
+                return <<<TEXT
+Estruture a resposta como curriculo de Escola Dominical:
+1. Visao geral da serie: objetivo pedagogico, publico, duracao e resultado esperado.
+2. Trilha de aulas: titulo, texto biblico, doutrina central, dinamica e aplicacao de cada encontro.
+3. Camada do professor: perguntas de observacao, interpretacao, aplicacao e avaliacao.
+4. Integracao com o Hub: sugestao de serie, aulas publicaveis e proximos passos para membros.
+TEXT;
+            }
+
+            if (str_contains($resource, 'discipulado')) {
+                return <<<TEXT
+Estruture a resposta como roteiro de discipulado:
+1. Diagnostico do perfil espiritual e objetivo da trilha.
+2. Encontros: titulo, passagem, objetivo, conversa guiada, pratica semanal e acompanhamento.
+3. Criterios pastorais: sinais de avanco, alertas e proximos passos para integracao na igreja.
+4. Integracao com o Hub: tarefas, membros responsaveis e materiais publicaveis.
+TEXT;
+            }
+
+            if (str_contains($resource, 'casamento')) {
+                return <<<TEXT
+Estruture a resposta como preparacao biblica para casamento:
+1. Visao pastoral do casal, tom adequado e objetivo dos encontros.
+2. Estrutura fixa de encontros com tema, texto biblico, perguntas, exercicio e alerta pastoral.
+3. Recomendacoes de acompanhamento, limites e proximos passos antes da cerimonia.
+4. Integracao com o Hub: checklist, agenda de encontros e material para o casal.
+TEXT;
+            }
+
+            if (str_contains($resource, 'pequenos grupos')) {
+                return <<<TEXT
+Estruture a resposta como planejamento de pequenos grupos:
+1. Visao pastoral do ciclo, publico, ritmo e resultado esperado.
+2. Encontros: titulo, passagem, quebra-gelo, estudo, perguntas e aplicacao comunitaria.
+3. Orientacoes para lideres: acompanhamento, metricas saudaveis e alertas de cuidado.
+4. Integracao com o Hub: grupos, lideres, calendario e publicacao para membros.
+TEXT;
+            }
+
+            if (str_contains($resource, 'plano anual')) {
+                return <<<TEXT
+Estruture a resposta como plano anual da igreja:
+1. Sintese de discernimento pastoral e tema norteador do ano.
+2. Pilares, trimestre a trimestre, com objetivos, acoes, responsaveis e indicadores.
+3. Agenda macro: culto, discipulado, pequenos grupos, comunicacao, financas e ministerios.
+4. Integracao com o Hub: tarefas, calendario, campanhas e relatorios que devem ser criados.
+TEXT;
+            }
+
+            return <<<TEXT
+Estruture a resposta como recurso ministerial pratico:
+1. Objetivo pastoral, publico e contexto de uso.
+2. Estrutura do material com etapas, textos biblicos, perguntas e aplicacoes.
+3. Plano de execucao: responsaveis, duracao, calendario e acompanhamento.
+4. Integracao com o Hub: onde publicar, quais tarefas criar e como medir avanco.
+TEXT;
+        }
         if (str_contains($resource, 'refinar')) {
             return <<<TEXT
 Estruture a resposta como refinamento do rascunho recebido:

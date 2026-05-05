@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $site = is_array($site ?? null) ? $site : [];
 $events = is_array($events ?? null) ? $events : [];
 $campaigns = is_array($campaigns ?? null) ? $campaigns : [];
@@ -35,6 +35,9 @@ $addressParts = array_filter([
 $address = implode(' - ', $addressParts);
 $ctaLabel = trim((string) ($site['cta_label'] ?? 'Quero visitar'));
 $ctaLabel = $ctaLabel !== '' ? $ctaLabel : 'Quero visitar';
+if (in_array(mb_strtolower($ctaLabel), ['voltar ao elo 42', 'voltar para o elo 42'], true)) {
+    $ctaLabel = 'Falar com a igreja';
+}
 $ctaUrl = trim((string) ($site['cta_url'] ?? ''));
 $ctaUrl = $ctaUrl !== '' ? $ctaUrl : ($whatsappUrl !== '' ? $whatsappUrl : '#contato');
 $socialLinks = array_filter([

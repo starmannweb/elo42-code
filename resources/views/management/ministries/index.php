@@ -13,7 +13,7 @@
 
 <?php if (empty($ministries)): ?>
 <div class="mgmt-empty">
-    <div class="mgmt-empty__icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+    <div class="mgmt-empty__icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20h16"></path><path d="M5 20V8l7-4 7 4v12"></path><path d="M9 20v-6h6v6"></path><path d="M8 10h.01"></path><path d="M16 10h.01"></path><path d="M12 8v3"></path><path d="M10.5 9.5h3"></path></svg></div>
     <h3 class="mgmt-empty__title">Nenhum ministério cadastrado</h3>
     <p class="mgmt-empty__text">Crie o primeiro ministério e já vincule líder e membros ministeriais como Infantil, Louvor, Mídia, Intercessão ou Recepção.</p>
     <a href="<?= url('/gestao/ministerios/novo') ?>" class="btn btn--primary">Criar ministério</a>
