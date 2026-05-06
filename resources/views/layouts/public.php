@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?= e($metaDescription ?? 'Elo 42 — Gestão, tecnologia e impacto para igrejas e organizações.') ?>">
+    <meta name="theme-color" content="#1455FF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Elo 42">
+    <link rel="manifest" href="<?= url('/app-manifest') ?>">
+    <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
     <title><?= e($pageTitle ?? 'Elo 42 Platform') ?></title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,6 +48,11 @@
                 });
             }
         });
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('<?= url('/sw.js') ?>').catch(function () {});
+            });
+        }
     </script>
 </body>
 </html>

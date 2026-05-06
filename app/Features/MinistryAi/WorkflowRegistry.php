@@ -12,17 +12,17 @@ final class WorkflowRegistry
             [
                 'id' => 'planejamento',
                 'title' => 'Planejamento Ministerial',
-                'description' => 'Curriculos, discipulados, lideranca, pequenos grupos e plano anual.',
+                'description' => 'Currículos, discipulados, liderança, pequenos grupos e plano anual.',
             ],
             [
                 'id' => 'pregacao',
-                'title' => 'Pregacao',
-                'description' => 'Sermoes, rascunhos, cultos ocasionais e aulas EBD.',
+                'title' => 'Pregação',
+                'description' => 'Sermões, rascunhos, cultos ocasionais e aulas EBD.',
             ],
             [
                 'id' => 'estudos',
-                'title' => 'Estudos Biblicos',
-                'description' => 'Estudos exegeticos, tematicos, confessionais e devocionais.',
+                'title' => 'Estudos Bíblicos',
+                'description' => 'Estudos exegéticos, temáticos, confessionais e devocionais.',
             ],
         ];
     }
@@ -32,31 +32,31 @@ final class WorkflowRegistry
         return [
             'series_sermoes' => [
                 'module' => 'planejamento',
-                'title' => 'Series de Sermoes',
-                'description' => 'Planeje uma serie com progressao pastoral, textos e mensagens.',
+                'title' => 'Séries de Sermões',
+                'description' => 'Planeje uma série com progressão pastoral, textos e mensagens.',
                 'icon' => 'mic',
                 'accent' => '#D97706',
                 'fields' => [
-                    self::text('series_theme', 'Tema da serie', true, 'Ex.: As promessas de Deus em tempos dificeis'),
-                    self::select('message_count', 'Numero de mensagens', true, [['4', '4 mensagens'], ['6', '6 mensagens'], ['8', '8 mensagens'], ['10', '10 mensagens'], ['12', '12 mensagens']]),
-                    self::select('audience', 'Publico-alvo', true, self::audienceOptions()),
-                    self::select('series_emphasis', 'Enfase da serie', true, self::pastoralEmphasisOptions()),
+                    self::text('series_theme', 'Tema da série', true, 'Ex.: As promessas de Deus em tempos difíceis'),
+                    self::select('message_count', 'Número de mensagens', true, [['4', '4 mensagens'], ['6', '6 mensagens'], ['8', '8 mensagens'], ['10', '10 mensagens'], ['12', '12 mensagens']]),
+                    self::select('audience', 'Público-alvo', true, self::audienceOptions()),
+                    self::select('series_emphasis', 'Ênfase da série', true, self::pastoralEmphasisOptions()),
                 ],
             ],
             'curriculo_escola_dominical' => [
                 'module' => 'planejamento',
-                'title' => 'Curriculo de Escola Dominical',
-                'description' => 'Crie uma serie pedagogica para classes e trilhas de formacao.',
+                'title' => 'Currículo de Escola Dominical',
+                'description' => 'Crie uma série pedagógica para classes e trilhas de formação.',
                 'icon' => 'book',
                 'accent' => '#5B21B6',
                 'fields' => [
-                    self::select('creation_mode', 'Modo de criacao', true, [['trilhas_sugeridas', 'Trilhas sugeridas'], ['criar_do_zero', 'Criar do zero']]),
-                    self::select('audience', 'Publico-alvo', true, [['adolescentes', 'Adolescentes'], ['jovens', 'Jovens'], ['casais', 'Casais'], ['adultos', 'Adultos'], ['catecumenos', 'Catecumenos'], ['novos_membros', 'Novos membros']]),
-                    self::select('suggested_track', 'Trilha sugerida', false, [['solas_reforma', 'Solas da Reforma'], ['panorama_biblico', 'Panorama Biblico'], ['evangelho_joao', 'Evangelho de Joao'], ['doutrina_salvacao', 'Doutrina da Salvacao'], ['vida_crista_reformada', 'Vida Crista Reformada'], ['catecismo_comentado', 'Catecismo Comentado'], ['igreja_sacramentos', 'Igreja e Sacramentos'], ['cosmovisao_crista', 'Cosmovisao Crista']]) + ['condition' => ['field' => 'creation_mode', 'equals' => 'trilhas_sugeridas']],
-                    self::text('series_theme', 'Tema da serie', false, 'Quando criar do zero') + ['condition' => ['field' => 'creation_mode', 'equals' => 'criar_do_zero']],
-                    self::text('pedagogical_goal', 'Objetivo pedagogico', true, 'O que a turma deve saber, crer e praticar?'),
-                    self::textarea('class_need', 'Necessidade especifica da turma', false, 'Opcional') + ['condition' => ['field' => 'creation_mode', 'equals' => 'criar_do_zero']],
-                    self::select('lesson_count', 'Quantidade de licoes', true, [['4', '4'], ['6', '6'], ['8', '8'], ['10', '10'], ['12', '12'], ['13', '13']]),
+                    self::select('creation_mode', 'Modo de criação', true, [['trilhas_sugeridas', 'Trilhas sugeridas'], ['criar_do_zero', 'Criar do zero']]),
+                    self::select('audience', 'Público-alvo', true, [['adolescentes', 'Adolescentes'], ['jovens', 'Jovens'], ['casais', 'Casais'], ['adultos', 'Adultos'], ['catecumenos', 'Catecúmenos'], ['novos_membros', 'Novos membros']]),
+                    self::select('suggested_track', 'Trilha sugerida', false, [['solas_reforma', 'Solas da Reforma'], ['panorama_biblico', 'Panorama Bíblico'], ['evangelho_joao', 'Evangelho de João'], ['doutrina_salvacao', 'Doutrina da Salvação'], ['vida_crista_reformada', 'Vida Cristã Reformada'], ['catecismo_comentado', 'Catecismo Comentado'], ['igreja_sacramentos', 'Igreja e Sacramentos'], ['cosmovisao_crista', 'Cosmovisão Cristã']]) + ['condition' => ['field' => 'creation_mode', 'equals' => 'trilhas_sugeridas']],
+                    self::text('series_theme', 'Tema da série', false, 'Quando criar do zero') + ['condition' => ['field' => 'creation_mode', 'equals' => 'criar_do_zero']],
+                    self::text('pedagogical_goal', 'Objetivo pedagógico', true, 'O que a turma deve saber, crer e praticar?'),
+                    self::textarea('class_need', 'Necessidade específica da turma', false, 'Opcional') + ['condition' => ['field' => 'creation_mode', 'equals' => 'criar_do_zero']],
+                    self::select('lesson_count', 'Quantidade de lições', true, [['4', '4'], ['6', '6'], ['8', '8'], ['10', '10'], ['12', '12'], ['13', '13']]),
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
                 ],
             ],
@@ -67,15 +67,15 @@ final class WorkflowRegistry
                 'icon' => 'users',
                 'accent' => '#059669',
                 'fields' => [
-                    self::select('spiritual_profile', 'Perfil espiritual', true, [['novo_convertido', 'Novo convertido'], ['catolicismo', 'Vindo do catolicismo'], ['pentecostalismo', 'Vindo do pentecostalismo'], ['evangelico_tradicional', 'Evangelico tradicional'], ['contexto_reformado', 'Contexto reformado'], ['membro_antigo', 'Membro antigo'], ['retornando_fe', 'Retornando a fe']]),
-                    self::select('age_group', 'Faixa etaria', true, [['adolescente', 'Adolescente'], ['jovem', 'Jovem'], ['adulto', 'Adulto'], ['maduro_idoso', 'Maduro / idoso']]),
-                    self::select('biblical_level', 'Nivel biblico', true, [['basico', 'Basico'], ['intermediario', 'Intermediario'], ['avancado', 'Avancado']]),
-                    self::select('main_goal', 'Objetivo principal', true, [['fundamentos_fe', 'Fundamentos da fe'], ['integracao_igreja', 'Integracao na igreja'], ['profissao_membresia', 'Profissao de fe / membresia'], ['formacao_lideranca', 'Formacao para lideranca'], ['restauracao_espiritual', 'Restauracao espiritual']]),
-                    self::select('frequency', 'Frequencia', true, [['semanal', 'Semanal'], ['quinzenal', 'Quinzenal'], ['mensal', 'Mensal']]),
-                    self::select('meeting_duration', 'Duracao do encontro', true, [['45', '45 minutos'], ['60', '60 minutos'], ['75', '75 minutos'], ['90', '90 minutos']]),
-                    self::select('environment', 'Ambiente', true, [['casa', 'Casa'], ['igreja', 'Igreja'], ['cafe', 'Cafe'], ['online', 'Online']]),
+                    self::select('spiritual_profile', 'Perfil espiritual', true, [['novo_convertido', 'Novo convertido'], ['catolicismo', 'Vindo do catolicismo'], ['pentecostalismo', 'Vindo do pentecostalismo'], ['evangelico_tradicional', 'Evangélico tradicional'], ['contexto_reformado', 'Contexto reformado'], ['membro_antigo', 'Membro antigo'], ['retornando_fe', 'Retornando à fé']]),
+                    self::select('age_group', 'Faixa etária', true, [['adolescente', 'Adolescente'], ['jovem', 'Jovem'], ['adulto', 'Adulto'], ['maduro_idoso', 'Maduro / idoso']]),
+                    self::select('biblical_level', 'Nível bíblico', true, [['basico', 'Básico'], ['intermediario', 'Intermediário'], ['avancado', 'Avançado']]),
+                    self::select('main_goal', 'Objetivo principal', true, [['fundamentos_fe', 'Fundamentos da fé'], ['integracao_igreja', 'Integração na igreja'], ['profissao_membresia', 'Profissão de fé / membresia'], ['formacao_lideranca', 'Formação para liderança'], ['restauracao_espiritual', 'Restauração espiritual']]),
+                    self::select('frequency', 'Frequência', true, [['semanal', 'Semanal'], ['quinzenal', 'Quinzenal'], ['mensal', 'Mensal']]),
+                    self::select('meeting_duration', 'Duração do encontro', true, [['45', '45 minutos'], ['60', '60 minutos'], ['75', '75 minutos'], ['90', '90 minutos']]),
+                    self::select('environment', 'Ambiente', true, [['casa', 'Casa'], ['igreja', 'Igreja'], ['cafe', 'Café'], ['online', 'Online']]),
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
-                    self::textarea('discipler_notes', 'Observacoes do discipulador', false, 'Opcional'),
+                    self::textarea('discipler_notes', 'Observações do discipulador', false, 'Opcional'),
                 ],
             ],
             'discipulado_casais' => [
@@ -85,154 +85,154 @@ final class WorkflowRegistry
                 'icon' => 'heart',
                 'accent' => '#DB2777',
                 'insights' => [
-                    ['title' => 'Estrutura fixa - 7 encontros', 'items' => ['Alianca e temor do Senhor', 'Amor, comunicacao e servico', 'Familia de origem e modelos familiares', 'Papeis, funcoes e responsabilidade', 'Financas e acordos conjugais', 'Conflitos, perdao e renovacao', 'Sexualidade e intimidade conjugal']],
+                    ['title' => 'Estrutura fixa - 7 encontros', 'items' => ['Aliança e temor do Senhor', 'Amor, comunicação e serviço', 'Família de origem e modelos familiares', 'Papéis, funções e responsabilidade', 'Finanças e acordos conjugais', 'Conflitos, perdão e renovação', 'Sexualidade e intimidade conjugal']],
                 ],
                 'fields' => [
-                    self::select('couples_track', 'Sugestao de trilha', true, [['estrutura_7', 'Estrutura fixa - 7 encontros'], ['noivos', 'Preparacao para noivos'], ['casais_novos', 'Casais no inicio da caminhada'], ['restauracao', 'Restauracao e renovacao conjugal']]),
+                    self::select('couples_track', 'Sugestão de trilha', true, [['estrutura_7', 'Estrutura fixa - 7 encontros'], ['noivos', 'Preparação para noivos'], ['casais_novos', 'Casais no início da caminhada'], ['restauracao', 'Restauração e renovação conjugal']]),
                     self::textarea('couple_context', 'Contexto do casal', true, 'Descreva o contexto com cuidado pastoral.'),
-                    self::select('meeting_duration', 'Duracao do encontro', true, [['60', '60 minutos'], ['75', '75 minutos'], ['90', '90 minutos']]),
+                    self::select('meeting_duration', 'Duração do encontro', true, [['60', '60 minutos'], ['75', '75 minutos'], ['90', '90 minutos']]),
                     self::select('environment', 'Ambiente', true, [['sala_igreja', 'Sala na igreja'], ['casa_pastoral', 'Casa pastoral'], ['casa_casal', 'Casa do casal'], ['online', 'Online']]),
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
                 ],
             ],
             'treinamento_lideranca' => [
                 'module' => 'planejamento',
-                'title' => 'Treinamento de Lideranca',
-                'description' => 'Monte uma trilha para formacao de lideres e equipes ministeriais.',
+                'title' => 'Treinamento de Liderança',
+                'description' => 'Monte uma trilha para formação de líderes e equipes ministeriais.',
                 'icon' => 'award',
                 'accent' => '#0D9488',
                 'fields' => [
-                    self::select('training_type', 'Tipo de treinamento', true, [['base_geral', 'Base geral'], ['presbiteros', 'Formacao de presbiteros'], ['diaconos', 'Formacao de diaconos'], ['jovens', 'Lideres de jovens'], ['professores_ebd', 'Professores de EBD'], ['pequenos_grupos', 'Lideres de pequenos grupos']]),
-                    self::select('member_count', 'Numero aproximado de membros', true, [['ate_50', 'Ate 50 membros'], ['50_150', '50 a 150 membros'], ['150_500', '150 a 500 membros'], ['500_plus', 'Acima de 500 membros']]),
-                    self::select('church_moment', 'Momento atual da igreja', true, [['rotina_ministerial', 'Rotina ministerial'], ['eleicao_proxima', 'Eleicao proxima'], ['crescimento', 'Fase de crescimento'], ['conflito', 'Conflito interno'], ['reorganizacao', 'Reorganizacao'], ['outra', 'Outra']]),
+                    self::select('training_type', 'Tipo de treinamento', true, [['base_geral', 'Base geral'], ['presbiteros', 'Formação de presbíteros'], ['diaconos', 'Formação de diáconos'], ['jovens', 'Líderes de jovens'], ['professores_ebd', 'Professores de EBD'], ['pequenos_grupos', 'Líderes de pequenos grupos']]),
+                    self::select('member_count', 'Número aproximado de membros', true, [['ate_50', 'Até 50 membros'], ['50_150', '50 a 150 membros'], ['150_500', '150 a 500 membros'], ['500_plus', 'Acima de 500 membros']]),
+                    self::select('church_moment', 'Momento atual da igreja', true, [['rotina_ministerial', 'Rotina ministerial'], ['eleicao_proxima', 'Eleição próxima'], ['crescimento', 'Fase de crescimento'], ['conflito', 'Conflito interno'], ['reorganizacao', 'Reorganização'], ['outra', 'Outra']]),
                     self::select('denominational_base', 'Base denominacional', true, [['presbiteriana', 'Presbiteriana'], ['batista_reformada', 'Batista reformada'], ['independente_reformada', 'Independente reformada'], ['outra', 'Outra']]),
                     self::select('depth', 'Profundidade', true, [['pastoral', 'Pastoral'], ['estruturada', 'Estruturada']]),
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
-                    self::textarea('pastor_notes', 'Observacoes do pastor', false, 'Opcional'),
+                    self::textarea('pastor_notes', 'Observações do pastor', false, 'Opcional'),
                 ],
             ],
             'pequenos_grupos' => [
                 'module' => 'planejamento',
                 'title' => 'Planejamento de Pequenos Grupos',
-                'description' => 'Crie ciclos com encontros, perguntas, aplicacao e envio.',
+                'description' => 'Crie ciclos com encontros, perguntas, aplicação e envio.',
                 'icon' => 'network',
                 'accent' => '#7C3AED',
                 'insights' => [
-                    ['title' => 'Estrutura do ciclo', 'items' => ['Encontro 1 - Introducao', 'Encontros 2 a 6 - Desenvolvimento', 'Encontro 7 - Consolidacao', 'Encontro 8 - Envio']],
+                    ['title' => 'Estrutura do ciclo', 'items' => ['Encontro 1 - Introdução', 'Encontros 2 a 6 - Desenvolvimento', 'Encontro 7 - Consolidação', 'Encontro 8 - Envio']],
                 ],
                 'fields' => [
-                    self::textarea('group_context', 'Visao e contexto do grupo', true, 'Descreva visao, publico, momento e necessidade.'),
-                    self::select('meeting_count', 'Numero de encontros', true, [['6', '6 encontros'], ['8', '8 encontros (padrao)'], ['10', '10 encontros']]),
-                    self::select('meeting_duration', 'Duracao por encontro', true, [['60', '60 minutos'], ['75', '75 minutos'], ['90', '90 minutos'], ['120', '120 minutos']]),
-                    self::select('frequency', 'Frequencia', true, [['semanal', 'Semanal'], ['quinzenal', 'Quinzenal'], ['mensal', 'Mensal']]),
+                    self::textarea('group_context', 'Visão e contexto do grupo', true, 'Descreva visão, público, momento e necessidade.'),
+                    self::select('meeting_count', 'Número de encontros', true, [['6', '6 encontros'], ['8', '8 encontros (padrão)'], ['10', '10 encontros']]),
+                    self::select('meeting_duration', 'Duração por encontro', true, [['60', '60 minutos'], ['75', '75 minutos'], ['90', '90 minutos'], ['120', '120 minutos']]),
+                    self::select('frequency', 'Frequência', true, [['semanal', 'Semanal'], ['quinzenal', 'Quinzenal'], ['mensal', 'Mensal']]),
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
                 ],
             ],
             'plano_anual_igreja' => [
                 'module' => 'planejamento',
                 'title' => 'Plano Anual da Igreja',
-                'description' => 'Estruture discernimento pastoral, pilares e acoes para o ano.',
+                'description' => 'Estruture discernimento pastoral, pilares e ações para o ano.',
                 'icon' => 'target',
                 'accent' => '#F59E0B',
                 'insights' => [
-                    ['title' => 'Processo em duas etapas', 'items' => ['Etapa 1 - Esboco macro: sintese pastoral, tema norteador, 4 a 6 pilares e distribuicao anual', 'Etapa 2 - Cinco secoes: diagnostico, tema, pilares, diretrizes e indicadores']],
+                    ['title' => 'Processo em duas etapas', 'items' => ['Etapa 1 - Esboço macro: síntese pastoral, tema norteador, 4 a 6 pilares e distribuição anual', 'Etapa 2 - Cinco seções: diagnóstico, tema, pilares, diretrizes e indicadores']],
                 ],
                 'fields' => [
-                    self::textarea('pastoral_context', 'Visao e contexto pastoral', true, 'Descreva momento atual, desafios, oportunidades e direcao percebida.'),
-                    self::text('reference_year', 'Ano de referencia', true, (string) ((int) date('Y') + 1)),
+                    self::textarea('pastoral_context', 'Visão e contexto pastoral', true, 'Descreva momento atual, desafios, oportunidades e direção percebida.'),
+                    self::text('reference_year', 'Ano de referência', true, (string) ((int) date('Y') + 1)),
                     self::select('denominational_base', 'Base denominacional', true, [['presbiteriana', 'Presbiteriana'], ['batista_reformada', 'Batista reformada'], ['independente_reformada', 'Independente reformada'], ['outra', 'Outra']]),
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
                 ],
             ],
             'gerar_sermao' => [
                 'module' => 'pregacao',
-                'title' => 'Gerar Sermao',
-                'description' => 'Monte um sermao estruturado a partir de texto, tema e contexto pastoral.',
+                'title' => 'Gerar Sermão',
+                'description' => 'Monte um sermão estruturado a partir de texto, tema e contexto pastoral.',
                 'icon' => 'pen',
                 'accent' => '#0A4DFF',
                 'fields' => [
-                    self::select('sermon_type', 'Tipo de sermao', true, [['expositivo', 'Expositivo'], ['textual', 'Textual'], ['tematico', 'Tematico'], ['biografico', 'Biografico']]),
-                    self::select('homiletic_structure', 'Estrutura homiletica', true, self::homileticOptions()),
-                    self::text('main_passage', 'Passagem biblica principal', true, 'Ex.: Efesios 2:1-10'),
-                    self::text('central_theme', 'Tema central do sermao', true, 'Ex.: A soberania de Deus na salvacao'),
-                    self::text('biblical_character', 'Personagem biblico', false, 'Opcional'),
-                    self::select('pastoral_emphasis', 'Enfase pastoral', true, self::pastoralEmphasisOptions()),
-                    self::select('audience', 'Publico-alvo', true, self::audienceOptions()),
-                    self::select('duration_minutes', 'Duracao em minutos', true, [['25', '25'], ['35', '35'], ['45', '45'], ['60', '60']]),
-                    self::select('bible_version', 'Versao biblica', true, self::bibleVersionOptions()),
-                    self::select('application_style', 'Estilo de aplicacao', true, [['ao_final', 'Ao final'], ['por_ponto', 'Ao longo dos pontos'], ['misto', 'Misto']]),
-                    self::select('include_reformed_quotes', 'Incluir citacoes reformadas', true, [['sim', 'Incluir'], ['nao', 'Nao incluir']]),
-                    self::select('include_illustrations', 'Incluir ilustracoes', true, [['sim', 'Incluir'], ['nao', 'Nao incluir']]),
+                    self::select('sermon_type', 'Tipo de sermão', true, [['expositivo', 'Expositivo'], ['textual', 'Textual'], ['tematico', 'Temático'], ['biografico', 'Biográfico']]),
+                    self::select('homiletic_structure', 'Estrutura homilética', true, self::homileticOptions()),
+                    self::text('main_passage', 'Passagem bíblica principal', true, 'Ex.: Efésios 2:1-10'),
+                    self::text('central_theme', 'Tema central do sermão', true, 'Ex.: A soberania de Deus na salvação'),
+                    self::text('biblical_character', 'Personagem bíblico', false, 'Opcional'),
+                    self::select('pastoral_emphasis', 'Ênfase pastoral', true, self::pastoralEmphasisOptions()),
+                    self::select('audience', 'Público-alvo', true, self::audienceOptions()),
+                    self::select('duration_minutes', 'Duração em minutos', true, [['25', '25'], ['35', '35'], ['45', '45'], ['60', '60']]),
+                    self::select('bible_version', 'Versão bíblica', true, self::bibleVersionOptions()),
+                    self::select('application_style', 'Estilo de aplicação', true, [['ao_final', 'Ao final'], ['por_ponto', 'Ao longo dos pontos'], ['misto', 'Misto']]),
+                    self::select('include_reformed_quotes', 'Incluir citações reformadas', true, [['sim', 'Incluir'], ['nao', 'Não incluir']]),
+                    self::select('include_illustrations', 'Incluir ilustrações', true, [['sim', 'Incluir'], ['nao', 'Não incluir']]),
                 ],
             ],
             'refinar_rascunho' => [
                 'module' => 'pregacao',
                 'title' => 'Refinar Rascunho',
-                'description' => 'Reorganize e fortaleca um rascunho sem apagar a voz do pastor.',
+                'description' => 'Reorganize e fortaleça um rascunho sem apagar a voz do pastor.',
                 'icon' => 'spark',
                 'accent' => '#7C3AED',
                 'fields' => [
-                    self::textarea('draft', 'Rascunho do sermao', true, 'Cole ou digite aqui o rascunho...'),
-                    self::select('homiletic_structure', 'Estrutura homiletica', true, self::homileticOptions()),
-                    self::select('sermon_type', 'Tipo de sermao', true, [['expositivo', 'Expositivo'], ['textual', 'Textual'], ['tematico', 'Tematico'], ['biografico', 'Biografico']]),
-                    self::text('main_passage', 'Passagem biblica principal', true, 'Ex.: Efesios 2:1-10'),
-                    self::text('central_theme', 'Tema central do sermao', true, 'Ex.: A graca de Deus'),
+                    self::textarea('draft', 'Rascunho do sermão', true, 'Cole ou digite aqui o rascunho...'),
+                    self::select('homiletic_structure', 'Estrutura homilética', true, self::homileticOptions()),
+                    self::select('sermon_type', 'Tipo de sermão', true, [['expositivo', 'Expositivo'], ['textual', 'Textual'], ['tematico', 'Temático'], ['biografico', 'Biográfico']]),
+                    self::text('main_passage', 'Passagem bíblica principal', true, 'Ex.: Efésios 2:1-10'),
+                    self::text('central_theme', 'Tema central do sermão', true, 'Ex.: A graça de Deus'),
                 ],
             ],
             'culto_ocasional' => [
                 'module' => 'pregacao',
                 'title' => 'Culto Ocasional',
-                'description' => 'Prepare uma mensagem sensivel para ocasioes especiais.',
+                'description' => 'Prepare uma mensagem sensível para ocasiões especiais.',
                 'icon' => 'heart',
                 'accent' => '#E11D48',
                 'fields' => [
-                    self::select('occasion_type', 'Tipo de ocasiao', true, [['casamento', 'Casamento'], ['culto_funebre', 'Culto funebre'], ['acao_gracas', 'Acao de gracas'], ['apresentacao_crianca', 'Apresentacao de crianca'], ['formatura', 'Formatura'], ['ordenacao_pastoral', 'Ordenacao pastoral']]),
-                    self::select('bible_version', 'Versao biblica', true, self::bibleVersionOptions()),
-                    self::textarea('occasion_context', 'Contexto da ocasiao', true, 'Descreva pessoas, momento, cuidados pastorais e tom desejado.'),
-                    self::text('central_passage', 'Passagem biblica central', true, 'Ex.: 1 Corintios 13'),
+                    self::select('occasion_type', 'Tipo de ocasião', true, [['casamento', 'Casamento'], ['culto_funebre', 'Culto fúnebre'], ['acao_gracas', 'Ação de graças'], ['apresentacao_crianca', 'Apresentação de criança'], ['formatura', 'Formatura'], ['ordenacao_pastoral', 'Ordenação pastoral']]),
+                    self::select('bible_version', 'Versão bíblica', true, self::bibleVersionOptions()),
+                    self::textarea('occasion_context', 'Contexto da ocasião', true, 'Descreva pessoas, momento, cuidados pastorais e tom desejado.'),
+                    self::text('central_passage', 'Passagem bíblica central', true, 'Ex.: 1 Coríntios 13'),
                     self::text('message_theme', 'Tema da mensagem', false, 'Opcional'),
                 ],
             ],
             'aula_ebd' => [
                 'module' => 'pregacao',
                 'title' => 'Aula EBD',
-                'description' => 'Gere um plano de aula completo para Escola Biblica Dominical.',
+                'description' => 'Gere um plano de aula completo para Escola Bíblica Dominical.',
                 'icon' => 'book',
                 'accent' => '#0F766E',
                 'fields' => [
-                    self::text('passage', 'Passagem biblica', false, 'Ex.: Efesios 2:1-10'),
-                    self::text('lesson_theme', 'Tema da aula', false, 'Ex.: A justificacao pela fe'),
-                    self::select('age_group', 'Faixa', true, [['adultos', 'Adultos'], ['casados', 'Casados'], ['jovens', 'Jovens'], ['adolescentes', 'Adolescentes'], ['catecumenos', 'Catecumenos / novos membros']]),
-                    self::select('available_time', 'Tempo disponivel', true, [['30', '30 minutos'], ['45', '45 minutos'], ['60', '60 minutos'], ['75', '75 minutos']]),
-                    self::select('level', 'Nivel', true, [['basico', 'Basico'], ['intermediario', 'Intermediario'], ['avancado', 'Avancado']]),
-                    self::select('bible_version', 'Versao biblica', true, self::bibleVersionOptions()),
+                    self::text('passage', 'Passagem bíblica', false, 'Ex.: Efésios 2:1-10'),
+                    self::text('lesson_theme', 'Tema da aula', false, 'Ex.: A justificação pela fé'),
+                    self::select('age_group', 'Faixa', true, [['adultos', 'Adultos'], ['casados', 'Casados'], ['jovens', 'Jovens'], ['adolescentes', 'Adolescentes'], ['catecumenos', 'Catecúmenos / novos membros']]),
+                    self::select('available_time', 'Tempo disponível', true, [['30', '30 minutos'], ['45', '45 minutos'], ['60', '60 minutos'], ['75', '75 minutos']]),
+                    self::select('level', 'Nível', true, [['basico', 'Básico'], ['intermediario', 'Intermediário'], ['avancado', 'Avançado']]),
+                    self::select('bible_version', 'Versão bíblica', true, self::bibleVersionOptions()),
                     self::textarea('additional_context', 'Contexto adicional', false, 'Opcional'),
                 ],
             ],
             'estudo_exegetico' => [
                 'module' => 'estudos',
-                'title' => 'Estudo Exegetico',
+                'title' => 'Estudo Exegético',
                 'description' => 'Aprofunde uma passagem antes de pregar, ensinar ou discipular.',
                 'icon' => 'search',
                 'accent' => '#2563EB',
                 'fields' => [
-                    self::select('depth', 'Profundidade', true, [['pastoral', 'Pastoral'], ['academico', 'Academico']]),
-                    self::text('passage', 'Passagem biblica', true, 'Ex.: Romanos 8:28-39'),
-                    self::select('bible_version', 'Versao biblica', true, self::bibleVersionOptions()),
+                    self::select('depth', 'Profundidade', true, [['pastoral', 'Pastoral'], ['academico', 'Acadêmico']]),
+                    self::text('passage', 'Passagem bíblica', true, 'Ex.: Romanos 8:28-39'),
+                    self::select('bible_version', 'Versão bíblica', true, self::bibleVersionOptions()),
                 ],
             ],
             'estudo_biblico' => [
                 'module' => 'estudos',
-                'title' => 'Estudo Biblico',
-                'description' => 'Prepare estudos por passagem, tema, confissao, palavra-chave ou familia.',
+                'title' => 'Estudo Bíblico',
+                'description' => 'Prepare estudos por passagem, tema, confissão, palavra-chave ou família.',
                 'icon' => 'book-open',
                 'accent' => '#0891B2',
                 'fields' => [
-                    self::select('study_type', 'Tipo de estudo', true, [['exegetico_passagem', 'Exegetico por passagem'], ['teologico_tema', 'Teologico por tema'], ['confessional_catecismo', 'Confessional / catecismo'], ['palavra_chave', 'Palavra-chave'], ['familiar_devocional', 'Familiar / devocional']]),
-                    self::select('depth_level', 'Nivel de profundidade', true, [['basico', 'Basico'], ['intermediario', 'Intermediario'], ['avancado', 'Avancado']]),
-                    self::text('passage', 'Passagem biblica', false, 'Opcional'),
+                    self::select('study_type', 'Tipo de estudo', true, [['exegetico_passagem', 'Exegético por passagem'], ['teologico_tema', 'Teológico por tema'], ['confessional_catecismo', 'Confessional / catecismo'], ['palavra_chave', 'Palavra-chave'], ['familiar_devocional', 'Familiar / devocional']]),
+                    self::select('depth_level', 'Nível de profundidade', true, [['basico', 'Básico'], ['intermediario', 'Intermediário'], ['avancado', 'Avançado']]),
+                    self::text('passage', 'Passagem bíblica', false, 'Opcional'),
                     self::text('study_theme', 'Tema do estudo', false, 'Opcional'),
-                    self::select('bible_version', 'Versao biblica', true, self::bibleVersionOptions()),
+                    self::select('bible_version', 'Versão bíblica', true, self::bibleVersionOptions()),
                 ],
             ],
         ];
@@ -266,7 +266,7 @@ final class WorkflowRegistry
     {
         $workflow = self::getWorkflow($workflowId);
         if ($workflow === null) {
-            return ['Fluxo invalido.'];
+            return ['Fluxo inválido.'];
         }
 
         $errors = [];
@@ -325,36 +325,36 @@ final class WorkflowRegistry
     private static function homileticOptions(): array
     {
         return [
-            ['automatico', 'Automatico recomendado'],
+            ['automatico', 'Automático recomendado'],
             ['expositivo_sequencial', 'Expositivo sequencial'],
-            ['dedutiva_classica', 'Dedutiva classica'],
-            ['tres_pontos', 'Classica de tres pontos'],
-            ['proposicao_prova_pratica', 'Proposicao, prova e pratica'],
-            ['problematico_solutiva', 'Problematico-solutiva'],
+            ['dedutiva_classica', 'Dedutiva clássica'],
+            ['tres_pontos', 'Clássica de três pontos'],
+            ['proposicao_prova_pratica', 'Proposição, prova e prática'],
+            ['problematico_solutiva', 'Problemático-solutiva'],
             ['narrativa', 'Narrativa'],
-            ['analitico_sintetica', 'Analitico-sintetica'],
+            ['analitico_sintetica', 'Analítico-sintética'],
             ['paradoxo', 'Paradoxo'],
-            ['pergunta_resposta', 'Pergunta-resposta catequetico'],
+            ['pergunta_resposta', 'Pergunta-resposta catequético'],
         ];
     }
 
     private static function bibleVersionOptions(): array
     {
-        return [['ara', 'Almeida Revista e Atualizada'], ['acf', 'Almeida Corrigida Fiel'], ['naa', 'Nova Almeida Atualizada'], ['nvi', 'Nova Versao Internacional']];
+        return [['ara', 'Almeida Revista e Atualizada'], ['acf', 'Almeida Corrigida Fiel'], ['naa', 'Nova Almeida Atualizada'], ['nvi', 'Nova Versão Internacional']];
     }
 
     private static function audienceOptions(): array
     {
-        return [['geral', 'Geral'], ['jovens', 'Jovens'], ['casais', 'Casais'], ['lideres', 'Lideres'], ['nao_crentes', 'Nao-crentes']];
+        return [['geral', 'Geral'], ['jovens', 'Jovens'], ['casais', 'Casais'], ['lideres', 'Líderes'], ['nao_crentes', 'Não-crentes']];
     }
 
     private static function pastoralEmphasisOptions(): array
     {
-        return [['doutrinaria', 'Doutrinaria'], ['pastoral_consoladora', 'Pastoral / Consoladora'], ['exortativa', 'Exortativa'], ['evangelistica', 'Evangelistica'], ['devocional', 'Devocional']];
+        return [['doutrinaria', 'Doutrinária'], ['pastoral_consoladora', 'Pastoral / Consoladora'], ['exortativa', 'Exortativa'], ['evangelistica', 'Evangelística'], ['devocional', 'Devocional']];
     }
 
     private static function confessionalLayerOptions(): array
     {
-        return [['somente_biblico', 'Somente biblico'], ['westminster', 'Confissao de Westminster'], ['londres_1689', 'Confissao Batista de Londres']];
+        return [['somente_biblico', 'Somente bíblico'], ['westminster', 'Confissão de Westminster'], ['londres_1689', 'Confissão Batista de Londres']];
     }
 }

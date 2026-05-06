@@ -13,14 +13,14 @@
         </button>
     </div>
 
-    <div class="mgmt-card" style="margin-bottom: 1.5rem;">
+    <div class="mgmt-card mgmt-filter-card">
         <div class="mgmt-card__body">
-            <form method="GET" action="<?= url('/gestao/novos-convertidos') ?>" style="display: grid; grid-template-columns: 1fr 200px 200px auto; gap: 1rem; align-items: end;">
-                <div>
+            <form method="GET" action="<?= url('/gestao/novos-convertidos') ?>" class="mgmt-filter-grid">
+                <div class="mgmt-filter-field">
                     <label for="search" class="form-label">Buscar</label>
                     <input type="text" id="search" name="search" class="form-control" placeholder="Nome ou telefone" value="<?= e($search ?? '') ?>">
                 </div>
-                <div>
+                <div class="mgmt-filter-field">
                     <label for="status" class="form-label">Status de Acompanhamento</label>
                     <select id="status" name="status" class="form-control">
                         <option value="">Todos</option>
@@ -30,13 +30,13 @@
                         <option value="membro" <?= ($status ?? '') === 'membro' ? 'selected' : '' ?>>Membro Ativo</option>
                     </select>
                 </div>
-                <div>
+                <div class="mgmt-filter-field">
                     <label for="month" class="form-label">Período</label>
                     <input type="month" id="month" name="month" class="form-control" value="<?= e($month ?? date('Y-m')) ?>">
                 </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button type="submit" class="btn btn-secondary">Filtrar</button>
-                    <a href="<?= url('/gestao/novos-convertidos') ?>" class="btn btn-secondary">Limpar</a>
+                <div class="mgmt-filter-actions">
+                    <button type="submit" class="btn btn--outline">Filtrar</button>
+                    <a href="<?= url('/gestao/novos-convertidos') ?>" class="btn btn--outline">Limpar</a>
                 </div>
             </form>
         </div>
@@ -44,7 +44,7 @@
 
     <div class="mgmt-stats" style="margin-bottom: 1.5rem;">
         <div class="stat-card">
-            <div class="stat-card__icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+            <div class="stat-card__icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             </div>
             <div>
@@ -62,7 +62,7 @@
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-card__icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+            <div class="stat-card__icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 2s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"></path>
                     <path d="m9 13 2 2 4-4"></path>

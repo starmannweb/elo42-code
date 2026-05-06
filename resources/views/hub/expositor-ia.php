@@ -17,27 +17,27 @@
         <div>
             <span class="hub-badge hub-badge--primary">ministry-ai</span>
             <h1 class="hub-page__title">Central Pastoral IA</h1>
-            <p class="hub-page__subtitle">Prepare sermoes, estudos, aulas e planejamentos ministeriais com apoio inteligente, sem perder o cuidado pastoral.</p>
+            <p class="hub-page__subtitle">Prepare sermões, estudos, aulas e planejamentos ministeriais com apoio inteligente, sem perder o cuidado pastoral.</p>
         </div>
         <div class="hub-page__actions">
-            <a href="<?= url('/hub/creditos') ?>" class="btn btn--outline">Ver creditos</a>
+            <a href="<?= url('/hub/créditos') ?>" class="btn btn--outline">Ver créditos</a>
         </div>
     </header>
 
     <div class="ministry-ai-usage">
         <div>
             <strong>Plano gratuito</strong>
-            <span>3 geracoes mensais liberadas. Depois disso, cada geracao consome <?= e((string) $creditCost) ?> credito.</span>
+            <span>3 gerações mensais liberadas. Depois disso, cada geração consome <?= e((string) $creditCost) ?> crédito.</span>
         </div>
         <div class="ministry-ai-usage__meter">
-            <strong data-credit-count><?= e((string) $credits) ?> credito(s) disponiveis</strong>
+            <strong data-credit-count><?= e((string) $credits) ?> crédito(s) disponíveis</strong>
             <span><i style="width:<?= $credits > 0 ? min(100, $credits * 34) : 0 ?>%;"></i></span>
         </div>
     </div>
 
     <?php if (!empty($monthlyAllowanceGranted)): ?>
         <div class="alert alert--success" style="margin-top:var(--space-4);">
-            3 geracoes gratuitas foram adicionadas ao saldo deste workspace.
+            3 gerações gratuitas foram adicionadas ao saldo deste workspace.
         </div>
     <?php endif; ?>
 
@@ -45,50 +45,50 @@
         <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="pregacao" data-shortcut-workflow="gerar_sermao">
             <span class="ministry-ai-card-icon">✎</span>
             <small>Caminho livre</small>
-            <strong>Organizar um sermao avulso</strong>
-            <p>Gere sermao, estudo biblico, aula EBD ou roteiro para culto especial de forma rapida.</p>
-            <b>Comecar</b>
+            <strong>Organizar um sermão avulso</strong>
+            <p>Gere sermão, estudo bíblico, aula EBD ou roteiro para culto especial de forma rápida.</p>
+            <b>Começar</b>
         </div>
         <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="planejamento" data-shortcut-workflow="series_sermoes">
             <span class="ministry-ai-card-icon">▦</span>
             <small>Caminho ministerial</small>
             <strong>Estou planejando o trimestre</strong>
-            <p>Crie series com PG e EBD alinhados, mantendo direcao teologica em todos os encontros.</p>
-            <b>Comecar</b>
+            <p>Crie séries com PG e EBD alinhados, mantendo direção teológica em todos os encontros.</p>
+            <b>Começar</b>
         </div>
         <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="estudos" data-shortcut-workflow="estudo_exegetico">
             <span class="ministry-ai-card-icon">⌕</span>
-            <small>Caminho exegetico</small>
+            <small>Caminho exegético</small>
             <strong>Quero partir do texto</strong>
-            <p>Aprofunde contexto, estrutura e aplicacao antes de desenvolver o material.</p>
-            <b>Comecar</b>
+            <p>Aprofunde contexto, estrutura e aplicação antes de desenvolver o material.</p>
+            <b>Começar</b>
         </div>
     </section>
 
     <section class="hub-panel ministry-ai-vision">
         <div class="hub-panel__head">
             <div>
-                <h2 class="hub-panel__title">Visao ministerial do mes</h2>
-                <p class="hub-panel__text">Use este quadro como ponto de partida para alinhar series, pequenos grupos e escola dominical.</p>
+                <h2 class="hub-panel__title">Visão ministerial do mês</h2>
+                <p class="hub-panel__text">Use este quadro como ponto de partida para alinhar séries, pequenos grupos e escola dominical.</p>
             </div>
             <button type="button" class="btn btn--outline" data-shortcut-module="planejamento" data-shortcut-workflow="plano_anual_igreja">Definir foco</button>
         </div>
         <div class="ministry-ai-vision__grid">
-            <article><span>Series</span><strong>0</strong></article>
-            <article><span>Sermoes gerados</span><strong>0</strong></article>
+            <article><span>Séries</span><strong>0</strong></article>
+            <article><span>Sermões gerados</span><strong>0</strong></article>
             <article><span>Estudos criados</span><strong>0</strong></article>
-            <article><span>Culto / Serie</span><strong>Nao iniciado</strong></article>
-            <article><span>Pequenos Grupos</span><strong>Nao iniciado</strong></article>
-            <article><span>Escola Dominical</span><strong>Nao iniciado</strong></article>
+            <article><span>Culto / Série</span><strong>Não iniciado</strong></article>
+            <article><span>Pequenos Grupos</span><strong>Não iniciado</strong></article>
+            <article><span>Escola Dominical</span><strong>Não iniciado</strong></article>
         </div>
         <div class="ministry-ai-vision__notice">
-            <strong>Proxima acao</strong>
-            <span>Defina um foco para comecar a medir coerencia ministerial.</span>
+            <strong>Próxima ação</strong>
+            <span>Defina um foco para começar a medir coerência ministerial.</span>
         </div>
     </section>
 
     <div class="ministry-ai-layout">
-        <nav class="ministry-ai-module-list ministry-ai-tabs" data-module-list aria-label="Modulos da Central Pastoral IA">
+        <nav class="ministry-ai-module-list ministry-ai-tabs" data-module-list aria-label="Módulos da Central Pastoral IA">
             <?php foreach ($modules as $index => $module): ?>
                 <button type="button" class="ministry-ai-module <?= $index === 0 ? 'is-active' : '' ?>" data-module-id="<?= e((string) $module['id']) ?>">
                     <strong><?= e((string) $module['title']) ?></strong>
@@ -101,7 +101,7 @@
             <section class="hub-panel">
                 <div class="hub-panel__head">
                     <div>
-                        <h2 class="hub-panel__title" data-workflow-section-title>Recursos do ministerio</h2>
+                        <h2 class="hub-panel__title" data-workflow-section-title>Recursos do ministério</h2>
                         <p class="hub-panel__text">Cada recurso monta um prompt especializado a partir do contexto informado.</p>
                     </div>
                 </div>
@@ -111,8 +111,8 @@
             <section class="hub-panel ministry-ai-form-panel">
                 <div class="hub-panel__head">
                     <div>
-                        <h2 class="hub-panel__title" data-workflow-title>Formulario inteligente</h2>
-                        <p class="hub-panel__text" data-workflow-description>Preencha os campos para revisar antes da geracao.</p>
+                        <h2 class="hub-panel__title" data-workflow-title>Formulário inteligente</h2>
+                        <p class="hub-panel__text" data-workflow-description>Preencha os campos para revisar antes da geração.</p>
                     </div>
                 </div>
                 <div class="ministry-ai-insights" data-workflow-insights></div>
@@ -122,12 +122,12 @@
             <section class="hub-panel">
                 <div class="hub-panel__head">
                     <div>
-                        <h2 class="hub-panel__title">Revisao</h2>
+                        <h2 class="hub-panel__title">Revisão</h2>
                         <p class="hub-panel__text">Confira o resumo antes de enviar para a IA.</p>
                     </div>
                 </div>
                 <div class="ministry-ai-review" data-review-box>
-                    <p class="hub-panel__text">Escolha um recurso para comecar.</p>
+                    <p class="hub-panel__text">Escolha um recurso para começar.</p>
                 </div>
                 <div class="hub-page__actions" style="margin-top:var(--space-4);justify-content:flex-end;">
                     <button type="button" class="btn btn--primary btn--lg" data-generate-button <?= $credits >= $creditCost ? '' : 'disabled' ?>>
@@ -141,7 +141,7 @@
                 <div class="hub-panel__head">
                     <div>
                         <h2 class="hub-panel__title" data-result-title>Resultado</h2>
-                        <p class="hub-panel__text">Markdown gerado para revisao pastoral.</p>
+                        <p class="hub-panel__text">Markdown gerado para revisão pastoral.</p>
                     </div>
                     <span class="hub-badge hub-badge--success" data-result-model></span>
                 </div>
@@ -149,7 +149,7 @@
                 <div class="hub-page__actions" style="margin-top:var(--space-4);">
                     <button type="button" class="btn btn--outline" data-copy-result>Copiar</button>
                     <button type="button" class="btn btn--outline" data-download-result>Baixar Markdown</button>
-                    <button type="button" class="btn btn--ghost" data-new-generation>Nova geracao</button>
+                    <button type="button" class="btn btn--ghost" data-new-generation>Nova geração</button>
                     <button type="button" class="btn btn--ghost" disabled>Salvar em breve</button>
                 </div>
             </section>
@@ -167,8 +167,8 @@
     var credits = <?= (int) $credits ?>;
     var creditCost = <?= (int) $creditCost ?>;
 
-    var activeModule = modules[0] ? modules[0].id : '';
-    var activeWorkflow = '';
+    var activeModule = <?= json_encode($selectedModule ?? ($modules[0] ? $modules[0]['id'] : '')) ?>;
+    var activeWorkflow = <?= json_encode($selectedWorkflow ?? '') ?>;
     var currentMarkdown = '';
     var isGenerating = false;
 

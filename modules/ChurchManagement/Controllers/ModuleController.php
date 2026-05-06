@@ -388,6 +388,9 @@ class ModuleController extends Controller
             $orgId = $this->orgId();
             $org = Session::get('organization');
             $orgName = is_array($org) ? ($org['name'] ?? 'Igreja') : 'Igreja';
+            $search = trim((string) $request->input('search', ''));
+            $type = trim((string) $request->input('type', ''));
+            $month = trim((string) $request->input('month', date('Y-m'))) ?: date('Y-m');
 
             $donations = [];
             $summary = ['total' => 0, 'tithe' => 0, 'offering' => 0, 'donors' => 0];
@@ -398,9 +401,12 @@ class ModuleController extends Controller
 
             if ($orgId > 0) {
                 try {
+                    $period = \DateTimeImmutable::createFromFormat('!Y-m', $month) ?: new \DateTimeImmutable('first day of this month');
                     $filters = [
-                        'start_date' => date('Y-m-01'),
-                        'end_date'   => date('Y-m-t'),
+                        'search' => $search,
+                        'type' => in_array($type, ['tithe', 'offering', 'special', 'campaign', 'other'], true) ? $type : '',
+                        'start_date' => $period->format('Y-m-01'),
+                        'end_date'   => $period->format('Y-m-t'),
                     ];
                     $result = Donation::byOrg($orgId, $filters, 1, 30);
                     $donations = $result['data'] ?? [];
@@ -443,6 +449,7 @@ class ModuleController extends Controller
                 'orgName'    => $orgName,
                 'members'    => $members,
                 'units'      => $units,
+                'filters'    => ['search' => $search, 'type' => $filters['type'] ?? $type, 'month' => $month],
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar dizimos & ofertas.');
@@ -457,6 +464,8 @@ class ModuleController extends Controller
             $page = max(1, (int) ($request->input('page', '1') ?: 1));
             $filters = [
                 'type' => 'expense',
+                'search' => $request->input('search', ''),
+                'status' => $request->input('status', ''),
                 'start_date' => $request->input('start_date', date('Y-m-01')),
                 'end_date' => $request->input('end_date', date('Y-m-t')),
             ];

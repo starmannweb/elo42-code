@@ -2,8 +2,7 @@
 <?php
     $portalOrganizationCtx = is_array($organization ?? null) ? $organization : (\App\Core\Session::get('organization') ?: []);
     $portalOrganizationCtx = is_array($portalOrganizationCtx) ? $portalOrganizationCtx : [];
-    $portalPlan = strtolower((string) ($portalOrganizationCtx['plan'] ?? ''));
-    $isPortalPwaEnabled = in_array($portalPlan, ['premium', 'enterprise', 'business', 'pro'], true);
+    $isPortalPwaEnabled = true;
 ?>
 <html lang="pt-BR">
 <head>

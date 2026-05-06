@@ -13,15 +13,15 @@
         </button>
     </div>
 
-    <div class="mgmt-card" style="margin-bottom: 1.5rem;">
+    <div class="mgmt-card mgmt-filter-card">
         <div class="mgmt-card__body">
-            <form method="GET" action="<?= url('/gestao/visitantes') ?>" style="display: grid; grid-template-columns: 1fr 1fr 200px auto; gap: 1rem; align-items: end;">
-                <div>
+            <form method="GET" action="<?= url('/gestao/visitantes') ?>" class="mgmt-filter-grid">
+                <div class="mgmt-filter-field">
                     <label for="search" class="form-label">Buscar</label>
                     <input type="text" id="search" name="search" class="form-control" placeholder="Nome, telefone ou e-mail" value="<?= e($search ?? '') ?>">
                 </div>
-                <div>
-                    <label for="status" class="form-label">Status</label>
+                <div class="mgmt-filter-field">
+                    <label for="status" class="form-label">Status de Acompanhamento</label>
                     <select id="status" name="status" class="form-control">
                         <option value="">Todos</option>
                         <option value="novo" <?= ($status ?? '') === 'novo' ? 'selected' : '' ?>>Novo</option>
@@ -29,13 +29,13 @@
                         <option value="membro" <?= ($status ?? '') === 'membro' ? 'selected' : '' ?>>Tornou-se Membro</option>
                     </select>
                 </div>
-                <div>
+                <div class="mgmt-filter-field">
                     <label for="date" class="form-label">Período</label>
                     <input type="month" id="date" name="month" class="form-control" value="<?= e($month ?? date('Y-m')) ?>">
                 </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button type="submit" class="btn btn-secondary">Filtrar</button>
-                    <a href="<?= url('/gestao/visitantes') ?>" class="btn btn-secondary">Limpar</a>
+                <div class="mgmt-filter-actions">
+                    <button type="submit" class="btn btn--outline">Filtrar</button>
+                    <a href="<?= url('/gestao/visitantes') ?>" class="btn btn--outline">Limpar</a>
                 </div>
             </form>
         </div>

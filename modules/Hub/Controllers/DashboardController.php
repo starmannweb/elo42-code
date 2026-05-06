@@ -453,8 +453,13 @@ class DashboardController extends Controller
             'resource_title' => '',
         ]);
 
+        $selectedModule = $request->input('module');
+        $selectedWorkflow = $request->input('workflow');
+
         $this->view('hub/expositor-ia', array_merge($context, [
             'pageTitle'           => 'Central Pastoral IA - Hub Elo 42',
+            'selectedModule'      => $selectedModule,
+            'selectedWorkflow'    => $selectedWorkflow,
             'iaCredits'           => $credits,
             'iaCreditCost'        => self::IA_CREDIT_COST,
             'canGenerateIa'       => $credits >= self::IA_CREDIT_COST,

@@ -22,6 +22,18 @@
             'title' => 'Pagamentos (Pagou)',
             'text' => 'Gateway, chaves e webhooks globais para cobrança recorrente dos assinantes do Hub.',
         ],
+        'email' => [
+            'title' => 'E-mails (Resend)',
+            'text' => 'Chaves e remetente oficial para disparos transacionais da plataforma.',
+        ],
+        'whatsapp' => [
+            'title' => 'WhatsApp (Evolution)',
+            'text' => 'Conexão global da Evolution API para disparos, instâncias e webhooks de mensagens.',
+        ],
+        'webhooks' => [
+            'title' => 'Webhooks',
+            'text' => 'Endpoints e segredos para integrações externas, automações e eventos da plataforma.',
+        ],
         'sites' => [
             'title' => 'Sites e domínios',
             'text' => 'Parâmetros usados para orientar publicação, CNAME, registro A e verificação de domínio.',
@@ -32,7 +44,7 @@
         ],
     ];
 
-    $groupOrder = ['ai', 'payments', 'billing', 'sites', 'general'];
+    $groupOrder = ['ai', 'email', 'whatsapp', 'webhooks', 'payments', 'billing', 'sites', 'general'];
     foreach (array_keys($groups) as $group) {
         if (!in_array($group, $groupOrder, true)) {
             $groupOrder[] = $group;
@@ -100,7 +112,7 @@
                 <?php foreach ($groups[$group] as $setting): ?>
                     <?php
                         $settingKey = (string) ($setting['setting_key'] ?? '');
-                        $isSecret = in_array($settingKey, ['openai_api_key', 'pagou_api_key', 'pagou_webhook_secret'], true);
+                        $isSecret = in_array($settingKey, ['openai_api_key', 'pagou_api_key', 'pagou_webhook_secret', 'resend_api_key', 'evolution_api_key', 'evolution_webhook_secret', 'platform_webhook_secret'], true);
                         $inputType = $isSecret ? 'password' : 'text';
                         $inputValue = $isSecret ? '' : (string) ($setting['setting_value'] ?? '');
                         $placeholder = $isSecret && !empty($setting['setting_value'])
@@ -137,7 +149,7 @@
     .admin-settings-tab span { font-weight: 800; color: inherit; }
     .admin-settings-tab small { color: inherit; opacity: .72; font-size: var(--text-xs); }
     .admin-settings-tab:hover { background: rgba(10,77,255,.06); color: var(--color-text); border-color: rgba(10,77,255,.18); }
-    .admin-settings-tab.is-active { background: var(--color-bright-blue, #0a4dff); border-color: var(--color-bright-blue, #0a4dff); color: #fff; box-shadow: 0 12px 24px rgba(10,77,255,.18); }
+    .admin-settings-tab.is-active { background: #1455FF; border-color: #1455FF; color: #fff; box-shadow: 0 12px 24px rgba(20,85,255,.18); }
     .admin-settings-panels { display: grid; }
     .admin-settings-card { padding: var(--space-5); }
     .admin-settings-card__head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: flex-start; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-light); margin-bottom: var(--space-4); }

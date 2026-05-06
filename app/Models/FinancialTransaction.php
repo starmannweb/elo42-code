@@ -19,14 +19,24 @@ class FinancialTransaction extends Model
             $where = ['ft.organization_id = :org'];
             $params = ['org' => $orgId];
 
+            if (!empty($filters['search'])) {
+                $where[] = "(ft.description LIKE :search OR ft.reference LIKE :search OR fc.name LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
             if (!empty($filters['type'])) { $where[] = "ft.type = :type"; $params['type'] = $filters['type']; }
+            if (!empty($filters['status'])) { $where[] = "ft.status = :status"; $params['status'] = $filters['status']; }
             if (!empty($filters['start_date'])) { $where[] = "ft.transaction_date >= :start"; $params['start'] = $filters['start_date']; }
             if (!empty($filters['end_date'])) { $where[] = "ft.transaction_date <= :end"; $params['end'] = $filters['end_date']; }
 
             $whereStr = implode(' AND ', $where);
             $offset = ($page - 1) * $perPage;
 
-            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM financial_transactions ft WHERE {$whereStr}");
+            $countStmt = $pdo->prepare("
+                SELECT COUNT(*)
+                FROM financial_transactions ft
+                LEFT JOIN financial_categories fc ON ft.category_id = fc.id
+                WHERE {$whereStr}
+            ");
             $countStmt->execute($params);
             $total = (int) $countStmt->fetchColumn();
 

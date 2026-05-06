@@ -378,7 +378,7 @@ class AdminCatalogController extends Controller
         $settings = $req->input('settings', []);
         if (is_array($settings)) {
             foreach ($settings as $key => $value) {
-                if (in_array((string) $key, ['openai_api_key', 'pagou_api_key', 'pagou_webhook_secret'], true) && trim((string) $value) === '') {
+                if (in_array((string) $key, ['openai_api_key', 'pagou_api_key', 'pagou_webhook_secret', 'resend_api_key', 'evolution_api_key', 'evolution_webhook_secret', 'platform_webhook_secret'], true) && trim((string) $value) === '') {
                     continue;
                 }
                 PlatformSetting::set($key, $value, (int) Session::user()['id']);
@@ -470,6 +470,20 @@ class AdminCatalogController extends Controller
             ['pagou_webhook_secret', '', 'payments', 'Segredo do webhook Pagou para validar eventos de pagamento'],
             ['pagou_webhook_url', '/webhooks/pagou', 'payments', 'Endpoint que receberá eventos da Pagou'],
             ['pagou_default_gateway', 'pagou', 'payments', 'Gateway oficial para cobrança recorrente dos assinantes do Hub'],
+            ['resend_api_key', '', 'email', 'Chave da API Resend usada para disparos transacionais da plataforma'],
+            ['resend_from_email', 'suporte@elo42.com.br', 'email', 'Email remetente padrao usado nos disparos'],
+            ['resend_from_name', 'Elo 42', 'email', 'Nome do remetente padrao usado nos disparos'],
+            ['resend_base_url', 'https://api.resend.com', 'email', 'URL base da API Resend'],
+            ['evolution_base_url', '', 'whatsapp', 'URL base da Evolution API'],
+            ['evolution_api_key', '', 'whatsapp', 'Chave global de autenticacao da Evolution API'],
+            ['evolution_instance', '', 'whatsapp', 'Instancia padrao da Evolution API usada para disparos'],
+            ['evolution_webhook_url', '/webhooks/evolution', 'whatsapp', 'Endpoint local para receber eventos da Evolution API'],
+            ['evolution_webhook_secret', '', 'whatsapp', 'Segredo para validar eventos recebidos da Evolution API'],
+            ['platform_webhook_base_url', '', 'webhooks', 'URL publica base para callbacks e automacoes externas'],
+            ['platform_webhook_secret', '', 'webhooks', 'Segredo compartilhado para validar webhooks gerais da plataforma'],
+            ['lead_capture_webhook_url', '/webhooks/leads', 'webhooks', 'Endpoint para captura externa de leads e formularios'],
+            ['billing_webhook_url', '/webhooks/pagou', 'webhooks', 'Endpoint para eventos financeiros e cobrancas'],
+            ['email_events_webhook_url', '/webhooks/resend', 'webhooks', 'Endpoint para eventos de entrega, abertura e falha de emails'],
             ['ia_free_generations_monthly', '3', 'ai', 'Geracoes gratuitas mensais por workspace'],
             ['ia_credit_cost', '1', 'ai', 'Creditos consumidos por geracao da Central Pastoral IA'],
             ['site_publish_cname_target', 'sites.elo42.com.br', 'sites', 'Destino CNAME recomendado para www ou subdominios'],
@@ -514,6 +528,20 @@ class AdminCatalogController extends Controller
             ['setting_key' => 'pagou_webhook_secret', 'setting_value' => '', 'setting_group' => 'payments', 'description' => 'Segredo do webhook Pagou para validar eventos de pagamento.'],
             ['setting_key' => 'pagou_webhook_url', 'setting_value' => '/webhooks/pagou', 'setting_group' => 'payments', 'description' => 'Endpoint que recebera eventos da Pagou.'],
             ['setting_key' => 'pagou_default_gateway', 'setting_value' => 'pagou', 'setting_group' => 'payments', 'description' => 'Gateway oficial para cobranca recorrente dos assinantes do Hub.'],
+            ['setting_key' => 'resend_api_key', 'setting_value' => '', 'setting_group' => 'email', 'description' => 'Chave da API Resend usada para disparos transacionais da plataforma.'],
+            ['setting_key' => 'resend_from_email', 'setting_value' => 'suporte@elo42.com.br', 'setting_group' => 'email', 'description' => 'Email remetente padrao usado nos disparos.'],
+            ['setting_key' => 'resend_from_name', 'setting_value' => 'Elo 42', 'setting_group' => 'email', 'description' => 'Nome do remetente padrao usado nos disparos.'],
+            ['setting_key' => 'resend_base_url', 'setting_value' => 'https://api.resend.com', 'setting_group' => 'email', 'description' => 'URL base da API Resend.'],
+            ['setting_key' => 'evolution_base_url', 'setting_value' => '', 'setting_group' => 'whatsapp', 'description' => 'URL base da Evolution API.'],
+            ['setting_key' => 'evolution_api_key', 'setting_value' => '', 'setting_group' => 'whatsapp', 'description' => 'Chave global de autenticacao da Evolution API.'],
+            ['setting_key' => 'evolution_instance', 'setting_value' => '', 'setting_group' => 'whatsapp', 'description' => 'Instancia padrao da Evolution API usada para disparos.'],
+            ['setting_key' => 'evolution_webhook_url', 'setting_value' => '/webhooks/evolution', 'setting_group' => 'whatsapp', 'description' => 'Endpoint local para receber eventos da Evolution API.'],
+            ['setting_key' => 'evolution_webhook_secret', 'setting_value' => '', 'setting_group' => 'whatsapp', 'description' => 'Segredo para validar eventos recebidos da Evolution API.'],
+            ['setting_key' => 'platform_webhook_base_url', 'setting_value' => '', 'setting_group' => 'webhooks', 'description' => 'URL publica base para callbacks e automacoes externas.'],
+            ['setting_key' => 'platform_webhook_secret', 'setting_value' => '', 'setting_group' => 'webhooks', 'description' => 'Segredo compartilhado para validar webhooks gerais da plataforma.'],
+            ['setting_key' => 'lead_capture_webhook_url', 'setting_value' => '/webhooks/leads', 'setting_group' => 'webhooks', 'description' => 'Endpoint para captura externa de leads e formularios.'],
+            ['setting_key' => 'billing_webhook_url', 'setting_value' => '/webhooks/pagou', 'setting_group' => 'webhooks', 'description' => 'Endpoint para eventos financeiros e cobrancas.'],
+            ['setting_key' => 'email_events_webhook_url', 'setting_value' => '/webhooks/resend', 'setting_group' => 'webhooks', 'description' => 'Endpoint para eventos de entrega, abertura e falha de emails.'],
             ['setting_key' => 'site_publish_cname_target', 'setting_value' => 'sites.elo42.com.br', 'setting_group' => 'sites', 'description' => 'Destino CNAME recomendado para www ou subdominios.'],
             ['setting_key' => 'site_publish_apex_ip', 'setting_value' => '185.158.133.1', 'setting_group' => 'sites', 'description' => 'IP usado quando o provedor exigir registro A no dominio raiz.'],
             ['setting_key' => 'site_domain_verify_prefix', 'setting_value' => '_elo42-verify', 'setting_group' => 'sites', 'description' => 'Prefixo do TXT opcional para validar posse do dominio.'],

@@ -18,13 +18,22 @@ class Donation extends Model
             $pdo = Database::connection();
             $where = ['d.organization_id = :org'];
             $params = ['org' => $orgId];
+            if (!empty($filters['search'])) {
+                $where[] = "(d.donor_name LIKE :search OR d.reference LIKE :search OR m.name LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
             if (!empty($filters['type'])) { $where[] = "d.type = :type"; $params['type'] = $filters['type']; }
             if (!empty($filters['start_date'])) { $where[] = "d.donation_date >= :start"; $params['start'] = $filters['start_date']; }
             if (!empty($filters['end_date'])) { $where[] = "d.donation_date <= :end"; $params['end'] = $filters['end_date']; }
             $whereStr = implode(' AND ', $where);
             $offset = ($page - 1) * $perPage;
 
-            $cStmt = $pdo->prepare("SELECT COUNT(*) FROM donations d WHERE {$whereStr}");
+            $cStmt = $pdo->prepare("
+                SELECT COUNT(*)
+                FROM donations d
+                LEFT JOIN members m ON d.member_id = m.id
+                WHERE {$whereStr}
+            ");
             $cStmt->execute($params);
             $total = (int) $cStmt->fetchColumn();
 

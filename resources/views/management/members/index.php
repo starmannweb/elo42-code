@@ -63,16 +63,36 @@ foreach ($members as $m) {
     </div>
 </div>
 
-<div class="mgmt-dashboard-card" style="padding:0; overflow:hidden;">
-    <div style="display:flex; align-items:center; justify-content:space-between; padding: var(--space-4); border-bottom: 1px solid var(--color-border-light); flex-wrap:wrap; gap: var(--space-3);">
-        <form method="GET" action="<?= url('/gestao/membros') ?>" style="display:flex; align-items:center; gap:0; margin:0; flex:1;">
-            <input type="hidden" name="status" value="<?= e($filters['status'] ?? '') ?>">
-            <div class="mgmt-search" style="max-width:320px;width:100%;">
-                <span class="mgmt-search__icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
-                <input type="text" name="search" class="form-input" placeholder="Buscar por nome, email..." value="<?= e($filters['search']) ?>" style="font-size:13px;">
+<div class="mgmt-filter-card mgmt-card">
+    <div class="mgmt-card__body">
+        <form method="GET" action="<?= url('/gestao/membros') ?>" class="mgmt-filter-grid">
+            <div class="mgmt-filter-field">
+                <label for="member_search" class="form-label">Buscar</label>
+                <input type="text" id="member_search" name="search" class="form-control" placeholder="Nome, e-mail ou telefone" value="<?= e($filters['search'] ?? '') ?>">
+            </div>
+            <div class="mgmt-filter-field">
+                <label for="member_status" class="form-label">Status</label>
+                <select id="member_status" name="status" class="form-control">
+                    <option value="">Todos</option>
+                    <option value="active" <?= ($filters['status'] ?? '') === 'active' ? 'selected' : '' ?>>Ativos</option>
+                    <option value="inactive" <?= ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inativos</option>
+                    <option value="visitor" <?= ($filters['status'] ?? '') === 'visitor' ? 'selected' : '' ?>>Visitantes</option>
+                    <option value="transferred" <?= ($filters['status'] ?? '') === 'transferred' ? 'selected' : '' ?>>Transferidos</option>
+                </select>
+            </div>
+            <div class="mgmt-filter-field">
+                <label for="member_month" class="form-label">Período</label>
+                <input type="month" id="member_month" name="month" class="form-control" value="<?= e($filters['month'] ?? date('Y-m')) ?>">
+            </div>
+            <div class="mgmt-filter-actions">
+                <button type="submit" class="btn btn--outline">Filtrar</button>
+                <a href="<?= url('/gestao/membros') ?>" class="btn btn--outline">Limpar</a>
             </div>
         </form>
     </div>
+</div>
+
+<div class="mgmt-dashboard-card" style="padding:0; overflow:hidden;">
 
 <?php if (empty($members)): ?>
     <div style="text-align:center; padding: var(--space-10); color: var(--text-muted);">

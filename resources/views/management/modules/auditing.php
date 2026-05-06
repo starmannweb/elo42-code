@@ -13,38 +13,6 @@
         </button>
     </div>
 
-    <div class="mgmt-card" style="margin-bottom: 1.5rem;">
-        <div class="mgmt-card__body">
-            <form method="GET" action="<?= url('/gestao/auditoria') ?>" style="display: grid; grid-template-columns: 1fr 200px 200px 200px auto; gap: 1rem; align-items: end;">
-                <div>
-                    <label for="search" class="form-label">Buscar</label>
-                    <input type="text" id="search" name="search" class="form-control" placeholder="Descrição ou usuário" value="<?= e($search ?? '') ?>">
-                </div>
-                <div>
-                    <label for="type" class="form-label">Tipo</label>
-                    <select id="type" name="type" class="form-control">
-                        <option value="">Todos</option>
-                        <option value="receita" <?= ($type ?? '') === 'receita' ? 'selected' : '' ?>>Receita</option>
-                        <option value="despesa" <?= ($type ?? '') === 'despesa' ? 'selected' : '' ?>>Despesa</option>
-                        <option value="transferencia" <?= ($type ?? '') === 'transferencia' ? 'selected' : '' ?>>Transferência</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="start_date" class="form-label">Data Inicial</label>
-                    <input type="date" id="start_date" name="start_date" class="form-control" value="<?= e($startDate ?? date('Y-m-01')) ?>">
-                </div>
-                <div>
-                    <label for="end_date" class="form-label">Data Final</label>
-                    <input type="date" id="end_date" name="end_date" class="form-control" value="<?= e($endDate ?? date('Y-m-d')) ?>">
-                </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button type="submit" class="btn btn-secondary">Filtrar</button>
-                    <a href="<?= url('/gestao/auditoria') ?>" class="btn btn-secondary">Limpar</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <div class="mgmt-stats" style="margin-bottom: 1.5rem;">
         <div class="stat-card">
             <div class="stat-card__icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
@@ -74,6 +42,34 @@
                     R$ <?= number_format($totalRevenue - $totalExpenses, 2, ',', '.') ?>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="mgmt-card mgmt-filter-card">
+        <div class="mgmt-card__body">
+            <form method="GET" action="<?= url('/gestao/auditoria') ?>" class="mgmt-filter-grid">
+                <div class="mgmt-filter-field">
+                    <label for="search" class="form-label">Buscar</label>
+                    <input type="text" id="search" name="search" class="form-control" placeholder="Descrição ou usuário" value="<?= e($search ?? '') ?>">
+                </div>
+                <div class="mgmt-filter-field">
+                    <label for="type" class="form-label">Tipo</label>
+                    <select id="type" name="type" class="form-control">
+                        <option value="">Todos</option>
+                        <option value="receita" <?= ($type ?? '') === 'receita' ? 'selected' : '' ?>>Receita</option>
+                        <option value="despesa" <?= ($type ?? '') === 'despesa' ? 'selected' : '' ?>>Despesa</option>
+                        <option value="transferencia" <?= ($type ?? '') === 'transferencia' ? 'selected' : '' ?>>Transferência</option>
+                    </select>
+                </div>
+                <div class="mgmt-filter-field">
+                    <label for="month" class="form-label">Período</label>
+                    <input type="month" id="month" name="month" class="form-control" value="<?= e($month ?? date('Y-m')) ?>">
+                </div>
+                <div class="mgmt-filter-actions">
+                    <button type="submit" class="btn btn--outline">Filtrar</button>
+                    <a href="<?= url('/gestao/auditoria') ?>" class="btn btn--outline">Limpar</a>
+                </div>
+            </form>
         </div>
     </div>
 

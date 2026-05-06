@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\PlatformSetting;
+
 /**
  * ResendService — Integração com a API REST do Resend (https://resend.com).
  *
@@ -21,11 +23,21 @@ class ResendService
 
     public function __construct()
     {
-        $this->apiKey    = (string) env('RESEND_API_KEY', '');
-        $this->endpoint  = rtrim((string) env('RESEND_BASE_URL', 'https://api.resend.com'), '/') . '/emails';
-        $this->fromEmail = (string) env('RESEND_FROM_EMAIL', env('MAIL_FROM_ADDRESS', 'suporte@elo42.com.br'));
-        $this->fromName  = (string) env('RESEND_FROM_NAME', env('MAIL_FROM_NAME', 'Elo 42'));
+        $this->apiKey    = $this->setting('resend_api_key', (string) env('RESEND_API_KEY', ''));
+        $this->endpoint  = rtrim($this->setting('resend_base_url', (string) env('RESEND_BASE_URL', 'https://api.resend.com')), '/') . '/emails';
+        $this->fromEmail = $this->setting('resend_from_email', (string) env('RESEND_FROM_EMAIL', env('MAIL_FROM_ADDRESS', 'suporte@elo42.com.br')));
+        $this->fromName  = $this->setting('resend_from_name', (string) env('RESEND_FROM_NAME', env('MAIL_FROM_NAME', 'Elo 42')));
         $this->timeout   = (int) env('RESEND_TIMEOUT', 20);
+    }
+
+    private function setting(string $key, string $fallback = ''): string
+    {
+        try {
+            $value = PlatformSetting::get($key);
+            return trim((string) $value) !== '' ? (string) $value : $fallback;
+        } catch (\Throwable $e) {
+            return $fallback;
+        }
     }
 
     public function isEnabled(): bool

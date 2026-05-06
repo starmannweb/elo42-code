@@ -20,6 +20,39 @@
     <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Saldo</div><div class="mgmt-kpi-card__value">R$ <?= number_format((float) ($summary['balance'] ?? 0), 2, ',', '.') ?></div></div></div>
 </div>
 
+<div class="mgmt-card mgmt-filter-card">
+    <div class="mgmt-card__body">
+        <form method="GET" action="<?= url('/gestao/despesas') ?>" class="mgmt-filter-grid mgmt-filter-grid--range">
+            <input type="hidden" name="type" value="expense">
+            <div class="mgmt-filter-field">
+                <label for="expense_search" class="form-label">Buscar</label>
+                <input type="text" id="expense_search" name="search" class="form-control" value="<?= e((string) ($filters['search'] ?? '')) ?>" placeholder="Descrição ou referência">
+            </div>
+            <div class="mgmt-filter-field">
+                <label for="expense_status" class="form-label">Status</label>
+                <select id="expense_status" name="status" class="form-control">
+                    <option value="">Todas</option>
+                    <option value="pending" <?= ($filters['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pendente</option>
+                    <option value="confirmed" <?= ($filters['status'] ?? '') === 'confirmed' ? 'selected' : '' ?>>Confirmada</option>
+                    <option value="cancelled" <?= ($filters['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelada</option>
+                </select>
+            </div>
+            <div class="mgmt-filter-field">
+                <label for="expense_start_date" class="form-label">Início</label>
+                <input type="date" id="expense_start_date" name="start_date" class="form-control" value="<?= e((string) ($filters['start_date'] ?? date('Y-m-01'))) ?>">
+            </div>
+            <div class="mgmt-filter-field">
+                <label for="expense_end_date" class="form-label">Fim</label>
+                <input type="date" id="expense_end_date" name="end_date" class="form-control" value="<?= e((string) ($filters['end_date'] ?? date('Y-m-t'))) ?>">
+            </div>
+            <div class="mgmt-filter-actions">
+                <button type="submit" class="btn btn-secondary">Filtrar</button>
+                <a href="<?= url('/gestao/despesas') ?>" class="btn btn-secondary">Limpar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="mgmt-dashboard-card" style="padding:0;overflow:hidden;">
     <?php if (empty($transactions)): ?>
         <div class="mgmt-empty">

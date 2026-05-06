@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\PlatformSetting;
+
 /**
  * WhatsAppService — Integration stub for WhatsApp messaging.
  *
@@ -17,12 +19,25 @@ class WhatsAppService
     public function __construct()
     {
         $this->config = [
-            'provider'   => env('WHATSAPP_PROVIDER', 'twilio'),
-            'api_key'    => env('WHATSAPP_API_KEY', ''),
+            'provider'   => env('WHATSAPP_PROVIDER', 'evolution'),
+            'base_url'   => $this->setting('evolution_base_url', (string) env('EVOLUTION_BASE_URL', '')),
+            'instance'   => $this->setting('evolution_instance', (string) env('EVOLUTION_INSTANCE', '')),
+            'api_key'    => $this->setting('evolution_api_key', (string) env('WHATSAPP_API_KEY', '')),
             'api_secret' => env('WHATSAPP_API_SECRET', ''),
             'from_number' => env('WHATSAPP_FROM_NUMBER', ''),
-            'webhook_url' => env('WHATSAPP_WEBHOOK_URL', ''),
+            'webhook_url' => $this->setting('evolution_webhook_url', (string) env('WHATSAPP_WEBHOOK_URL', '')),
+            'webhook_secret' => $this->setting('evolution_webhook_secret', ''),
         ];
+    }
+
+    private function setting(string $key, string $fallback = ''): string
+    {
+        try {
+            $value = PlatformSetting::get($key);
+            return trim((string) $value) !== '' ? (string) $value : $fallback;
+        } catch (\Throwable $e) {
+            return $fallback;
+        }
     }
 
     /**

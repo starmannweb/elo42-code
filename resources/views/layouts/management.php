@@ -2,8 +2,7 @@
 <?php
     $mgmtOrganization = \App\Core\Session::get('organization');
     $mgmtOrganization = is_array($mgmtOrganization) ? $mgmtOrganization : [];
-    $mgmtPlan = strtolower((string) ($mgmtOrganization['plan'] ?? ''));
-    $isPwaEnabled = in_array($mgmtPlan, ['premium', 'enterprise', 'business', 'pro'], true);
+    $isPwaEnabled = true;
 ?>
 <html lang="pt-BR">
 <head>
@@ -158,12 +157,26 @@
                 ['href' => '/gestao/jornadas', 'label' => 'Jornada espiritual', 'icon' => 'journey', 'premium' => true],
                 ['href' => '/gestao/historico', 'label' => 'Histórico', 'icon' => 'audit', 'premium' => true],
             ];
+            $treasuryTabs = [
+                ['href' => '/gestao/receitas', 'label' => 'Receitas', 'icon' => 'income', 'active' => ['/gestao/receitas', '/gestao/doacoes']],
+                ['href' => '/gestao/despesas', 'label' => 'Despesas', 'icon' => 'expense'],
+                ['href' => '/gestao/categorias-financeiras', 'label' => 'Categorias', 'icon' => 'category'],
+                ['href' => '/gestao/aprovacoes-despesas', 'label' => 'Aprovações', 'icon' => 'check', 'premium' => true],
+                ['href' => '/gestao/auditoria', 'label' => 'Auditoria', 'icon' => 'audit', 'premium' => true],
+                ['href' => '/gestao/contas', 'label' => 'Contas / Caixas', 'icon' => 'wallet', 'premium' => true],
+            ];
             $settingsTabs = [
                 ['href' => '/gestao/configuracoes/usuarios', 'label' => 'Usuários', 'icon' => 'users', 'active' => ['/gestao/configuracoes', '/gestao/configuracoes/usuarios', '/gestao/usuarios']],
                 ['href' => '/gestao/configuracoes/unidades', 'label' => 'Unidades', 'icon' => 'home'],
                 ['href' => '/gestao/configuracoes/pix', 'label' => 'PIX / Ofertas', 'icon' => 'pix', 'premium' => true],
                 ['href' => '/gestao/configuracoes/seo', 'label' => 'SEO', 'icon' => 'seo', 'premium' => true],
                 ['href' => '/gestao/configuracoes/pwa', 'label' => 'APP', 'icon' => 'pwa', 'premium' => true],
+            ];
+            $adminTabs = [
+                ['href' => '/gestao/sermoes', 'label' => 'Sermões', 'icon' => 'sermon', 'active' => ['/gestao/sermoes']],
+                ['href' => '/gestao/pregadores', 'label' => 'Pregadores', 'icon' => 'users'],
+                ['href' => '/gestao/relatorios', 'label' => 'Relatórios', 'icon' => 'reports'],
+                ['href' => '/gestao/sermoes/expositor-ia?module=planejamento&workflow=plano_anual_igreja', 'label' => 'Plano Anual', 'icon' => 'award', 'active' => ['/gestao/sermoes/expositor-ia']],
             ];
         ?>
 
@@ -177,6 +190,11 @@
 
             <nav class="hub-sidebar__nav" aria-label="Navegação da gestão">
                 <?= $navItem('/gestao', 'Dashboard', 'dashboard', false, ['/gestao']) ?>
+                <?= $navItem('/hub', 'Voltar ao Hub', 'home', false, ['/hub']) ?>
+
+                <?php if ($isSystemAdmin): ?>
+                    <?= $navItem('/admin', 'Super Admin', 'admin', false, ['/admin']) ?>
+                <?php endif; ?>
 
                 <?php
                 $peoplePaths = [
@@ -238,10 +256,12 @@
                     '/gestao/pregadores',
                     '/gestao/sermoes',
                     '/gestao/relatorios',
+                    '/gestao/sermoes/expositor-ia',
                 ];
                 echo $navGroup('administracao', 'Administração', 'admin', [
                     $subNavItem('/gestao/pregadores', 'Pregadores', true, ['/gestao/pregadores']),
                     $subNavItem('/gestao/sermoes', 'Séries e Sermões', true, ['/gestao/sermoes']),
+                    $subNavItem('/gestao/sermoes/expositor-ia?module=planejamento&workflow=plano_anual_igreja', 'Plano Anual', true, ['/gestao/sermoes/expositor-ia']),
                     $subNavItem('/gestao/relatorios', 'Relatórios', true, ['/gestao/relatorios']),
                 ], $administrationPaths);
                 ?>
@@ -307,8 +327,12 @@
                 <?php
                     if ($isActive(['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico'], $uri)) {
                         $renderTabs($peopleTabs);
+                    } elseif ($isActive(['/gestao/receitas', '/gestao/despesas', '/gestao/categorias-financeiras', '/gestao/aprovacoes-despesas', '/gestao/auditoria', '/gestao/contas', '/gestao/doacoes'], $uri)) {
+                        $renderTabs($treasuryTabs);
                     } elseif ($isActive(['/gestao/configuracoes', '/gestao/usuarios'], $uri)) {
                         $renderTabs($settingsTabs);
+                    } elseif ($isActive(['/gestao/sermoes', '/gestao/pregadores', '/gestao/relatorios', '/gestao/sermoes/expositor-ia'], $uri)) {
+                        $renderTabs($adminTabs);
                     }
                 ?>
 

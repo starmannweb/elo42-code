@@ -22,6 +22,25 @@
         </span>
     </div>
 
+    <div class="mgmt-card mgmt-filter-card">
+        <div class="mgmt-card__body">
+            <form method="GET" action="<?= url('/gestao/aniversarios') ?>" class="mgmt-filter-grid mgmt-filter-grid--compact">
+                <div class="mgmt-filter-field">
+                    <label for="search" class="form-label">Buscar</label>
+                    <input type="text" id="search" name="search" class="form-control" placeholder="Nome ou telefone" value="<?= e($search ?? '') ?>">
+                </div>
+                <div class="mgmt-filter-field">
+                    <label for="month" class="form-label">Período</label>
+                    <input type="month" id="month" name="month" class="form-control" value="<?= e($month ?? date('Y-m')) ?>">
+                </div>
+                <div class="mgmt-filter-actions">
+                    <button type="submit" class="btn btn--outline">Filtrar</button>
+                    <a href="<?= url('/gestao/aniversarios') ?>" class="btn btn--outline">Limpar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <?php if (empty($members)): ?>
         <div class="mgmt-card">
             <div class="mgmt-empty">

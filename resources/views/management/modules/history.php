@@ -9,14 +9,14 @@
         </div>
     </div>
 
-    <div class="mgmt-card" style="margin-bottom: 1.5rem;">
+    <div class="mgmt-card mgmt-filter-card">
         <div class="mgmt-card__body">
-            <form method="GET" action="<?= url('/gestao/historico') ?>" style="display: grid; grid-template-columns: 1fr 200px 200px 200px auto; gap: 1rem; align-items: end;">
-                <div>
+            <form method="GET" action="<?= url('/gestao/historico') ?>" class="mgmt-filter-grid">
+                <div class="mgmt-filter-field">
                     <label for="search" class="form-label">Buscar</label>
-                    <input type="text" id="search" name="search" class="form-control" placeholder="Buscar por evento ou usuário" value="<?= e($search ?? '') ?>">
+                    <input type="text" id="search" name="search" class="form-control" placeholder="Evento ou usuário" value="<?= e($search ?? '') ?>">
                 </div>
-                <div>
+                <div class="mgmt-filter-field">
                     <label for="type" class="form-label">Tipo</label>
                     <select id="type" name="type" class="form-control">
                         <option value="">Todos</option>
@@ -27,17 +27,13 @@
                         <option value="sistema" <?= ($type ?? '') === 'sistema' ? 'selected' : '' ?>>Sistema</option>
                     </select>
                 </div>
-                <div>
-                    <label for="start_date" class="form-label">Data Inicial</label>
-                    <input type="date" id="start_date" name="start_date" class="form-control" value="<?= e($startDate ?? date('Y-m-01')) ?>">
+                <div class="mgmt-filter-field">
+                    <label for="month" class="form-label">Período</label>
+                    <input type="month" id="month" name="month" class="form-control" value="<?= e($month ?? date('Y-m')) ?>">
                 </div>
-                <div>
-                    <label for="end_date" class="form-label">Data Final</label>
-                    <input type="date" id="end_date" name="end_date" class="form-control" value="<?= e($endDate ?? date('Y-m-d')) ?>">
-                </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button type="submit" class="btn btn-secondary">Filtrar</button>
-                    <a href="<?= url('/gestao/historico') ?>" class="btn btn-secondary">Limpar</a>
+                <div class="mgmt-filter-actions">
+                    <button type="submit" class="btn btn--outline">Filtrar</button>
+                    <a href="<?= url('/gestao/historico') ?>" class="btn btn--outline">Limpar</a>
                 </div>
             </form>
         </div>

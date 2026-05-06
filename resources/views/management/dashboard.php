@@ -56,6 +56,46 @@ $balance = (float) ($financial['balance'] ?? 0);
         </article>
     </section>
 
+    <section class="hub-panel ministry-ai-vision" style="margin-bottom: 2rem;">
+        <div class="hub-panel__head">
+            <div>
+                <h2 class="hub-panel__title">Visão ministerial do mês</h2>
+                <p class="hub-panel__text">Alinhamento de séries, pequenos grupos e escola dominical.</p>
+            </div>
+            <a href="<?= url('/gestao/sermoes/expositor-ia?module=planejamento&workflow=plano_anual_igreja') ?>" class="btn btn--outline">Definir foco</a>
+        </div>
+        <div class="ministry-ai-vision__grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+            <article class="mgmt-card" style="padding: 1.25rem;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Séries</span>
+                <strong style="display: block; font-size: 1.5rem; margin-top: 0.25rem;">0</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Sermões gerados</span>
+                <strong style="display: block; font-size: 1.5rem; margin-top: 0.25rem;">0</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Estudos criados</span>
+                <strong style="display: block; font-size: 1.5rem; margin-top: 0.25rem;">0</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Culto / Série</span>
+                <strong style="display: block; font-size: 1.125rem; margin-top: 0.25rem; color: var(--text-muted);">Não iniciado</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Pequenos Grupos</span>
+                <strong style="display: block; font-size: 1.125rem; margin-top: 0.25rem; color: var(--text-muted);">Não iniciado</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Escola Dominical</span>
+                <strong style="display: block; font-size: 1.125rem; margin-top: 0.25rem; color: var(--text-muted);">Não iniciado</strong>
+            </article>
+        </div>
+        <div class="alert alert--warning" style="margin-top: 1.5rem; border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.05); color: #92400e;">
+            <strong style="font-weight: 700;">Próxima ação:</strong>
+            <span style="margin-left: 0.5rem;">Defina um foco para começar a medir coerência ministerial.</span>
+        </div>
+    </section>
+
     <section class="mgmt-dashboard-grid">
         <article class="mgmt-dashboard-card">
             <header class="mgmt-dashboard-card__header" style="margin-bottom: 24px;">

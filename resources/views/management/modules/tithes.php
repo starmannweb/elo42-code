@@ -5,6 +5,7 @@
     $members = is_array($members ?? null) ? $members : [];
     $units = is_array($units ?? null) ? $units : [];
     $orgName = $orgName ?? 'Igreja';
+    $filters = is_array($filters ?? null) ? $filters : ['search' => '', 'type' => '', 'month' => date('Y-m')];
 ?>
 <div class="mgmt-header">
     <div>
@@ -13,6 +14,36 @@
     </div>
     <div class="mgmt-header__actions">
         <button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-donation').style.display='flex'">Registrar contribuição</button>
+    </div>
+</div>
+
+<div class="mgmt-card mgmt-filter-card">
+    <div class="mgmt-card__body">
+        <form method="GET" action="<?= url('/gestao/receitas') ?>" class="mgmt-filter-grid">
+            <div class="mgmt-filter-field">
+                <label for="revenue_search" class="form-label">Buscar</label>
+                <input type="text" id="revenue_search" name="search" class="form-control" placeholder="Doador ou referência" value="<?= e((string) ($filters['search'] ?? '')) ?>">
+            </div>
+            <div class="mgmt-filter-field">
+                <label for="revenue_type" class="form-label">Tipo</label>
+                <select id="revenue_type" name="type" class="form-control">
+                    <option value="">Todos</option>
+                    <option value="tithe" <?= ($filters['type'] ?? '') === 'tithe' ? 'selected' : '' ?>>Dízimo</option>
+                    <option value="offering" <?= ($filters['type'] ?? '') === 'offering' ? 'selected' : '' ?>>Oferta</option>
+                    <option value="special" <?= ($filters['type'] ?? '') === 'special' ? 'selected' : '' ?>>Especial</option>
+                    <option value="campaign" <?= ($filters['type'] ?? '') === 'campaign' ? 'selected' : '' ?>>Campanha</option>
+                    <option value="other" <?= ($filters['type'] ?? '') === 'other' ? 'selected' : '' ?>>Outro</option>
+                </select>
+            </div>
+            <div class="mgmt-filter-field">
+                <label for="revenue_month" class="form-label">Período</label>
+                <input type="month" id="revenue_month" name="month" class="form-control" value="<?= e((string) ($filters['month'] ?? date('Y-m'))) ?>">
+            </div>
+            <div class="mgmt-filter-actions">
+                <button type="submit" class="btn btn--outline">Filtrar</button>
+                <a href="<?= url('/gestao/receitas') ?>" class="btn btn--outline">Limpar</a>
+            </div>
+        </form>
     </div>
 </div>
 

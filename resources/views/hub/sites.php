@@ -354,6 +354,21 @@
                 .image-preview--hero img { max-height:180px; width:100%; object-fit:cover; border-radius:8px; }
                 .image-preview[hidden] { display:none; }
                 .site-gallery-uploader { display:flex; align-items:center; gap:.6rem; margin-top:.65rem; flex-wrap:wrap; }
+                .site-gallery-dropzone { margin-top:.75rem; min-height:92px; border:1.5px dashed #c9daf5; border-radius:12px; background:#f8fbff; display:grid; place-items:center; text-align:center; padding:1rem; color:#60708e; cursor:pointer; transition:border-color .18s ease, background .18s ease; }
+                .site-gallery-dropzone.is-dragging { border-color:#1455ff; background:rgba(20,85,255,.06); }
+                .site-gallery-dropzone strong { display:block; color:#06183a; font-size:.9rem; margin-bottom:.2rem; }
+                .site-gallery-sortable { display:grid; gap:.5rem; margin-top:.8rem; }
+                .site-gallery-sortable:empty { display:none; }
+                .site-gallery-sortable__item { display:flex; align-items:center; gap:.65rem; border:1px solid #dfe7f4; border-radius:10px; background:#fff; padding:.55rem .7rem; cursor:grab; }
+                .site-gallery-sortable__item.is-dragging { opacity:.55; }
+                .site-gallery-sortable__thumb { width:46px; height:34px; border-radius:7px; background:#eef4ff; object-fit:cover; flex:0 0 auto; }
+                .site-gallery-sortable__handle { color:#1455ff; font-weight:900; line-height:1; }
+                .site-gallery-sortable__text { min-width:0; flex:1; font-size:.78rem; color:#405372; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+                .site-publish-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; align-items:stretch; margin-bottom:1.5rem; }
+                .site-publish-grid > article { margin-bottom:0 !important; }
+                .site-publish-grid .site-publish-summary { order:1; grid-column: 1; }
+                .site-publish-grid .site-publish-controls { order:2; grid-column: 2; }
+                .site-publish-grid .site-readiness-card { grid-column:1 / -1; order:3; }                @media (max-width: 980px) { .site-publish-grid { grid-template-columns:1fr; } }
             </style>
             <div class="site-appearance-card">
                 <div>
@@ -368,6 +383,13 @@
                         <input type="file" id="gallery_image_files" name="gallery_image_files[]" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden data-gallery-input>
                         <span class="file-chip" data-gallery-chip hidden><span data-gallery-count>0 imagens selecionadas</span></span>
                     </div>
+                    <div class="site-gallery-dropzone" data-gallery-dropzone>
+                        <div>
+                            <strong>Arraste imagens para anexar</strong>
+                            <span>ou clique em Enviar imagens. Depois arraste a lista abaixo para definir a ordem.</span>
+                        </div>
+                    </div>
+                    <div class="site-gallery-sortable" data-gallery-sortable aria-label="Ordem das imagens da galeria"></div>
                     <span class="form-hint">Você pode misturar links e uploads. PNG, JPG, WEBP ou GIF até 5 MB por imagem.</span>
                 </div>
             </div>
@@ -402,15 +424,137 @@
                     var galleryInput = gallery.querySelector('[data-gallery-input]');
                     var galleryChip = gallery.querySelector('[data-gallery-chip]');
                     var galleryCount = gallery.querySelector('[data-gallery-count]');
-                    if (galleryInput) {
-                        galleryInput.addEventListener('change', function () {
-                            var count = galleryInput.files ? galleryInput.files.length : 0;
-                            if (galleryChip && galleryCount && count > 0) {
-                                galleryCount.textContent = count === 1 ? '1 imagem selecionada' : count + ' imagens selecionadas';
-                                galleryChip.hidden = false;
+                    var galleryTextarea = document.getElementById('gallery_images');
+                    var galleryDropzone = document.querySelector('[data-gallery-dropzone]');
+                    var gallerySortable = document.querySelector('[data-gallery-sortable]');
+                    var uploadedFiles = [];
+
+                    function urlLines() {
+                        if (!galleryTextarea) return [];
+                        return galleryTextarea.value.split(/\r?\n/).map(function (line) {
+                            return line.trim();
+                        }).filter(Boolean);
+                    }
+
+                    function syncFilesInput() {
+                        if (!galleryInput || !window.DataTransfer) return;
+                        var transfer = new DataTransfer();
+                        uploadedFiles.forEach(function (file) { transfer.items.add(file); });
+                        galleryInput.files = transfer.files;
+                    }
+
+                    function renderGalleryOrder() {
+                        if (!gallerySortable) return;
+                        gallerySortable.innerHTML = '';
+
+                        var items = [];
+                        urlLines().forEach(function (url) {
+                            items.push({ type: 'url', value: url });
+                        });
+                        uploadedFiles.forEach(function (file, index) {
+                            items.push({ type: 'file', value: file, index: index });
+                        });
+
+                        items.forEach(function (item) {
+                            var div = document.createElement('div');
+                            div.className = 'site-gallery-sortable__item';
+                            div.draggable = true;
+                            if (item.type === 'url') {
+                                div.setAttribute('data-gallery-url', item.value);
+                                div.innerHTML = '<span class="site-gallery-sortable__handle">::</span><img class="site-gallery-sortable__thumb" src="' + item.value.replace(/"/g, '&quot;') + '" alt=""><span class="site-gallery-sortable__text">' + item.value.replace(/</g, '&lt;') + '</span>';
+                            } else {
+                                div.setAttribute('data-gallery-file-index', String(item.index));
+                                div.innerHTML = '<span class="site-gallery-sortable__handle">::</span><span class="site-gallery-sortable__thumb" style="display:grid;place-items:center;background:#1455ff;color:#fff;font-size:10px;font-weight:700;">UP</span><span class="site-gallery-sortable__text">' + item.value.name.replace(/</g, '&lt;') + '</span>';
                             }
+                            gallerySortable.appendChild(div);
                         });
                     }
+
+                    function syncAll() {
+                        if (!gallerySortable) return;
+                        var urls = [];
+                        var newFiles = [];
+                        gallerySortable.querySelectorAll('.site-gallery-sortable__item').forEach(function (item) {
+                            var url = item.getAttribute('data-gallery-url');
+                            var fileIndex = item.getAttribute('data-gallery-file-index');
+                            if (url) {
+                                urls.push(url);
+                            } else if (fileIndex !== null) {
+                                newFiles.push(uploadedFiles[Number(fileIndex)]);
+                            }
+                        });
+                        if (galleryTextarea) galleryTextarea.value = urls.join('\n');
+                        uploadedFiles = newFiles;
+                        syncFilesInput();
+                        updateFileChip();
+                    }
+
+                    function updateFileChip() {
+                        var count = uploadedFiles.length;
+                        if (galleryChip && galleryCount) {
+                            galleryChip.hidden = count === 0;
+                            galleryCount.textContent = count === 1 ? '1 imagem selecionada' : count + ' imagens selecionadas';
+                        }
+                    }
+
+                    function acceptFiles(files) {
+                        uploadedFiles = Array.prototype.slice.call(files || []).filter(function (file) {
+                            return /^image\/(png|jpeg|webp|gif)$/.test(file.type) && file.size <= 5 * 1024 * 1024;
+                        });
+                        syncFilesInput();
+                        updateFileChip();
+                        renderGalleryOrder();
+                    }
+
+                    if (galleryInput) {
+                        galleryInput.addEventListener('change', function () {
+                            acceptFiles(galleryInput.files);
+                        });
+                    }
+                    if (galleryTextarea) {
+                        galleryTextarea.addEventListener('input', renderGalleryOrder);
+                    }
+                    if (galleryDropzone && galleryInput) {
+                        galleryDropzone.addEventListener('click', function () { galleryInput.click(); });
+                        ['dragenter', 'dragover'].forEach(function (eventName) {
+                            galleryDropzone.addEventListener(eventName, function (event) {
+                                event.preventDefault();
+                                galleryDropzone.classList.add('is-dragging');
+                            });
+                        });
+                        ['dragleave', 'drop'].forEach(function (eventName) {
+                            galleryDropzone.addEventListener(eventName, function (event) {
+                                event.preventDefault();
+                                galleryDropzone.classList.remove('is-dragging');
+                            });
+                        });
+                        galleryDropzone.addEventListener('drop', function (event) {
+                            acceptFiles(event.dataTransfer ? event.dataTransfer.files : []);
+                        });
+                    }
+                    if (gallerySortable) {
+                        var dragging = null;
+                        gallerySortable.addEventListener('dragstart', function (event) {
+                            dragging = event.target.closest('.site-gallery-sortable__item');
+                            if (dragging) dragging.classList.add('is-dragging');
+                        });
+                        gallerySortable.addEventListener('dragend', function () {
+                            if (dragging) dragging.classList.remove('is-dragging');
+                            dragging = null;
+                            syncAll();
+                            renderGalleryOrder();
+                        });
+                        gallerySortable.addEventListener('dragover', function (event) {
+                            event.preventDefault();
+                            var after = Array.prototype.slice.call(gallerySortable.querySelectorAll('.site-gallery-sortable__item:not(.is-dragging)')).find(function (item) {
+                                return event.clientY <= item.getBoundingClientRect().top + item.offsetHeight / 2;
+                            });
+                            if (!dragging) return;
+                            if (after) gallerySortable.insertBefore(dragging, after);
+                            else gallerySortable.appendChild(dragging);
+                        });
+                    }
+                    renderGalleryOrder();
                 }
             })();
             </script>
@@ -592,6 +736,7 @@
                 <span class="hub-badge <?= e($publishStateClass) ?>"><?= e($publishStateLabel) ?></span>
             </div>
 
+            <div class="site-publish-grid">
             <article class="site-publish-summary" style="margin-bottom:var(--space-4);">
                 <div class="site-publish-summary__body">
                     <h3 class="hub-panel__title" style="margin:0;">Visão geral</h3>
@@ -716,6 +861,8 @@
                     <?php endif; ?>
                 </div>
             </article>
+
+            </div>
 
             <style>
                 .site-publish-summary { border: 1px solid var(--color-border); border-radius: 18px; overflow: hidden; background: #fff; box-shadow: 0 14px 32px rgba(15,35,75,.06); }

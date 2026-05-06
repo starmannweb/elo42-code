@@ -43,14 +43,14 @@
         </div>
     </div>
 
-    <div class="mgmt-card" style="margin-bottom: 1.5rem;">
+    <div class="mgmt-card mgmt-filter-card">
         <div class="mgmt-card__body">
-            <form method="GET" action="<?= url('/gestao/aprovacoes-despesas') ?>" style="display: grid; grid-template-columns: 1fr 200px 200px auto; gap: 1rem; align-items: end;">
-                <div>
+            <form method="GET" action="<?= url('/gestao/aprovacoes-despesas') ?>" class="mgmt-filter-grid">
+                <div class="mgmt-filter-field">
                     <label for="search" class="form-label">Buscar</label>
                     <input type="text" id="search" name="search" class="form-control" placeholder="Descrição ou fornecedor" value="<?= e($search ?? '') ?>">
                 </div>
-                <div>
+                <div class="mgmt-filter-field">
                     <label for="status" class="form-label">Status</label>
                     <select id="status" name="status" class="form-control">
                         <option value="">Todos</option>
@@ -59,13 +59,13 @@
                         <option value="rejected" <?= ($status ?? '') === 'rejected' ? 'selected' : '' ?>>Rejeitado</option>
                     </select>
                 </div>
-                <div>
+                <div class="mgmt-filter-field">
                     <label for="month" class="form-label">Período</label>
                     <input type="month" id="month" name="month" class="form-control" value="<?= e($month ?? date('Y-m')) ?>">
                 </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button type="submit" class="btn btn-secondary">Filtrar</button>
-                    <a href="<?= url('/gestao/aprovacoes-despesas') ?>" class="btn btn-secondary">Limpar</a>
+                <div class="mgmt-filter-actions">
+                    <button type="submit" class="btn btn--outline">Filtrar</button>
+                    <a href="<?= url('/gestao/aprovacoes-despesas') ?>" class="btn btn--outline">Limpar</a>
                 </div>
             </form>
         </div>
