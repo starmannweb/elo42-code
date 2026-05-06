@@ -987,9 +987,25 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
     color: #8a95ac;
 }
 
+.mgmt-layout .hub-sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.mgmt-layout .hub-nav-group {
+    display: grid;
+    gap: 2px;
+}
+
 .mgmt-layout .hub-nav-link {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    justify-items: start;
     color: #3b4a65;
     font-size: 1rem;
+    min-height: 42px;
+    margin-bottom: 0;
 }
 
 .mgmt-layout .hub-nav-link__label {
@@ -1005,6 +1021,33 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
+}
+
+.mgmt-layout .hub-sidebar .premium-feature-icon {
+    margin-left: 0;
+    justify-self: end;
+}
+
+.mgmt-layout .hub-nav-link__chevron {
+    justify-self: end;
+}
+
+.mgmt-layout .hub-nav-sublist {
+    margin: 2px 0 6px 18px;
+    padding: 3px 0 3px 22px;
+}
+
+.mgmt-layout .hub-nav-sublink {
+    display: grid;
+    grid-template-columns: 10px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 7px 10px;
+}
+
+.mgmt-layout .hub-nav-sublink__label {
+    min-width: 0;
 }
 
 .mgmt-tabs {
@@ -1865,6 +1908,30 @@ textarea.form-input,
 body[data-hub-theme="dark"] .mgmt-tabs-frame {
     background: #0f1c31;
     border-color: #243857;
+}
+
+.pwa-upload-field {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 0.85rem;
+    padding: 0.8rem;
+    border: 1px dashed #b8c9e6;
+    border-radius: 10px;
+    background: #f8fbff;
+    color: #304461;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.pwa-upload-field input {
+    width: 100%;
+    font-size: 0.82rem;
+}
+
+body[data-hub-theme="dark"] .mgmt-layout .pwa-upload-field {
+    background: #0f1f3a;
+    border-color: rgba(155, 183, 226, 0.32);
+    color: #d8e3f6;
 }
 
 .modal-grid {

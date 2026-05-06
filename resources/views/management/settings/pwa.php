@@ -24,7 +24,7 @@
     O APP já possui manifesto e service worker. Depois de alterar nome, cores ou ícones, alguns celulares podem exigir reinstalação para atualizar o atalho.
 </div>
 
-<form id="form-pwa" action="<?= url('/gestao/configuracoes') ?>" method="POST">
+<form id="form-pwa" action="<?= url('/gestao/configuracoes') ?>" method="POST" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <input type="hidden" name="redirect_to" value="<?= url('/gestao/configuracoes/pwa') ?>">
 
@@ -77,11 +77,19 @@
                     <strong>Ícone 192x192</strong>
                     <p class="text-muted" style="margin:.35rem 0 1rem;">Atalho padrão em Android.</p>
                     <input type="text" name="pwa_icon_192" class="form-control" value="<?= e((string) ($settings['pwa_icon_192'] ?? '/assets/img/logo-color-new.png')) ?>" placeholder="/assets/img/icone-192.png">
+                    <label class="pwa-upload-field">
+                        <span>Enviar PNG 192x192</span>
+                        <input type="file" name="pwa_icon_192_file" accept="image/png,image/webp,image/jpeg">
+                    </label>
                 </div>
                 <div class="mgmt-card" style="padding:1rem;">
                     <strong>Ícone 512x512</strong>
                     <p class="text-muted" style="margin:.35rem 0 1rem;">Splash screen e alta resolução.</p>
                     <input type="text" name="pwa_icon_512" class="form-control" value="<?= e((string) ($settings['pwa_icon_512'] ?? '/assets/img/logo-color-new.png')) ?>" placeholder="/assets/img/icone-512.png">
+                    <label class="pwa-upload-field">
+                        <span>Enviar PNG 512x512</span>
+                        <input type="file" name="pwa_icon_512_file" accept="image/png,image/webp,image/jpeg">
+                    </label>
                 </div>
             </div>
 

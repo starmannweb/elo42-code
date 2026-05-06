@@ -37,7 +37,7 @@
             <?php if (empty($journeys)): ?>
                 <div class="mgmt-empty">
                     <div class="mgmt-empty__icon">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"></path><path d="M4 6c2.5-1.2 5 1.2 7.5 0S16.5 5 20 6v9c-3.5-1-6 .2-8.5 1.2S6.5 15 4 16"></path><path d="M8 20h8"></path><path d="M8 10h.01"></path><path d="M13 9h.01"></path><path d="M17 11h.01"></path></svg>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19a9 9 0 0 1 9-9h5"></path><path d="M18 10l-3-3"></path><path d="M18 10l-3 3"></path><circle cx="5" cy="19" r="2"></circle><circle cx="13" cy="10" r="2"></circle><circle cx="19" cy="5" r="2"></circle></svg>
                     </div>
                     <h3 class="mgmt-empty__title">Nenhuma jornada cadastrada</h3>
                     <p class="mgmt-empty__text">Crie trilhas como integração de novos membros, discipulado, batismo ou liderança.</p>

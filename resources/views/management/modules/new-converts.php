@@ -13,35 +13,6 @@
         </button>
     </div>
 
-    <div class="mgmt-card mgmt-filter-card">
-        <div class="mgmt-card__body">
-            <form method="GET" action="<?= url('/gestao/novos-convertidos') ?>" class="mgmt-filter-grid">
-                <div class="mgmt-filter-field">
-                    <label for="search" class="form-label">Buscar</label>
-                    <input type="text" id="search" name="search" class="form-control" placeholder="Nome ou telefone" value="<?= e($search ?? '') ?>">
-                </div>
-                <div class="mgmt-filter-field">
-                    <label for="status" class="form-label">Status de Acompanhamento</label>
-                    <select id="status" name="status" class="form-control">
-                        <option value="">Todos</option>
-                        <option value="novo" <?= ($status ?? '') === 'novo' ? 'selected' : '' ?>>Novo</option>
-                        <option value="acompanhamento" <?= ($status ?? '') === 'acompanhamento' ? 'selected' : '' ?>>Em Acompanhamento</option>
-                        <option value="batizado" <?= ($status ?? '') === 'batizado' ? 'selected' : '' ?>>Batizado</option>
-                        <option value="membro" <?= ($status ?? '') === 'membro' ? 'selected' : '' ?>>Membro Ativo</option>
-                    </select>
-                </div>
-                <div class="mgmt-filter-field">
-                    <label for="month" class="form-label">Período</label>
-                    <input type="month" id="month" name="month" class="form-control" value="<?= e($month ?? date('Y-m')) ?>">
-                </div>
-                <div class="mgmt-filter-actions">
-                    <button type="submit" class="btn btn--outline">Filtrar</button>
-                    <a href="<?= url('/gestao/novos-convertidos') ?>" class="btn btn--outline">Limpar</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <div class="mgmt-stats" style="margin-bottom: 1.5rem;">
         <div class="stat-card">
             <div class="stat-card__icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
@@ -72,6 +43,35 @@
                 <div class="stat-card__label">Batizados</div>
                 <div class="stat-card__value"><?= count(array_filter($converts, fn($c) => ($c['status'] ?? '') === 'batizado')) ?></div>
             </div>
+        </div>
+    </div>
+
+    <div class="mgmt-card mgmt-filter-card">
+        <div class="mgmt-card__body">
+            <form method="GET" action="<?= url('/gestao/novos-convertidos') ?>" class="mgmt-filter-grid">
+                <div class="mgmt-filter-field">
+                    <label for="search" class="form-label">Buscar</label>
+                    <input type="text" id="search" name="search" class="form-control" placeholder="Nome ou telefone" value="<?= e($search ?? '') ?>">
+                </div>
+                <div class="mgmt-filter-field">
+                    <label for="status" class="form-label">Status de Acompanhamento</label>
+                    <select id="status" name="status" class="form-control">
+                        <option value="">Todos</option>
+                        <option value="novo" <?= ($status ?? '') === 'novo' ? 'selected' : '' ?>>Novo</option>
+                        <option value="acompanhamento" <?= ($status ?? '') === 'acompanhamento' ? 'selected' : '' ?>>Em Acompanhamento</option>
+                        <option value="batizado" <?= ($status ?? '') === 'batizado' ? 'selected' : '' ?>>Batizado</option>
+                        <option value="membro" <?= ($status ?? '') === 'membro' ? 'selected' : '' ?>>Membro Ativo</option>
+                    </select>
+                </div>
+                <div class="mgmt-filter-field">
+                    <label for="month" class="form-label">Período</label>
+                    <input type="month" id="month" name="month" class="form-control" value="<?= e($month ?? date('Y-m')) ?>">
+                </div>
+                <div class="mgmt-filter-actions">
+                    <button type="submit" class="btn btn--outline">Filtrar</button>
+                    <a href="<?= url('/gestao/novos-convertidos') ?>" class="btn btn--outline">Limpar</a>
+                </div>
+            </form>
         </div>
     </div>
 

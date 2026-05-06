@@ -17,6 +17,13 @@
     </div>
 </div>
 
+<div class="mgmt-kpi-grid" style="grid-template-columns:repeat(4,minmax(0,1fr));">
+    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Total do mês</div><div class="mgmt-kpi-card__value">R$ <?= number_format(($summary['total'] ?? 0), 2, ',', '.') ?></div></div></div>
+    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Dízimos</div><div class="mgmt-kpi-card__value" style="color:#059669;">R$ <?= number_format(($summary['tithe'] ?? 0), 2, ',', '.') ?></div></div></div>
+    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Ofertas</div><div class="mgmt-kpi-card__value" style="color:#d97706;">R$ <?= number_format(($summary['offering'] ?? 0), 2, ',', '.') ?></div></div></div>
+    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Contribuintes</div><div class="mgmt-kpi-card__value"><?= (int) ($summary['donors'] ?? 0) ?></div></div></div>
+</div>
+
 <div class="mgmt-card mgmt-filter-card">
     <div class="mgmt-card__body">
         <form method="GET" action="<?= url('/gestao/receitas') ?>" class="mgmt-filter-grid">
@@ -45,13 +52,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div class="mgmt-kpi-grid" style="grid-template-columns:repeat(4,minmax(0,1fr));">
-    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Total do mês</div><div class="mgmt-kpi-card__value">R$ <?= number_format(($summary['total'] ?? 0), 2, ',', '.') ?></div></div></div>
-    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Dízimos</div><div class="mgmt-kpi-card__value" style="color:#059669;">R$ <?= number_format(($summary['tithe'] ?? 0), 2, ',', '.') ?></div></div></div>
-    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Ofertas</div><div class="mgmt-kpi-card__value" style="color:#d97706;">R$ <?= number_format(($summary['offering'] ?? 0), 2, ',', '.') ?></div></div></div>
-    <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Contribuintes</div><div class="mgmt-kpi-card__value"><?= (int) ($summary['donors'] ?? 0) ?></div></div></div>
 </div>
 
 <div class="mgmt-dashboard-card" style="padding:0;overflow:hidden;">

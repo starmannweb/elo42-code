@@ -143,10 +143,10 @@
 </form>
 
 <style>
-    .admin-settings-shell { display: grid; gap: var(--space-5); max-width: 1040px; }
+    .admin-settings-shell { display: grid; gap: var(--space-5); max-width: none; }
     .admin-settings-tabs { 
         display: grid; 
-        grid-template-columns: repeat(7, 1fr); 
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
         gap: .75rem; 
         padding: .75rem; 
         border: 1px solid var(--color-border); 
@@ -164,10 +164,12 @@
         cursor: pointer; 
         display: grid; 
         gap: .25rem; 
+        min-width: 0;
+        min-height: 86px;
         text-align: left; 
         transition: all .2s ease; 
     }
-    .admin-settings-tab span { font-weight: 800; color: var(--color-text); font-size: var(--text-sm); }
+    .admin-settings-tab span { font-weight: 800; color: var(--color-text); font-size: var(--text-sm); line-height: 1.2; overflow-wrap: normal; word-break: keep-all; }
     .admin-settings-tab small { color: var(--color-text-muted); opacity: .72; font-size: var(--text-xs); }
     .admin-settings-tab:hover { background: rgba(10,77,255,.06); color: var(--color-text); border-color: rgba(10,77,255,.18); transform: translateY(-2px); }
     .admin-settings-tab.is-active { 

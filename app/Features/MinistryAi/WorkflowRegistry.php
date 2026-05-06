@@ -119,7 +119,15 @@ final class WorkflowRegistry
                     self::select('confessional_layer', 'Camada Confessional', true, [
                         ['somente_biblico', 'Somente bíblico'],
                         ['westminster', 'Confissão de Westminster'],
-                        ['londres_1689', 'Confissão Batista de Londres']
+                        ['londres_1689', 'Confissão Batista de Londres'],
+                        ['tres_formas_unidade', 'Três Formas de Unidade'],
+                        ['catecismo_heidelberg', 'Catecismo de Heidelberg'],
+                        ['canones_dort', 'Cânones de Dort'],
+                        ['confissao_belga', 'Confissão Belga'],
+                        ['augsburgo', 'Confissão de Augsburgo'],
+                        ['trinta_nove_artigos', 'Trinta e Nove Artigos'],
+                        ['metodista_wesleyana', 'Base metodista / wesleyana'],
+                        ['batista_fe_mensagem', 'Fé e Mensagem Batista']
                     ]),
                 ],
             ],
@@ -156,9 +164,6 @@ final class WorkflowRegistry
                 'description' => 'Crie ciclos com encontros, perguntas, aplicação e envio.',
                 'icon' => 'network',
                 'accent' => '#7C3AED',
-                'insights' => [
-                    ['title' => 'Estrutura do ciclo', 'items' => ['Encontro 1 - Introdução', 'Encontros 2 a 6 - Desenvolvimento', 'Encontro 7 - Consolidação', 'Encontro 8 - Envio']],
-                ],
                 'fields' => [
                     self::textarea('group_context', 'Visão e contexto do grupo', true, 'Descreva visão, público, momento e necessidade.'),
                     self::select('meeting_count', 'Número de encontros', true, [['6', '6 encontros'], ['8', '8 encontros (padrão)'], ['10', '10 encontros']]),
@@ -378,6 +383,18 @@ final class WorkflowRegistry
 
     private static function confessionalLayerOptions(): array
     {
-        return [['somente_biblico', 'Somente bíblico'], ['westminster', 'Confissão de Westminster'], ['londres_1689', 'Confissão Batista de Londres']];
+        return [
+            ['somente_biblico', 'Somente bíblico'],
+            ['westminster', 'Confissão de Westminster'],
+            ['londres_1689', 'Confissão Batista de Londres'],
+            ['tres_formas_unidade', 'Três Formas de Unidade'],
+            ['catecismo_heidelberg', 'Catecismo de Heidelberg'],
+            ['canones_dort', 'Cânones de Dort'],
+            ['confissao_belga', 'Confissão Belga'],
+            ['augsburgo', 'Confissão de Augsburgo'],
+            ['trinta_nove_artigos', 'Trinta e Nove Artigos'],
+            ['metodista_wesleyana', 'Base metodista / wesleyana'],
+            ['batista_fe_mensagem', 'Fé e Mensagem Batista'],
+        ];
     }
 }

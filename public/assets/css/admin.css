@@ -5,6 +5,22 @@
 /* Admin accent colors — using specificity instead of !important */
 .hub-layout .hub-sidebar.admin-sidebar {
     background: linear-gradient(180deg, #0f172a 0%, #1e2a4a 100%);
+    overflow: hidden;
+}
+
+.admin-sidebar .hub-sidebar__header {
+    padding: 14px 18px;
+}
+
+.admin-sidebar .hub-sidebar__nav {
+    flex: 0 1 auto;
+    overflow: visible;
+    padding: 10px 16px 8px;
+}
+
+.admin-sidebar .hub-sidebar__section-title {
+    padding: 10px 12px 5px;
+    font-size: 0.68rem;
 }
 
 .hub-sidebar .navbar__logo-mark.admin-logo-mark {
@@ -12,7 +28,23 @@
 }
 
 .admin-sidebar .hub-nav-link {
-    font-size: 1rem;
+    min-height: 39px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 0.94rem;
+    margin-bottom: 1px;
+}
+
+.admin-sidebar .hub-sidebar__footer {
+    margin-top: auto;
+    padding: 10px 14px;
+}
+
+.admin-hub-shortcut {
+    margin-bottom: 0.65rem;
+    background: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+    font-weight: 700;
 }
 
 .hub-sidebar__user-avatar.admin-avatar {

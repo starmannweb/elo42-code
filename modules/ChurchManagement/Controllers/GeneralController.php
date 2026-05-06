@@ -953,6 +953,13 @@ class GeneralController extends Controller
         unset($payload['_token'], $payload['csrf_token'], $payload['redirect_to']);
         unset($payload['openai_key'], $payload['model_analysis'], $payload['model_generation']);
 
+        try {
+            $payload = $this->applyPwaIconUploads($req, $payload);
+        } catch (\Throwable $e) {
+            Session::flash('error', $e->getMessage());
+            redirect((string) $req->input('redirect_to', '/gestao/configuracoes'));
+        }
+
         if ($this->containsPremiumSetting($payload) && !$this->hasPremiumAccess()) {
             Session::flash('warning', 'Este recurso é exclusivo do Plano Premium. Assine agora para desbloquear!');
             redirect('/gestao/assinatura');
@@ -967,6 +974,66 @@ class GeneralController extends Controller
 
         Session::flash('success', 'Configurações salvas.');
         redirect((string) $req->input('redirect_to', '/gestao/configuracoes'));
+    }
+
+    private function applyPwaIconUploads(Request $req, array $payload): array
+    {
+        $slots = [
+            'pwa_icon_192_file' => 'pwa_icon_192',
+            'pwa_icon_512_file' => 'pwa_icon_512',
+        ];
+
+        foreach ($slots as $fileKey => $settingKey) {
+            $file = $req->file($fileKey);
+            if (!is_array($file) || (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+                continue;
+            }
+
+            $payload[$settingKey] = $this->storePwaIconUpload($file, $settingKey);
+        }
+
+        return $payload;
+    }
+
+    private function storePwaIconUpload(array $file, string $slot): string
+    {
+        if ((int) ($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+            throw new \RuntimeException('Não foi possível receber o ícone enviado.');
+        }
+
+        $tmpName = (string) ($file['tmp_name'] ?? '');
+        if ($tmpName === '' || !is_uploaded_file($tmpName)) {
+            throw new \RuntimeException('Upload de ícone inválido.');
+        }
+
+        $imageInfo = @getimagesize($tmpName);
+        $mime = is_array($imageInfo) ? (string) ($imageInfo['mime'] ?? '') : '';
+        $extensions = [
+            'image/png' => 'png',
+            'image/jpeg' => 'jpg',
+            'image/webp' => 'webp',
+        ];
+
+        if (!isset($extensions[$mime])) {
+            throw new \RuntimeException('Envie o ícone em PNG, JPG ou WebP.');
+        }
+
+        $orgId = max(0, $this->orgId());
+        $relativeDir = '/uploads/pwa/' . $orgId;
+        $targetDir = BASE_PATH . '/public' . $relativeDir;
+
+        if (!is_dir($targetDir) && !mkdir($targetDir, 0775, true) && !is_dir($targetDir)) {
+            throw new \RuntimeException('Não foi possível preparar a pasta de upload.');
+        }
+
+        $fileName = $slot . '-' . date('YmdHis') . '-' . bin2hex(random_bytes(4)) . '.' . $extensions[$mime];
+        $target = $targetDir . '/' . $fileName;
+
+        if (!move_uploaded_file($tmpName, $target)) {
+            throw new \RuntimeException('Não foi possível salvar o ícone enviado.');
+        }
+
+        return $relativeDir . '/' . $fileName;
     }
 
     public function settingsPix(Request $req): void

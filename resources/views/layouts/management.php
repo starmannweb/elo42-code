@@ -75,7 +75,7 @@
                     'home' => '<path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"></path>',
                     'smallgroup' => '<circle cx="8" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 21v-1a5 5 0 0 1 10 0v1"></path><path d="M14 21v-1a4 4 0 0 1 7 0v1"></path>',
                     'birthday' => '<path d="M4 21h16"></path><path d="M5 12h14v9H5z"></path><path d="M7 12V9a5 5 0 0 1 10 0v3"></path><path d="M9 7c0-1 .7-2 1.5-3C11.3 5 12 6 12 7"></path><path d="M14 7c0-1 .7-2 1.5-3C16.3 5 17 6 17 7"></path><path d="M5 16c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 5 0"></path>',
-                    'journey' => '<path d="M4 19V5"></path><path d="M4 6c2.5-1.2 5 1.2 7.5 0S16.5 5 20 6v9c-3.5-1-6 .2-8.5 1.2S6.5 15 4 16"></path><path d="M8 20h8"></path>',
+                    'journey' => '<path d="M4 19a9 9 0 0 1 9-9h5"></path><path d="M18 10l-3-3"></path><path d="M18 10l-3 3"></path><circle cx="5" cy="19" r="2"></circle><circle cx="13" cy="10" r="2"></circle><circle cx="19" cy="5" r="2"></circle>',
                     'ministries' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path>',
                     'income' => '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline>',
                     'expense' => '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline>',
@@ -177,10 +177,9 @@
                 ['href' => '/gestao/configuracoes/pwa', 'label' => 'APP', 'icon' => 'pwa', 'premium' => true],
             ];
             $adminTabs = [
-                ['href' => '/gestao/sermoes', 'label' => 'Sermões', 'icon' => 'sermon', 'active' => ['/gestao/sermoes']],
+                ['href' => '/gestao/sermoes', 'label' => 'Séries e Sermões', 'icon' => 'sermon', 'active' => ['/gestao/sermoes']],
                 ['href' => '/gestao/pregadores', 'label' => 'Pregadores', 'icon' => 'users'],
                 ['href' => '/gestao/relatorios', 'label' => 'Relatórios', 'icon' => 'reports'],
-                ['href' => '/gestao/sermoes/expositor-ia?module=planejamento&workflow=plano_anual_igreja', 'label' => 'Plano Anual', 'icon' => 'award', 'active' => ['/gestao/sermoes/expositor-ia']],
             ];
         ?>
 
@@ -260,9 +259,8 @@
                     '/gestao/sermoes/expositor-ia',
                 ];
                 echo $navGroup('administracao', 'Administração', 'admin', [
-                    $subNavItem('/gestao/pregadores', 'Pregadores', true, ['/gestao/pregadores']),
                     $subNavItem('/gestao/sermoes', 'Séries e Sermões', true, ['/gestao/sermoes']),
-                    $subNavItem('/gestao/sermoes/expositor-ia?module=planejamento&workflow=plano_anual_igreja', 'Plano Anual', true, ['/gestao/sermoes/expositor-ia']),
+                    $subNavItem('/gestao/pregadores', 'Pregadores', true, ['/gestao/pregadores']),
                     $subNavItem('/gestao/relatorios', 'Relatórios', true, ['/gestao/relatorios']),
                 ], $administrationPaths);
                 ?>

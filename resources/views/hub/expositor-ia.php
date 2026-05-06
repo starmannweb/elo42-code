@@ -56,44 +56,12 @@
         </div>
     <?php endif; ?>
 
-    <section class="ministry-ai-shortcuts" aria-label="Caminhos de trabalho">
-        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="pregacao" data-shortcut-workflow="gerar_sermao">
-            <span class="ministry-ai-card-icon">✎</span>
-            <small>Caminho livre</small>
-            <strong>Organizar um sermão avulso</strong>
-            <p>Gere sermão, estudo bíblico, aula EBD ou roteiro para culto especial de forma rápida.</p>
-            <b>Começar</b>
-        </div>
-        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="planejamento" data-shortcut-workflow="series_sermoes">
-            <span class="ministry-ai-card-icon">▦</span>
-            <small>Caminho ministerial</small>
-            <strong>Estou planejando o trimestre</strong>
-            <p>Crie séries com PG e EBD alinhados, mantendo direção teológica em todos os encontros.</p>
-            <b>Começar</b>
-        </div>
-        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="estudos" data-shortcut-workflow="estudo_exegetico">
-            <span class="ministry-ai-card-icon">⌕</span>
-            <small>Caminho exegético</small>
-            <strong>Quero partir do texto</strong>
-            <p>Aprofunde contexto, estrutura e aplicação antes de desenvolver o material.</p>
-            <b>Começar</b>
-        </div>
-        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="planejamento" data-shortcut-workflow="plano_anual_igreja">
-            <span class="ministry-ai-card-icon">◎</span>
-            <small>Caminho estratégico</small>
-            <strong>Plano Anual da Igreja</strong>
-            <p>Estruture discernimento pastoral, pilares e ações para o ano de forma inteligente.</p>
-            <b>Começar</b>
-        </div>
-    </section>
-
     <section class="hub-panel ministry-ai-vision">
         <div class="hub-panel__head">
             <div>
                 <h2 class="hub-panel__title">Impressões e dados de dashboard</h2>
                 <p class="hub-panel__text">Use este quadro como ponto de partida para alinhar séries, pequenos grupos e escola dominical.</p>
             </div>
-            <button type="button" class="btn btn--outline" data-shortcut-module="planejamento" data-shortcut-workflow="plano_anual_igreja">Definir foco</button>
         </div>
         <div class="ministry-ai-vision__grid" style="display:grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-top: 1.5rem;">
             <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
@@ -123,7 +91,38 @@
         </div>
         <div class="ministry-ai-vision__notice">
             <strong>Próxima ação</strong>
-            <span>Defina um foco para começar a medir coerência ministerial.</span>
+            <span>Use os atalhos abaixo para transformar estes sinais em material ministerial.</span>
+        </div>
+    </section>
+
+    <section class="ministry-ai-shortcuts" aria-label="Caminhos de trabalho">
+        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="pregacao" data-shortcut-workflow="gerar_sermao">
+            <span class="ministry-ai-card-icon">✎</span>
+            <small>Caminho livre</small>
+            <strong>Organizar um sermão avulso</strong>
+            <p>Gere sermão, estudo bíblico, aula EBD ou roteiro para culto especial de forma rápida.</p>
+            <b>Começar</b>
+        </div>
+        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="planejamento" data-shortcut-workflow="series_sermoes">
+            <span class="ministry-ai-card-icon">▦</span>
+            <small>Caminho ministerial</small>
+            <strong>Estou planejando o trimestre</strong>
+            <p>Crie séries com PG e EBD alinhados, mantendo direção teológica em todos os encontros.</p>
+            <b>Começar</b>
+        </div>
+        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="estudos" data-shortcut-workflow="estudo_exegetico">
+            <span class="ministry-ai-card-icon">⌕</span>
+            <small>Caminho exegético</small>
+            <strong>Quero partir do texto</strong>
+            <p>Aprofunde contexto, estrutura e aplicação antes de desenvolver o material.</p>
+            <b>Começar</b>
+        </div>
+        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="planejamento" data-shortcut-workflow="plano_anual_igreja">
+            <span class="ministry-ai-card-icon">◎</span>
+            <small>Caminho estratégico</small>
+            <strong>Plano Anual da Igreja</strong>
+            <p>Estruture discernimento pastoral, pilares e ações para o ano de forma inteligente.</p>
+            <b>Começar</b>
         </div>
     </section>
 
@@ -245,7 +244,12 @@
 
     function renderWorkflows() {
         var workflows = workflowsByModule[activeModule] || [];
-        var filteredWorkflows = workflows.filter(function (w) { return w.id !== 'plano_anual_igreja'; });
+        var filteredWorkflows = workflows.filter(function (w) { return w.id !== 'series_sermoes'; });
+        filteredWorkflows.sort(function (a, b) {
+            if (a.id === 'plano_anual_igreja') return -1;
+            if (b.id === 'plano_anual_igreja') return 1;
+            return 0;
+        });
         
         if (!activeWorkflow && filteredWorkflows[0]) activeWorkflow = filteredWorkflows[0].id;
         if (!workflows.some(function (workflow) { return workflow.id === activeWorkflow; }) && filteredWorkflows[0]) {
