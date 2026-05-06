@@ -3325,11 +3325,30 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 
 /* Site appearance controls */
 .site-color-controls {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(140px, 1fr));
+    gap: 1rem;
     align-items: start;
 }
 
 .site-color-controls .form-group {
     min-width: 0;
+}
+
+.site-field-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.site-field-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: rgba(10, 77, 255, 0.08);
+    color: var(--color-bright-blue, #0a4dff);
 }
 
 /* Central Pastoral IA */
@@ -3374,21 +3393,21 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 
 .ministry-ai-layout {
     display: grid;
-    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
     gap: var(--space-5);
     margin-top: var(--space-5);
-}
-
-.ministry-ai-sidebar {
-    align-self: start;
-    position: sticky;
-    top: 1rem;
 }
 
 .ministry-ai-module-list,
 .ministry-ai-workflows {
     display: grid;
     gap: var(--space-3);
+}
+
+.ministry-ai-tabs {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: stretch;
 }
 
 .ministry-ai-module,
@@ -3407,6 +3426,120 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
+.ministry-ai-module {
+    width: auto;
+    min-height: 72px;
+    min-width: 220px;
+    flex: 1 1 220px;
+}
+
+.ministry-ai-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+}
+
+.ministry-ai-shortcut {
+    display: grid;
+    gap: 0.55rem;
+    min-height: 190px;
+    padding: 1.35rem;
+    border: 1px solid var(--color-border, #d9e2f2);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(15, 35, 75, 0.06);
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ministry-ai-shortcut:hover,
+.ministry-ai-shortcut:focus-visible {
+    transform: translateY(-2px);
+    border-color: rgba(10, 77, 255, 0.4);
+    box-shadow: 0 16px 32px rgba(10, 77, 255, 0.12);
+    outline: none;
+}
+
+.ministry-ai-card-icon,
+.ministry-ai-workflow__icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgba(10, 77, 255, 0.08);
+    color: var(--color-bright-blue, #0a4dff);
+    font-weight: 800;
+}
+
+.ministry-ai-shortcut small {
+    color: #6b7892;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.ministry-ai-shortcut strong {
+    font-family: "Saira", sans-serif;
+    color: #071a3a;
+    font-size: 1.05rem;
+}
+
+.ministry-ai-shortcut p {
+    margin: 0;
+    color: #5c6c86;
+    line-height: 1.55;
+}
+
+.ministry-ai-shortcut b {
+    align-self: end;
+    color: var(--color-bright-blue, #0a4dff);
+    font-size: 0.9rem;
+}
+
+.ministry-ai-vision {
+    margin-top: var(--space-5);
+}
+
+.ministry-ai-vision__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+}
+
+.ministry-ai-vision__grid article {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border-light, #dfe7f4);
+    border-radius: 12px;
+    background: #f8fbff;
+}
+
+.ministry-ai-vision__grid span {
+    color: #5c6c86;
+    font-size: 0.85rem;
+}
+
+.ministry-ai-vision__grid strong {
+    color: #071a3a;
+    font-size: 1.35rem;
+}
+
+.ministry-ai-vision__notice {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: var(--space-3);
+    padding: 1rem;
+    border: 1px solid rgba(245, 158, 11, 0.28);
+    border-radius: 12px;
+    background: rgba(245, 158, 11, 0.08);
+    color: #92400e;
+}
+
 .ministry-ai-module strong,
 .ministry-ai-workflow strong {
     font-family: "Saira", sans-serif;
@@ -3423,7 +3556,7 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 .ministry-ai-workflow.is-active,
 .ministry-ai-module:hover,
 .ministry-ai-workflow:hover {
-    border-color: rgba(10, 77, 255, 0.55);
+    border-color: var(--workflow-accent, rgba(10, 77, 255, 0.55));
     background: #f8fbff;
     box-shadow: 0 10px 22px rgba(10, 77, 255, 0.08);
 }
@@ -3432,40 +3565,18 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.ministry-ai-workflow {
+    border-top: 3px solid var(--workflow-accent, var(--color-bright-blue, #0a4dff));
+}
+
+.ministry-ai-workflow__icon {
+    background: color-mix(in srgb, var(--workflow-accent, #0a4dff) 13%, #fff);
+    color: var(--workflow-accent, #0a4dff);
+}
+
 .ministry-ai-main {
     display: grid;
     gap: var(--space-5);
-}
-
-.ministry-ai-steps {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin: var(--space-4) 0;
-}
-
-.ministry-ai-step {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    min-height: 34px;
-    padding: 0.35rem 0.7rem;
-    border: 1px solid var(--color-border-light, #dfe7f4);
-    border-radius: 999px;
-    color: #49617f;
-    background: #f7faff;
-    font-size: 0.82rem;
-    font-weight: 700;
-}
-
-.ministry-ai-step b {
-    display: grid;
-    place-items: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: rgba(10, 77, 255, 0.12);
-    color: var(--color-bright-blue, #0a4dff);
 }
 
 .ministry-ai-form {
@@ -3476,6 +3587,35 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 
 .ministry-ai-field--wide {
     grid-column: 1 / -1;
+}
+
+.ministry-ai-insights {
+    display: grid;
+    gap: var(--space-3);
+    margin: var(--space-4) 0;
+}
+
+.ministry-ai-insight {
+    padding: 1rem;
+    border: 1px solid color-mix(in srgb, var(--workflow-accent, #0a4dff) 24%, #dfe7f4);
+    border-left: 4px solid var(--workflow-accent, #0a4dff);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--workflow-accent, #0a4dff) 6%, #fff);
+}
+
+.ministry-ai-insight strong {
+    display: block;
+    margin-bottom: 0.65rem;
+    color: #071a3a;
+    font-family: "Saira", sans-serif;
+}
+
+.ministry-ai-insight ul {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0;
+    padding-left: 1rem;
+    color: #4b5d7c;
 }
 
 .ministry-ai-review {
@@ -3533,17 +3673,18 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 }
 
 @media (max-width: 1080px) {
-    .ministry-ai-layout,
+    .site-color-controls,
     .ministry-ai-usage {
         grid-template-columns: 1fr;
     }
 
-    .ministry-ai-sidebar {
-        position: static;
-    }
-
     .ministry-ai-workflows {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ministry-ai-shortcuts,
+    .ministry-ai-vision__grid {
+        grid-template-columns: 1fr;
     }
 }
 

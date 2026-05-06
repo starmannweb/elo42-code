@@ -26,6 +26,24 @@
     $appearanceTitleFont = trim((string) ($appearance['appearance_title_font'] ?? ''));
     $appearanceBodyFont = trim((string) ($appearance['appearance_body_font'] ?? ''));
     $hasAppearanceSettings = ($appearancePrimary !== '' || $appearanceAccent !== '');
+    $socialExtras = [
+        'tiktok_url' => trim((string) ($currentSite['tiktok_url'] ?? $appearance['social_tiktok'] ?? '')),
+        'linkedin_url' => trim((string) ($currentSite['linkedin_url'] ?? $appearance['social_linkedin'] ?? '')),
+        'website_url' => trim((string) ($currentSite['website_url'] ?? $appearance['social_website'] ?? '')),
+        'telegram_url' => trim((string) ($currentSite['telegram_url'] ?? $appearance['social_telegram'] ?? '')),
+    ];
+    $fieldIcon = static function (string $name): string {
+        $paths = [
+            'phone' => '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+            'mail' => '<path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/>',
+            'map' => '<path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+            'link' => '<path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3A5 5 0 1 0 11 21.07l1.71-1.71"/>',
+            'text' => '<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h10"/>',
+            'social' => '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/>',
+        ];
+        $path = $paths[$name] ?? $paths['text'];
+        return '<span class="site-field-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' . $path . '</svg></span>';
+    };
     $initialSiteStep = (string) ($initialSiteStep ?? 'dados-site');
     $validSiteSteps = ['dados-site', 'modelos-site', 'aparencia-site', 'publicar-site'];
     if (!in_array($initialSiteStep, $validSiteSteps, true)) {
@@ -104,22 +122,22 @@
 
             <div class="form-grid form-grid--3">
                 <div class="form-group">
-                    <label class="form-label" for="contact_phone">Telefone</label>
+                    <label class="form-label site-field-label" for="contact_phone"><?= $fieldIcon('phone') ?>Telefone</label>
                     <input id="contact_phone" name="contact_phone" class="form-input" value="<?= e((string) ($currentSite['contact_phone'] ?? '')) ?>" placeholder="(11) 99999-9999">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="contact_email">E-mail</label>
+                    <label class="form-label site-field-label" for="contact_email"><?= $fieldIcon('mail') ?>E-mail</label>
                     <input id="contact_email" name="contact_email" class="form-input" value="<?= e((string) ($currentSite['contact_email'] ?? '')) ?>" placeholder="contato@igreja.org">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="whatsapp_url">WhatsApp</label>
+                    <label class="form-label site-field-label" for="whatsapp_url"><?= $fieldIcon('social') ?>WhatsApp</label>
                     <input id="whatsapp_url" name="whatsapp_url" class="form-input" value="<?= e((string) ($currentSite['whatsapp_url'] ?? '')) ?>" placeholder="https://wa.me/55...">
                 </div>
             </div>
 
             <div class="form-grid form-grid--3">
                 <div class="form-group">
-                    <label class="form-label" for="address_line">Endereço</label>
+                    <label class="form-label site-field-label" for="address_line"><?= $fieldIcon('map') ?>Endereço</label>
                     <input id="address_line" name="address_line" class="form-input" value="<?= e((string) ($currentSite['address_line'] ?? '')) ?>" placeholder="Rua, número e bairro">
                 </div>
                 <div class="form-group">
@@ -134,11 +152,11 @@
 
             <div class="form-grid form-grid--2">
                 <div class="form-group">
-                    <label class="form-label" for="cta_label">Texto do botão principal</label>
+                    <label class="form-label site-field-label" for="cta_label"><?= $fieldIcon('text') ?>Texto do botão principal</label>
                     <input id="cta_label" name="cta_label" class="form-input" value="<?= e((string) ($currentSite['cta_label'] ?? 'Falar com a igreja')) ?>" placeholder="Falar com a igreja">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="cta_url">Link do botão principal</label>
+                    <label class="form-label site-field-label" for="cta_url"><?= $fieldIcon('link') ?>Link do botão principal</label>
                     <input id="cta_url" name="cta_url" class="form-input" value="<?= e((string) ($currentSite['cta_url'] ?? '')) ?>" placeholder="https://wa.me/55...">
                 </div>
             </div>
@@ -151,20 +169,37 @@
 
             <h3 class="hub-panel__title" style="margin-top:1.5rem;">Redes sociais</h3>
             <p class="hub-panel__text">Esses links aparecem no rodapé e cabeçalho do site público.</p>
-            <div class="form-grid form-grid--3">
+            <div class="form-grid form-grid--3 site-social-grid">
                 <div class="form-group">
-                    <label class="form-label" for="instagram_url">Instagram</label>
+                    <label class="form-label site-field-label" for="instagram_url"><?= $fieldIcon('social') ?>Instagram</label>
                     <input id="instagram_url" name="instagram_url" class="form-input" value="<?= e((string) ($currentSite['instagram_url'] ?? '')) ?>" placeholder="https://instagram.com/...">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="facebook_url">Facebook</label>
+                    <label class="form-label site-field-label" for="facebook_url"><?= $fieldIcon('social') ?>Facebook</label>
                     <input id="facebook_url" name="facebook_url" class="form-input" value="<?= e((string) ($currentSite['facebook_url'] ?? '')) ?>" placeholder="https://facebook.com/...">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="youtube_url">YouTube</label>
+                    <label class="form-label site-field-label" for="youtube_url"><?= $fieldIcon('social') ?>YouTube</label>
                     <input id="youtube_url" name="youtube_url" class="form-input" value="<?= e((string) ($currentSite['youtube_url'] ?? '')) ?>" placeholder="https://youtube.com/...">
                 </div>
+                <div class="form-group">
+                    <label class="form-label site-field-label" for="tiktok_url"><?= $fieldIcon('social') ?>TikTok</label>
+                    <input id="tiktok_url" name="tiktok_url" class="form-input" value="<?= e($socialExtras['tiktok_url']) ?>" placeholder="https://tiktok.com/@...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label site-field-label" for="linkedin_url"><?= $fieldIcon('social') ?>LinkedIn</label>
+                    <input id="linkedin_url" name="linkedin_url" class="form-input" value="<?= e($socialExtras['linkedin_url']) ?>" placeholder="https://linkedin.com/company/...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label site-field-label" for="telegram_url"><?= $fieldIcon('social') ?>Telegram</label>
+                    <input id="telegram_url" name="telegram_url" class="form-input" value="<?= e($socialExtras['telegram_url']) ?>" placeholder="https://t.me/...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label site-field-label" for="website_url"><?= $fieldIcon('link') ?>Outro site</label>
+                    <input id="website_url" name="website_url" class="form-input" value="<?= e($socialExtras['website_url']) ?>" placeholder="https://...">
+                </div>
             </div>
+            <p class="form-hint">Use apenas as redes oficiais da organização. Campos vazios não aparecem no site publicado.</p>
 
             <div class="site-step-panel__footer">
                 <span class="hub-panel__text">Os dados cadastrais da organização já entram como base quando estiverem preenchidos.</span>
@@ -415,7 +450,7 @@
                     <?php endforeach; ?>
                 </div>
 
-                <div class="site-color-controls" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem;">
+                <div class="site-color-controls" style="margin-top:1rem;">
                     <div class="form-group" style="margin:0;">
                         <label class="form-label" for="appearance_primary">Cor primária</label>
                         <div style="display:flex;align-items:center;gap:.6rem;">

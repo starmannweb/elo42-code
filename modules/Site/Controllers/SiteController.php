@@ -142,6 +142,14 @@ class SiteController extends Controller
             'appearance_body_font' => 'body_font',
             'service_times' => 'service_times',
             'gallery_images' => 'gallery_images',
+            'social_instagram' => 'instagram_url',
+            'social_facebook' => 'facebook_url',
+            'social_youtube' => 'youtube_url',
+            'social_whatsapp' => 'whatsapp_url',
+            'social_tiktok' => 'tiktok_url',
+            'social_linkedin' => 'linkedin_url',
+            'social_website' => 'website_url',
+            'social_telegram' => 'telegram_url',
         ];
 
         foreach ($map as $settingKey => $siteKey) {

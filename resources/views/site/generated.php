@@ -44,6 +44,11 @@ $socialLinks = array_filter([
     'Instagram' => trim((string) ($site['instagram_url'] ?? '')),
     'Facebook' => trim((string) ($site['facebook_url'] ?? '')),
     'YouTube' => trim((string) ($site['youtube_url'] ?? '')),
+    'WhatsApp' => trim((string) ($site['whatsapp_url'] ?? '')),
+    'TikTok' => trim((string) ($site['tiktok_url'] ?? '')),
+    'LinkedIn' => trim((string) ($site['linkedin_url'] ?? '')),
+    'Telegram' => trim((string) ($site['telegram_url'] ?? '')),
+    'Site' => trim((string) ($site['website_url'] ?? '')),
 ]);
 $galleryRaw = trim((string) ($site['gallery_images'] ?? ''));
 $galleryImages = [];

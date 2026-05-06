@@ -92,6 +92,15 @@ MARKDOWN;
                 continue;
             }
 
+            $condition = $field['condition'] ?? null;
+            if (is_array($condition)) {
+                $conditionField = (string) ($condition['field'] ?? '');
+                $expectedValue = (string) ($condition['equals'] ?? '');
+                if ($conditionField !== '' && (string) ($inputPayload[$conditionField] ?? '') !== $expectedValue) {
+                    continue;
+                }
+            }
+
             $value = trim((string) ($inputPayload[$name] ?? ''));
             if ($value === '') {
                 continue;
@@ -194,6 +203,16 @@ TEXT,
 7. Aplicacoes praticas
 8. Sugestao de oracao
 9. Observacoes pastorais
+TEXT,
+            'series_sermoes' => <<<TEXT
+1. Nome da serie
+2. Tema pastoral central
+3. Publico-alvo
+4. Enfase da serie
+5. Visao geral e progressao pastoral
+6. Lista de mensagens. Para cada mensagem: titulo, texto biblico, ideia central, objetivo pastoral e aplicacao
+7. Pontes para pequenos grupos, EBD ou discipulado
+8. Observacoes para revisao pastoral
 TEXT,
             'curriculo_escola_dominical' => <<<TEXT
 1. Nome da serie

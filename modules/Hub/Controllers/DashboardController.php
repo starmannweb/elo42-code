@@ -77,6 +77,10 @@ class DashboardController extends Controller
             'appearance_text',
             'appearance_title_font',
             'appearance_body_font',
+            'social_tiktok',
+            'social_linkedin',
+            'social_website',
+            'social_telegram',
         ]);
 
         $this->view('hub/sites', array_merge($context, [
@@ -314,8 +318,12 @@ class DashboardController extends Controller
         $text = $this->normalizeThemeColorOptional((string) $request->input('appearance_text', ''));
         $titleFont = trim((string) $request->input('appearance_title_font', ''));
         $bodyFont = trim((string) $request->input('appearance_body_font', ''));
+        $socialTiktok = $this->normalizeSiteUrl((string) $request->input('tiktok_url', '')) ?? '';
+        $socialLinkedin = $this->normalizeSiteUrl((string) $request->input('linkedin_url', '')) ?? '';
+        $socialWebsite = $this->normalizeSiteUrl((string) $request->input('website_url', '')) ?? '';
+        $socialTelegram = $this->normalizeSiteUrl((string) $request->input('telegram_url', '')) ?? '';
 
-        if ($primary === '' && $accent === '' && $background === '' && $text === '' && $titleFont === '' && $bodyFont === '') {
+        if ($primary === '' && $accent === '' && $background === '' && $text === '' && $titleFont === '' && $bodyFont === '' && $socialTiktok === '' && $socialLinkedin === '' && $socialWebsite === '' && $socialTelegram === '') {
             return;
         }
 
@@ -344,6 +352,10 @@ class DashboardController extends Controller
             if ($bodyFont !== '') {
                 $upsert('appearance_body_font', $bodyFont);
             }
+            $upsert('social_tiktok', $socialTiktok);
+            $upsert('social_linkedin', $socialLinkedin);
+            $upsert('social_website', $socialWebsite);
+            $upsert('social_telegram', $socialTelegram);
         } catch (\Throwable $e) {
             error_log('[saveAppearanceSettings] ' . $e->getMessage());
         }
@@ -1320,6 +1332,10 @@ class DashboardController extends Controller
             'social_facebook',
             'social_youtube',
             'social_whatsapp',
+            'social_tiktok',
+            'social_linkedin',
+            'social_website',
+            'social_telegram',
             'appearance_primary',
             'appearance_accent',
             'appearance_background',
@@ -1370,6 +1386,10 @@ class DashboardController extends Controller
             'instagram_url' => $this->normalizeSiteUrl($fromSettings('social_instagram')),
             'facebook_url' => $this->normalizeSiteUrl($fromSettings('social_facebook')),
             'youtube_url' => $this->normalizeSiteUrl($fromSettings('social_youtube')),
+            'tiktok_url' => $this->normalizeSiteUrl($fromSettings('social_tiktok')),
+            'linkedin_url' => $this->normalizeSiteUrl($fromSettings('social_linkedin')),
+            'website_url' => $this->normalizeSiteUrl($fromSettings('social_website')),
+            'telegram_url' => $this->normalizeSiteUrl($fromSettings('social_telegram')),
             'address_line' => $this->nullableText((string) ($organization['address'] ?? '')),
             'city' => $this->nullableText((string) ($organization['city'] ?? '')),
             'state' => $this->nullableText((string) ($organization['state'] ?? '')),
@@ -1468,6 +1488,10 @@ class DashboardController extends Controller
             trim((string) ($site['instagram_url'] ?? '')) !== ''
             || trim((string) ($site['facebook_url'] ?? '')) !== ''
             || trim((string) ($site['youtube_url'] ?? '')) !== ''
+            || trim((string) ($site['tiktok_url'] ?? '')) !== ''
+            || trim((string) ($site['linkedin_url'] ?? '')) !== ''
+            || trim((string) ($site['telegram_url'] ?? '')) !== ''
+            || trim((string) ($site['website_url'] ?? '')) !== ''
         );
 
         return [
