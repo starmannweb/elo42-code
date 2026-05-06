@@ -98,9 +98,6 @@ final class WorkflowRegistry
                 'description' => 'Estruture discernimento pastoral, pilares e ações para o ano.',
                 'icon' => 'target',
                 'accent' => '#F59E0B',
-                'insights' => [
-                    ['title' => 'Processo em duas etapas', 'items' => ['Etapa 1 - Esboço macro: síntese pastoral, tema norteador, 4 a 6 pilares e distribuição anual', 'Etapa 2 - Cinco seções: diagnóstico, tema, pilares, diretrizes e indicadores']],
-                ],
                 'fields' => [
                     self::textarea('pastoral_context', 'Visão e Contexto Pastoral', true, 'Escreva livremente. Quanto mais contexto, mais preciso o discernimento.'),
                     self::text('reference_year', 'Ano de referência', true, (string) ((int) date('Y') + 1)),

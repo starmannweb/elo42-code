@@ -1936,6 +1936,10 @@ body[data-hub-theme="light"] .hub-nav-sublink__dot {
     gap: var(--space-4);
 }
 
+.site-builder-page #modelos-site .site-template-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .site-template-card {
     border: 1px solid #dfe7f4;
     border-radius: 16px;
@@ -3540,6 +3544,176 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     color: #92400e;
 }
 
+.ministry-ai-month-vision {
+    display: grid;
+    gap: 1rem;
+    margin-top: var(--space-5);
+    padding: 1.25rem;
+    border: 1px solid #334761;
+    border-radius: 18px;
+    background: #1f2d42;
+    box-shadow: 0 14px 34px rgba(8, 20, 38, 0.18);
+    color: #eaf2ff;
+}
+
+.ministry-ai-month-vision__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.ministry-ai-month-vision__head h2 {
+    margin: 0 0 1.1rem;
+    color: #f8fbff;
+    font-size: 1.05rem;
+}
+
+.ministry-ai-month-vision__head strong,
+.ministry-ai-month-vision__head span {
+    display: block;
+}
+
+.ministry-ai-month-vision__head strong {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.ministry-ai-month-vision__head span {
+    color: #9db0ca;
+}
+
+.ministry-ai-month-vision__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.ministry-ai-month-vision__actions span {
+    font-size: 0.82rem;
+    text-decoration: underline;
+}
+
+.ministry-ai-coherence {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem;
+    border: 1px solid #40536f;
+    border-radius: 14px;
+}
+
+.ministry-ai-coherence__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: #b7c9e5;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.ministry-ai-coherence__bar {
+    height: 6px;
+    border-radius: 999px;
+    background: #506179;
+}
+
+.ministry-ai-coherence ul {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: #91a5c2;
+    font-size: 0.9rem;
+}
+
+.ministry-ai-coherence li {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.ministry-ai-coherence b {
+    color: #a78bfa;
+    font-size: 1.1rem;
+}
+
+.ministry-ai-coherence p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.status-dot,
+.status-box,
+.ministry-ai-month-vision .ministry-ai-vision__grid i {
+    display: inline-block;
+    flex: 0 0 auto;
+}
+
+.status-dot,
+.ministry-ai-month-vision .ministry-ai-vision__grid i {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: #52637a;
+}
+
+.status-box {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    background: #cbd5e1;
+}
+
+.ministry-ai-month-vision .ministry-ai-vision__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ministry-ai-month-vision .ministry-ai-vision__grid article {
+    min-height: 84px;
+    padding: 1rem;
+    border-color: #40536f;
+    background: #26364d;
+}
+
+.ministry-ai-month-vision .ministry-ai-vision__grid span {
+    color: #a9bedc;
+}
+
+.ministry-ai-month-vision .ministry-ai-vision__grid strong {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: #ffffff;
+}
+
+.ministry-ai-month-vision .ministry-ai-vision__notice {
+    margin-top: 0;
+    border-color: rgba(245, 158, 11, 0.42);
+    background: rgba(245, 158, 11, 0.05);
+    color: #f8fbff;
+}
+
+.ministry-ai-month-vision .ministry-ai-vision__notice strong {
+    color: #c4d4eb;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.ministry-ai-month-vision__footnote {
+    margin: 0;
+    color: #667792;
+    font-size: 0.78rem;
+}
+
 .ministry-ai-module strong,
 .ministry-ai-workflow strong {
     font-family: "Saira", sans-serif;
@@ -3593,6 +3767,11 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     display: grid;
     gap: var(--space-3);
     margin: var(--space-4) 0;
+}
+
+.ministry-ai-insights:empty {
+    display: none;
+    margin: 0;
 }
 
 .ministry-ai-insight {
@@ -3678,6 +3857,10 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
         grid-template-columns: 1fr;
     }
 
+    .site-builder-page #modelos-site .site-template-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .ministry-ai-workflows {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -3686,12 +3869,29 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     .ministry-ai-vision__grid {
         grid-template-columns: 1fr;
     }
+
+    .ministry-ai-month-vision .ministry-ai-vision__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 700px) {
+    .site-builder-page #modelos-site .site-template-grid,
     .ministry-ai-workflows,
     .ministry-ai-form,
     .ministry-ai-review li {
+        grid-template-columns: 1fr;
+    }
+
+    .ministry-ai-month-vision__head {
+        flex-direction: column;
+    }
+
+    .ministry-ai-month-vision__actions {
+        justify-content: flex-start;
+    }
+
+    .ministry-ai-month-vision .ministry-ai-vision__grid {
         grid-template-columns: 1fr;
     }
 }

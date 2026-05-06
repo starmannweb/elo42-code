@@ -56,43 +56,47 @@
         </div>
     <?php endif; ?>
 
-    <section class="hub-panel ministry-ai-vision">
-        <div class="hub-panel__head">
+    <section class="ministry-ai-vision ministry-ai-month-vision">
+        <div class="ministry-ai-month-vision__head">
             <div>
-                <h2 class="hub-panel__title">Impressões e dados de dashboard</h2>
-                <p class="hub-panel__text">Use este quadro como ponto de partida para alinhar séries, pequenos grupos e escola dominical.</p>
+                <h2>Visão Ministerial do Mês</h2>
+                <strong>Estrutura Ministerial Atual</strong>
+                <span>Nenhum foco definido para este mês.</span>
+            </div>
+            <div class="ministry-ai-month-vision__actions">
+                <span>Sincronizar entre dispositivos</span>
+                <button type="button" class="btn btn--primary" data-shortcut-module="planejamento" data-shortcut-workflow="plano_anual_igreja">Definir foco do mês</button>
             </div>
         </div>
-        <div class="ministry-ai-vision__grid" style="display:grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-top: 1.5rem;">
-            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
-                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Séries</span>
-                <strong style="display: block; font-size: 1.75rem; margin-top: 0.25rem; color: var(--color-primary);">0</strong>
-            </article>
-            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
-                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Sermões gerados</span>
-                <strong style="display: block; font-size: 1.75rem; margin-top: 0.25rem; color: var(--color-primary);">0</strong>
-            </article>
-            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
-                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Estudos criados</span>
-                <strong style="display: block; font-size: 1.75rem; margin-top: 0.25rem; color: var(--color-primary);">0</strong>
-            </article>
-            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
-                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Culto / Série</span>
-                <strong style="display: block; font-size: 1rem; margin-top: 0.25rem; color: var(--text-muted);">Não iniciado</strong>
-            </article>
-            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
-                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Pequenos Grupos</span>
-                <strong style="display: block; font-size: 1rem; margin-top: 0.25rem; color: var(--text-muted);">Não iniciado</strong>
-            </article>
-            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
-                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Escola Dominical</span>
-                <strong style="display: block; font-size: 1rem; margin-top: 0.25rem; color: var(--text-muted);">Não iniciado</strong>
-            </article>
+
+        <div class="ministry-ai-coherence">
+            <div class="ministry-ai-coherence__head">
+                <span>Coerência ministerial</span>
+                <strong>--</strong>
+            </div>
+            <div class="ministry-ai-coherence__bar" aria-hidden="true"></div>
+            <ul>
+                <li><span class="status-dot"></span>Série vinculada <b>×</b></li>
+                <li><span class="status-box"></span>Pequenos Grupos — defina o foco para confirmar alinhamento</li>
+                <li><span class="status-box"></span>Escola Dominical — defina o foco para confirmar alinhamento</li>
+            </ul>
+            <p>Defina o foco do mês para começar a medir a coerência ministerial.</p>
         </div>
+
+        <div class="ministry-ai-vision__grid">
+            <article><span>Séries</span><strong>0</strong></article>
+            <article><span>Sermões gerados (mês)</span><strong>0</strong></article>
+            <article><span>Estudos criados (mês)</span><strong>0</strong></article>
+            <article><span>Culto / Série</span><strong><i></i>Não iniciado</strong></article>
+            <article><span>Pequenos Grupos</span><strong><i></i>Não iniciado</strong></article>
+            <article><span>Escola Dominical</span><strong><i></i>Não iniciado</strong></article>
+        </div>
+
         <div class="ministry-ai-vision__notice">
             <strong>Próxima ação</strong>
-            <span>Use os atalhos abaixo para transformar estes sinais em material ministerial.</span>
+            <span>Seu ministério ainda não tem um foco definido para este mês. Ao definir o foco, você poderá estruturar sua série, alinhar os Pequenos Grupos e organizar a Escola Dominical com intencionalidade.</span>
         </div>
+        <p class="ministry-ai-month-vision__footnote">Dados salvos localmente. A sincronização entre dispositivos está disponível no Plano Premium.</p>
     </section>
 
     <section class="ministry-ai-shortcuts" aria-label="Caminhos de trabalho">
@@ -115,13 +119,6 @@
             <small>Caminho exegético</small>
             <strong>Quero partir do texto</strong>
             <p>Aprofunde contexto, estrutura e aplicação antes de desenvolver o material.</p>
-            <b>Começar</b>
-        </div>
-        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="planejamento" data-shortcut-workflow="plano_anual_igreja">
-            <span class="ministry-ai-card-icon">◎</span>
-            <small>Caminho estratégico</small>
-            <strong>Plano Anual da Igreja</strong>
-            <p>Estruture discernimento pastoral, pilares e ações para o ano de forma inteligente.</p>
             <b>Começar</b>
         </div>
     </section>

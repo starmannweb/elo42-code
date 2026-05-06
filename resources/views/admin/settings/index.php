@@ -143,7 +143,7 @@
 </form>
 
 <style>
-    .admin-settings-shell { display: grid; gap: var(--space-5); max-width: none; }
+    .admin-settings-shell { display: grid; gap: var(--space-5); width: 100%; max-width: none; }
     .admin-settings-tabs { 
         display: grid; 
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
@@ -180,7 +180,7 @@
     }
     .admin-settings-tab.is-active span, .admin-settings-tab.is-active small { color: #fff; }
     .admin-settings-panels { display: grid; }
-    .admin-settings-card { padding: var(--space-5); }
+    .admin-settings-card { padding: var(--space-5); max-width: none; width: 100%; box-sizing: border-box; }
     .admin-settings-card__head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: flex-start; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-light); margin-bottom: var(--space-4); }
     .admin-settings-list { display: grid; gap: var(--space-4); }
     .admin-setting-row { display: grid; grid-template-columns: minmax(180px, .55fr) minmax(280px, 1fr); gap: .5rem 1rem; align-items: center; }
