@@ -2312,6 +2312,20 @@ class DashboardController extends Controller
                 'highlight' => false,
                 'assets' => ['Fotos dos projetos', 'Dados de impacto', 'Marca institucional'],
             ],
+            [
+                'name' => 'Conexão Reformada',
+                'description' => 'Layout sóbrio focado em doutrina, confissões de fé, estudos bíblicos aprofundados e liturgia clássica.',
+                'status' => 'Disponível',
+                'highlight' => false,
+                'assets' => ['Sola Scriptura', 'Estudos confessionais', 'Acervo de áudio/vídeo'],
+            ],
+            [
+                'name' => 'Jovens e Dinâmico',
+                'description' => 'Layout moderno com cores vibrantes, integração pesada com redes sociais e foco em agenda de eventos para juventude.',
+                'status' => 'Disponível',
+                'highlight' => false,
+                'assets' => ['Feed social', 'Agenda visual', 'Galeria dinâmica'],
+            ],
         ];
     }
 

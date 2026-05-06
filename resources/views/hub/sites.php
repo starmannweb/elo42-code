@@ -40,6 +40,12 @@
             'link' => '<path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3A5 5 0 1 0 11 21.07l1.71-1.71"/>',
             'text' => '<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h10"/>',
             'social' => '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/>',
+            'instagram' => '<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>',
+            'facebook' => '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
+            'youtube' => '<path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2C1 8.11 1 12 1 12s0 3.89.46 5.58a2.78 2.78 0 0 0 1.94 2c1.72.42 8.6.42 8.6.42s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2C23 15.89 23 12 23 12s0-3.89-.46-5.58z"/><polyline points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/>',
+            'tiktok' => '<path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>',
+            'linkedin' => '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>',
+            'telegram' => '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
         ];
         $path = $paths[$name] ?? $paths['text'];
         return '<span class="site-field-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' . $path . '</svg></span>';
@@ -171,34 +177,52 @@
             <p class="hub-panel__text">Esses links aparecem no rodapé e cabeçalho do site público.</p>
             <div class="form-grid form-grid--3 site-social-grid">
                 <div class="form-group">
-                    <label class="form-label site-field-label" for="instagram_url"><?= $fieldIcon('social') ?>Instagram</label>
+                    <label class="form-label site-field-label" for="instagram_url"><?= $fieldIcon('instagram') ?>Instagram</label>
                     <input id="instagram_url" name="instagram_url" class="form-input" value="<?= e((string) ($currentSite['instagram_url'] ?? '')) ?>" placeholder="https://instagram.com/...">
                 </div>
                 <div class="form-group">
-                    <label class="form-label site-field-label" for="facebook_url"><?= $fieldIcon('social') ?>Facebook</label>
+                    <label class="form-label site-field-label" for="facebook_url"><?= $fieldIcon('facebook') ?>Facebook</label>
                     <input id="facebook_url" name="facebook_url" class="form-input" value="<?= e((string) ($currentSite['facebook_url'] ?? '')) ?>" placeholder="https://facebook.com/...">
                 </div>
                 <div class="form-group">
-                    <label class="form-label site-field-label" for="youtube_url"><?= $fieldIcon('social') ?>YouTube</label>
+                    <label class="form-label site-field-label" for="youtube_url"><?= $fieldIcon('youtube') ?>YouTube</label>
                     <input id="youtube_url" name="youtube_url" class="form-input" value="<?= e((string) ($currentSite['youtube_url'] ?? '')) ?>" placeholder="https://youtube.com/...">
                 </div>
                 <div class="form-group">
-                    <label class="form-label site-field-label" for="tiktok_url"><?= $fieldIcon('social') ?>TikTok</label>
+                    <label class="form-label site-field-label" for="tiktok_url"><?= $fieldIcon('tiktok') ?>TikTok</label>
                     <input id="tiktok_url" name="tiktok_url" class="form-input" value="<?= e($socialExtras['tiktok_url']) ?>" placeholder="https://tiktok.com/@...">
                 </div>
                 <div class="form-group">
-                    <label class="form-label site-field-label" for="linkedin_url"><?= $fieldIcon('social') ?>LinkedIn</label>
+                    <label class="form-label site-field-label" for="linkedin_url"><?= $fieldIcon('linkedin') ?>LinkedIn</label>
                     <input id="linkedin_url" name="linkedin_url" class="form-input" value="<?= e($socialExtras['linkedin_url']) ?>" placeholder="https://linkedin.com/company/...">
                 </div>
                 <div class="form-group">
-                    <label class="form-label site-field-label" for="telegram_url"><?= $fieldIcon('social') ?>Telegram</label>
+                    <label class="form-label site-field-label" for="telegram_url"><?= $fieldIcon('telegram') ?>Telegram</label>
                     <input id="telegram_url" name="telegram_url" class="form-input" value="<?= e($socialExtras['telegram_url']) ?>" placeholder="https://t.me/...">
                 </div>
-                <div class="form-group">
-                    <label class="form-label site-field-label" for="website_url"><?= $fieldIcon('link') ?>Outro site</label>
+                <div class="form-group" data-other-social>
+                    <label class="form-label site-field-label" for="other_social_toggle"><?= $fieldIcon('link') ?>Outra rede ou site?</label>
+                    <select id="other_social_toggle" class="form-select" data-toggle-trigger>
+                        <option value="no">Não adicionar</option>
+                        <option value="yes" <?= !empty($socialExtras['website_url']) ? 'selected' : '' ?>>Sim, adicionar</option>
+                    </select>
+                </div>
+                <div class="form-group" data-other-social-field <?= empty($socialExtras['website_url']) ? 'hidden' : '' ?>>
+                    <label class="form-label" for="website_url">URL da rede ou site</label>
                     <input id="website_url" name="website_url" class="form-input" value="<?= e($socialExtras['website_url']) ?>" placeholder="https://...">
                 </div>
             </div>
+            <script>
+                (function() {
+                    var toggle = document.querySelector('[data-toggle-trigger]');
+                    var field = document.querySelector('[data-other-social-field]');
+                    if (toggle && field) {
+                        toggle.addEventListener('change', function() {
+                            field.hidden = toggle.value !== 'yes';
+                        });
+                    }
+                })();
+            </script>
             <p class="form-hint">Use apenas as redes oficiais da organização. Campos vazios não aparecem no site publicado.</p>
 
             <div class="site-step-panel__footer">
@@ -222,12 +246,16 @@
                     'Comunidade Engajada'    => ['gradient' => 'linear-gradient(135deg,#7c1d3a 0%,#9f1239 50%,#1e3a8a 100%)', 'tone' => 'bordô · multimídia e calorosa'],
                     'Campanhas e Eventos'    => ['gradient' => 'linear-gradient(135deg,#111827 0%,#e11d48 45%,#facc15 100%)', 'tone' => 'evento vibrante com urgência visual'],
                     'Captação para ONGs'     => ['gradient' => 'linear-gradient(135deg,#0f766e 0%,#14b8a6 50%,#fcd34d 100%)', 'tone' => 'verde · impacto social'],
+                    'Conexão Reformada'      => ['gradient' => 'linear-gradient(135deg,#1e293b 0%,#334155 50%,#475569 100%)', 'tone' => 'sóbrio e confessional'],
+                    'Jovens e Dinâmico'      => ['gradient' => 'linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#db2777 100%)', 'tone' => 'moderno e vibrante'],
                 ];
                 $templateLayouts = [
                     'Institucional Clássico' => ['Hero centralizado', 'Sobre · Ministérios · Agenda', 'Footer com contato e mapa'],
                     'Comunidade Engajada'    => ['Hero pleno c/ overlay', 'Princípios + Destaques + Séries', 'Bloco "Conecte-se" + cultos'],
                     'Campanhas e Eventos'    => ['Hero com contagem regressiva', 'Programação por dia + palestrantes', 'Inscrição direta no topo'],
                     'Captação para ONGs'     => ['Hero institucional', 'Projetos + Impacto + Histórias', 'Doação recorrente em destaque'],
+                    'Conexão Reformada'      => ['Foco em Sola Scriptura', 'Confissões · Estudos · Liturgia', 'Tipografia clássica'],
+                    'Jovens e Dinâmico'      => ['Layout assimétrico', 'Redes sociais integradas', 'Agenda visual dinâmica'],
                 ];
             ?>
 
