@@ -342,9 +342,18 @@ class GeneralController extends Controller
     public function visits(Request $req): void
     {
         try {
+            $orgId = $this->orgId();
+            $filters = [
+                'search' => $req->input('search', ''),
+                'status' => $req->input('status', ''),
+                'month'  => $req->input('month', date('Y-m')),
+            ];
+            
             $this->view('management/visits/index', [
-                'pageTitle' => 'Visitas — Gestão', 'breadcrumb' => 'Visitas',
-                'visits' => Visit::byOrg($this->orgId()),
+                'pageTitle' => 'Visitas — Gestão', 
+                'breadcrumb' => 'Visitas',
+                'visits' => Visit::byOrg($orgId, $filters),
+                'filters' => $filters,
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar visitas: ' . $e->getMessage());

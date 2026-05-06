@@ -2,6 +2,22 @@
 
 <?php $__view->section('content'); ?>
 
+<style>
+    .ministry-ai-shortcuts {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+    @media (max-width: 1200px) {
+        .ministry-ai-shortcuts {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+    }
+    @media (max-width: 600px) {
+        .ministry-ai-shortcuts {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+
 <?php
     $modules = is_array($ministryAiModules ?? null) ? $ministryAiModules : [];
     $workflowsByModule = is_array($ministryAiWorkflows ?? null) ? $ministryAiWorkflows : [];
@@ -15,7 +31,6 @@
 <section class="hub-page ministry-ai-page" data-ministry-ai>
     <header class="hub-page__header">
         <div>
-            <span class="hub-badge hub-badge--primary">ministry-ai</span>
             <h1 class="hub-page__title">Central Pastoral IA</h1>
             <p class="hub-page__subtitle">Prepare sermões, estudos, aulas e planejamentos ministeriais com apoio inteligente, sem perder o cuidado pastoral.</p>
         </div>
@@ -63,12 +78,19 @@
             <p>Aprofunde contexto, estrutura e aplicação antes de desenvolver o material.</p>
             <b>Começar</b>
         </div>
+        <div class="ministry-ai-shortcut" role="button" tabindex="0" data-shortcut-module="planejamento" data-shortcut-workflow="plano_anual_igreja">
+            <span class="ministry-ai-card-icon">◎</span>
+            <small>Caminho estratégico</small>
+            <strong>Plano Anual da Igreja</strong>
+            <p>Estruture discernimento pastoral, pilares e ações para o ano de forma inteligente.</p>
+            <b>Começar</b>
+        </div>
     </section>
 
     <section class="hub-panel ministry-ai-vision">
         <div class="hub-panel__head">
             <div>
-                <h2 class="hub-panel__title">Visão ministerial do mês</h2>
+                <h2 class="hub-panel__title">impressões e dados de dashboard</h2>
                 <p class="hub-panel__text">Use este quadro como ponto de partida para alinhar séries, pequenos grupos e escola dominical.</p>
             </div>
             <button type="button" class="btn btn--outline" data-shortcut-module="planejamento" data-shortcut-workflow="plano_anual_igreja">Definir foco</button>

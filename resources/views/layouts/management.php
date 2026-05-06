@@ -26,6 +26,10 @@
     <link rel="stylesheet" href="<?= asset('css/app.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/hub.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/management.css') ?>">
+    <style>
+        .hub-sidebar__nav-extra { padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .hub-sidebar__nav-main { margin-bottom: 1rem; }
+    </style>
 </head>
 <body data-hub-theme="dark">
     <a href="#mgmt-main-content" class="skip-to-content">Pular para o conteúdo</a>
@@ -189,12 +193,16 @@
             </div>
 
             <nav class="hub-sidebar__nav" aria-label="Navegação da gestão">
-                <?= $navItem('/gestao', 'Dashboard', 'dashboard', false, ['/gestao']) ?>
-                <?= $navItem('/hub', 'Voltar ao Hub', 'home', false, ['/hub']) ?>
+                <div class="hub-sidebar__nav-extra">
+                    <?= $navItem('/hub', 'Voltar ao Hub', 'home', false, ['/hub']) ?>
+                    <?php if ($isSystemAdmin): ?>
+                        <?= $navItem('/admin', 'Super Admin', 'admin', false, ['/admin']) ?>
+                    <?php endif; ?>
+                </div>
 
-                <?php if ($isSystemAdmin): ?>
-                    <?= $navItem('/admin', 'Super Admin', 'admin', false, ['/admin']) ?>
-                <?php endif; ?>
+                <div class="hub-sidebar__nav-main">
+                    <?= $navItem('/gestao', 'Dashboard', 'dashboard', false, ['/gestao']) ?>
+                </div>
 
                 <?php
                 $peoplePaths = [

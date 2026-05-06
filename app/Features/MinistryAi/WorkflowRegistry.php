@@ -128,22 +128,6 @@ final class WorkflowRegistry
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
                 ],
             ],
-            'plano_anual_igreja' => [
-                'module' => 'planejamento',
-                'title' => 'Plano Anual da Igreja',
-                'description' => 'Estruture discernimento pastoral, pilares e ações para o ano.',
-                'icon' => 'target',
-                'accent' => '#F59E0B',
-                'insights' => [
-                    ['title' => 'Processo em duas etapas', 'items' => ['Etapa 1 - Esboço macro: síntese pastoral, tema norteador, 4 a 6 pilares e distribuição anual', 'Etapa 2 - Cinco seções: diagnóstico, tema, pilares, diretrizes e indicadores']],
-                ],
-                'fields' => [
-                    self::textarea('pastoral_context', 'Visão e contexto pastoral', true, 'Descreva momento atual, desafios, oportunidades e direção percebida.'),
-                    self::text('reference_year', 'Ano de referência', true, (string) ((int) date('Y') + 1)),
-                    self::select('denominational_base', 'Base denominacional', true, [['presbiteriana', 'Presbiteriana'], ['batista_reformada', 'Batista reformada'], ['independente_reformada', 'Independente reformada'], ['outra', 'Outra']]),
-                    self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
-                ],
-            ],
             'gerar_sermao' => [
                 'module' => 'pregacao',
                 'title' => 'Gerar Sermão',

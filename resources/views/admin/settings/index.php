@@ -143,13 +143,40 @@
 </form>
 
 <style>
-    .admin-settings-shell { display: grid; gap: var(--space-5); max-width: 980px; }
-    .admin-settings-tabs { display: flex; gap: .65rem; flex-wrap: wrap; align-items: stretch; padding: .55rem; border: 1px solid var(--color-border); border-radius: 18px; background: #fff; box-shadow: 0 12px 30px rgba(15,35,75,.05); }
-    .admin-settings-tab { appearance: none; border: 1px solid transparent; background: transparent; color: var(--color-text-muted); border-radius: 12px; padding: .85rem 1rem; min-width: 148px; cursor: pointer; display: grid; gap: .2rem; text-align: left; transition: background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease; }
-    .admin-settings-tab span { font-weight: 800; color: inherit; }
-    .admin-settings-tab small { color: inherit; opacity: .72; font-size: var(--text-xs); }
-    .admin-settings-tab:hover { background: rgba(10,77,255,.06); color: var(--color-text); border-color: rgba(10,77,255,.18); }
-    .admin-settings-tab.is-active { background: #1455FF; border-color: #1455FF; color: #fff; box-shadow: 0 12px 24px rgba(20,85,255,.18); }
+    .admin-settings-shell { display: grid; gap: var(--space-5); max-width: 1040px; }
+    .admin-settings-tabs { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+        gap: .75rem; 
+        padding: .75rem; 
+        border: 1px solid var(--color-border); 
+        border-radius: 20px; 
+        background: #fff; 
+        box-shadow: 0 12px 30px rgba(15,35,75,.05); 
+    }
+    .admin-settings-tab { 
+        appearance: none; 
+        border: 1px solid rgba(0,0,0,0.05); 
+        background: var(--color-bg-light, #f8faff); 
+        color: var(--color-text-muted); 
+        border-radius: 14px; 
+        padding: 1rem; 
+        cursor: pointer; 
+        display: grid; 
+        gap: .25rem; 
+        text-align: left; 
+        transition: all .2s ease; 
+    }
+    .admin-settings-tab span { font-weight: 800; color: var(--color-text); font-size: var(--text-sm); }
+    .admin-settings-tab small { color: var(--color-text-muted); opacity: .72; font-size: var(--text-xs); }
+    .admin-settings-tab:hover { background: rgba(10,77,255,.06); color: var(--color-text); border-color: rgba(10,77,255,.18); transform: translateY(-2px); }
+    .admin-settings-tab.is-active { 
+        background: #1455FF; 
+        border-color: #1455FF; 
+        color: #fff; 
+        box-shadow: 0 8px 20px rgba(20,85,255,.25); 
+    }
+    .admin-settings-tab.is-active span, .admin-settings-tab.is-active small { color: #fff; }
     .admin-settings-panels { display: grid; }
     .admin-settings-card { padding: var(--space-5); }
     .admin-settings-card__head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: flex-start; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-light); margin-bottom: var(--space-4); }
