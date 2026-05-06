@@ -63,7 +63,7 @@
             </li>
             <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); opacity: 0.6;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                Sem Acesso à Geração Expositor IA
+                Sem acesso à Central Pastoral IA
             </li>
         </ul>
         
@@ -112,7 +112,7 @@
             </li>
             <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-primary);">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-color);"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Criação com Expositor IA Ilimitada
+                Criação com Central Pastoral IA ilimitada
             </li>
             <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-primary);">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-color);"><polyline points="20 6 9 17 4 12"></polyline></svg>

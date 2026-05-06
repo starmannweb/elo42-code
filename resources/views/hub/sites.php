@@ -480,16 +480,7 @@
                 var hidden = document.getElementById('theme_color_input');
                 if (!primary) return;
 
-                function updatePreview() {
-                    var preview = document.querySelector('.site-preview-card');
-                    if (!preview) return;
-                    preview.style.setProperty('--site-preview-primary', primary.value || '#1e3a8a');
-                    preview.style.setProperty('--site-preview-accent', accent.value || '#f59e0b');
-                    preview.style.setProperty('--site-preview-bg', background ? (background.value || '#f4f7fd') : '#f4f7fd');
-                    preview.style.setProperty('--site-preview-text', text ? (text.value || '#06183a') : '#06183a');
-                    preview.style.setProperty('--site-preview-title-font', titleFont ? titleFont.value : 'Saira');
-                    preview.style.setProperty('--site-preview-body-font', bodyFont ? bodyFont.value : 'Inter');
-                }
+                function updatePreview() {}
 
                 function syncTextFromColor(colorInput, textInput) {
                     textInput.value = colorInput.value.toUpperCase();
@@ -532,19 +523,6 @@
             })();
             </script>
 
-            <div class="site-preview-card" aria-label="Previa visual do site" style="--site-preview-primary: <?= e($appearancePrimary !== '' ? $appearancePrimary : '#1e3a8a') ?>; --site-preview-accent: <?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?>; --site-preview-bg: <?= e($appearanceBackground !== '' ? $appearanceBackground : '#f4f7fd') ?>; --site-preview-text: <?= e($appearanceText !== '' ? $appearanceText : '#06183a') ?>; --site-preview-title-font: <?= e($appearanceTitleFont !== '' ? $appearanceTitleFont : 'Saira') ?>; --site-preview-body-font: <?= e($appearanceBodyFont !== '' ? $appearanceBodyFont : 'Inter') ?>;">
-                <?php if (!empty($currentSite['hero_image'])): ?>
-                    <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
-                <?php else: ?>
-                    <div class="site-preview-card__hero" style="background:linear-gradient(135deg, var(--site-preview-primary), var(--site-preview-accent));"></div>
-                <?php endif; ?>
-                <div>
-                    <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>
-                    <p class="hub-mini-card__text"><?= e($templateValue) ?></p>
-                </div>
-                <div class="site-preview-card__lines"><span></span><span></span><span></span></div>
-            </div>
-
             <div class="site-step-panel__footer">
                 <button type="button" class="btn btn--ghost" data-site-step-button="#modelos-site">Voltar aos modelos</button>
                 <button type="button" class="btn btn--outline" data-site-step-button="#publicar-site">Avançar para publicação</button>
@@ -580,32 +558,10 @@
             </div>
 
             <article class="site-publish-summary" style="margin-bottom:var(--space-4);">
-                <div class="site-publish-summary__preview" style="--preview-primary: <?= e($appearancePrimary !== '' ? $appearancePrimary : ((string) ($currentSite['theme_color'] ?? '#1e3a8a'))) ?>; --preview-accent: <?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?>;">
-                    <?php if (!empty($currentSite['hero_image'])): ?>
-                        <div class="site-publish-summary__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>');"></div>
-                    <?php else: ?>
-                        <div class="site-publish-summary__hero site-publish-summary__hero--gradient"></div>
-                    <?php endif; ?>
-                    <div class="site-publish-summary__overlay">
-                        <div class="site-publish-summary__brand">
-                            <?php if (!empty($currentSite['logo_image'])): ?>
-                                <img src="<?= e((string) $currentSite['logo_image']) ?>" alt="Logo">
-                            <?php else: ?>
-                                <span class="site-publish-summary__initial"><?= e(strtoupper(mb_substr($siteTitle, 0, 1, 'UTF-8'))) ?></span>
-                            <?php endif; ?>
-                            <div>
-                                <strong><?= e($siteTitle) ?></strong>
-                                <span><?= e($templateValue) ?></span>
-                            </div>
-                        </div>
-                        <p><?= e(mb_substr($siteDescription !== '' ? $siteDescription : $defaultDescription, 0, 160, 'UTF-8')) ?><?= mb_strlen($siteDescription) > 160 ? '…' : '' ?></p>
-                    </div>
-                </div>
-
                 <div class="site-publish-summary__body">
                     <h3 class="hub-panel__title" style="margin:0;">Visão geral</h3>
                     <p class="hub-panel__text" style="margin:.4rem 0 1rem;">
-                        <?= $currentSite ? ($hasSavedSite ? 'Rascunho atualizado e pronto para revisão pública.' : 'Pré-visualização montada com os dados cadastrais da organização.') : 'Nenhum rascunho foi gerado ainda — escolha um modelo para começar.' ?>
+                        <?= $currentSite ? ($hasSavedSite ? 'Rascunho atualizado e pronto para revisão pública.' : 'Dados do site preparados com as informações cadastrais da organização.') : 'Nenhum rascunho foi gerado ainda — escolha um modelo para começar.' ?>
                     </p>
                     <dl class="site-publish-summary__meta">
                         <div>
@@ -727,17 +683,7 @@
             </article>
 
             <style>
-                .site-publish-summary { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); border: 1px solid var(--color-border); border-radius: 18px; overflow: hidden; background: #fff; box-shadow: 0 14px 32px rgba(15,35,75,.06); }
-                .site-publish-summary__preview { position: relative; min-height: 220px; color: #fff; overflow: hidden; }
-                .site-publish-summary__hero { position: absolute; inset: 0; background-size: cover; background-position: center; }
-                .site-publish-summary__hero--gradient { background: linear-gradient(135deg, var(--preview-primary, #1e3a8a) 0%, color-mix(in srgb, var(--preview-primary, #1e3a8a) 70%, #000 30%) 60%, var(--preview-accent, #f59e0b) 100%); }
-                .site-publish-summary__overlay { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.4rem; gap: .8rem; background: linear-gradient(180deg, rgba(8,18,45,.05) 0%, rgba(8,18,45,.7) 100%); }
-                .site-publish-summary__brand { display: flex; align-items: center; gap: .8rem; }
-                .site-publish-summary__brand img { width: 44px; height: 44px; object-fit: contain; background: rgba(255,255,255,.92); border-radius: 10px; padding: 4px; }
-                .site-publish-summary__initial { width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.4); display: grid; place-items: center; font-family: 'Saira'; font-weight: 800; font-size: 1.1rem; }
-                .site-publish-summary__brand strong { display: block; font-family: 'Saira'; font-size: 1.05rem; color: #fff; }
-                .site-publish-summary__brand span { display: block; font-size: .78rem; color: rgba(255,255,255,.78); }
-                .site-publish-summary__overlay p { margin: 0; color: rgba(255,255,255,.85); font-size: .9rem; line-height: 1.5; }
+                .site-publish-summary { border: 1px solid var(--color-border); border-radius: 18px; overflow: hidden; background: #fff; box-shadow: 0 14px 32px rgba(15,35,75,.06); }
                 .site-publish-summary__body { padding: 1.5rem; display: flex; flex-direction: column; }
                 .site-publish-summary__meta { display: grid; gap: .8rem; margin: 0 0 1rem; }
                 .site-publish-summary__meta div { display: grid; gap: 4px; }
@@ -768,7 +714,6 @@
 
                 @media (max-width: 860px) {
                     .site-publish-summary { grid-template-columns: 1fr; }
-                    .site-publish-summary__preview { min-height: 180px; }
                 }
             </style>
 

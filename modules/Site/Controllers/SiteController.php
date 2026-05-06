@@ -460,9 +460,9 @@ class SiteController extends Controller
                 'meta' => 'Google para Nonprofits — Ad Grants, Workspace, YouTube e mais para sua organização.',
             ],
             'expositor-ia' => [
-                'title' => 'Expositor IA',
+                'title' => 'Central Pastoral IA',
                 'subtitle' => 'Plataforma completa de aprofundamento exegético e produção ministerial com IA para pastores.',
-                'description' => 'O Expositor IA apoia pastores no caminho do texto bíblico até o púlpito: exegese, revisão pastoral, sermões, séries, EBD, discipulado, pequenos grupos, formação de liderança, preparo para casais e planejamento anual da igreja.',
+                'description' => 'A Central Pastoral IA apoia pastores e líderes na preparação de sermões, estudos, aulas, discipulados, pequenos grupos e planejamento anual da igreja.',
                 'features' => [
                     'Caminho Exegético — contexto histórico-literário, palavras-chave em grego/hebraico e eixo cristológico',
                     'Sermão em Etapas — construção estruturada com refinamento assistido por IA',
@@ -474,7 +474,7 @@ class SiteController extends Controller
                     'Preparação de Casais — guia pastoral + material do casal com exercícios semanais',
                     'Planejamento Anual — diagnóstico pastoral, pilares ministeriais e indicadores espirituais',
                 ],
-                'meta' => 'Expositor IA - Plataforma de aprofundamento exegético e produção ministerial com IA para pastores.',
+                'meta' => 'Central Pastoral IA - Apoio inteligente para preparação ministerial dentro do Elo 42.',
             ],
             'consultoria' => [
                 'title' => 'Consultoria',

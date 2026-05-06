@@ -432,7 +432,7 @@ class AdminCatalogController extends Controller
         $defaults = [
             ['name' => 'Painel de Gestao para Igrejas', 'slug' => 'painel-gestao-igrejas', 'description' => 'Sistema completo para membros, financas, ministerios, eventos, relatorios e rotina pastoral. Inclui ate 100 usuarios da plataforma de gestao.', 'rules' => 'Acesso por assinatura da igreja responsavel. Acima de 100 usuarios pode haver custo adicional.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
             ['name' => 'Site para Igrejas', 'slug' => 'site-para-igrejas', 'description' => 'Construtor de site institucional com modelos, dados cadastrais, preview e publicacao para assinantes.', 'rules' => 'Plano avulso de site por R$ 67,00/mes. No combo com gestao, o total fica R$ 99,90/mes.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
-            ['name' => 'Expositor IA', 'slug' => 'expositor-ia', 'description' => 'Criacao assistida de sermoes, estudos biblicos, series, ministracoes e planos de leitura.', 'rules' => 'Materiais publicados aparecem no sistema de gestao e na area do membro.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Central Pastoral IA', 'slug' => 'central-pastoral-ia', 'description' => 'Criacao assistida de sermoes, estudos biblicos, series, ministracoes e planos de leitura.', 'rules' => 'Materiais publicados aparecem no sistema de gestao e na area do membro.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
             ['name' => 'Google Ad Grants', 'slug' => 'google-ad-grants', 'description' => 'Apoio para elegibilidade, configuracao e gestao de campanhas para ONGs e igrejas.', 'rules' => 'Disponibilidade depende das regras do programa e validacao da instituicao.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
             ['name' => 'Google para ONGs', 'slug' => 'google-para-ongs', 'description' => 'Orientacao para ativar ferramentas Google Workspace e recursos para organizacoes elegiveis.', 'rules' => 'Sujeito a aprovacao externa do programa.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
             ['name' => 'Gestao de Trafego Pago', 'slug' => 'gestao-trafego-pago', 'description' => 'Planejamento, criacao e acompanhamento de campanhas pagas para comunicacao e captacao.', 'rules' => 'Investimento de midia nao incluso no servico.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
@@ -457,9 +457,9 @@ class AdminCatalogController extends Controller
     private function ensureDefaultPlatformSettings(): void
     {
         $defaults = [
-            ['openai_api_key', '', 'ai', 'Chave da OpenAI usada pelo Expositor IA'],
-            ['openai_model', 'gpt-4o-mini', 'ai', 'Modelo principal do Expositor IA'],
-            ['openai_temperature', '0.6', 'ai', 'Temperatura de geração do Expositor IA'],
+            ['openai_api_key', '', 'ai', 'Chave da OpenAI usada pela Central Pastoral IA'],
+            ['openai_model', 'gpt-4o-mini', 'ai', 'Modelo principal da Central Pastoral IA'],
+            ['openai_temperature', '0.6', 'ai', 'Temperatura de geração da Central Pastoral IA'],
             ['openai_timeout', '60', 'ai', 'Tempo limite das chamadas OpenAI em segundos'],
             ['plan_management_monthly_price', '67.00', 'billing', 'Plano de gestão mensal até 100 usuários'],
             ['plan_site_monthly_price', '67.00', 'billing', 'Plano avulso do site'],
@@ -471,7 +471,7 @@ class AdminCatalogController extends Controller
             ['pagou_webhook_url', '/webhooks/pagou', 'payments', 'Endpoint que receberá eventos da Pagou'],
             ['pagou_default_gateway', 'pagou', 'payments', 'Gateway oficial para cobrança recorrente dos assinantes do Hub'],
             ['ia_free_generations_monthly', '3', 'ai', 'Geracoes gratuitas mensais por workspace'],
-            ['ia_credit_cost', '1', 'ai', 'Creditos consumidos por geracao do Expositor IA'],
+            ['ia_credit_cost', '1', 'ai', 'Creditos consumidos por geracao da Central Pastoral IA'],
             ['site_publish_cname_target', 'sites.elo42.com.br', 'sites', 'Destino CNAME recomendado para www ou subdominios'],
             ['site_publish_apex_ip', '185.158.133.1', 'sites', 'IP usado quando o provedor exigir registro A no dominio raiz'],
             ['site_domain_verify_prefix', '_elo42-verify', 'sites', 'Prefixo do TXT opcional para validar posse do dominio'],
@@ -499,12 +499,12 @@ class AdminCatalogController extends Controller
     private function defaultPlatformSettings(): array
     {
         return [
-            ['setting_key' => 'openai_api_key', 'setting_value' => '', 'setting_group' => 'ai', 'description' => 'Chave da OpenAI usada pelo Expositor IA. Deixe em branco para manter a chave atual.'],
-            ['setting_key' => 'openai_model', 'setting_value' => 'gpt-4o-mini', 'setting_group' => 'ai', 'description' => 'Modelo principal usado pelo Expositor IA.'],
+            ['setting_key' => 'openai_api_key', 'setting_value' => '', 'setting_group' => 'ai', 'description' => 'Chave da OpenAI usada pela Central Pastoral IA. Deixe em branco para manter a chave atual.'],
+            ['setting_key' => 'openai_model', 'setting_value' => 'gpt-4o-mini', 'setting_group' => 'ai', 'description' => 'Modelo principal usado pela Central Pastoral IA.'],
             ['setting_key' => 'openai_temperature', 'setting_value' => '0.6', 'setting_group' => 'ai', 'description' => 'Criatividade das respostas. Valores menores deixam o material mais conservador.'],
             ['setting_key' => 'openai_timeout', 'setting_value' => '60', 'setting_group' => 'ai', 'description' => 'Tempo limite das chamadas OpenAI em segundos.'],
             ['setting_key' => 'ia_free_generations_monthly', 'setting_value' => '3', 'setting_group' => 'ai', 'description' => 'Geracoes gratuitas mensais por workspace.'],
-            ['setting_key' => 'ia_credit_cost', 'setting_value' => '1', 'setting_group' => 'ai', 'description' => 'Creditos consumidos por geracao do Expositor IA.'],
+            ['setting_key' => 'ia_credit_cost', 'setting_value' => '1', 'setting_group' => 'ai', 'description' => 'Creditos consumidos por geracao da Central Pastoral IA.'],
             ['setting_key' => 'plan_management_monthly_price', 'setting_value' => '67.00', 'setting_group' => 'billing', 'description' => 'Plano de gestao mensal com ate 100 usuarios da plataforma.'],
             ['setting_key' => 'plan_site_monthly_price', 'setting_value' => '67.00', 'setting_group' => 'billing', 'description' => 'Plano avulso do site para igrejas.'],
             ['setting_key' => 'plan_combo_monthly_price', 'setting_value' => '99.90', 'setting_group' => 'billing', 'description' => 'Combo gestao + site.'],

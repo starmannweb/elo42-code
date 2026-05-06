@@ -19,6 +19,8 @@ $router->group(['prefix' => 'hub', 'middleware' => ['csrf', 'auth']], function($
         $router->post('/sites/gerar', [DashboardController::class, 'gerarSite']);
         $router->post('/sites/configurar', [DashboardController::class, 'configurarSite']);
         $router->post('/sites/publicar', [DashboardController::class, 'publicarSite']);
+        $router->get('/ministry-ai', [DashboardController::class, 'expositorIa']);
+        $router->post('/ministry-ai/generate', [DashboardController::class, 'generateMinistryAi']);
         $router->get('/expositor-ia', [DashboardController::class, 'expositorIa']);
         $router->post('/expositor-ia/gerar', [DashboardController::class, 'gerarExpositorIa']);
         $router->post('/expositor-ia/publicar', [DashboardController::class, 'publicarExpositorIa']);

@@ -12,7 +12,7 @@
     $groupMeta = [
         'ai' => [
             'title' => 'Integrações de IA',
-            'text' => 'Configuração global do Expositor IA. Esta área pertence ao gestor master DEV e alimenta todo o Hub.',
+            'text' => 'Configuração global da Central Pastoral IA. Esta área pertence ao gestor master DEV e alimenta todo o Hub.',
         ],
         'billing' => [
             'title' => 'Planos e limites',
@@ -43,7 +43,7 @@
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-header__title">Configurações da plataforma</h1>
-        <p class="mgmt-header__subtitle">Parâmetros globais da Elo 42, planos, domínios e Expositor IA.</p>
+        <p class="mgmt-header__subtitle">Parâmetros globais da Elo 42, planos, domínios e Central Pastoral IA.</p>
     </div>
 </div>
 

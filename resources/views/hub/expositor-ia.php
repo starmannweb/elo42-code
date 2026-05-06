@@ -3,563 +3,358 @@
 <?php $__view->section('content'); ?>
 
 <?php
-    $form = is_array($expositorForm ?? null) ? $expositorForm : [];
-    $creditCost = (int) ($iaCreditCost ?? 1);
+    $modules = is_array($ministryAiModules ?? null) ? $ministryAiModules : [];
+    $workflowsByModule = is_array($ministryAiWorkflows ?? null) ? $ministryAiWorkflows : [];
+    $allWorkflows = is_array($ministryAiAllWorkflows ?? null) ? $ministryAiAllWorkflows : [];
+    $generateUrl = (string) ($ministryAiGenerateUrl ?? url('/hub/ministry-ai/generate'));
+    $token = (string) ($csrfToken ?? csrf_token());
     $credits = (int) ($iaCredits ?? 0);
-    $canGenerate = !empty($canGenerateIa);
-    $lastResult = $expositorLastResult ?? null;
-    $generatedDraft = is_array($expositorGeneratedDraft ?? null) ? $expositorGeneratedDraft : null;
-    $contentType = (string) ($form['content_type'] ?? 'sermon');
-    $activeExpositorTab = match ($contentType) {
-        'study', 'reading_plan' => 'estudos',
-        'series' => 'series',
-        'resource' => 'planejamento',
-        default => !empty($lastResult) ? 'pregacao' : 'planejamento',
-    };
+    $creditCost = (int) ($iaCreditCost ?? 1);
 ?>
 
-<section class="hub-page expositor-console" data-expositor-workbench>
-    <div class="expositor-console__bar" aria-label="Cabeçalho do Expositor IA">
-        <div class="expositor-console__brand">
-            <span class="expositor-console__mark" aria-hidden="true">IA</span>
-            <strong>Expositor IA</strong>
-        </div>
-        <span class="expositor-console__status">Suporte</span>
-    </div>
-
-    <header class="hub-page__header expositor-page-header">
+<section class="hub-page ministry-ai-page" data-ministry-ai>
+    <header class="hub-page__header">
         <div>
-            <h1 class="hub-page__title">Expositor IA</h1>
-            <p class="hub-page__subtitle">Um ambiente ministerial separado para planejar, estudar o texto, gerar sermões, refinar rascunhos e preparar materiais para EBD, pequenos grupos e discipulado.</p>
+            <span class="hub-badge hub-badge--primary">ministry-ai</span>
+            <h1 class="hub-page__title">Central Pastoral IA</h1>
+            <p class="hub-page__subtitle">Prepare sermões, estudos, aulas e planejamentos ministeriais com apoio inteligente, sem perder o cuidado pastoral.</p>
+        </div>
+        <div class="hub-page__actions">
+            <a href="<?= url('/hub/creditos') ?>" class="btn btn--outline">Ver créditos</a>
         </div>
     </header>
 
-    <nav class="expositor-workbench-tabs expositor-workbench-tabs--primary" aria-label="Áreas do Expositor IA">
-        <button type="button" class="expositor-workbench-tabs__item <?= in_array($activeExpositorTab, ['planejamento', 'series'], true) ? 'active' : '' ?>" data-expositor-tab="planejamento" aria-controls="expositor-panel-planejamento">Planejamento</button>
-        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'pregacao' ? 'active' : '' ?>" data-expositor-tab="pregacao" aria-controls="expositor-panel-pregacao">Pregação</button>
-        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'estudos' ? 'active' : '' ?>" data-expositor-tab="estudos" aria-controls="expositor-panel-estudos">Estudos</button>
-    </nav>
-    <nav class="expositor-workbench-tabs expositor-workbench-tabs--secondary" aria-label="Fluxos de planejamento">
-        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'planejamento' ? 'active' : '' ?>" data-expositor-tab="planejamento" aria-controls="expositor-panel-planejamento">Hub Ministerial</button>
-        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'series' ? 'active' : '' ?>" data-expositor-tab="series" aria-controls="expositor-panel-series">Série de Sermões</button>
-    </nav>
-
-    <div class="expositor-usage">
+    <div class="ministry-ai-usage">
         <div>
             <strong>Plano gratuito</strong>
-            <span>3 gerações liberadas por mês. Depois disso, cada geração consome <?= e((string) $creditCost) ?> crédito.</span>
+            <span>3 gerações mensais liberadas. Depois disso, cada geração consome <?= e((string) $creditCost) ?> crédito.</span>
         </div>
-        <div class="expositor-usage__meter" aria-label="Saldo de créditos">
-            <span><?= e((string) $credits) ?> crédito(s) disponíveis</span>
-            <div><i style="width:<?= $credits > 0 ? '100' : '0' ?>%;"></i></div>
-            <a href="<?= url('/hub/creditos') ?>" class="btn btn--outline btn--sm" style="margin-top: 0.5rem;">Ver créditos</a>
+        <div class="ministry-ai-usage__meter">
+            <strong data-credit-count><?= e((string) $credits) ?> crédito(s) disponíveis</strong>
+            <span><i style="width:<?= $credits > 0 ? min(100, $credits * 34) : 0 ?>%;"></i></span>
         </div>
     </div>
 
     <?php if (!empty($monthlyAllowanceGranted)): ?>
-        <div class="expositor-usage expositor-usage--notice" role="status">
-            <div>
-                <strong>3 gerações gratuitas liberadas</strong>
-                <span>Esse benefício mensal pertence ao Expositor IA e já foi adicionado ao saldo deste workspace.</span>
-            </div>
+        <div class="alert alert--success" style="margin-top:var(--space-4);">
+            3 gerações gratuitas foram adicionadas ao saldo deste workspace.
         </div>
     <?php endif; ?>
 
-    <?php if (!empty($lastResult)): ?>
-        <article class="hub-panel expositor-result-panel">
-            <div class="hub-panel__row">
-                <div>
-                    <h2 class="hub-panel__title">Material gerado</h2>
-                    <p class="hub-panel__text">Revise o conteúdo, publique para a gestão e libere para a área de membros quando estiver pronto.</p>
-                </div>
-                <?php if (!empty($generatedDraft)): ?>
-                    <span class="hub-badge hub-badge--warning">Rascunho salvo</span>
-                <?php endif; ?>
+    <div class="ministry-ai-layout">
+        <aside class="ministry-ai-sidebar hub-panel">
+            <h2 class="hub-panel__title">Módulos</h2>
+            <p class="hub-panel__text">Escolha a área pastoral e depois o fluxo de trabalho.</p>
+            <div class="ministry-ai-module-list" data-module-list>
+                <?php foreach ($modules as $index => $module): ?>
+                    <button type="button" class="ministry-ai-module <?= $index === 0 ? 'is-active' : '' ?>" data-module-id="<?= e((string) $module['id']) ?>">
+                        <strong><?= e((string) $module['title']) ?></strong>
+                        <span><?= e((string) $module['description']) ?></span>
+                    </button>
+                <?php endforeach; ?>
             </div>
-            <pre class="expositor-result"><?= e((string) $lastResult) ?></pre>
-            <?php if (!empty($generatedDraft)): ?>
-                <div class="expositor-publish-card">
+        </aside>
+
+        <div class="ministry-ai-main">
+            <section class="hub-panel">
+                <div class="hub-panel__head">
                     <div>
-                        <strong><?= e((string) ($generatedDraft['title'] ?? 'Material gerado')) ?></strong>
-                        <span><?= e((string) ($generatedDraft['label'] ?? 'Conteúdo')) ?> pronto para publicação.</span>
-                    </div>
-                    <form method="POST" action="<?= url('/hub/expositor-ia/publicar') ?>">
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="draft_type" value="<?= e((string) ($generatedDraft['type'] ?? 'sermon')) ?>">
-                        <input type="hidden" name="draft_id" value="<?= e((string) ($generatedDraft['id'] ?? 0)) ?>">
-                        <button type="submit" class="btn btn--primary">Publicar para membros</button>
-                    </form>
-                    <a href="<?= url((string) ($generatedDraft['destination'] ?? '/gestao/sermoes')) ?>" class="btn btn--outline">Ver na gestão</a>
-                </div>
-            <?php endif; ?>
-        </article>
-    <?php endif; ?>
-
-    <div id="expositor-panel-planejamento" class="expositor-panel" data-expositor-panel="planejamento" <?= $activeExpositorTab === 'planejamento' ? '' : 'hidden' ?>>
-    <div class="expositor-choice-grid">
-        <article class="expositor-choice-card">
-            <span class="expositor-choice-card__icon">✎</span>
-            <small>Caminho livre</small>
-            <h2>Organizar um sermão avulso</h2>
-            <p>Gere sermão, estudo bíblico, aula EBD ou roteiro para culto especial de forma rápida.</p>
-            <button type="button" class="expositor-link-button" data-expositor-target="pregacao">Começar</button>
-        </article>
-        <article class="expositor-choice-card">
-            <span class="expositor-choice-card__icon">▦</span>
-            <small>Caminho ministerial</small>
-            <h2>Planejar uma série</h2>
-            <p>Crie séries com PG e EBD alinhados, mantendo direção teológica em todos os encontros.</p>
-            <button type="button" class="expositor-link-button" data-expositor-target="series">Planejar série</button>
-        </article>
-        <article class="expositor-choice-card">
-            <span class="expositor-choice-card__icon">⌕</span>
-            <small>Caminho exegético</small>
-            <h2>Partir do texto bíblico</h2>
-            <p>Aprofunde contexto, estrutura, palavras-chave e aplicação antes de desenvolver o material.</p>
-            <button type="button" class="expositor-link-button" data-expositor-target="estudos">Estudar texto</button>
-        </article>
-    </div>
-
-    <article class="hub-panel" style="margin-top:var(--space-5);">
-        <div class="hub-panel__row">
-            <div>
-                <h2 class="hub-panel__title">Planejamento rápido</h2>
-                <p class="hub-panel__text">Informe a passagem ou tema e gere um esboço inicial de planejamento ministerial em segundos.</p>
-            </div>
-            <div class="hub-badge <?= $canGenerate ? 'hub-badge--success' : 'hub-badge--warning' ?>">
-                <?= $canGenerate ? 'Geração liberada' : 'Sem créditos suficientes' ?>
-            </div>
-        </div>
-
-        <?php if (!$canGenerate): ?>
-            <div class="alert alert--warning" role="alert" style="margin-top:var(--space-3);">
-                Use as 3 gerações gratuitas do mês ou compre créditos para continuar.
-                <a href="<?= url('/hub/creditos') ?>" class="text-primary font-bold">Comprar créditos</a>
-            </div>
-        <?php endif; ?>
-
-        <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" data-loading style="margin-top:var(--space-4);">
-            <?= csrf_field() ?>
-            <input type="hidden" name="content_type" value="sermon">
-            <input type="hidden" name="resource_title" value="Planejamento rápido">
-
-            <div class="form-grid form-grid--2">
-                <div class="form-group">
-                    <label class="form-label" for="ia-plan-passage">Passagem ou tema</label>
-                    <input id="ia-plan-passage" type="text" name="passage" class="form-input" value="<?= e((string) ($form['passage'] ?? '')) ?>" placeholder="Ex.: Romanos 12 ou A graça transformadora" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-plan-theme">Ênfase pastoral</label>
-                    <input id="ia-plan-theme" type="text" name="theme" class="form-input" value="<?= e((string) ($form['theme'] ?? '')) ?>" placeholder="Ex.: Vida na Igreja">
-                </div>
-            </div>
-
-            <div class="form-grid form-grid--2">
-                <div class="form-group">
-                    <label class="form-label" for="ia-plan-confessional">Linha confessional</label>
-                    <select id="ia-plan-confessional" name="confessional" class="form-select">
-                        <?php foreach (($confessionalOptions ?? []) as $option): ?>
-                            <option value="<?= e((string) ($option['value'] ?? '')) ?>" <?= (($form['confessional'] ?? '') === ($option['value'] ?? '')) ? 'selected' : '' ?>>
-                                <?= e((string) ($option['label'] ?? '')) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-plan-depth">Profundidade</label>
-                    <select id="ia-plan-depth" name="depth" class="form-select">
-                        <?php foreach (($depthOptions ?? []) as $option): ?>
-                            <option value="<?= e((string) ($option['value'] ?? '')) ?>" <?= (($form['depth'] ?? 'pastoral') === ($option['value'] ?? '')) ? 'selected' : '' ?>>
-                                <?= e((string) ($option['label'] ?? '')) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="hub-page__actions" style="margin-top:var(--space-3);">
-                <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar planejamento</button>
-                <a href="<?= url('/hub/creditos') ?>" class="btn btn--ghost">Saldo de créditos</a>
-            </div>
-        </form>
-    </article>
-
-    <?php
-        $planningResources = [
-            ['title' => 'Currículo de Escola Dominical', 'text' => 'Série bíblica com progressão pedagógica, objetivo por aula e perguntas de aplicação.', 'placeholder' => 'Ex.: Evangelho de João para adultos', 'theme' => 'Adultos, jovens ou adolescentes'],
-            ['title' => 'Roteiro de Discipulado', 'text' => 'Trilha de encontros adaptada ao perfil espiritual, maturidade e objetivo pastoral.', 'placeholder' => 'Ex.: novos membros em 12 encontros', 'theme' => 'Fundamentos da fé'],
-            ['title' => 'Preparação Bíblica para Casamento', 'text' => 'Curso de noivos com encontros, textos bíblicos, alertas pastorais e exercícios.', 'placeholder' => 'Ex.: casal jovem, 7 encontros', 'theme' => 'Aliança, comunicação e finanças'],
-            ['title' => 'Planejamento de Pequenos Grupos', 'text' => 'Ciclo completo com título, visão pastoral, encontros e perguntas para líderes.', 'placeholder' => 'Ex.: PGs em fase de crescimento', 'theme' => 'Comunhão, Palavra e oração'],
-            ['title' => 'Plano Anual da Igreja', 'text' => 'Esboço macro para organizar ênfases, calendário pastoral, ministérios e indicadores.', 'placeholder' => 'Ex.: ano de consolidação e discipulado', 'theme' => '2027'],
-        ];
-    ?>
-    <section class="hub-panel" style="margin-top:var(--space-5);">
-        <div class="hub-panel__row">
-            <div>
-                <h2 class="hub-panel__title">Hub ministerial</h2>
-                <p class="hub-panel__text">Crie materiais que já nascem com destino prático para gestão, área de membros, séries e rotinas da igreja.</p>
-            </div>
-            <span class="hub-badge <?= $canGenerate ? 'hub-badge--success' : 'hub-badge--warning' ?>"><?= $canGenerate ? 'Pronto para gerar' : 'Sem créditos' ?></span>
-        </div>
-        <div class="expositor-resource-grid">
-            <?php foreach ($planningResources as $resource): ?>
-                <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="content_type" value="resource">
-                    <input type="hidden" name="resource_title" value="<?= e($resource['title']) ?>">
-                    <input type="hidden" name="confessional" value="biblico-evangelico">
-                    <input type="hidden" name="depth" value="pastoral">
-                    <h3 class="hub-mini-card__title"><?= e($resource['title']) ?></h3>
-                    <p class="hub-mini-card__text"><?= e($resource['text']) ?></p>
-                    <div class="form-group">
-                        <label class="form-label">Contexto principal</label>
-                        <input type="text" name="passage" class="form-input" placeholder="<?= e($resource['placeholder']) ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Ênfase / público</label>
-                        <input type="text" name="theme" class="form-input" placeholder="<?= e($resource['theme']) ?>">
-                    </div>
-                    <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar visão geral</button>
-                </form>
-            <?php endforeach; ?>
-        </div>
-    </section>
-
-    <div class="expositor-flow-grid">
-        <article class="expositor-flow-card">
-            <span>1</span>
-            <strong>Caminho exegético</strong>
-            <p>Contexto, estrutura literária, palavras-chave, teologia do texto e eixo cristológico antes da aplicação.</p>
-        </article>
-        <article class="expositor-flow-card">
-            <span>2</span>
-            <strong>Revisão pastoral</strong>
-            <p>O pastor valida tema central, pontos e ênfase confessional antes de transformar o estudo em material.</p>
-        </article>
-        <article class="expositor-flow-card">
-            <span>3</span>
-            <strong>Desenvolvimento</strong>
-            <p>Gere esboço, roteiro de pequeno grupo, aula de EBD, discipulado ou série a partir da mesma base.</p>
-        </article>
-    </div>
-    </div>
-
-    <div id="expositor-panel-series" class="hub-panel expositor-panel" data-expositor-panel="series" <?= $activeExpositorTab === 'series' ? '' : 'hidden' ?>>
-        <div class="hub-panel__row">
-            <div>
-                <h2 class="hub-panel__title">Série de sermões</h2>
-                <p class="hub-panel__text">Crie a série, defina a linha bíblica e salve o primeiro rascunho vinculado à série em Sermões.</p>
-            </div>
-            <div class="hub-badge <?= $canGenerate ? 'hub-badge--success' : 'hub-badge--warning' ?>">
-                <?= $canGenerate ? 'Geração liberada' : 'Sem créditos suficientes' ?>
-            </div>
-        </div>
-        <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
-            <?= csrf_field() ?>
-            <input type="hidden" name="content_type" value="series">
-            <div class="form-grid form-grid--2">
-                <div class="form-group">
-                    <label class="form-label" for="ia-series-title">Nome da série</label>
-                    <input id="ia-series-title" type="text" name="resource_title" class="form-input" placeholder="Ex.: Sermão do Monte" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-series-passage">Livro, passagem ou tema base</label>
-                    <input id="ia-series-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Mateus 5-7" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-series-theme">Objetivo pastoral</label>
-                    <input id="ia-series-theme" type="text" name="theme" class="form-input" placeholder="Ex.: formar discípulos no Reino">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-series-depth">Profundidade</label>
-                    <select id="ia-series-depth" name="depth" class="form-select">
-                        <?php foreach (($depthOptions ?? []) as $option): ?>
-                            <option value="<?= e((string) ($option['value'] ?? '')) ?>"><?= e((string) ($option['label'] ?? '')) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-series-duration">Quantidade de mensagens</label>
-                    <select id="ia-series-duration" name="duration" class="form-select">
-                        <option>3 mensagens</option>
-                        <option selected>4 mensagens</option>
-                        <option>6 mensagens</option>
-                        <option>8 mensagens</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-series-audience">Público-alvo</label>
-                    <select id="ia-series-audience" name="audience" class="form-select">
-                        <option>Geral</option>
-                        <option>Liderança</option>
-                        <option>Jovens</option>
-                        <option>Casais</option>
-                        <option>Novos convertidos</option>
-                    </select>
-                </div>
-                <div class="form-group form-grid__full" style="grid-column:1 / -1;">
-                    <label class="form-label" for="ia-series-notes">Ênfase e observações</label>
-                    <textarea id="ia-series-notes" name="notes" class="form-input" rows="3" placeholder="Ex.: tom doutrinário, aplicações para pequenos grupos, datas especiais ou textos que devem entrar na série."></textarea>
-                </div>
-            </div>
-            <input type="hidden" name="confessional" value="biblico-evangelico">
-            <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar série</button>
-        </form>
-    </div>
-
-    <div id="expositor-panel-pregacao" class="hub-panel expositor-panel" data-expositor-panel="pregacao" <?= $activeExpositorTab === 'pregacao' ? '' : 'hidden' ?>>
-        <div class="hub-panel__row">
-            <div>
-                <h2 class="hub-panel__title">Workspace de pregação</h2>
-                <p class="hub-panel__text">Preencha a base pastoral e gere um esboço pronto para revisão.</p>
-            </div>
-            <div class="hub-badge <?= $canGenerate ? 'hub-badge--success' : 'hub-badge--warning' ?>">
-                <?= $canGenerate ? 'Geração liberada' : 'Sem créditos suficientes' ?>
-            </div>
-        </div>
-
-        <?php if (!$canGenerate): ?>
-            <div class="alert alert--warning" role="alert">
-                Você pode usar as 3 gerações gratuitas do mês ou comprar créditos para continuar.
-                <a href="<?= url('/hub/creditos') ?>" class="text-primary font-bold">Comprar créditos</a>
-            </div>
-        <?php endif; ?>
-
-        <div class="expositor-layout">
-            <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
-                <?= csrf_field() ?>
-                <input type="hidden" name="content_type" value="sermon">
-                <input type="hidden" name="resource_title" value="">
-
-                <div class="form-group">
-                    <label class="form-label" for="ia-passage">Passagem bíblica</label>
-                    <input id="ia-passage" type="text" name="passage" class="form-input" value="<?= e((string) ($form['passage'] ?? '')) ?>" placeholder="Ex.: Efésios 2:1-10" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="ia-theme">Tema / Ênfase</label>
-                    <input id="ia-theme" type="text" name="theme" class="form-input" value="<?= e((string) ($form['theme'] ?? '')) ?>" placeholder="Ex.: Salvos pela graça">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="ia-notes">Rascunho, objetivo ou observações</label>
-                    <textarea id="ia-notes" name="notes" class="form-input" rows="3" placeholder="Cole um rascunho para refinar ou descreva o culto, ocasião e direção pastoral."><?= e((string) ($form['notes'] ?? '')) ?></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="ia-confessional">Linha teológica / confessional</label>
-                    <select id="ia-confessional" name="confessional" class="form-select">
-                        <?php foreach (($confessionalOptions ?? []) as $option): ?>
-                            <option value="<?= e((string) ($option['value'] ?? '')) ?>" <?= (($form['confessional'] ?? '') === ($option['value'] ?? '')) ? 'selected' : '' ?>>
-                                <?= e((string) ($option['label'] ?? '')) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="ia-depth">Nível de profundidade</label>
-                    <select id="ia-depth" name="depth" class="form-select">
-                        <?php foreach (($depthOptions ?? []) as $option): ?>
-                            <option value="<?= e((string) ($option['value'] ?? '')) ?>" <?= (($form['depth'] ?? '') === ($option['value'] ?? '')) ? 'selected' : '' ?>>
-                                <?= e((string) ($option['label'] ?? '')) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="expositor-form-grid">
-                    <div class="form-group">
-                        <label class="form-label" for="ia-duration">Duração</label>
-                        <select id="ia-duration" class="form-select" name="duration">
-                            <option>35 minutos</option>
-                            <option>45 minutos</option>
-                            <option>60 minutos</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="ia-audience">Público-alvo</label>
-                        <select id="ia-audience" class="form-select" name="audience">
-                            <option>Geral</option>
-                            <option>Jovens</option>
-                            <option>Casais</option>
-                            <option>Novos convertidos</option>
-                        </select>
+                        <h2 class="hub-panel__title">Fluxos disponíveis</h2>
+                        <p class="hub-panel__text">Cada fluxo monta um prompt especializado a partir do contexto informado.</p>
                     </div>
                 </div>
+                <div class="ministry-ai-workflows" data-workflow-list></div>
+            </section>
 
-                <p class="hub-panel__text">
-                    <strong>Custo:</strong> <?= e((string) $creditCost) ?> crédito por geração.
-                </p>
-                <button type="submit" class="btn btn--gold" style="width:100%;" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>
-                    Gerar sermão
-                </button>
-            </form>
-
-            <article class="hub-mini-card">
-                <h2 class="hub-mini-card__title">Fluxos rápidos</h2>
-                <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" data-loading>
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="content_type" value="sermon">
-                    <input type="hidden" name="resource_title" value="Refinar rascunho de sermão">
-                    <input type="hidden" name="depth" value="pastoral">
-                    <input type="hidden" name="confessional" value="biblico-evangelico">
-                    <div class="form-group">
-                        <label class="form-label" for="ia-refine-passage">Texto base</label>
-                        <input id="ia-refine-passage" type="text" name="passage" class="form-input" placeholder="Ex.: João 15:1-8" required>
+            <section class="hub-panel ministry-ai-form-panel">
+                <div class="hub-panel__head">
+                    <div>
+                        <h2 class="hub-panel__title" data-workflow-title>Formulário inteligente</h2>
+                        <p class="hub-panel__text" data-workflow-description>Preencha os campos para revisar antes da geração.</p>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label" for="ia-refine-notes">Rascunho para refinar</label>
-                        <textarea id="ia-refine-notes" name="notes" class="form-input" rows="4" placeholder="Cole o rascunho atual, pontos ou anotações." required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn--primary" style="width:100%;" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Refinar rascunho</button>
-                </form>
-
-                <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" data-loading style="margin-top:1rem;">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="content_type" value="sermon">
-                    <input type="hidden" name="resource_title" value="Culto ocasional">
-                    <input type="hidden" name="depth" value="pastoral">
-                    <input type="hidden" name="confessional" value="biblico-evangelico">
-                    <div class="form-group">
-                        <label class="form-label" for="ia-occasion-passage">Passagem ou tema</label>
-                        <input id="ia-occasion-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Salmo 23 ou gratidão" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="ia-occasion-theme">Ocasião</label>
-                        <input id="ia-occasion-theme" type="text" name="theme" class="form-input" placeholder="Ex.: funeral, casamento, ceia, batismo">
-                    </div>
-                    <button type="submit" class="btn btn--outline" style="width:100%;" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar culto ocasional</button>
-                </form>
-
-                <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" data-loading style="margin-top:1rem;">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="content_type" value="sermon">
-                    <input type="hidden" name="resource_title" value="Aula EBD">
-                    <input type="hidden" name="depth" value="pastoral">
-                    <input type="hidden" name="confessional" value="biblico-evangelico">
-                    <div class="form-group">
-                        <label class="form-label" for="ia-ebd-passage">Passagem ou tema da aula</label>
-                        <input id="ia-ebd-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Efésios 2:1-10" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="ia-ebd-theme">Classe / faixa</label>
-                        <input id="ia-ebd-theme" type="text" name="theme" class="form-input" placeholder="Ex.: Adultos, jovens, adolescentes">
-                    </div>
-                    <button type="submit" class="btn btn--outline" style="width:100%;" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar aula EBD</button>
-                </form>
-            </article>
-
-            <article class="hub-mini-card">
-                <h2 class="hub-mini-card__title">Resultado</h2>
-                <?php if (!empty($lastResult)): ?>
-                    <div class="expositor-empty-result">
-                        <strong>Material pronto para revisão</strong>
-                        <p>Use o bloco "Material gerado" acima para publicar ou abrir o registro salvo na gestão.</p>
-                    </div>
-                <?php else: ?>
-                    <div class="expositor-empty-result">
-                        <strong>Aguardando geração</strong>
-                        <p>O esboço aparecerá aqui para revisão pastoral e próximos passos.</p>
-                    </div>
-                    <ul class="expositor-next-list">
-                        <li>Caminho exegético com 6 ênfases</li>
-                        <li>Roteiro para PG, EBD e discipulado</li>
-                        <li>Base para exportação em PDF/DOCX</li>
-                    </ul>
-                <?php endif; ?>
-                <div class="hub-page__actions" style="margin-top:auto;">
-                    <a href="<?= url('/hub/creditos') ?>" class="btn btn--outline">Comprar créditos</a>
-                    <a href="https://wa.me/5513978008047" target="_blank" rel="noopener noreferrer" class="btn btn--ghost">Suporte no WhatsApp</a>
+                    <span class="hub-badge hub-badge--neutral" data-workflow-step-count>Revisão</span>
                 </div>
-            </article>
+
+                <div class="ministry-ai-steps" data-workflow-steps></div>
+                <form class="ministry-ai-form" data-workflow-form novalidate></form>
+            </section>
+
+            <section class="hub-panel">
+                <div class="hub-panel__head">
+                    <div>
+                        <h2 class="hub-panel__title">Revisão</h2>
+                        <p class="hub-panel__text">Confira o resumo antes de enviar para a IA.</p>
+                    </div>
+                </div>
+                <div class="ministry-ai-review" data-review-box>
+                    <p class="hub-panel__text">Escolha um fluxo para começar.</p>
+                </div>
+                <div class="hub-page__actions" style="margin-top:var(--space-4);justify-content:flex-end;">
+                    <button type="button" class="btn btn--primary btn--lg" data-generate-button <?= $credits >= $creditCost ? '' : 'disabled' ?>>
+                        Gerar material
+                    </button>
+                </div>
+                <p class="form-hint" data-form-message></p>
+            </section>
+
+            <section class="hub-panel ministry-ai-result" data-result-section hidden>
+                <div class="hub-panel__head">
+                    <div>
+                        <h2 class="hub-panel__title" data-result-title>Resultado</h2>
+                        <p class="hub-panel__text">Markdown gerado para revisão pastoral.</p>
+                    </div>
+                    <span class="hub-badge hub-badge--success" data-result-model></span>
+                </div>
+                <pre data-result-markdown></pre>
+                <div class="hub-page__actions" style="margin-top:var(--space-4);">
+                    <button type="button" class="btn btn--outline" data-copy-result>Copiar</button>
+                    <button type="button" class="btn btn--outline" data-download-result>Baixar Markdown</button>
+                    <button type="button" class="btn btn--ghost" data-new-generation>Nova geração</button>
+                    <button type="button" class="btn btn--ghost" disabled>Salvar em breve</button>
+                </div>
+            </section>
         </div>
     </div>
-
-    <section id="expositor-panel-estudos" class="hub-panel expositor-panel" data-expositor-panel="estudos" <?= $activeExpositorTab === 'estudos' ? '' : 'hidden' ?>>
-        <div class="hub-panel__row">
-            <div>
-                <h2 class="hub-panel__title">Estudos bíblicos</h2>
-                <p class="hub-panel__text">Escolha um caminho de estudo e prepare base bíblica antes da aplicação ministerial.</p>
-            </div>
-            <div class="hub-badge <?= $canGenerate ? 'hub-badge--success' : 'hub-badge--warning' ?>">
-                <?= $canGenerate ? 'Geração liberada' : 'Sem créditos suficientes' ?>
-            </div>
-        </div>
-        <div class="expositor-study-grid">
-            <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
-                <?= csrf_field() ?>
-                <input type="hidden" name="content_type" value="study">
-                <input type="hidden" name="resource_title" value="">
-                <input type="hidden" name="depth" value="teologico">
-                <input type="hidden" name="confessional" value="biblico-evangelico">
-                <h3 class="hub-mini-card__title">Estudo do texto pastoral</h3>
-                <div class="form-group">
-                    <label class="form-label" for="ia-study-passage">Passagem bíblica</label>
-                    <input id="ia-study-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Romanos 8:28-39" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-study-theme">Ênfase do estudo</label>
-                    <input id="ia-study-theme" type="text" name="theme" class="form-input" placeholder="Ex.: Segurança do crente">
-                </div>
-                <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar estudo</button>
-            </form>
-
-            <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
-                <?= csrf_field() ?>
-                <input type="hidden" name="content_type" value="study">
-                <input type="hidden" name="resource_title" value="Estudo de texto academico">
-                <input type="hidden" name="depth" value="academico">
-                <input type="hidden" name="confessional" value="biblico-evangelico">
-                <h3 class="hub-mini-card__title">Estudo do texto acadêmico</h3>
-                <div class="form-group">
-                    <label class="form-label" for="ia-study-academic-passage">Passagem bíblica</label>
-                    <input id="ia-study-academic-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Romanos 5:1-11" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-study-academic-theme">Recorte de pesquisa</label>
-                    <input id="ia-study-academic-theme" type="text" name="theme" class="form-input" placeholder="Ex.: justificação e paz com Deus">
-                </div>
-                <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar estudo acadêmico</button>
-            </form>
-
-            <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
-                <?= csrf_field() ?>
-                <input type="hidden" name="content_type" value="study">
-                <input type="hidden" name="resource_title" value="Estudo biblico">
-                <input type="hidden" name="depth" value="pastoral">
-                <input type="hidden" name="confessional" value="biblico-evangelico">
-                <h3 class="hub-mini-card__title">Estudo bíblico</h3>
-                <div class="form-group">
-                    <label class="form-label" for="ia-study-bible-passage">Passagem ou tema</label>
-                    <input id="ia-study-bible-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Efésios 2:1-10" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-study-bible-theme">Objetivo do estudo</label>
-                    <input id="ia-study-bible-theme" type="text" name="theme" class="form-input" placeholder="Ex.: estudo para pequenos grupos ou discipulado">
-                </div>
-                <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar estudo bíblico</button>
-            </form>
-
-            <form method="POST" action="<?= url('/hub/expositor-ia/gerar') ?>" class="hub-mini-card" data-loading>
-                <?= csrf_field() ?>
-                <input type="hidden" name="content_type" value="reading_plan">
-                <input type="hidden" name="resource_title" value="Plano de leitura">
-                <input type="hidden" name="depth" value="pastoral">
-                <input type="hidden" name="confessional" value="biblico-evangelico">
-                <h3 class="hub-mini-card__title">Plano de leitura</h3>
-                <div class="form-group">
-                    <label class="form-label" for="ia-reading-passage">Livro ou percurso</label>
-                    <input id="ia-reading-passage" type="text" name="passage" class="form-input" placeholder="Ex.: Salmos em 30 dias" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ia-reading-theme">Objetivo pastoral</label>
-                    <input id="ia-reading-theme" type="text" name="theme" class="form-input" placeholder="Ex.: oração e confiança diária">
-                </div>
-                <button type="submit" class="btn btn--primary" <?= !$canGenerate ? 'disabled aria-disabled="true"' : '' ?>>Gerar plano</button>
-            </form>
-        </div>
-    </section>
 </section>
+
+<script>
+(function () {
+    var modules = <?= json_encode($modules, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?> || [];
+    var workflowsByModule = <?= json_encode($workflowsByModule, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?> || {};
+    var allWorkflows = <?= json_encode($allWorkflows, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?> || {};
+    var generateUrl = <?= json_encode($generateUrl, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    var csrfToken = <?= json_encode($token, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    var credits = <?= (int) $credits ?>;
+    var creditCost = <?= (int) $creditCost ?>;
+
+    var activeModule = modules[0] ? modules[0].id : '';
+    var activeWorkflow = '';
+    var currentMarkdown = '';
+    var isGenerating = false;
+
+    var moduleButtons = document.querySelectorAll('[data-module-id]');
+    var workflowList = document.querySelector('[data-workflow-list]');
+    var form = document.querySelector('[data-workflow-form]');
+    var reviewBox = document.querySelector('[data-review-box]');
+    var title = document.querySelector('[data-workflow-title]');
+    var description = document.querySelector('[data-workflow-description]');
+    var stepsBox = document.querySelector('[data-workflow-steps]');
+    var stepCount = document.querySelector('[data-workflow-step-count]');
+    var message = document.querySelector('[data-form-message]');
+    var generateButton = document.querySelector('[data-generate-button]');
+    var resultSection = document.querySelector('[data-result-section]');
+    var resultMarkdown = document.querySelector('[data-result-markdown]');
+    var resultTitle = document.querySelector('[data-result-title]');
+    var resultModel = document.querySelector('[data-result-model]');
+    var creditCount = document.querySelector('[data-credit-count]');
+
+    function workflowWithId(id) {
+        var workflow = allWorkflows[id] || null;
+        if (workflow) workflow.id = id;
+        return workflow;
+    }
+
+    function renderWorkflows() {
+        var workflows = workflowsByModule[activeModule] || [];
+        if (!activeWorkflow && workflows[0]) activeWorkflow = workflows[0].id;
+        if (!workflows.some(function (workflow) { return workflow.id === activeWorkflow; }) && workflows[0]) {
+            activeWorkflow = workflows[0].id;
+        }
+
+        workflowList.innerHTML = workflows.map(function (workflow) {
+            return '<button type="button" class="ministry-ai-workflow ' + (workflow.id === activeWorkflow ? 'is-active' : '') + '" data-workflow-id="' + escapeHtml(workflow.id) + '">' +
+                '<strong>' + escapeHtml(workflow.title) + '</strong>' +
+                '<span>' + escapeHtml(workflow.description || '') + '</span>' +
+                '</button>';
+        }).join('');
+
+        workflowList.querySelectorAll('[data-workflow-id]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                activeWorkflow = button.getAttribute('data-workflow-id') || '';
+                renderWorkflows();
+                renderForm();
+            });
+        });
+    }
+
+    function renderForm() {
+        var workflow = workflowWithId(activeWorkflow);
+        if (!workflow) return;
+
+        title.textContent = workflow.title || 'Formulário inteligente';
+        description.textContent = workflow.description || '';
+        stepCount.textContent = (workflow.steps || []).length + ' etapas';
+        stepsBox.innerHTML = (workflow.steps || []).map(function (step, index) {
+            return '<span class="ministry-ai-step"><b>' + (index + 1) + '</b>' + escapeHtml(step) + '</span>';
+        }).join('');
+
+        form.innerHTML = (workflow.fields || []).map(function (field) {
+            var required = field.required ? ' required' : '';
+            var label = '<label class="form-label" for="ministry_' + escapeHtml(field.name) + '">' + escapeHtml(field.label) + (field.required ? ' *' : '') + '</label>';
+            if (field.type === 'textarea') {
+                return '<div class="form-group ministry-ai-field ministry-ai-field--wide">' + label +
+                    '<textarea id="ministry_' + escapeHtml(field.name) + '" name="' + escapeHtml(field.name) + '" class="form-textarea" maxlength="8000" rows="5" placeholder="' + escapeHtml(field.placeholder || '') + '"' + required + '></textarea></div>';
+            }
+            if (field.type === 'select') {
+                var options = (field.options || []).map(function (option) {
+                    return '<option value="' + escapeHtml(option[0]) + '">' + escapeHtml(option[1]) + '</option>';
+                }).join('');
+                return '<div class="form-group ministry-ai-field">' + label +
+                    '<select id="ministry_' + escapeHtml(field.name) + '" name="' + escapeHtml(field.name) + '" class="form-select"' + required + '>' + options + '</select></div>';
+            }
+            return '<div class="form-group ministry-ai-field">' + label +
+                '<input id="ministry_' + escapeHtml(field.name) + '" name="' + escapeHtml(field.name) + '" class="form-input" maxlength="500" placeholder="' + escapeHtml(field.placeholder || '') + '"' + required + '></div>';
+        }).join('');
+
+        form.querySelectorAll('input, select, textarea').forEach(function (input) {
+            input.addEventListener('input', renderReview);
+            input.addEventListener('change', renderReview);
+        });
+
+        message.textContent = '';
+        renderReview();
+    }
+
+    function collectPayload() {
+        var payload = {};
+        form.querySelectorAll('input, select, textarea').forEach(function (input) {
+            payload[input.name] = input.value.trim();
+        });
+        return payload;
+    }
+
+    function renderReview() {
+        var workflow = workflowWithId(activeWorkflow);
+        if (!workflow) return;
+        var payload = collectPayload();
+        var items = (workflow.fields || []).map(function (field) {
+            var value = payload[field.name] || '';
+            if (!value) return '';
+            return '<li><strong>' + escapeHtml(field.label) + '</strong><span>' + escapeHtml(optionLabel(field, value)) + '</span></li>';
+        }).filter(Boolean).join('');
+
+        reviewBox.innerHTML = '<div class="ministry-ai-review__head"><strong>' + escapeHtml(workflow.title) + '</strong><span>' + escapeHtml(workflow.description || '') + '</span></div>' +
+            (items ? '<ul>' + items + '</ul>' : '<p class="hub-panel__text">Preencha os campos para montar o resumo.</p>');
+    }
+
+    function optionLabel(field, value) {
+        var found = (field.options || []).find(function (option) { return option[0] === value; });
+        return found ? found[1] : value;
+    }
+
+    function validateRequired() {
+        var workflow = workflowWithId(activeWorkflow);
+        var payload = collectPayload();
+        var missing = (workflow.fields || []).filter(function (field) {
+            return field.required && !(payload[field.name] || '').trim();
+        });
+        if (missing.length) {
+            return 'Preencha: ' + missing.map(function (field) { return field.label; }).join(', ') + '.';
+        }
+        return '';
+    }
+
+    function setLoading(state) {
+        isGenerating = state;
+        generateButton.disabled = state || credits < creditCost;
+        generateButton.textContent = state ? 'Gerando...' : 'Gerar material';
+    }
+
+    function generate() {
+        if (isGenerating) return;
+        var error = validateRequired();
+        if (error) {
+            message.textContent = error;
+            message.style.color = '#dc2626';
+            return;
+        }
+        if (credits < creditCost) {
+            message.textContent = 'Você não possui créditos suficientes.';
+            message.style.color = '#dc2626';
+            return;
+        }
+
+        setLoading(true);
+        message.textContent = 'Preparando material...';
+        message.style.color = '';
+
+        fetch(generateUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+                module: activeModule,
+                workflowId: activeWorkflow,
+                inputPayload: collectPayload()
+            })
+        }).then(function (response) {
+            return response.json().then(function (json) {
+                if (!response.ok || !json.success) {
+                    throw new Error(json.error || 'Não foi possível gerar agora.');
+                }
+                return json.data;
+            });
+        }).then(function (data) {
+            currentMarkdown = data.outputMarkdown || '';
+            resultTitle.textContent = data.title || 'Resultado';
+            resultModel.textContent = data.modelUsed || '';
+            resultMarkdown.textContent = currentMarkdown;
+            resultSection.hidden = false;
+            credits = Math.max(0, credits - creditCost);
+            if (creditCount) creditCount.textContent = credits + ' crédito(s) disponíveis';
+            message.textContent = 'Material gerado. Revise antes de usar.';
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }).catch(function (err) {
+            message.textContent = err.message || 'Não foi possível gerar agora.';
+            message.style.color = '#dc2626';
+        }).finally(function () {
+            setLoading(false);
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, function (char) {
+            return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]);
+        });
+    }
+
+    moduleButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            activeModule = button.getAttribute('data-module-id') || activeModule;
+            activeWorkflow = '';
+            moduleButtons.forEach(function (item) { item.classList.toggle('is-active', item === button); });
+            renderWorkflows();
+            renderForm();
+        });
+    });
+
+    generateButton.addEventListener('click', generate);
+    document.querySelector('[data-copy-result]').addEventListener('click', function () {
+        if (currentMarkdown && navigator.clipboard) navigator.clipboard.writeText(currentMarkdown);
+    });
+    document.querySelector('[data-download-result]').addEventListener('click', function () {
+        if (!currentMarkdown) return;
+        var blob = new Blob([currentMarkdown], { type: 'text/markdown;charset=utf-8' });
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'central-pastoral-ia.md';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    });
+    document.querySelector('[data-new-generation]').addEventListener('click', function () {
+        currentMarkdown = '';
+        resultSection.hidden = true;
+        form.reset();
+        renderReview();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    renderWorkflows();
+    renderForm();
+})();
+</script>
 
 <?php $__view->endSection(); ?>

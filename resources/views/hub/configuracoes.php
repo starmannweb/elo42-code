@@ -109,7 +109,7 @@ $orgTypeOptions = [
             </article>
 
             <article class="hub-mini-card">
-                <h3 class="hub-mini-card__title">Expositor IA</h3>
+                <h3 class="hub-mini-card__title">Central Pastoral IA</h3>
                 <p class="hub-mini-card__text">
                     Saldo: <strong><?= e((string) ($iaCredits ?? 0)) ?> crédito(s)</strong><br>
                     Consumo: <strong>1 crédito por geração</strong>

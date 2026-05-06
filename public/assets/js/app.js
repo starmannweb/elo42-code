@@ -262,60 +262,6 @@
             });
         });
 
-        // --- Expositor IA workspace tabs ---
-        document.querySelectorAll('[data-expositor-workbench]').forEach(function(workbench) {
-            var tabButtons = workbench.querySelectorAll('[data-expositor-tab]');
-            var panels = workbench.querySelectorAll('[data-expositor-panel]');
-
-            var activateTab = function(tabName) {
-                if (!tabName) return;
-
-                tabButtons.forEach(function(button) {
-                    var isActive = button.dataset.expositorTab === tabName;
-                    button.classList.toggle('active', isActive);
-                    button.setAttribute('aria-selected', isActive ? 'true' : 'false');
-                });
-
-                panels.forEach(function(panel) {
-                    panel.hidden = panel.dataset.expositorPanel !== tabName;
-                });
-            };
-
-            tabButtons.forEach(function(button) {
-                button.setAttribute('role', 'tab');
-                button.setAttribute('aria-selected', button.classList.contains('active') ? 'true' : 'false');
-                button.addEventListener('click', function() {
-                    activateTab(button.dataset.expositorTab);
-                });
-            });
-
-            workbench.querySelectorAll('[data-expositor-target]').forEach(function(trigger) {
-                trigger.addEventListener('click', function() {
-                    activateTab(trigger.dataset.expositorTarget);
-                });
-            });
-
-            workbench.querySelectorAll('[data-expositor-resource]').forEach(function(trigger) {
-                trigger.addEventListener('click', function() {
-                    var detail = workbench.querySelector('#expositor-resource-detail');
-                    if (!detail) return;
-
-                    var title = detail.querySelector('[data-resource-detail-title]');
-                    var text = detail.querySelector('[data-resource-detail-text]');
-                    var action = detail.querySelector('[data-resource-detail-action]');
-                    var input = detail.querySelector('[data-resource-detail-input]');
-
-                    if (title) title.textContent = trigger.dataset.resourceTitle || 'Recurso ministerial';
-                    if (text) text.textContent = trigger.dataset.resourceText || 'Preencha o contexto para gerar este recurso.';
-                    if (action) action.textContent = trigger.dataset.resourceAction || 'Gerar recurso';
-                    if (input) input.value = trigger.dataset.resourceTitle || 'Recurso ministerial';
-
-                    detail.hidden = false;
-                    detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                });
-            });
-        });
-
         // --- Scroll Animations ---
         if ('IntersectionObserver' in window) {
             var observer = new IntersectionObserver(function(entries) {

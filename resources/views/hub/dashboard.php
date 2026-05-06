@@ -37,7 +37,7 @@ if (empty($siteBuilderAccess['can_publish'])) {
     $activityItems[] = ['title' => 'Publicação do site ainda não liberada', 'meta' => (string) ($siteBuilderAccess['publish_requirement'] ?? 'Ative a mensalidade para publicar em domínio real.')];
 }
 if ($iaCreditsCount <= 0) {
-    $activityItems[] = ['title' => 'Créditos de IA zerados', 'meta' => 'Compre créditos para usar o Expositor IA em sermões, estudos e apoio pastoral.'];
+    $activityItems[] = ['title' => 'Créditos de IA zerados', 'meta' => 'Compre créditos para usar a Central Pastoral IA em sermões, estudos e apoio pastoral.'];
 }
 if ($ticketsOpen > 0) {
     $activityItems[] = ['title' => 'Tickets aguardando acompanhamento', 'meta' => $ticketsOpen . ' solicitação(ões) aberta(s) na central de suporte.'];
@@ -149,7 +149,7 @@ $nextPendingStep = $pendingSteps[0] ?? null;
             <div class="church-links-grid">
                 <a href="<?= url('/gestao') ?>" class="church-link-card">Gestão da igreja</a>
                 <a href="<?= url('/hub/sites') ?>" class="church-link-card">Site institucional</a>
-                <a href="<?= url('/hub/expositor-ia') ?>" class="church-link-card">Expositor IA</a>
+                <a href="<?= url('/hub/ministry-ai') ?>" class="church-link-card">Central Pastoral IA</a>
                 <a href="<?= url('/hub/suporte') ?>" class="church-link-card">Suporte</a>
                 <a href="<?= url('/hub/creditos') ?>" class="church-link-card">Créditos</a>
                 <a href="<?= url('/hub/vitrine') ?>" class="church-link-card">Loja do Hub</a>
@@ -207,7 +207,7 @@ $nextPendingStep = $pendingSteps[0] ?? null;
                 <a href="<?= url('/gestao/agenda') ?>" class="church-link-card">Agenda da igreja</a>
                 <a href="<?= url('/gestao/relatorios') ?>" class="church-link-card">Relatórios</a>
                 <a href="<?= url('/hub/sites') ?>" class="church-link-card">Meu site</a>
-                <a href="<?= url('/hub/expositor-ia') ?>" class="church-link-card">Expositor IA</a>
+                <a href="<?= url('/hub/ministry-ai') ?>" class="church-link-card">Central Pastoral IA</a>
                 <a href="<?= url('/hub/configuracoes') ?>" class="church-link-card">Configurações</a>
             </div>
         </article>

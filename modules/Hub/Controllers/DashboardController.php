@@ -15,6 +15,8 @@ use App\Models\Member;
 use App\Models\Event;
 use App\Models\ChurchRequest;
 use App\Models\FinancialTransaction;
+use App\Features\MinistryAi\GenerationRepository;
+use App\Features\MinistryAi\WorkflowRegistry;
 use DateTimeImmutable;
 
 class DashboardController extends Controller
@@ -405,7 +407,7 @@ class DashboardController extends Controller
 
     public function expositorIa(Request $request): void
     {
-        $context = $this->buildBaseContext('Expositor IA', 'expositor');
+        $context = $this->buildBaseContext('Central Pastoral IA', 'expositor');
         $organization = $context['organization'];
         $user = $context['user'];
         
@@ -421,7 +423,7 @@ class DashboardController extends Controller
             $this->appendCreditHistory($organization, $user, [
                 'date'        => date('d/m/Y H:i'),
                 'period'      => $currentPeriod,
-                'description' => '3 gerações gratuitas do mês',
+                'description' => '3 gerações gratuitas da Central Pastoral IA',
                 'type'        => 'Gratuito',
                 'qty'         => $bonusCredits,
                 'price'       => null,
@@ -440,7 +442,7 @@ class DashboardController extends Controller
         ]);
 
         $this->view('hub/expositor-ia', array_merge($context, [
-            'pageTitle'           => 'Expositor IA — Hub Elo 42',
+            'pageTitle'           => 'Central Pastoral IA - Hub Elo 42',
             'iaCredits'           => $credits,
             'iaCreditCost'        => self::IA_CREDIT_COST,
             'canGenerateIa'       => $credits >= self::IA_CREDIT_COST,
@@ -448,6 +450,11 @@ class DashboardController extends Controller
             'expositorLastResult' => Session::getFlash('hub_expositor_result'),
             'expositorGeneratedDraft' => Session::getFlash('hub_expositor_generated'),
             'expositorForm'       => $form,
+            'ministryAiModules'   => WorkflowRegistry::modules(),
+            'ministryAiWorkflows' => WorkflowRegistry::workflowsByModule(),
+            'ministryAiAllWorkflows' => WorkflowRegistry::workflows(),
+            'ministryAiGenerateUrl' => url('/hub/ministry-ai/generate'),
+            'csrfToken' => csrf_token(),
             'confessionalOptions' => $this->buildConfessionalOptions(),
             'depthOptions' => [
                 ['value' => 'pastoral', 'label' => 'Sermão Expositivo Pastoral'],
@@ -455,6 +462,88 @@ class DashboardController extends Controller
                 ['value' => 'academico', 'label' => 'Exegese Acadêmica'],
             ],
         ]));
+    }
+
+    public function generateMinistryAi(Request $request): void
+    {
+        $context = $this->buildBaseContext('Central Pastoral IA', 'expositor');
+        $organization = $context['organization'];
+        $user = $context['user'];
+
+        $raw = file_get_contents('php://input') ?: '';
+        $payload = json_decode($raw, true);
+        if (!is_array($payload)) {
+            $payload = $request->all();
+        }
+
+        $module = trim((string) ($payload['module'] ?? ''));
+        $workflowId = trim((string) ($payload['workflowId'] ?? ''));
+        $inputPayload = $payload['inputPayload'] ?? [];
+        $inputPayload = is_array($inputPayload) ? $inputPayload : [];
+
+        $workflow = WorkflowRegistry::getWorkflow($workflowId);
+        if ($workflow === null || $module === '' || (string) ($workflow['module'] ?? '') !== $module) {
+            $this->json(['success' => false, 'error' => 'Escolha um fluxo valido antes de gerar.'], 422);
+            return;
+        }
+
+        $errors = WorkflowRegistry::validatePayload($workflowId, $inputPayload);
+        if ($errors !== []) {
+            $this->json(['success' => false, 'error' => implode(' ', $errors)], 422);
+            return;
+        }
+
+        $credits = $this->resolveIaCredits($organization, $user);
+        if ($credits < self::IA_CREDIT_COST) {
+            $this->json(['success' => false, 'error' => 'Voce nao possui creditos suficientes para gerar este material.'], 402);
+            return;
+        }
+
+        try {
+            $service = new \App\Services\OpenAiService();
+            $result = $service->generateMinistryAi($workflowId, $inputPayload);
+
+            if ($result === null) {
+                $this->json(['success' => false, 'error' => 'Não foi possível chamar a IA agora. Confira a chave e o modelo da OpenAI no Admin Master.'], 503);
+                return;
+            }
+
+            $this->setIaCredits($organization, $user, $credits - self::IA_CREDIT_COST);
+            $this->appendCreditHistory($organization, $user, [
+                'date'        => date('d/m/Y H:i'),
+                'description' => 'Consumo na Central Pastoral IA',
+                'type'        => 'Uso',
+                'qty'         => -self::IA_CREDIT_COST,
+                'price'       => null,
+            ]);
+
+            $record = GenerationRepository::prepareRecord([
+                'userId' => $user['id'] ?? null,
+                'organizationId' => $organization['id'] ?? null,
+                'module' => $module,
+                'workflowId' => $workflowId,
+                'title' => $result['title'] ?? ($workflow['title'] ?? 'Geracao ministerial'),
+                'inputPayload' => $inputPayload,
+                'outputMarkdown' => $result['outputMarkdown'] ?? '',
+                'modelUsed' => $result['modelUsed'] ?? 'offline',
+            ]);
+
+            $this->json([
+                'success' => true,
+                'data' => [
+                    'id' => $record['id'],
+                    'module' => $record['module'],
+                    'workflowId' => $record['workflowId'],
+                    'title' => $record['title'],
+                    'outputMarkdown' => $record['outputMarkdown'],
+                    'modelUsed' => $record['modelUsed'],
+                    'createdAt' => $record['createdAt'],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[CentralPastoralIA] ' . $e->getMessage());
+            $this->json(['success' => false, 'error' => 'Nao foi possivel gerar agora. Revise os dados e tente novamente.'], 500);
+        }
     }
 
     public function creditos(Request $request): void
@@ -506,7 +595,7 @@ class DashboardController extends Controller
 
     public function gerarExpositorIa(Request $request): void
     {
-        $context = $this->buildBaseContext('Expositor IA', 'expositor');
+        $context = $this->buildBaseContext('Central Pastoral IA', 'expositor');
         $organization = $context['organization'];
         $user = $context['user'];
 
@@ -525,12 +614,12 @@ class DashboardController extends Controller
         if ($form['passage'] === '') {
             Session::flash('error', 'Informe a passagem, tema ou contexto para gerar o material.');
             Session::flash('hub_expositor_form', $form);
-            redirect('/hub/expositor-ia');
+            redirect('/hub/ministry-ai');
         }
 
         $credits = $this->resolveIaCredits($organization, $user);
         if ($credits < self::IA_CREDIT_COST) {
-            Session::flash('warning', 'Você não possui créditos suficientes. Compre créditos para usar o Expositor IA.');
+            Session::flash('warning', 'Você não possui créditos suficientes. Compre créditos para usar a Central Pastoral IA.');
             Session::flash('hub_expositor_form', $form);
             redirect('/hub/creditos');
         }
@@ -543,7 +632,7 @@ class DashboardController extends Controller
 
         $this->appendCreditHistory($organization, $user, [
             'date'        => date('d/m/Y H:i'),
-            'description' => 'Consumo no Expositor IA',
+            'description' => 'Consumo na Central Pastoral IA',
             'type'        => 'Uso',
             'qty'         => -self::IA_CREDIT_COST,
             'price'       => null,
@@ -556,12 +645,12 @@ class DashboardController extends Controller
             Session::flash('hub_expositor_generated', $draft);
         }
         Session::flash('hub_expositor_form', $form);
-        redirect('/hub/expositor-ia');
+        redirect('/hub/ministry-ai');
     }
 
     public function publicarExpositorIa(Request $request): void
     {
-        $context = $this->buildBaseContext('Expositor IA', 'expositor');
+        $context = $this->buildBaseContext('Central Pastoral IA', 'expositor');
         $organization = $context['organization'];
 
         $type = $this->normalizeExpositorContentType(trim((string) $request->input('draft_type')));
@@ -569,7 +658,7 @@ class DashboardController extends Controller
 
         if (empty($organization['id']) || $id <= 0) {
             Session::flash('error', 'Não foi possível localizar o material gerado para publicação.');
-            redirect('/hub/expositor-ia');
+            redirect('/hub/ministry-ai');
         }
 
         if ($this->publishExpositorDraft($organization, $type, $id)) {
@@ -578,7 +667,7 @@ class DashboardController extends Controller
         }
 
         Session::flash('error', 'Não foi possível publicar esse material agora.');
-        redirect('/hub/expositor-ia');
+        redirect('/hub/ministry-ai');
     }
 
     public function comprarCreditos(Request $request): void
@@ -1838,7 +1927,7 @@ class DashboardController extends Controller
     private function buildCreditPackages(): array
     {
         return [
-            ['id' => 'starter', 'name' => 'Pacote Expositor', 'credits' => 30, 'price_label' => 'R$ 34,90', 'description' => 'Créditos para sermões avulsos, estudos bíblicos e aulas EBD.', 'badge' => '', 'badge_type' => ''],
+            ['id' => 'starter', 'name' => 'Pacote Pastoral', 'credits' => 30, 'price_label' => 'R$ 34,90', 'description' => 'Créditos para sermões avulsos, estudos bíblicos e aulas EBD.', 'badge' => '', 'badge_type' => ''],
             ['id' => 'pro', 'name' => 'Pacote Ministerial', 'credits' => 120, 'price_label' => 'R$ 97,00', 'description' => 'Melhor custo-benefício para planejamento recorrente no ministério.', 'badge' => 'Mais vendido', 'badge_type' => 'hot'],
             ['id' => 'max', 'name' => 'Pacote Intensivo', 'credits' => 300, 'price_label' => 'R$ 197,00', 'description' => 'Volume para equipes, séries, discipulados e materiais mensais.', 'badge' => 'Melhor valor', 'badge_type' => 'new'],
         ];
@@ -1961,7 +2050,7 @@ class DashboardController extends Controller
             ['number' => 1, 'title' => 'Cadastrar organização', 'description' => 'Configure os dados da sua igreja ou ONG.', 'done' => !empty($organization['id']), 'action' => url('/onboarding/organizacao'), 'action_text' => 'Concluir cadastro'],
             ['number' => 2, 'title' => 'Definir perfil de acesso', 'description' => 'Escolha entre Gestor principal e Usuário cliente.', 'done' => !empty($organization['role_name']), 'action' => url('/hub/configuracoes'), 'action_text' => 'Ajustar perfil'],
             ['number' => 3, 'title' => 'Ativar mensalidade para publicar', 'description' => 'Você já pode criar sites e testar modelos; publicar exige mensalidade ativa.', 'done' => !empty($siteBuilderAccess['can_publish']), 'action' => url('/hub/sites'), 'action_text' => 'Ver status de publicação'],
-            ['number' => 4, 'title' => 'Adicionar créditos do Expositor IA', 'description' => 'O Expositor IA funciona por consumo de créditos.', 'done' => $iaCredits > 0, 'action' => url('/hub/creditos'), 'action_text' => 'Comprar créditos'],
+            ['number' => 4, 'title' => 'Adicionar créditos da Central Pastoral IA', 'description' => 'A Central Pastoral IA funciona por consumo de créditos.', 'done' => $iaCredits > 0, 'action' => url('/hub/creditos'), 'action_text' => 'Comprar créditos'],
             ['number' => 5, 'title' => 'Abrir primeiro ticket de suporte', 'description' => 'Fale com o time para implantação e ajustes iniciais.', 'done' => count($tickets) > 0, 'action' => url('/hub/suporte'), 'action_text' => 'Abrir ticket'],
         ];
     }
@@ -2341,12 +2430,12 @@ class DashboardController extends Controller
                 $stmt->execute([
                     'organization_id' => (int) $organization['id'],
                     'title' => $title,
-                    'preacher' => trim((string) ($user['name'] ?? '')) ?: 'Expositor IA',
+                    'preacher' => trim((string) ($user['name'] ?? '')) ?: 'Central Pastoral IA',
                     'sermon_date' => date('Y-m-d'),
                     'bible_reference' => $reference,
                     'summary' => $result,
                     'series_name' => in_array($type, ['resource', 'series'], true) ? (trim((string) ($form['resource_title'] ?? '')) ?: $title) : null,
-                    'tags' => 'Expositor IA, ' . $label,
+                    'tags' => 'Central Pastoral IA, ' . $label,
                     'status' => 'draft',
                     'created_at' => $now,
                     'updated_at' => $now,
@@ -2464,7 +2553,7 @@ class DashboardController extends Controller
             ['icon' => 'monitor', 'title' => 'Combo Sistema + Site', 'description' => 'Painel de Gestão e Site para Igrejas no mesmo plano, com publicação do site inclusa.', 'price' => 'R$ 99,90/mês', 'badge' => 'Combo', 'badge_type' => 'hot', 'cta' => 'Quero o combo', 'url' => $wa('Combo Sistema + Site (R$ 99,90/mês)')],
             ['icon' => 'monitor', 'title' => 'Painel de Gestão de Igrejas', 'description' => 'Acesso completo para membros, eventos, financeiro e rotina ministerial. Inclui até 100 usuários da plataforma de gestão.', 'price' => 'R$ 67,00/mês (7 dias grátis)', 'badge' => 'Mais vendido', 'badge_type' => 'hot', 'cta' => 'Ver detalhes', 'url' => url('/gestao')],
             ['icon' => 'globe', 'title' => 'Site para Igrejas', 'description' => 'Sites profissionais para publicação com identidade visual da organização.', 'price' => 'R$ 67,00/mês', 'badge' => '', 'badge_type' => '', 'cta' => 'Ver detalhes', 'url' => url('/hub/sites')],
-            ['icon' => 'book', 'title' => 'Expositor IA', 'description' => 'Geração de esboços e estudos bíblicos para apoio pastoral e ministerial.', 'price' => 'Use com créditos', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Comprar créditos', 'url' => url('/hub/creditos')],
+            ['icon' => 'book', 'title' => 'Central Pastoral IA', 'description' => 'Geração de sermões, estudos e planejamentos com apoio pastoral inteligente.', 'price' => 'Use com créditos', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Comprar créditos', 'url' => url('/hub/creditos')],
             ['icon' => 'gift', 'title' => 'Google Ad Grants', 'description' => 'Implantação e aprovação para captar até US$ 10.000/mês em anúncios.', 'price' => 'R$ 497,00', 'badge' => '', 'badge_type' => '', 'cta' => 'Falar com comercial', 'url' => $wa('Google Ad Grants')],
             ['icon' => 'gift', 'title' => 'Google para ONGs', 'description' => 'Trilha guiada para aprovação e criação do Google Workspace gratuito.', 'price' => 'R$ 297,00', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Falar com comercial', 'url' => $wa('Google para ONGs')],
             ['icon' => 'megaphone', 'title' => 'Gestão de Tráfego Pago', 'description' => 'Planejamento e operação de campanhas para ampliar alcance e resultados.', 'price' => 'Consulte', 'badge' => 'Novo', 'badge_type' => 'new', 'cta' => 'Falar com comercial', 'url' => $wa('Gestão de Tráfego Pago')],
@@ -2512,10 +2601,10 @@ class DashboardController extends Controller
                 'highlight'   => false,
             ],
             [
-                'title'       => 'Expositor IA',
+                'title'       => 'Central Pastoral IA',
                 'description' => 'Abra o módulo, preencha a passagem bíblica e gere o esboço com consumo de crédito.',
-                'cta'         => 'Acessar Expositor IA',
-                'url'         => url('/hub/expositor-ia'),
+                'cta'         => 'Acessar Central Pastoral IA',
+                'url'         => url('/hub/ministry-ai'),
                 'highlight'   => false,
             ],
             [
@@ -2549,7 +2638,7 @@ class DashboardController extends Controller
                 'url'         => $this->buildCommercialWhatsAppUrl('Painel de Gestão de Igrejas — Plano mensal'),
             ],
             [
-                'product'     => 'Expositor IA',
+                'product'     => 'Central Pastoral IA',
                 'package'     => 'Pacote de entrada',
                 'price'       => 'Pacotes de créditos',
                 'description' => 'Ideal para começar com esboços e estudos no ritmo da sua equipe, pagando por uso.',

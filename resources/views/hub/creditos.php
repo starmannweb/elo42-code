@@ -9,7 +9,7 @@
 
 <section class="hub-page">
     <header class="hub-page__header">
-        <h1 class="hub-page__title">Créditos do Expositor IA</h1>
+        <h1 class="hub-page__title">Créditos da Central Pastoral IA</h1>
         <p class="hub-page__subtitle">Use 3 gerações gratuitas por mês e compre créditos quando precisar gerar sermões, estudos, séries, EBD e materiais ministeriais.</p>
     </header>
 
@@ -20,7 +20,7 @@
             <p class="hub-panel__text">Cada geração consome 1 crédito. O plano gratuito libera 3 gerações mensais e os pacotes começam em <strong class="credits-hero__price"><?= e($starterPrice) ?></strong>.</p>
         </div>
         <div class="hub-page__actions">
-            <a href="<?= url('/hub/expositor-ia') ?>" class="btn btn--gold btn--lg">Abrir Expositor IA</a>
+            <a href="<?= url('/hub/ministry-ai') ?>" class="btn btn--gold btn--lg">Abrir Central Pastoral IA</a>
             <a href="#comprar-creditos" class="btn btn--outline btn--lg">Comprar créditos</a>
         </div>
     </div>
@@ -39,7 +39,7 @@
                 <div class="credit-package-card__price">R$ 0,00</div>
                 <p class="hub-mini-card__text">Acesso inicial para testar o fluxo de sermões e estudos sem cartão.</p>
                 <p class="credit-package-card__meta">Renova automaticamente a cada mês.</p>
-                <a href="<?= url('/hub/expositor-ia') ?>" class="btn btn--outline" style="width:100%;">Começar gratuitamente</a>
+                <a href="<?= url('/hub/ministry-ai') ?>" class="btn btn--outline" style="width:100%;">Começar gratuitamente</a>
             </article>
 
             <?php foreach ($packages as $package): ?>

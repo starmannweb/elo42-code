@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Features\MinistryAi\PromptBuilder;
+
 /**
- * OpenAiService — Integração com a API de Chat Completions da OpenAI.
+ * OpenAiService — integração segura com a Responses API da OpenAI.
  *
  * Responsável por gerar materiais ministeriais (sermão, estudo, recurso)
- * a partir do payload do Expositor IA. Quando a chave OPENAI_API_KEY não
+ * a partir do payload da Central Pastoral IA. Quando a chave OPENAI_API_KEY não
  * está configurada ou a chamada falha, retorna `null` para que o chamador
  * caia no fallback offline.
  */
@@ -24,7 +26,7 @@ class OpenAiService
     {
         $this->apiKey      = (string) (env('OPENAI_API_KEY', '') ?: $this->platformSetting('openai_api_key', ''));
         $this->model       = (string) (env('OPENAI_MODEL', '') ?: $this->platformSetting('openai_model', 'gpt-4o-mini'));
-        $this->endpoint    = rtrim((string) env('OPENAI_BASE_URL', 'https://api.openai.com/v1'), '/') . '/chat/completions';
+        $this->endpoint    = rtrim((string) env('OPENAI_BASE_URL', 'https://api.openai.com/v1'), '/') . '/responses';
         $this->timeout     = (int) (env('OPENAI_TIMEOUT', '') ?: $this->platformSetting('openai_timeout', '60'));
         $this->temperature = (float) (env('OPENAI_TEMPERATURE', '') ?: $this->platformSetting('openai_temperature', '0.6'));
     }
@@ -47,13 +49,92 @@ class OpenAiService
         return $this->apiKey !== '';
     }
 
+    public function generateMinistryAi(string $workflowId, array $inputPayload): ?array
+    {
+        if (!$this->isEnabled() || $this->model === '') {
+            return null;
+        }
+
+        try {
+            $prompt = PromptBuilder::build($workflowId, $inputPayload);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $body = $this->postJson([
+            'model' => $this->model,
+            'instructions' => (string) $prompt['systemPrompt'],
+            'input' => (string) $prompt['userPrompt'],
+        ]);
+
+        if ($body === null) {
+            return null;
+        }
+
+        $output = $this->extractResponseText($body);
+        if ($output === null || trim($output) === '') {
+            return null;
+        }
+
+        return [
+            'title' => (string) ($prompt['title'] ?? 'Geracao ministerial'),
+            'outputMarkdown' => trim($output),
+            'modelUsed' => $this->model,
+        ];
+    }
+
     /**
-     * Gera o material ministerial respeitando o formato/expectativa do Expositor IA.
+     * Gera o material ministerial respeitando o formato da Central Pastoral IA.
      *
      * @return string|null  Texto pronto para exibir ou null em caso de falha/desabilitado.
      */
     public function generateExpositorMaterial(array $form): ?string
     {
+        $contentType = trim((string) ($form['content_type'] ?? 'sermon'));
+        $resource = strtolower(trim((string) ($form['resource_title'] ?? '')));
+        $workflowId = 'gerar_sermao';
+
+        if ($contentType === 'study') {
+            $workflowId = str_contains($resource, 'academico') ? 'estudo_exegetico' : 'estudo_biblico';
+        } elseif (str_contains($resource, 'refinar')) {
+            $workflowId = 'refinar_rascunho';
+        } elseif (str_contains($resource, 'culto ocasional')) {
+            $workflowId = 'culto_ocasional';
+        } elseif (str_contains($resource, 'aula ebd')) {
+            $workflowId = 'aula_ebd';
+        }
+
+        $payload = [
+            'main_passage' => trim((string) ($form['passage'] ?? '')),
+            'passage' => trim((string) ($form['passage'] ?? '')),
+            'central_passage' => trim((string) ($form['passage'] ?? '')),
+            'central_theme' => trim((string) ($form['theme'] ?? '')),
+            'study_theme' => trim((string) ($form['theme'] ?? '')),
+            'lesson_theme' => trim((string) ($form['theme'] ?? '')),
+            'pastoral_emphasis' => trim((string) ($form['theme'] ?? '')),
+            'draft' => trim((string) ($form['notes'] ?? '')),
+            'occasion_context' => trim((string) ($form['notes'] ?? $form['passage'] ?? '')),
+            'bible_version' => 'ara',
+            'sermon_type' => 'expositivo',
+            'homiletic_structure' => 'automatico',
+            'audience' => trim((string) ($form['audience'] ?? 'geral')) ?: 'geral',
+            'duration_minutes' => trim((string) ($form['duration'] ?? '35')) ?: '35',
+            'application_style' => 'misto',
+            'include_reformed_quotes' => 'nao',
+            'include_illustrations' => 'sim',
+            'depth' => trim((string) ($form['depth'] ?? 'pastoral')) ?: 'pastoral',
+            'study_type' => 'exegetico_passagem',
+            'depth_level' => 'intermediario',
+            'occasion_type' => 'acao_gracas',
+            'age_group' => 'adultos',
+            'available_time' => '45',
+            'level' => 'intermediario',
+        ];
+
+        $result = $this->generateMinistryAi($workflowId, $payload);
+
+        return is_array($result) ? (string) $result['outputMarkdown'] : null;
+
         if (!$this->isEnabled()) {
             return null;
         }
@@ -298,6 +379,23 @@ Estruture a resposta como sermão:
 TEXT;
     }
 
+    private function extractResponseText(array $body): ?string
+    {
+        if (isset($body['output_text']) && is_string($body['output_text'])) {
+            return $body['output_text'];
+        }
+
+        foreach (($body['output'] ?? []) as $output) {
+            foreach (($output['content'] ?? []) as $content) {
+                if (isset($content['text']) && is_string($content['text'])) {
+                    return $content['text'];
+                }
+            }
+        }
+
+        return null;
+    }
+
     private function postJson(array $payload): ?array
     {
         try {
@@ -324,7 +422,7 @@ TEXT;
             curl_close($ch);
 
             if ($response === false || $status >= 400) {
-                error_log('[OpenAiService] HTTP ' . $status . ' err=' . $error . ' body=' . (is_string($response) ? substr($response, 0, 200) : '-'));
+                error_log('[OpenAiService] HTTP ' . $status . ' err=' . $error);
                 return null;
             }
 
