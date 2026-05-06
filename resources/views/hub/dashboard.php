@@ -82,7 +82,7 @@ $nextPendingStep = $pendingSteps[0] ?? null;
     <section class="church-metrics-grid" aria-label="Indicadores principais">
         <article class="church-metric-card">
             <div class="church-metric-card__icon church-metric-card__icon--blue" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.5"></path><path d="M16 3.2a4 4 0 0 1 0 7.6"></path></svg>
             </div>
             <div class="church-metric-card__body">
                 <p class="church-metric-card__label">Membros cadastrados</p>

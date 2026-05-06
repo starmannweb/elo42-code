@@ -6,7 +6,7 @@
     <div class="mgmt-header">
         <div>
             <h1 class="mgmt-title">Redes sociais</h1>
-            <p class="mgmt-subtitle">Links exibidos no site, no PWA e na área de membros quando a igreja quiser divulgar canais oficiais.</p>
+            <p class="mgmt-subtitle">Links exibidos no site, no APP e na área de membros quando a igreja quiser divulgar canais oficiais.</p>
         </div>
         <button type="submit" form="form-social" class="btn btn--primary">Salvar redes</button>
     </div>

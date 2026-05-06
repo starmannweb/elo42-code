@@ -3360,3 +3360,243 @@ body[data-hub-theme="dark"] .mgmt-layout .form-label {
 body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     filter: brightness(1.05);
 }
+
+/* Site appearance preview */
+.site-color-controls {
+    align-items: start;
+}
+
+.site-color-controls .form-group {
+    min-width: 0;
+}
+
+.site-preview-card {
+    background:
+        linear-gradient(135deg, color-mix(in srgb, var(--site-preview-primary, #1e3a8a) 10%, transparent), transparent 35%),
+        var(--site-preview-bg, #ffffff);
+    color: var(--site-preview-text, #06183a);
+}
+
+.site-preview-card .hub-mini-card__title {
+    color: var(--site-preview-text, #06183a);
+    font-family: var(--site-preview-title-font, "Saira"), "Saira", sans-serif;
+}
+
+.site-preview-card .hub-mini-card__text {
+    color: color-mix(in srgb, var(--site-preview-text, #06183a) 72%, white);
+    font-family: var(--site-preview-body-font, "Inter"), "Inter", sans-serif;
+}
+
+.site-preview-card__lines span {
+    background: color-mix(in srgb, var(--site-preview-primary, #1e3a8a) 18%, white);
+}
+
+.site-preview-card__lines span:nth-child(2) {
+    background: color-mix(in srgb, var(--site-preview-accent, #f59e0b) 22%, white);
+}
+
+/* Expositor IA: console visual alinhado com a referencia ministerial escura */
+.hub-content:has([data-expositor-workbench]) {
+    background: #030712;
+}
+
+.expositor-console {
+    max-width: 1180px;
+    margin: 0 auto;
+    color: #c7d7ef;
+}
+
+.expositor-console__bar {
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.expositor-console__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #f8fafc;
+    font-family: "Saira", sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+}
+
+.expositor-console__mark {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: #d18a2b;
+    color: #0f172a;
+    font-size: 0.72rem;
+    letter-spacing: 0;
+}
+
+.expositor-console__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #34d399;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.expositor-console__status::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+}
+
+.expositor-console .expositor-page-header {
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.expositor-console .hub-page__title {
+    color: #f8fafc;
+    font-size: clamp(1.9rem, 2.4vw, 2.6rem);
+}
+
+.expositor-console .hub-page__subtitle,
+.expositor-console .hub-panel__text,
+.expositor-console .hub-mini-card__text,
+.expositor-console .form-hint {
+    color: #9eb6d8;
+}
+
+.expositor-console .expositor-workbench-tabs {
+    justify-content: flex-start;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+}
+
+.expositor-console .expositor-workbench-tabs--primary {
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.expositor-console .expositor-workbench-tabs--secondary {
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.expositor-console .expositor-workbench-tabs--secondary .expositor-workbench-tabs__item {
+    min-height: 38px;
+    padding-inline: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #7f93b4;
+    box-shadow: none;
+}
+
+.expositor-console .expositor-workbench-tabs--secondary .expositor-workbench-tabs__item.active,
+.expositor-console .expositor-workbench-tabs--secondary .expositor-workbench-tabs__item:hover {
+    background: transparent;
+    color: #f8fafc;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.expositor-console .expositor-workbench-tabs--primary .expositor-workbench-tabs__item {
+    min-height: 48px;
+    padding: 0 20px;
+    border-color: transparent;
+    background: transparent;
+    color: #cbd5e1;
+    border-radius: 10px;
+}
+
+.expositor-console .expositor-workbench-tabs--primary .expositor-workbench-tabs__item.active,
+.expositor-console .expositor-workbench-tabs--primary .expositor-workbench-tabs__item:hover {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.expositor-console .expositor-usage {
+    max-width: 920px;
+    margin: 0 auto 1.5rem;
+    background: #031626;
+    border-color: #0369a1;
+    color: #bae6fd;
+}
+
+.expositor-console .hub-panel,
+.expositor-console .hub-mini-card,
+.expositor-console .expositor-choice-card,
+.expositor-console .expositor-flow-card,
+.expositor-console .expositor-empty-result {
+    background: #1f2c3f;
+    border-color: #3a4c65;
+    box-shadow: none;
+}
+
+.expositor-console .hub-panel {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.expositor-console .hub-panel__title,
+.expositor-console .hub-mini-card__title,
+.expositor-console .expositor-choice-card h2,
+.expositor-console .expositor-empty-result strong {
+    color: #f8fafc;
+}
+
+.expositor-console .expositor-choice-grid,
+.expositor-console .expositor-resource-grid,
+.expositor-console .expositor-study-grid {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.expositor-console .expositor-choice-card__icon {
+    background: #334155;
+    color: #dbeafe;
+}
+
+.expositor-console .form-input,
+.expositor-console .form-select,
+.expositor-console .form-textarea {
+    background: #334155;
+    border-color: #53657e;
+    color: #f8fafc;
+}
+
+.expositor-console .form-input::placeholder,
+.expositor-console .form-textarea::placeholder {
+    color: #9fb1ca;
+}
+
+.expositor-console .form-label {
+    color: #dbeafe;
+}
+
+.expositor-console .btn--primary,
+.expositor-console .btn--gold {
+    background: #0ea5e9;
+    border-color: #0ea5e9;
+    color: #fff;
+}
+
+.expositor-console .btn--outline,
+.expositor-console .btn--ghost {
+    border-color: #1d4ed8;
+    color: #bfdbfe;
+    background: rgba(30, 64, 175, 0.12);
+}
+
+.expositor-console .expositor-flow-grid {
+    max-width: 960px;
+    margin: 1.5rem auto 0;
+}

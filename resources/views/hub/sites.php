@@ -415,7 +415,7 @@
                     <?php endforeach; ?>
                 </div>
 
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem;">
+                <div class="site-color-controls" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem;">
                     <div class="form-group" style="margin:0;">
                         <label class="form-label" for="appearance_primary">Cor primária</label>
                         <div style="display:flex;align-items:center;gap:.6rem;">
@@ -475,18 +475,33 @@
                 var backgroundText = document.getElementById('appearance_background_text');
                 var text = document.getElementById('appearance_text');
                 var textText = document.getElementById('appearance_text_text');
+                var titleFont = document.getElementById('appearance_title_font');
+                var bodyFont = document.getElementById('appearance_body_font');
                 var hidden = document.getElementById('theme_color_input');
                 if (!primary) return;
+
+                function updatePreview() {
+                    var preview = document.querySelector('.site-preview-card');
+                    if (!preview) return;
+                    preview.style.setProperty('--site-preview-primary', primary.value || '#1e3a8a');
+                    preview.style.setProperty('--site-preview-accent', accent.value || '#f59e0b');
+                    preview.style.setProperty('--site-preview-bg', background ? (background.value || '#f4f7fd') : '#f4f7fd');
+                    preview.style.setProperty('--site-preview-text', text ? (text.value || '#06183a') : '#06183a');
+                    preview.style.setProperty('--site-preview-title-font', titleFont ? titleFont.value : 'Saira');
+                    preview.style.setProperty('--site-preview-body-font', bodyFont ? bodyFont.value : 'Inter');
+                }
 
                 function syncTextFromColor(colorInput, textInput) {
                     textInput.value = colorInput.value.toUpperCase();
                     if (colorInput === primary && hidden) hidden.value = colorInput.value;
+                    updatePreview();
                 }
                 function syncColorFromText(textInput, colorInput) {
                     var v = textInput.value.trim();
                     if (/^#[0-9A-Fa-f]{6}$/.test(v)) {
                         colorInput.value = v;
                         if (colorInput === primary && hidden) hidden.value = v;
+                        updatePreview();
                     }
                 }
                 primary.addEventListener('input', function () { syncTextFromColor(primary, primaryText); });
@@ -501,6 +516,8 @@
                     text.addEventListener('input', function () { syncTextFromColor(text, textText); });
                     textText.addEventListener('input', function () { syncColorFromText(textText, text); });
                 }
+                if (titleFont) titleFont.addEventListener('change', updatePreview);
+                if (bodyFont) bodyFont.addEventListener('change', updatePreview);
 
                 document.querySelectorAll('[data-color-presets] .site-color-preset').forEach(function (btn) {
                     btn.addEventListener('click', function () {
@@ -508,16 +525,18 @@
                         var a = btn.getAttribute('data-accent');
                         if (p) { primary.value = p; primaryText.value = p.toUpperCase(); if (hidden) hidden.value = p; }
                         if (a) { accent.value = a; accentText.value = a.toUpperCase(); }
+                        updatePreview();
                     });
                 });
+                setTimeout(updatePreview, 0);
             })();
             </script>
 
-            <div class="site-preview-card" aria-label="Preview visual do site">
+            <div class="site-preview-card" aria-label="Previa visual do site" style="--site-preview-primary: <?= e($appearancePrimary !== '' ? $appearancePrimary : '#1e3a8a') ?>; --site-preview-accent: <?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?>; --site-preview-bg: <?= e($appearanceBackground !== '' ? $appearanceBackground : '#f4f7fd') ?>; --site-preview-text: <?= e($appearanceText !== '' ? $appearanceText : '#06183a') ?>; --site-preview-title-font: <?= e($appearanceTitleFont !== '' ? $appearanceTitleFont : 'Saira') ?>; --site-preview-body-font: <?= e($appearanceBodyFont !== '' ? $appearanceBodyFont : 'Inter') ?>;">
                 <?php if (!empty($currentSite['hero_image'])): ?>
                     <div class="site-preview-card__hero" style="background-image:url('<?= e((string) $currentSite['hero_image']) ?>'); background-size:cover; background-position:center;"></div>
                 <?php else: ?>
-                    <div class="site-preview-card__hero" style="background:linear-gradient(135deg, <?= e($appearancePrimary !== '' ? $appearancePrimary : '#1e3a8a') ?>, <?= e($appearanceAccent !== '' ? $appearanceAccent : '#f59e0b') ?>);"></div>
+                    <div class="site-preview-card__hero" style="background:linear-gradient(135deg, var(--site-preview-primary), var(--site-preview-accent));"></div>
                 <?php endif; ?>
                 <div>
                     <h3 class="hub-mini-card__title"><?= e($siteTitle) ?></h3>

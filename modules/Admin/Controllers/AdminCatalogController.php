@@ -378,7 +378,7 @@ class AdminCatalogController extends Controller
         $settings = $req->input('settings', []);
         if (is_array($settings)) {
             foreach ($settings as $key => $value) {
-                if (in_array((string) $key, ['openai_api_key'], true) && trim((string) $value) === '') {
+                if (in_array((string) $key, ['openai_api_key', 'pagou_api_key', 'pagou_webhook_secret'], true) && trim((string) $value) === '') {
                     continue;
                 }
                 PlatformSetting::set($key, $value, (int) Session::user()['id']);
@@ -465,6 +465,11 @@ class AdminCatalogController extends Controller
             ['plan_site_monthly_price', '67.00', 'billing', 'Plano avulso do site'],
             ['plan_combo_monthly_price', '99.90', 'billing', 'Combo gestão + site'],
             ['management_included_users', '100', 'billing', 'Usuários incluídos no plano de gestão'],
+            ['pagou_environment', 'sandbox', 'payments', 'Ambiente da integração Pagou: sandbox ou production'],
+            ['pagou_api_key', '', 'payments', 'Chave da API Pagou usada para cobrança dos assinantes do Hub'],
+            ['pagou_webhook_secret', '', 'payments', 'Segredo do webhook Pagou para validar eventos de pagamento'],
+            ['pagou_webhook_url', '/webhooks/pagou', 'payments', 'Endpoint que receberá eventos da Pagou'],
+            ['pagou_default_gateway', 'pagou', 'payments', 'Gateway oficial para cobrança recorrente dos assinantes do Hub'],
             ['ia_free_generations_monthly', '3', 'ai', 'Geracoes gratuitas mensais por workspace'],
             ['ia_credit_cost', '1', 'ai', 'Creditos consumidos por geracao do Expositor IA'],
             ['site_publish_cname_target', 'sites.elo42.com.br', 'sites', 'Destino CNAME recomendado para www ou subdominios'],
@@ -504,6 +509,11 @@ class AdminCatalogController extends Controller
             ['setting_key' => 'plan_site_monthly_price', 'setting_value' => '67.00', 'setting_group' => 'billing', 'description' => 'Plano avulso do site para igrejas.'],
             ['setting_key' => 'plan_combo_monthly_price', 'setting_value' => '99.90', 'setting_group' => 'billing', 'description' => 'Combo gestao + site.'],
             ['setting_key' => 'management_included_users', 'setting_value' => '100', 'setting_group' => 'billing', 'description' => 'Usuarios incluidos no plano de gestao. Acima disso, cobrar adicional.'],
+            ['setting_key' => 'pagou_environment', 'setting_value' => 'sandbox', 'setting_group' => 'payments', 'description' => 'Ambiente da integracao Pagou: sandbox ou production.'],
+            ['setting_key' => 'pagou_api_key', 'setting_value' => '', 'setting_group' => 'payments', 'description' => 'Chave da API Pagou usada para cobranca dos assinantes do Hub.'],
+            ['setting_key' => 'pagou_webhook_secret', 'setting_value' => '', 'setting_group' => 'payments', 'description' => 'Segredo do webhook Pagou para validar eventos de pagamento.'],
+            ['setting_key' => 'pagou_webhook_url', 'setting_value' => '/webhooks/pagou', 'setting_group' => 'payments', 'description' => 'Endpoint que recebera eventos da Pagou.'],
+            ['setting_key' => 'pagou_default_gateway', 'setting_value' => 'pagou', 'setting_group' => 'payments', 'description' => 'Gateway oficial para cobranca recorrente dos assinantes do Hub.'],
             ['setting_key' => 'site_publish_cname_target', 'setting_value' => 'sites.elo42.com.br', 'setting_group' => 'sites', 'description' => 'Destino CNAME recomendado para www ou subdominios.'],
             ['setting_key' => 'site_publish_apex_ip', 'setting_value' => '185.158.133.1', 'setting_group' => 'sites', 'description' => 'IP usado quando o provedor exigir registro A no dominio raiz.'],
             ['setting_key' => 'site_domain_verify_prefix', 'setting_value' => '_elo42-verify', 'setting_group' => 'sites', 'description' => 'Prefixo do TXT opcional para validar posse do dominio.'],

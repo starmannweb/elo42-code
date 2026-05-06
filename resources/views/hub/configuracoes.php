@@ -145,9 +145,9 @@ $orgTypeOptions = [
             <?php endforeach; ?>
 
             <article class="hub-mini-card">
-                <h3 class="hub-mini-card__title">Pagamentos</h3>
-                <p class="hub-mini-card__text">Configure gateway, chaves e webhooks nas integrações da gestão. A assinatura escolhida acima fica registrada no Hub para cobrança recorrente. Integração Pagou prevista para a próxima etapa.</p>
-                <a href="<?= url('/gestao/configuracoes/integracoes') ?>" class="btn btn--outline">Configurar pagamentos</a>
+                <h3 class="hub-mini-card__title">Cobrança do Hub</h3>
+                <p class="hub-mini-card__text">A mensalidade escolhida fica registrada no Hub. Gateway Pagou, chaves e webhooks são controlados no Admin Master DEV para cobrança dos assinantes.</p>
+                <span class="hub-badge">Admin Master</span>
             </article>
         </div>
     </div>

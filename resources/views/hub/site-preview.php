@@ -145,7 +145,7 @@
                 <li>Logo em PNG ou SVG</li>
                 <li>Foto principal da fachada, culto ou comunidade</li>
                 <li>Fotos de ministérios, eventos e campanhas</li>
-                <li>Ícones PWA 192x192 e 512x512</li>
+                <li>Ícones do APP 192x192 e 512x512</li>
             </ul>
         </section>
     </div>

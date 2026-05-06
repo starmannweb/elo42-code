@@ -99,7 +99,7 @@
                 <?php if (($organization['role_slug'] ?? '') !== 'member'): ?>
                     <a href="<?= e($churchEntryUrl) ?>" class="hub-nav-link" target="_blank" rel="noopener noreferrer">
                         <span class="hub-nav-link__icon" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 10h14"></path><path d="M7 21v-8h10v8"></path></svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"></path><path d="M5 21V9l7-5 7 5v12"></path><path d="M9 21v-7h6v7"></path><path d="M12 4v4"></path><path d="M10 7h4"></path></svg>
                         </span>
                         Gestão para Igrejas
                     </a>

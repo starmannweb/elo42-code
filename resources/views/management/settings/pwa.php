@@ -11,17 +11,17 @@
 
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-title">PWA</h1>
+        <h1 class="mgmt-title">APP</h1>
         <p class="mgmt-subtitle">Configure como o aplicativo aparece quando instalado no celular.</p>
     </div>
     <div class="mgmt-actions">
         <a href="<?= url('/gestao/configuracoes/usuarios') ?>" class="btn btn--ghost">Cancelar</a>
-        <button type="submit" form="form-pwa" class="btn btn--primary">Salvar PWA</button>
+        <button type="submit" form="form-pwa" class="btn btn--primary">Salvar APP</button>
     </div>
 </div>
 
 <div class="alert alert--info" style="margin-bottom: 1.5rem;">
-    O PWA já possui manifesto e service worker. Depois de alterar nome, cores ou ícones, alguns celulares podem exigir reinstalação para atualizar o atalho.
+    O APP já possui manifesto e service worker. Depois de alterar nome, cores ou ícones, alguns celulares podem exigir reinstalação para atualizar o atalho.
 </div>
 
 <form id="form-pwa" action="<?= url('/gestao/configuracoes') ?>" method="POST">

@@ -18,7 +18,15 @@
     };
 ?>
 
-<section class="hub-page" data-expositor-workbench>
+<section class="hub-page expositor-console" data-expositor-workbench>
+    <div class="expositor-console__bar" aria-label="Cabeçalho do Expositor IA">
+        <div class="expositor-console__brand">
+            <span class="expositor-console__mark" aria-hidden="true">IA</span>
+            <strong>Expositor IA</strong>
+        </div>
+        <span class="expositor-console__status">Suporte</span>
+    </div>
+
     <header class="hub-page__header expositor-page-header">
         <div>
             <h1 class="hub-page__title">Expositor IA</h1>
@@ -26,11 +34,14 @@
         </div>
     </header>
 
-    <nav class="expositor-workbench-tabs" aria-label="Fluxos do Expositor IA">
-        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'planejamento' ? 'active' : '' ?>" data-expositor-tab="planejamento" aria-controls="expositor-panel-planejamento">Planejamento</button>
-        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'series' ? 'active' : '' ?>" data-expositor-tab="series" aria-controls="expositor-panel-series">Séries</button>
+    <nav class="expositor-workbench-tabs expositor-workbench-tabs--primary" aria-label="Áreas do Expositor IA">
+        <button type="button" class="expositor-workbench-tabs__item <?= in_array($activeExpositorTab, ['planejamento', 'series'], true) ? 'active' : '' ?>" data-expositor-tab="planejamento" aria-controls="expositor-panel-planejamento">Planejamento</button>
         <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'pregacao' ? 'active' : '' ?>" data-expositor-tab="pregacao" aria-controls="expositor-panel-pregacao">Pregação</button>
         <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'estudos' ? 'active' : '' ?>" data-expositor-tab="estudos" aria-controls="expositor-panel-estudos">Estudos</button>
+    </nav>
+    <nav class="expositor-workbench-tabs expositor-workbench-tabs--secondary" aria-label="Fluxos de planejamento">
+        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'planejamento' ? 'active' : '' ?>" data-expositor-tab="planejamento" aria-controls="expositor-panel-planejamento">Hub Ministerial</button>
+        <button type="button" class="expositor-workbench-tabs__item <?= $activeExpositorTab === 'series' ? 'active' : '' ?>" data-expositor-tab="series" aria-controls="expositor-panel-series">Série de Sermões</button>
     </nav>
 
     <div class="expositor-usage">

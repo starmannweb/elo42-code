@@ -18,7 +18,7 @@
 
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-header__title">Agenda e Eventos</h1>
+        <h1 class="mgmt-header__title">Agenda</h1>
         <p class="mgmt-header__subtitle">Calendário unificado de eventos, visitas e aconselhamentos</p>
     </div>
     <div class="mgmt-header__actions">

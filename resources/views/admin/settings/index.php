@@ -18,6 +18,10 @@
             'title' => 'Planos e limites',
             'text' => 'Valores de referência dos planos, combo e limite de usuários incluídos.',
         ],
+        'payments' => [
+            'title' => 'Pagamentos (Pagou)',
+            'text' => 'Gateway, chaves e webhooks globais para cobrança recorrente dos assinantes do Hub.',
+        ],
         'sites' => [
             'title' => 'Sites e domínios',
             'text' => 'Parâmetros usados para orientar publicação, CNAME, registro A e verificação de domínio.',
@@ -28,7 +32,7 @@
         ],
     ];
 
-    $groupOrder = ['ai', 'billing', 'sites', 'general'];
+    $groupOrder = ['ai', 'payments', 'billing', 'sites', 'general'];
     foreach (array_keys($groups) as $group) {
         if (!in_array($group, $groupOrder, true)) {
             $groupOrder[] = $group;
@@ -68,11 +72,11 @@
                 <?php foreach ($groups[$group] as $setting): ?>
                     <?php
                         $settingKey = (string) ($setting['setting_key'] ?? '');
-                        $isSecret = in_array($settingKey, ['openai_api_key'], true);
+                        $isSecret = in_array($settingKey, ['openai_api_key', 'pagou_api_key', 'pagou_webhook_secret'], true);
                         $inputType = $isSecret ? 'password' : 'text';
                         $inputValue = $isSecret ? '' : (string) ($setting['setting_value'] ?? '');
                         $placeholder = $isSecret && !empty($setting['setting_value'])
-                            ? 'Chave configurada. Preencha apenas para substituir.'
+                            ? 'Valor configurado. Preencha apenas para substituir.'
                             : '';
                     ?>
                     <label class="admin-setting-row">
@@ -98,15 +102,18 @@
 </form>
 
 <style>
-    .admin-settings-grid { display: grid; gap: var(--space-5); max-width: 1120px; }
+    .admin-settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); max-width: 1440px; }
     .admin-settings-card { padding: var(--space-5); }
     .admin-settings-card__head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: flex-start; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-light); margin-bottom: var(--space-4); }
     .admin-settings-list { display: grid; gap: var(--space-4); }
     .admin-setting-row { display: grid; grid-template-columns: minmax(180px, .55fr) minmax(280px, 1fr); gap: .5rem 1rem; align-items: center; }
     .admin-setting-row__label { font-size: var(--text-sm); font-weight: 800; color: var(--color-text); word-break: break-word; }
     .admin-setting-row small { grid-column: 2; color: var(--color-text-muted); font-size: var(--text-xs); line-height: 1.45; }
-    .admin-settings-actions { justify-content: flex-start; }
+    .admin-settings-actions { grid-column: 1 / -1; justify-content: flex-start; }
+    .admin-settings-card:first-of-type { grid-column: 1 / -1; }
+    .admin-settings-card:nth-of-type(2) { grid-column: 1 / -1; }
     @media (max-width: 760px) {
+        .admin-settings-grid { grid-template-columns: 1fr; }
         .admin-setting-row { grid-template-columns: 1fr; }
         .admin-setting-row small { grid-column: auto; }
         .admin-settings-card__head { flex-direction: column; }

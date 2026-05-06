@@ -114,12 +114,6 @@ class GeneralController extends Controller
             'background_color',
             'pwa_icon_192',
             'pwa_icon_512',
-            'payment_gateway',
-            'payment_public_key',
-            'payment_secret_key',
-            'whatsapp_provider',
-            'email_provider',
-            'webhook_url',
         ];
 
         $prefixes = [
@@ -544,7 +538,11 @@ class GeneralController extends Controller
             ]);
             Session::flash('success', 'Serie criada. Agora voce pode vincular sermoes a ela.');
         } catch (\Throwable $e) {
-            Session::flash('error', 'Nao foi possivel criar a serie: ' . $e->getMessage());
+            $message = $e->getMessage();
+            if (str_contains($message, 'SQLSTATE[HY000] [2002]') || stripos($message, 'Connection refused') !== false) {
+                $message = 'o banco de dados recusou a conexao. Verifique se o MySQL esta ativo e se DB_HOST/DB_PORT/DB_DATABASE/DB_USERNAME/DB_PASSWORD ou DATABASE_URL estao corretos no ambiente.';
+            }
+            Session::flash('error', 'Nao foi possivel criar a serie: ' . $message);
         }
 
         redirect('/gestao/sermoes');
@@ -1005,9 +1003,9 @@ class GeneralController extends Controller
     public function settingsPwa(Request $req): void
     {
         try {
-            $context = $this->buildBaseContext('Configurações PWA', 'configuracoes/pwa');
+            $context = $this->buildBaseContext('Configurações APP', 'configuracoes/pwa');
             $this->view('management/settings/pwa', array_merge($context, [
-                'pageTitle' => 'PWA — Gestão',
+                'pageTitle' => 'APP — Gestão',
                 'activeTab' => 'pwa',
                 'settings' => $this->settingValues()
             ]));

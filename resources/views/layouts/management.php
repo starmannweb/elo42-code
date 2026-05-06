@@ -71,7 +71,8 @@
                     'users' => '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>',
                     'home' => '<path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"></path>',
                     'smallgroup' => '<circle cx="8" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 21v-1a5 5 0 0 1 10 0v1"></path><path d="M14 21v-1a4 4 0 0 1 7 0v1"></path>',
-                    'journey' => '<path d="M5 20V6"></path><path d="M5 6c3-2 6 2 9 0s5-1 5-1v9s-2-1-5 1-6-2-9 0"></path><path d="M8 18c2-3 5-3 8-5"></path><circle cx="17" cy="12" r="1.5"></circle>',
+                    'birthday' => '<path d="M4 21h16"></path><path d="M5 12h14v9H5z"></path><path d="M7 12V9a5 5 0 0 1 10 0v3"></path><path d="M9 7c0-1 .7-2 1.5-3C11.3 5 12 6 12 7"></path><path d="M14 7c0-1 .7-2 1.5-3C16.3 5 17 6 17 7"></path><path d="M5 16c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 5 0"></path>',
+                    'journey' => '<path d="M4 19V5"></path><path d="M4 6c2.5-1.2 5 1.2 7.5 0S16.5 5 20 6v9c-3.5-1-6 .2-8.5 1.2S6.5 15 4 16"></path><path d="M8 20h8"></path>',
                     'ministries' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path>',
                     'income' => '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline>',
                     'expense' => '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline>',
@@ -153,7 +154,7 @@
                 ['href' => '/gestao/membros', 'label' => 'Membros', 'icon' => 'users', 'active' => ['/gestao/membros']],
                 ['href' => '/gestao/visitantes', 'label' => 'Visitantes', 'icon' => 'users', 'premium' => true],
                 ['href' => '/gestao/novos-convertidos', 'label' => 'Novos Convertidos', 'icon' => 'award', 'premium' => true],
-                ['href' => '/gestao/aniversarios', 'label' => 'Aniversariantes', 'icon' => 'calendar', 'premium' => true],
+                ['href' => '/gestao/aniversarios', 'label' => 'Aniversariantes', 'icon' => 'birthday', 'premium' => true],
                 ['href' => '/gestao/jornadas', 'label' => 'Jornada espiritual', 'icon' => 'journey', 'premium' => true],
                 ['href' => '/gestao/historico', 'label' => 'Histórico', 'icon' => 'audit', 'premium' => true],
             ];
@@ -162,8 +163,7 @@
                 ['href' => '/gestao/configuracoes/unidades', 'label' => 'Unidades', 'icon' => 'home'],
                 ['href' => '/gestao/configuracoes/pix', 'label' => 'PIX / Ofertas', 'icon' => 'pix', 'premium' => true],
                 ['href' => '/gestao/configuracoes/seo', 'label' => 'SEO', 'icon' => 'seo', 'premium' => true],
-                ['href' => '/gestao/configuracoes/pwa', 'label' => 'PWA', 'icon' => 'pwa', 'premium' => true],
-                ['href' => '/gestao/configuracoes/integracoes', 'label' => 'Integrações', 'icon' => 'integration', 'premium' => true, 'active' => ['/gestao/configuracoes/integracoes', '/gestao/configuracoes/ia']],
+                ['href' => '/gestao/configuracoes/pwa', 'label' => 'APP', 'icon' => 'pwa', 'premium' => true],
             ];
         ?>
 
@@ -225,7 +225,8 @@
                     '/gestao/conquistas',
                 ];
                 echo $navGroup('comunicacao', 'Comunicação', 'message', [
-                    $subNavItem('/gestao/agenda', 'Agenda e Eventos', false, ['/gestao/agenda', '/gestao/eventos']),
+                    $subNavItem('/gestao/agenda', 'Agenda', false, ['/gestao/agenda']),
+                    $subNavItem('/gestao/eventos', 'Eventos', false, ['/gestao/eventos']),
                     $subNavItem('/gestao/plano-leitura', 'Planos de Leitura', false, ['/gestao/plano-leitura']),
                     $subNavItem('/gestao/banners', 'Banners', true, ['/gestao/banners']),
                     $subNavItem('/gestao/cursos', 'Cursos', true, ['/gestao/cursos']),

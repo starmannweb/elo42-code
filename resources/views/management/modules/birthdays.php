@@ -16,9 +16,7 @@
         </div>
         <span class="hub-badge">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
-                <circle cx="12" cy="7" r="4"></circle>
+                <path d="M4 21h16"></path><path d="M5 12h14v9H5z"></path><path d="M7 12V9a5 5 0 0 1 10 0v3"></path><path d="M9 7c0-1 .7-2 1.5-3C11.3 5 12 6 12 7"></path><path d="M14 7c0-1 .7-2 1.5-3C16.3 5 17 6 17 7"></path>
             </svg>
             <?= $birthdayCount ?> aniversariante<?= $birthdayCount !== 1 ? 's' : '' ?>
         </span>
@@ -28,10 +26,8 @@
         <div class="mgmt-card">
             <div class="mgmt-empty">
                 <div class="mgmt-empty__icon" aria-hidden="true">
-                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 21h16"></path><path d="M5 12h14v9H5z"></path><path d="M7 12V9a5 5 0 0 1 10 0v3"></path><path d="M9 7c0-1 .7-2 1.5-3C11.3 5 12 6 12 7"></path><path d="M14 7c0-1 .7-2 1.5-3C16.3 5 17 6 17 7"></path><path d="M5 16c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 5 0"></path>
                     </svg>
                 </div>
                 <h2 class="mgmt-empty__title">Nenhum aniversariante este mês</h2>
