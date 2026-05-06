@@ -193,13 +193,6 @@
             </div>
 
             <nav class="hub-sidebar__nav" aria-label="Navegação da gestão">
-                <div class="hub-sidebar__nav-extra">
-                    <?= $navItem('/hub', 'Voltar ao Hub', 'home', false, ['/hub']) ?>
-                    <?php if ($isSystemAdmin): ?>
-                        <?= $navItem('/admin', 'Super Admin', 'admin', false, ['/admin']) ?>
-                    <?php endif; ?>
-                </div>
-
                 <div class="hub-sidebar__nav-main">
                     <?= $navItem('/gestao', 'Dashboard', 'dashboard', false, ['/gestao']) ?>
                 </div>
@@ -278,6 +271,7 @@
             </nav>
 
             <div class="hub-sidebar__footer">
+                <?= $navItem('/hub', 'Voltar ao Hub', 'home', false, ['/hub']) ?>
                 <form action="<?= url('/logout') ?>" method="POST" style="width:100%;">
                     <?= csrf_field() ?>
                     <button type="submit" class="hub-nav-link" style="width:100%;border:none;background:transparent;cursor:pointer;justify-content:flex-start;">

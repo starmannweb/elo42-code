@@ -146,7 +146,7 @@
     .admin-settings-shell { display: grid; gap: var(--space-5); max-width: 1040px; }
     .admin-settings-tabs { 
         display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+        grid-template-columns: repeat(7, 1fr); 
         gap: .75rem; 
         padding: .75rem; 
         border: 1px solid var(--color-border); 

@@ -90,18 +90,36 @@
     <section class="hub-panel ministry-ai-vision">
         <div class="hub-panel__head">
             <div>
-                <h2 class="hub-panel__title">impressões e dados de dashboard</h2>
+                <h2 class="hub-panel__title">Impressões e dados de dashboard</h2>
                 <p class="hub-panel__text">Use este quadro como ponto de partida para alinhar séries, pequenos grupos e escola dominical.</p>
             </div>
             <button type="button" class="btn btn--outline" data-shortcut-module="planejamento" data-shortcut-workflow="plano_anual_igreja">Definir foco</button>
         </div>
-        <div class="ministry-ai-vision__grid">
-            <article><span>Séries</span><strong>0</strong></article>
-            <article><span>Sermões gerados</span><strong>0</strong></article>
-            <article><span>Estudos criados</span><strong>0</strong></article>
-            <article><span>Culto / Série</span><strong>Não iniciado</strong></article>
-            <article><span>Pequenos Grupos</span><strong>Não iniciado</strong></article>
-            <article><span>Escola Dominical</span><strong>Não iniciado</strong></article>
+        <div class="ministry-ai-vision__grid" style="display:grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-top: 1.5rem;">
+            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Séries</span>
+                <strong style="display: block; font-size: 1.75rem; margin-top: 0.25rem; color: var(--color-primary);">0</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Sermões gerados</span>
+                <strong style="display: block; font-size: 1.75rem; margin-top: 0.25rem; color: var(--color-primary);">0</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Estudos criados</span>
+                <strong style="display: block; font-size: 1.75rem; margin-top: 0.25rem; color: var(--color-primary);">0</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Culto / Série</span>
+                <strong style="display: block; font-size: 1rem; margin-top: 0.25rem; color: var(--text-muted);">Não iniciado</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Pequenos Grupos</span>
+                <strong style="display: block; font-size: 1rem; margin-top: 0.25rem; color: var(--text-muted);">Não iniciado</strong>
+            </article>
+            <article class="mgmt-card" style="padding: 1.25rem; background: var(--color-bg-light, #f8faff); border: 1px solid var(--color-border-light, #dfe7f4);">
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">Escola Dominical</span>
+                <strong style="display: block; font-size: 1rem; margin-top: 0.25rem; color: var(--text-muted);">Não iniciado</strong>
+            </article>
         </div>
         <div class="ministry-ai-vision__notice">
             <strong>Próxima ação</strong>
@@ -227,12 +245,14 @@
 
     function renderWorkflows() {
         var workflows = workflowsByModule[activeModule] || [];
-        if (!activeWorkflow && workflows[0]) activeWorkflow = workflows[0].id;
-        if (!workflows.some(function (workflow) { return workflow.id === activeWorkflow; }) && workflows[0]) {
-            activeWorkflow = workflows[0].id;
+        var filteredWorkflows = workflows.filter(function (w) { return w.id !== 'plano_anual_igreja'; });
+        
+        if (!activeWorkflow && filteredWorkflows[0]) activeWorkflow = filteredWorkflows[0].id;
+        if (!workflows.some(function (workflow) { return workflow.id === activeWorkflow; }) && filteredWorkflows[0]) {
+            activeWorkflow = filteredWorkflows[0].id;
         }
 
-        workflowList.innerHTML = workflows.map(function (workflow) {
+        workflowList.innerHTML = filteredWorkflows.map(function (workflow) {
             var accent = workflow.accent || '#0A4DFF';
             return '<button type="button" class="ministry-ai-workflow ' + (workflow.id === activeWorkflow ? 'is-active' : '') + '" data-workflow-id="' + escapeHtml(workflow.id) + '" style="--workflow-accent:' + escapeHtml(accent) + '">' +
                 '<span class="ministry-ai-workflow__icon">' + workflowIcon(workflow.icon || 'spark') + '</span>' +

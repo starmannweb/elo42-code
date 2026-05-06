@@ -84,15 +84,43 @@ final class WorkflowRegistry
                 'description' => 'Prepare uma trilha de 7 encontros para noivos ou casais.',
                 'icon' => 'heart',
                 'accent' => '#DB2777',
-                'insights' => [
-                    ['title' => 'Estrutura fixa - 7 encontros', 'items' => ['Aliança e temor do Senhor', 'Amor, comunicação e serviço', 'Família de origem e modelos familiares', 'Papéis, funções e responsabilidade', 'Finanças e acordos conjugais', 'Conflitos, perdão e renovação', 'Sexualidade e intimidade conjugal']],
-                ],
                 'fields' => [
                     self::select('couples_track', 'Sugestão de trilha', true, [['estrutura_7', 'Estrutura fixa - 7 encontros'], ['noivos', 'Preparação para noivos'], ['casais_novos', 'Casais no início da caminhada'], ['restauracao', 'Restauração e renovação conjugal']]),
                     self::textarea('couple_context', 'Contexto do casal', true, 'Descreva o contexto com cuidado pastoral.'),
                     self::select('meeting_duration', 'Duração do encontro', true, [['60', '60 minutos'], ['75', '75 minutos'], ['90', '90 minutos']]),
                     self::select('environment', 'Ambiente', true, [['sala_igreja', 'Sala na igreja'], ['casa_pastoral', 'Casa pastoral'], ['casa_casal', 'Casa do casal'], ['online', 'Online']]),
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
+                ],
+            ],
+            'plano_anual_igreja' => [
+                'module' => 'planejamento',
+                'title' => 'Plano Anual da Igreja',
+                'description' => 'Estruture discernimento pastoral, pilares e ações para o ano.',
+                'icon' => 'target',
+                'accent' => '#F59E0B',
+                'insights' => [
+                    ['title' => 'Processo em duas etapas', 'items' => ['Etapa 1 - Esboço macro: síntese pastoral, tema norteador, 4 a 6 pilares e distribuição anual', 'Etapa 2 - Cinco seções: diagnóstico, tema, pilares, diretrizes e indicadores']],
+                ],
+                'fields' => [
+                    self::textarea('pastoral_context', 'Visão e Contexto Pastoral', true, 'Escreva livremente. Quanto mais contexto, mais preciso o discernimento.'),
+                    self::text('reference_year', 'Ano de referência', true, (string) ((int) date('Y') + 1)),
+                    self::select('denominational_base', 'Base Denominacional', true, [
+                        ['presbiteriana', 'Presbiteriana'],
+                        ['batista_reformada', 'Batista reformada'],
+                        ['batista_tradicional', 'Batista (Tradicional)'],
+                        ['congregacional', 'Congregacional'],
+                        ['pentecostal', 'Pentecostal'],
+                        ['assembleiana', 'Assembleiana'],
+                        ['luterana', 'Luterana'],
+                        ['anglicana', 'Anglicana'],
+                        ['independente', 'Independente'],
+                        ['outra', 'Outra']
+                    ]),
+                    self::select('confessional_layer', 'Camada Confessional', true, [
+                        ['somente_biblico', 'Somente bíblico'],
+                        ['westminster', 'Confissão de Westminster'],
+                        ['londres_1689', 'Confissão Batista de Londres']
+                    ]),
                 ],
             ],
             'treinamento_lideranca' => [
@@ -105,7 +133,18 @@ final class WorkflowRegistry
                     self::select('training_type', 'Tipo de treinamento', true, [['base_geral', 'Base geral'], ['presbiteros', 'Formação de presbíteros'], ['diaconos', 'Formação de diáconos'], ['jovens', 'Líderes de jovens'], ['professores_ebd', 'Professores de EBD'], ['pequenos_grupos', 'Líderes de pequenos grupos']]),
                     self::select('member_count', 'Número aproximado de membros', true, [['ate_50', 'Até 50 membros'], ['50_150', '50 a 150 membros'], ['150_500', '150 a 500 membros'], ['500_plus', 'Acima de 500 membros']]),
                     self::select('church_moment', 'Momento atual da igreja', true, [['rotina_ministerial', 'Rotina ministerial'], ['eleicao_proxima', 'Eleição próxima'], ['crescimento', 'Fase de crescimento'], ['conflito', 'Conflito interno'], ['reorganizacao', 'Reorganização'], ['outra', 'Outra']]),
-                    self::select('denominational_base', 'Base denominacional', true, [['presbiteriana', 'Presbiteriana'], ['batista_reformada', 'Batista reformada'], ['independente_reformada', 'Independente reformada'], ['outra', 'Outra']]),
+                    self::select('denominational_base', 'Base Denominacional', true, [
+                        ['presbiteriana', 'Presbiteriana'],
+                        ['batista_reformada', 'Batista reformada'],
+                        ['batista_tradicional', 'Batista (Tradicional)'],
+                        ['congregacional', 'Congregacional'],
+                        ['pentecostal', 'Pentecostal'],
+                        ['assembleiana', 'Assembleiana'],
+                        ['luterana', 'Luterana'],
+                        ['anglicana', 'Anglicana'],
+                        ['independente', 'Independente'],
+                        ['outra', 'Outra']
+                    ]),
                     self::select('depth', 'Profundidade', true, [['pastoral', 'Pastoral'], ['estruturada', 'Estruturada']]),
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
                     self::textarea('pastor_notes', 'Observações do pastor', false, 'Opcional'),
