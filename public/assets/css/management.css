@@ -994,6 +994,10 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
     padding: 16px 12px 18px;
 }
 
+.mgmt-layout .hub-sidebar__nav-main {
+    margin-bottom: 0;
+}
+
 .mgmt-layout .hub-nav-group {
     display: grid;
     gap: 2px;

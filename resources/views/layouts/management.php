@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="<?= asset('css/management.css') ?>">
     <style>
         .hub-sidebar__nav-extra { padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .hub-sidebar__nav-main { margin-bottom: 1rem; }
+        .hub-sidebar__nav-main { margin-bottom: 0; }
     </style>
 </head>
 <body data-hub-theme="dark">
@@ -75,7 +75,7 @@
                     'home' => '<path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"></path>',
                     'smallgroup' => '<circle cx="8" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 21v-1a5 5 0 0 1 10 0v1"></path><path d="M14 21v-1a4 4 0 0 1 7 0v1"></path>',
                     'birthday' => '<path d="M4 21h16"></path><path d="M5 12h14v9H5z"></path><path d="M7 12V9a5 5 0 0 1 10 0v3"></path><path d="M9 7c0-1 .7-2 1.5-3C11.3 5 12 6 12 7"></path><path d="M14 7c0-1 .7-2 1.5-3C16.3 5 17 6 17 7"></path><path d="M5 16c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 5 0"></path>',
-                    'journey' => '<path d="M4 19a9 9 0 0 1 9-9h5"></path><path d="M18 10l-3-3"></path><path d="M18 10l-3 3"></path><circle cx="5" cy="19" r="2"></circle><circle cx="13" cy="10" r="2"></circle><circle cx="19" cy="5" r="2"></circle>',
+                    'journey' => '<path d="M5 19c3.5-8 8-11 14-14"></path><circle cx="5" cy="19" r="2"></circle><path d="M17.5 3.5 19 6.5l3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5 1.5-3z"></path><path d="M10 14h.01"></path><path d="M13 11h.01"></path>',
                     'ministries' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path>',
                     'income' => '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline>',
                     'expense' => '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline>',
@@ -327,12 +327,8 @@
                 <?php
                     if ($isActive(['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico'], $uri)) {
                         $renderTabs($peopleTabs);
-                    } elseif ($isActive(['/gestao/receitas', '/gestao/despesas', '/gestao/categorias-financeiras', '/gestao/aprovacoes-despesas', '/gestao/auditoria', '/gestao/contas', '/gestao/doacoes'], $uri)) {
-                        $renderTabs($treasuryTabs);
                     } elseif ($isActive(['/gestao/configuracoes', '/gestao/usuarios'], $uri)) {
                         $renderTabs($settingsTabs);
-                    } elseif ($isActive(['/gestao/sermoes', '/gestao/pregadores', '/gestao/relatorios', '/gestao/sermoes/expositor-ia'], $uri)) {
-                        $renderTabs($adminTabs);
                     }
                 ?>
 

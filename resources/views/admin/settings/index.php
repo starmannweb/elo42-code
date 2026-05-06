@@ -75,7 +75,6 @@
             <?php
                 $firstVisibleGroup = $firstVisibleGroup ?? $group;
                 $meta = $groupMeta[$group] ?? ['title' => strtoupper($group), 'text' => 'Parâmetros da plataforma.'];
-                $count = count($groups[$group]);
             ?>
             <button
                 type="button"
@@ -85,7 +84,6 @@
                 aria-selected="<?= $firstVisibleGroup === $group ? 'true' : 'false' ?>"
             >
                 <span><?= e($meta['title']) ?></span>
-                <small><?= $count ?> <?= $count === 1 ? 'item' : 'itens' ?></small>
             </button>
         <?php endforeach; ?>
     </nav>
@@ -170,7 +168,6 @@
         transition: all .2s ease; 
     }
     .admin-settings-tab span { font-weight: 800; color: var(--color-text); font-size: var(--text-sm); line-height: 1.2; overflow-wrap: normal; word-break: keep-all; }
-    .admin-settings-tab small { color: var(--color-text-muted); opacity: .72; font-size: var(--text-xs); }
     .admin-settings-tab:hover { background: rgba(10,77,255,.06); color: var(--color-text); border-color: rgba(10,77,255,.18); transform: translateY(-2px); }
     .admin-settings-tab.is-active { 
         background: #1455FF; 
@@ -178,19 +175,23 @@
         color: #fff; 
         box-shadow: 0 8px 20px rgba(20,85,255,.25); 
     }
-    .admin-settings-tab.is-active span, .admin-settings-tab.is-active small { color: #fff; }
+    .admin-settings-tab.is-active span { color: #fff; }
     .admin-settings-panels { display: grid; }
     .admin-settings-card { padding: var(--space-5); max-width: none; width: 100%; box-sizing: border-box; }
     .admin-settings-card__head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: flex-start; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-light); margin-bottom: var(--space-4); }
-    .admin-settings-list { display: grid; gap: var(--space-4); }
-    .admin-setting-row { display: grid; grid-template-columns: minmax(180px, .55fr) minmax(280px, 1fr); gap: .5rem 1rem; align-items: center; }
+    .admin-settings-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); align-items: start; }
+    .admin-setting-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; align-items: start; }
     .admin-setting-row__label { font-size: var(--text-sm); font-weight: 800; color: var(--color-text); word-break: break-word; }
-    .admin-setting-row small { grid-column: 2; color: var(--color-text-muted); font-size: var(--text-xs); line-height: 1.45; }
+    .admin-setting-row small { grid-column: auto; color: var(--color-text-muted); font-size: var(--text-xs); line-height: 1.45; }
     .admin-settings-actions { justify-content: flex-start; padding-top: var(--space-2); border-top: 1px solid var(--color-border-light); }
+    @media (max-width: 1200px) {
+        .admin-settings-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
     @media (max-width: 760px) {
         .admin-settings-shell { max-width: none; }
         .admin-settings-tabs { display: grid; grid-template-columns: 1fr; }
         .admin-settings-tab { min-width: 0; }
+        .admin-settings-list { grid-template-columns: 1fr !important; }
         .admin-setting-row { grid-template-columns: 1fr; }
         .admin-setting-row small { grid-column: auto; }
         .admin-settings-card__head { flex-direction: column; }

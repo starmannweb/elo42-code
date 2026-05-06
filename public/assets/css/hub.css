@@ -3549,11 +3549,11 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     gap: 1rem;
     margin-top: var(--space-5);
     padding: 1.25rem;
-    border: 1px solid #334761;
-    border-radius: 18px;
-    background: #1f2d42;
-    box-shadow: 0 14px 34px rgba(8, 20, 38, 0.18);
-    color: #eaf2ff;
+    border: 1px solid var(--color-border, #d9e2f2);
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(15, 35, 75, 0.06);
+    color: #071a3a;
 }
 
 .ministry-ai-month-vision__head {
@@ -3565,7 +3565,7 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 
 .ministry-ai-month-vision__head h2 {
     margin: 0 0 1.1rem;
-    color: #f8fbff;
+    color: #071a3a;
     font-size: 1.05rem;
 }
 
@@ -3575,12 +3575,12 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 }
 
 .ministry-ai-month-vision__head strong {
-    color: #ffffff;
+    color: #071a3a;
     font-weight: 800;
 }
 
 .ministry-ai-month-vision__head span {
-    color: #9db0ca;
+    color: #5c6c86;
 }
 
 .ministry-ai-month-vision__actions {
@@ -3592,6 +3592,7 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 }
 
 .ministry-ai-month-vision__actions span {
+    color: #5c6c86;
     font-size: 0.82rem;
     text-decoration: underline;
 }
@@ -3600,8 +3601,9 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     display: grid;
     gap: 0.85rem;
     padding: 1rem;
-    border: 1px solid #40536f;
+    border: 1px solid #d8e3f4;
     border-radius: 14px;
+    background: #f8fbff;
 }
 
 .ministry-ai-coherence__head {
@@ -3609,7 +3611,7 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    color: #b7c9e5;
+    color: #4b5d7c;
     font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0.07em;
@@ -3619,7 +3621,7 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 .ministry-ai-coherence__bar {
     height: 6px;
     border-radius: 999px;
-    background: #506179;
+    background: #d5e0f0;
 }
 
 .ministry-ai-coherence ul {
@@ -3628,7 +3630,7 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     margin: 0;
     padding: 0;
     list-style: none;
-    color: #91a5c2;
+    color: #536488;
     font-size: 0.9rem;
 }
 
@@ -3645,7 +3647,7 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 
 .ministry-ai-coherence p {
     margin: 0;
-    color: #ffffff;
+    color: #071a3a;
     font-size: 0.86rem;
     font-weight: 800;
 }
@@ -3662,7 +3664,7 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     width: 9px;
     height: 9px;
     border-radius: 999px;
-    background: #52637a;
+    background: #94a3b8;
 }
 
 .status-box {
@@ -3679,30 +3681,30 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 .ministry-ai-month-vision .ministry-ai-vision__grid article {
     min-height: 84px;
     padding: 1rem;
-    border-color: #40536f;
-    background: #26364d;
+    border-color: #d8e3f4;
+    background: #f8fbff;
 }
 
 .ministry-ai-month-vision .ministry-ai-vision__grid span {
-    color: #a9bedc;
+    color: #536488;
 }
 
 .ministry-ai-month-vision .ministry-ai-vision__grid strong {
     display: flex;
     align-items: center;
     gap: 0.55rem;
-    color: #ffffff;
+    color: #071a3a;
 }
 
 .ministry-ai-month-vision .ministry-ai-vision__notice {
     margin-top: 0;
-    border-color: rgba(245, 158, 11, 0.42);
-    background: rgba(245, 158, 11, 0.05);
-    color: #f8fbff;
+    border-color: rgba(220, 38, 38, 0.24);
+    background: rgba(220, 38, 38, 0.05);
+    color: #7f1d1d;
 }
 
 .ministry-ai-month-vision .ministry-ai-vision__notice strong {
-    color: #c4d4eb;
+    color: #991b1b;
     font-size: 0.78rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -3710,7 +3712,7 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 
 .ministry-ai-month-vision__footnote {
     margin: 0;
-    color: #667792;
+    color: #8a99b0;
     font-size: 0.78rem;
 }
 
