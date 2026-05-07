@@ -1097,9 +1097,17 @@
     background: rgba(255, 255, 255, 0.92);
 }
 
+.bento-card--platform .bento-card__image img {
+    box-sizing: border-box;
+    object-fit: contain;
+    object-position: center;
+    padding: 14px;
+}
+
 .bento-card--ads {
     grid-area: ads;
     min-height: 560px;
+    justify-content: flex-start;
 }
 
 .bento-card--expositor {
@@ -1209,6 +1217,18 @@
 
 .bento-card__image--cover img {
     object-fit: contain;
+}
+
+.bento-card--ads .bento-card__image--cover {
+    height: 260px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bento-card--ads .bento-card__image--cover img {
+    object-position: center top;
 }
 
 .bento-card__image--side {

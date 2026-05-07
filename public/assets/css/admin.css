@@ -48,13 +48,6 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
     gap: 0.75rem;
 }
 
-.admin-hub-shortcut {
-    margin-bottom: 0.65rem;
-    background: rgba(255, 255, 255, 0.07);
-    color: #ffffff;
-    font-weight: 700;
-}
-
 .admin-sidebar .hub-nav-link {
     display: grid;
     grid-template-columns: 28px minmax(0, 1fr);
@@ -124,9 +117,10 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
     width: 140px;
 }
 
-.admin-services-table .mgmt-table__actions {
-    align-items: center;
-    justify-content: flex-start;
+.admin-services-table td.mgmt-table__actions {
+    display: table-cell;
+    text-align: left;
+    white-space: nowrap;
 }
 
 .admin-services-table .badge {

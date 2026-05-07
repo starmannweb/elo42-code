@@ -90,9 +90,6 @@
             </nav>
 
             <div class="hub-sidebar__footer">
-                <a href="<?= url('/hub') ?>" class="hub-nav-link admin-hub-shortcut">
-                    <span class="hub-nav-link__icon" aria-hidden="true"><?= $adminIcon('home') ?></span> Ir para Hub
-                </a>
                 <div class="hub-sidebar__user">
                     <div class="hub-sidebar__user-avatar admin-avatar" aria-hidden="true"><?= $initials ?></div>
                     <div class="hub-sidebar__user-info">
