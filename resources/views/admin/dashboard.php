@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<div class="mgmt-info-card" style="margin-bottom:var(--space-5); border: 1px dashed rgba(214, 166, 70, 0.4); background: rgba(214, 166, 70, 0.06);">
+<div class="mgmt-info-card admin-demo-card">
     <div style="display:flex; flex-wrap:wrap; gap:var(--space-4); align-items:center; justify-content:space-between;">
         <div style="flex:1; min-width: 280px;">
             <h3 class="mgmt-info-card__title" style="margin:0 0 var(--space-1);">Dados de demonstração</h3>
@@ -49,7 +49,7 @@
         return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $path . '</svg>';
     };
 ?>
-<div class="mgmt-stats-grid">
+<div class="mgmt-stats-grid admin-dashboard-stats">
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--blue"><?= $statSvg('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>') ?></span><div><div class="mgmt-stat__value"><?= $totalUsers ?></div><div class="mgmt-stat__label">Usuários</div></div></div>
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--gold"><?= $statSvg('<path d="M3 21V7l9-4 9 4v14"></path><path d="M9 21v-6h6v6"></path><path d="M3 21h18"></path>') ?></span><div><div class="mgmt-stat__value"><?= $totalOrgs ?></div><div class="mgmt-stat__label">Instituições</div></div></div>
     <div class="mgmt-stat"><span class="mgmt-stat__icon mgmt-stat__icon--green"><?= $statSvg('<rect x="2.5" y="5" width="19" height="14" rx="2"></rect><path d="M16 12h.01"></path><path d="M2.5 9h19"></path>') ?></span><div><div class="mgmt-stat__value"><?= $activeSubs ?></div><div class="mgmt-stat__label">Assinaturas ativas</div></div></div>

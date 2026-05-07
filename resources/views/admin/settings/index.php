@@ -144,11 +144,11 @@
     .admin-settings-shell { display: grid; gap: var(--space-5); width: 100%; max-width: none; }
     .admin-settings-tabs { 
         display: grid; 
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-        gap: .75rem; 
-        padding: .75rem; 
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+        gap: .5rem; 
+        padding: .55rem; 
         border: 1px solid var(--color-border); 
-        border-radius: 20px; 
+        border-radius: 14px; 
         background: #fff; 
         box-shadow: 0 12px 30px rgba(15,35,75,.05); 
     }
@@ -157,18 +157,18 @@
         border: 1px solid rgba(0,0,0,0.05); 
         background: var(--color-bg-light, #f8faff); 
         color: var(--color-text-muted); 
-        border-radius: 14px; 
-        padding: 1rem; 
+        border-radius: 10px; 
+        padding: .72rem .9rem; 
         cursor: pointer; 
         display: grid; 
         place-items: center;
         gap: .25rem; 
         min-width: 0;
-        min-height: 86px;
+        min-height: 58px;
         text-align: center; 
         transition: all .2s ease; 
     }
-    .admin-settings-tab span { font-weight: 800; color: var(--color-text); font-size: var(--text-sm); line-height: 1.2; overflow-wrap: normal; word-break: keep-all; text-align: center; }
+    .admin-settings-tab span { font-weight: 800; color: var(--color-text); font-size: .82rem; line-height: 1.2; overflow-wrap: normal; word-break: keep-all; text-align: center; }
     .admin-settings-tab:hover { background: rgba(10,77,255,.06); color: var(--color-text); border-color: rgba(10,77,255,.18); transform: translateY(-2px); }
     .admin-settings-tab.is-active { 
         background: #1455FF; 

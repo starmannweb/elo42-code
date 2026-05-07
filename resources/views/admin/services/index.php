@@ -19,7 +19,7 @@ $recurrenceLabels = ['one_time' => 'Único', 'monthly' => 'Mensal', 'quarterly' 
     <?php if (!empty($degraded)): ?>
         <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponivel agora. Exibindo o catalogo base para referencia.</div>
     <?php endif; ?>
-    <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Serviço</th><th>Preço</th><th>Recorrência</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+    <div class="mgmt-table-container admin-services-table-wrap"><table class="mgmt-table admin-services-table"><thead><tr><th>Serviço</th><th>Preço</th><th>Recorrência</th><th>Status</th><th>Ações</th></tr></thead><tbody>
         <?php foreach ($services as $s): ?><tr>
             <td><div class="mgmt-table__name"><?= e($s['name']) ?></div><div class="mgmt-table__sub"><?= e($s['slug']) ?></div></td>
             <td style="font-weight:700;">R$ <?= number_format((float)($s['price'] ?? 0), 2, ',', '.') ?></td>

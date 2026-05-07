@@ -51,7 +51,7 @@ $showEvents    = in_array($reportType, ['overview', 'events'], true);
     a <?= e(date('d/m/Y', strtotime((string) ($filters['end_date'] ?? date('Y-m-t'))))) ?>
 </div>
 
-<div class="mgmt-kpi-grid" style="grid-template-columns: repeat(4, 1fr);">
+<div class="mgmt-kpi-grid mgmt-report-kpi-grid">
     <?php if ($showMembers): ?>
     <div class="mgmt-kpi-card" style="justify-content:space-between;">
         <div>
