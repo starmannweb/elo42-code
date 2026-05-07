@@ -1140,9 +1140,15 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 .mgmt-sidebar-action {
     width: 100%;
     grid-template-columns: 28px minmax(0, 1fr);
-    border: 1px solid #d8e3f4;
-    background: #f8fbff;
-    color: #24375b;
+    background: #111f35;
+    border: 1px solid #243857;
+    color: #cbd5e1;
+}
+
+.mgmt-sidebar-action:hover {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f8fafc;
 }
 
 .mgmt-sidebar-action .hub-nav-link__label {
@@ -1151,24 +1157,24 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 }
 
 .mgmt-sidebar-action--logout {
-    border-color: #fecaca;
-    background: #fff7f7;
-    color: #b91c1c;
+    background: rgba(127, 29, 29, 0.18);
+    border-color: rgba(248, 113, 113, 0.32);
+    color: #fca5a5;
     cursor: pointer;
     font: inherit;
 }
 
 .mgmt-sidebar-action--logout:hover {
-    border-color: #f87171;
-    background: #fee2e2;
-    color: #991b1b;
+    background: rgba(185, 28, 28, 0.28);
+    border-color: #ef4444;
+    color: #fecaca;
 }
 
 .mgmt-layout .mgmt-sidebar-action--logout:hover,
 .mgmt-layout .mgmt-sidebar-action--logout:focus-visible {
-    border-color: #f87171;
-    background: #fee2e2;
-    color: #991b1b;
+    background: rgba(185, 28, 28, 0.28);
+    border-color: #ef4444;
+    color: #fecaca;
 }
 
 .mgmt-layout .hub-sidebar__user-avatar {
