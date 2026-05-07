@@ -2849,91 +2849,52 @@ body[data-hub-theme="light"] .hub-topbar {
     background: #ffffff;
 }
 
-body[data-hub-theme="light"] .hub-sidebar {
-    background: #ffffff;
-    border-right: 1px solid #e4e8f0;
-}
-
-body[data-hub-theme="light"] .hub-sidebar__header,
-body[data-hub-theme="light"] .hub-sidebar__footer {
-    border-color: #e4e8f0;
-}
-
-body[data-hub-theme="light"] .hub-sidebar__brand-subtitle,
-body[data-hub-theme="light"] .hub-sidebar__section-title,
-body[data-hub-theme="light"] .hub-sidebar__user-role {
-    color: #6b7892;
-}
-
-body[data-hub-theme="light"] .hub-nav-link {
-    color: #33415f;
-}
-
-body[data-hub-theme="light"] .hub-nav-link:hover,
-body[data-hub-theme="light"] .hub-nav-link.active {
-    background: #eaf1ff;
-    color: #0b3f9e;
-}
-
-body[data-hub-theme="light"] .hub-nav-link.active::before {
-    background: #0a4dff;
-}
-
-body[data-hub-theme="light"] .hub-sidebar__user-name {
-    color: #102445;
-}
-
-body[data-hub-theme="light"] .hub-sidebar__user-avatar {
-    background: #e6eefc;
-    color: #0b3f9e;
-}
-
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar {
+body[data-hub-theme="light"] .hub-layout .hub-sidebar {
     background: #0a1f44;
     border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__header,
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__footer {
+body[data-hub-theme="light"] .hub-layout .hub-sidebar__header,
+body[data-hub-theme="light"] .hub-layout .hub-sidebar__footer {
     border-color: rgba(255, 255, 255, 0.08);
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__logo .logo-dark {
+body[data-hub-theme="light"] .hub-layout .hub-sidebar__logo .logo-dark {
     display: inline-block;
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__logo .logo-light {
+body[data-hub-theme="light"] .hub-layout .hub-sidebar__logo .logo-light {
     display: none;
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__brand-subtitle,
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__user-role {
+body[data-hub-theme="light"] .hub-layout .hub-sidebar__brand-subtitle,
+body[data-hub-theme="light"] .hub-layout .hub-sidebar__user-role {
     color: rgba(255, 255, 255, 0.62);
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__section-title {
+body[data-hub-theme="light"] .hub-layout .hub-sidebar__section-title {
     color: rgba(255, 255, 255, 0.38);
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-nav-link {
+body[data-hub-theme="light"] .hub-layout .hub-nav-link {
     color: rgba(255, 255, 255, 0.72);
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-nav-link:hover {
+body[data-hub-theme="light"] .hub-layout .hub-nav-link:hover {
     background: rgba(255, 255, 255, 0.07);
     color: var(--color-white);
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-nav-link.active {
+body[data-hub-theme="light"] .hub-layout .hub-nav-link.active {
     background: rgba(10, 77, 255, 0.24);
     color: var(--color-white);
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__user-name {
+body[data-hub-theme="light"] .hub-layout .hub-sidebar__user-name {
     color: #f7fbff;
 }
 
-body[data-hub-theme="light"] .hub-layout:not(.mgmt-layout) .hub-sidebar__user-avatar {
+body[data-hub-theme="light"] .hub-layout .hub-sidebar__user-avatar {
     background: linear-gradient(135deg, var(--color-gold), #e8ca80);
     color: #0f2149;
 }
