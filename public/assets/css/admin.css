@@ -4,8 +4,14 @@
 
 /* Admin accent colors — using specificity instead of !important */
 .hub-layout .hub-sidebar.admin-sidebar {
-    background: linear-gradient(180deg, #0f172a 0%, #1e2a4a 100%);
+    background: #0a1f44;
     overflow: hidden;
+}
+
+body[data-hub-theme="dark"] .hub-layout .hub-sidebar.admin-sidebar,
+body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
+    background: #0a1f44;
+    border-right-color: rgba(255, 255, 255, 0.08);
 }
 
 .admin-sidebar .hub-sidebar__header {
@@ -38,6 +44,8 @@
 .admin-sidebar .hub-sidebar__footer {
     margin-top: auto;
     padding: 10px 14px;
+    display: grid;
+    gap: 0.75rem;
 }
 
 .admin-hub-shortcut {
@@ -45,6 +53,19 @@
     background: rgba(255, 255, 255, 0.07);
     color: #ffffff;
     font-weight: 700;
+}
+
+.admin-sidebar .hub-nav-link {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    align-items: center;
+    column-gap: 10px;
+}
+
+.admin-sidebar .hub-nav-link__icon {
+    width: 28px;
+    display: inline-flex;
+    justify-content: center;
 }
 
 .hub-sidebar__user-avatar.admin-avatar {

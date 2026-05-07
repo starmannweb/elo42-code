@@ -81,6 +81,7 @@
             'search' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>',
             'bell' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
             'moon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>',
+            'logout' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>',
             default => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>',
         };
     };
@@ -161,9 +162,22 @@
                 </div>
 
                 <div class="portal-topbar__actions">
-                    <button type="button" class="portal-icon-btn" aria-label="Pesquisar"><?= $icon('search') ?></button>
-                    <button type="button" class="portal-icon-btn" aria-label="Notificações"><?= $icon('bell') ?></button>
+                    <div class="portal-notifications" data-portal-notifications>
+                        <button type="button" class="portal-icon-btn portal-notification-btn" aria-label="Notificações" aria-expanded="false" data-portal-notification-toggle>
+                            <?= $icon('bell') ?>
+                            <span class="portal-notification-dot" aria-hidden="true"></span>
+                        </button>
+                        <div class="portal-notification-panel" role="status" hidden>
+                            <strong>Notificações</strong>
+                            <p>Nenhuma notificação nova no momento.</p>
+                            <a href="<?= url('/membro/configuracoes') ?>">Configurar preferências</a>
+                        </div>
+                    </div>
                     <button type="button" class="portal-icon-btn portal-theme-toggle" data-portal-theme-toggle aria-label="Alternar tema"><?= $icon('moon') ?></button>
+                    <form method="POST" action="<?= url('/logout') ?>" class="portal-logout-form">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="portal-icon-btn portal-logout-btn" aria-label="Sair"><?= $icon('logout') ?></button>
+                    </form>
                 </div>
             </header>
 
@@ -185,6 +199,8 @@
             const body = document.body;
             const menuButton = document.querySelector('[data-portal-menu]');
             const themeButton = document.querySelector('[data-portal-theme-toggle]');
+            const notifications = document.querySelector('[data-portal-notifications]');
+            const notificationButton = document.querySelector('[data-portal-notification-toggle]');
 
             menuButton && menuButton.addEventListener('click', function () {
                 body.classList.toggle('portal-menu-open');
@@ -205,6 +221,27 @@
                 const next = body.getAttribute('data-portal-theme') === 'dark' ? 'light' : 'dark';
                 body.setAttribute('data-portal-theme', next);
                 document.cookie = 'elo42_portal_theme=' + next + '; path=/; max-age=31536000; SameSite=Lax';
+            });
+
+            notificationButton && notificationButton.addEventListener('click', function () {
+                const panel = notifications && notifications.querySelector('.portal-notification-panel');
+                if (!panel) {
+                    return;
+                }
+                const isOpen = panel.hasAttribute('hidden');
+                panel.toggleAttribute('hidden', !isOpen);
+                notificationButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!notifications || notifications.contains(event.target)) {
+                    return;
+                }
+                const panel = notifications.querySelector('.portal-notification-panel');
+                if (panel) {
+                    panel.hidden = true;
+                    notificationButton && notificationButton.setAttribute('aria-expanded', 'false');
+                }
             });
 
             <?php if ($isPortalPwaEnabled): ?>

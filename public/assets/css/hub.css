@@ -989,7 +989,7 @@ body[data-hub-theme="light"] .hub-nav-sublink__dot {
 .platform-access-grid,
 .contract-packages-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-4);
 }
 
@@ -2519,9 +2519,28 @@ body[data-hub-theme="dark"] .site-readiness-card,
 body[data-hub-theme="dark"] .site-step-link,
 body[data-hub-theme="dark"] .site-step-panel,
 body[data-hub-theme="dark"] .site-template-card,
+body[data-hub-theme="dark"] .platform-access-card,
+body[data-hub-theme="dark"] .contract-package-card,
 body[data-hub-theme="dark"] .credit-package-card {
     background: #10223d;
     border-color: rgba(155, 183, 226, 0.28);
+}
+
+body[data-hub-theme="dark"] .platform-access-card.is-highlight {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(214, 166, 70, 0.12) 0%, transparent 38%),
+        #10223d;
+    border-color: rgba(214, 166, 70, 0.34);
+}
+
+body[data-hub-theme="dark"] .platform-access-card__title,
+body[data-hub-theme="dark"] .contract-package-card__title {
+    color: #f4f8ff;
+}
+
+body[data-hub-theme="dark"] .platform-access-card__description,
+body[data-hub-theme="dark"] .contract-package-card__description {
+    color: rgba(210, 224, 247, 0.9);
 }
 
 body[data-hub-theme="dark"] .site-step-link:hover,
@@ -3853,6 +3872,80 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     font-size: 0.9rem;
 }
 
+body[data-hub-theme="dark"] .ministry-ai-usage,
+body[data-hub-theme="dark"] .ministry-ai-module,
+body[data-hub-theme="dark"] .ministry-ai-workflow,
+body[data-hub-theme="dark"] .ministry-ai-shortcut,
+body[data-hub-theme="dark"] .ministry-ai-month-vision,
+body[data-hub-theme="dark"] .ministry-ai-coherence,
+body[data-hub-theme="dark"] .ministry-ai-vision__grid article,
+body[data-hub-theme="dark"] .ministry-ai-insight,
+body[data-hub-theme="dark"] .ministry-ai-review {
+    background: #10223d;
+    border-color: rgba(155, 183, 226, 0.28);
+    color: #f4f8ff;
+}
+
+body[data-hub-theme="dark"] .ministry-ai-usage__meter span,
+body[data-hub-theme="dark"] .ministry-ai-coherence__bar {
+    background: #1d3559;
+}
+
+body[data-hub-theme="dark"] .ministry-ai-module.is-active,
+body[data-hub-theme="dark"] .ministry-ai-workflow.is-active,
+body[data-hub-theme="dark"] .ministry-ai-module:hover,
+body[data-hub-theme="dark"] .ministry-ai-workflow:hover {
+    background: #132a4d;
+}
+
+body[data-hub-theme="dark"] .ministry-ai-card-icon,
+body[data-hub-theme="dark"] .ministry-ai-workflow__icon {
+    background: rgba(120, 161, 255, 0.16);
+    color: #9fc0ff;
+}
+
+body[data-hub-theme="dark"] .ministry-ai-shortcut strong,
+body[data-hub-theme="dark"] .ministry-ai-module strong,
+body[data-hub-theme="dark"] .ministry-ai-workflow strong,
+body[data-hub-theme="dark"] .ministry-ai-month-vision__head h2,
+body[data-hub-theme="dark"] .ministry-ai-month-vision__head strong,
+body[data-hub-theme="dark"] .ministry-ai-coherence p,
+body[data-hub-theme="dark"] .ministry-ai-vision__grid strong,
+body[data-hub-theme="dark"] .ministry-ai-insight strong,
+body[data-hub-theme="dark"] .ministry-ai-review__head strong {
+    color: #f4f8ff;
+}
+
+body[data-hub-theme="dark"] .ministry-ai-shortcut p,
+body[data-hub-theme="dark"] .ministry-ai-shortcut small,
+body[data-hub-theme="dark"] .ministry-ai-module span,
+body[data-hub-theme="dark"] .ministry-ai-workflow span,
+body[data-hub-theme="dark"] .ministry-ai-month-vision__head span,
+body[data-hub-theme="dark"] .ministry-ai-month-vision__actions span,
+body[data-hub-theme="dark"] .ministry-ai-coherence__head,
+body[data-hub-theme="dark"] .ministry-ai-coherence ul,
+body[data-hub-theme="dark"] .ministry-ai-vision__grid span,
+body[data-hub-theme="dark"] .ministry-ai-month-vision__footnote,
+body[data-hub-theme="dark"] .ministry-ai-insight ul,
+body[data-hub-theme="dark"] .ministry-ai-review__head span,
+body[data-hub-theme="dark"] .ministry-ai-review li span {
+    color: rgba(210, 224, 247, 0.9);
+}
+
+body[data-hub-theme="dark"] .ministry-ai-review li {
+    border-color: rgba(155, 183, 226, 0.22);
+}
+
+body[data-hub-theme="dark"] .ministry-ai-month-vision .ministry-ai-vision__notice {
+    background: rgba(220, 38, 38, 0.12);
+    border-color: rgba(248, 113, 113, 0.32);
+    color: #fecaca;
+}
+
+body[data-hub-theme="dark"] .ministry-ai-month-vision .ministry-ai-vision__notice strong {
+    color: #fca5a5;
+}
+
 @media (max-width: 1080px) {
     .site-color-controls,
     .ministry-ai-usage {
@@ -3860,6 +3953,11 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
     }
 
     .site-builder-page #modelos-site .site-template-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .platform-access-grid,
+    .contract-packages-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -3879,6 +3977,8 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 
 @media (max-width: 700px) {
     .site-builder-page #modelos-site .site-template-grid,
+    .platform-access-grid,
+    .contract-packages-grid,
     .ministry-ai-workflows,
     .ministry-ai-form,
     .ministry-ai-review li {

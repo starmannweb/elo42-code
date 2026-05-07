@@ -348,6 +348,10 @@ body[data-portal-theme="dark"] .portal-topbar {
     gap: 10px;
 }
 
+.portal-notifications {
+    position: relative;
+}
+
 .portal-icon-btn {
     width: 42px;
     height: 42px;
@@ -370,6 +374,60 @@ body[data-portal-theme="dark"] .portal-topbar {
     transform: translateY(-1px);
     color: var(--portal-primary-dark);
     border-color: var(--portal-border-strong);
+}
+
+.portal-notification-btn {
+    position: relative;
+}
+
+.portal-notification-dot {
+    position: absolute;
+    right: 9px;
+    bottom: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--portal-primary);
+}
+
+.portal-notification-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 30;
+    width: min(310px, calc(100vw - 32px));
+    padding: 16px;
+    border: 1px solid var(--portal-border);
+    border-radius: 16px;
+    background: var(--portal-surface);
+    box-shadow: var(--portal-shadow);
+    color: var(--portal-text);
+}
+
+.portal-notification-panel strong {
+    display: block;
+    margin-bottom: 6px;
+    font-family: var(--portal-heading-font);
+}
+
+.portal-notification-panel p {
+    margin: 0 0 12px;
+    color: var(--portal-text-soft);
+    font-size: 0.9rem;
+}
+
+.portal-notification-panel a {
+    color: var(--portal-primary-dark);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.portal-logout-form {
+    margin: 0;
+}
+
+.portal-logout-btn {
+    color: var(--portal-danger);
 }
 
 .portal-content {

@@ -12,11 +12,11 @@
 }
 
 body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-dark {
-    display: inline-block;
+    display: none;
 }
 
 body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-light {
-    display: none;
+    display: inline-block;
 }
 
 .mgmt-layout h1,
@@ -1082,7 +1082,9 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 .mgmt-tabs__link {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    min-height: 42px;
     padding: 10px 14px;
     border-radius: 10px;
     color: #64748b;
@@ -1140,6 +1142,35 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 
 .mgmt-layout .hub-sidebar__footer {
     border-top: 1px solid #e4e8f0;
+    display: grid;
+    gap: 0.6rem;
+    padding: 14px;
+}
+
+.mgmt-sidebar-logout {
+    margin: 0;
+    width: 100%;
+}
+
+.mgmt-sidebar-action {
+    width: 100%;
+    grid-template-columns: 28px minmax(0, 1fr);
+    border: 1px solid #d8e3f4;
+    background: #f8fbff;
+    color: #24375b;
+}
+
+.mgmt-sidebar-action .hub-nav-link__label {
+    justify-self: start;
+    text-align: left;
+}
+
+.mgmt-sidebar-action--logout {
+    border-color: #fecaca;
+    background: #fff7f7;
+    color: #b91c1c;
+    cursor: pointer;
+    font: inherit;
 }
 
 .mgmt-layout .hub-sidebar__user-avatar {
@@ -1379,25 +1410,30 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
    Management Dark Mode Overrides
    ============================================= */
 body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar {
-    background: #0f172a;
-    border-color: #1e293b;
+    background: #ffffff;
+    border-color: #e4e8f0;
 }
 body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__header,
 body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__footer {
-    border-color: #1e293b;
+    border-color: #e4e8f0;
 }
-body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__brand-subtitle { color: #94a3b8; }
-body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__section-title { color: #64748b; }
-body[data-hub-theme="dark"] .mgmt-layout .hub-nav-link { color: #94a3b8; }
-body[data-hub-theme="dark"] .mgmt-layout .hub-nav-link:hover { background: #1e293b; color: #f8fafc; }
-body[data-hub-theme="dark"] .mgmt-layout .hub-nav-link.active { background: #1e293b; color: #38bdf8; }
-body[data-hub-theme="dark"] .mgmt-layout .hub-nav-link.active::before { background: #38bdf8; }
-body[data-hub-theme="dark"] .mgmt-tabs { border-color: #1e293b; }
-body[data-hub-theme="dark"] .mgmt-tabs__link { color: #94a3b8; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__brand-subtitle { color: #8a95ac; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__section-title { color: #8a95ac; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-nav-link { color: #3b4a65; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-nav-link:hover { background: #ecf2fb; color: #11284f; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-nav-link.active { background: #dfeafb; color: #0d3f8f; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-nav-link.active::before { background: #0a4dff; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-nav-sublist { border-left-color: rgba(15, 23, 42, 0.1); }
+body[data-hub-theme="dark"] .mgmt-layout .hub-nav-sublink { color: rgba(15, 23, 42, 0.62); }
+body[data-hub-theme="dark"] .mgmt-layout .hub-nav-sublink:hover { background: rgba(15, 23, 42, 0.04); color: rgba(15, 23, 42, 0.95); }
+body[data-hub-theme="dark"] .mgmt-layout .hub-nav-sublink.active { background: rgba(10, 77, 255, 0.1); color: #0a4dff; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-nav-sublink__dot { background: rgba(15, 23, 42, 0.28); }
+body[data-hub-theme="dark"] .mgmt-tabs { border-color: #243857; }
+body[data-hub-theme="dark"] .mgmt-tabs__link { color: #b9c7df; background: #10223d; border: 1px solid #243857; }
 body[data-hub-theme="dark"] .mgmt-tabs__link.active { background: #1455ff; color: #ffffff; }
-body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__user-avatar { background: #1e293b; color: #f8fafc; }
-body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__user-name { color: #f8fafc; }
-body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__user-role { color: #94a3b8; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__user-avatar { background: #e6eefc; color: #0b3f9e; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__user-name { color: #102445; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__user-role { color: #6b7892; }
 
 body[data-hub-theme="dark"] .mgmt-layout .hub-topbar,
 body[data-hub-theme="dark"] .mgmt-layout .hub-main {
@@ -1910,6 +1946,7 @@ textarea.form-input,
     min-width: 0;
     padding: 0;
     border-bottom: 0;
+    align-items: center;
 }
 
 .mgmt-report-tabs .mgmt-kpi-card {
@@ -1922,8 +1959,35 @@ textarea.form-input,
 }
 
 body[data-hub-theme="dark"] .mgmt-tabs-frame {
-    background: #0f1c31;
+    background: #10223d;
     border-color: #243857;
+}
+
+body[data-hub-theme="dark"] .agenda-toolbar,
+body[data-hub-theme="dark"] .mgmt-calendar-shell {
+    background: #10223d;
+    border-color: #243857;
+}
+
+body[data-hub-theme="dark"] .mgmt-calendar-weekday,
+body[data-hub-theme="dark"] .mgmt-calendar-day.is-muted {
+    background: #0d1d36;
+    color: #b9c7df;
+    border-color: #243857;
+}
+
+body[data-hub-theme="dark"] .mgmt-calendar-day {
+    background: #10223d;
+    border-color: #243857;
+}
+
+body[data-hub-theme="dark"] .mgmt-calendar-day.is-today {
+    background: #132a4d;
+}
+
+body[data-hub-theme="dark"] .mgmt-calendar-day__number,
+body[data-hub-theme="dark"] .agenda-toolbar__month {
+    color: #f4f8ff;
 }
 
 .pwa-upload-field {

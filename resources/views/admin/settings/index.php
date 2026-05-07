@@ -161,13 +161,14 @@
         padding: 1rem; 
         cursor: pointer; 
         display: grid; 
+        place-items: center;
         gap: .25rem; 
         min-width: 0;
         min-height: 86px;
-        text-align: left; 
+        text-align: center; 
         transition: all .2s ease; 
     }
-    .admin-settings-tab span { font-weight: 800; color: var(--color-text); font-size: var(--text-sm); line-height: 1.2; overflow-wrap: normal; word-break: keep-all; }
+    .admin-settings-tab span { font-weight: 800; color: var(--color-text); font-size: var(--text-sm); line-height: 1.2; overflow-wrap: normal; word-break: keep-all; text-align: center; }
     .admin-settings-tab:hover { background: rgba(10,77,255,.06); color: var(--color-text); border-color: rgba(10,77,255,.18); transform: translateY(-2px); }
     .admin-settings-tab.is-active { 
         background: #1455FF; 
@@ -195,6 +196,25 @@
         .admin-setting-row { grid-template-columns: 1fr; }
         .admin-setting-row small { grid-column: auto; }
         .admin-settings-card__head { flex-direction: column; }
+    }
+    body[data-hub-theme="dark"] .admin-settings-tabs,
+    body[data-hub-theme="dark"] .admin-settings-card {
+        background: #10223d;
+        border-color: #243857;
+    }
+    body[data-hub-theme="dark"] .admin-settings-tab {
+        background: #0d1d36;
+        border-color: #243857;
+        color: #b9c7df;
+    }
+    body[data-hub-theme="dark"] .admin-settings-tab span,
+    body[data-hub-theme="dark"] .admin-settings-card__head h2,
+    body[data-hub-theme="dark"] .admin-setting-row__label {
+        color: #f4f8ff;
+    }
+    body[data-hub-theme="dark"] .admin-settings-tab.is-active {
+        background: #1455FF;
+        border-color: #1455FF;
     }
 </style>
 
