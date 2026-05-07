@@ -61,8 +61,8 @@
 }
 
 .hub-sidebar__logo img {
-    max-height: 48px;
-    max-width: 152px;
+    max-height: 54px;
+    max-width: 170px;
     width: auto;
     object-fit: contain;
 }
@@ -75,13 +75,7 @@
     display: none;
 }
 
-[data-hub-theme="light"] .hub-sidebar__logo .logo-dark {
-    display: none;
-}
 
-[data-hub-theme="light"] .hub-sidebar__logo .logo-light {
-    display: inline-block;
-}
 
 .hub-sidebar__brand-subtitle {
     margin-top: var(--space-1);
@@ -245,31 +239,7 @@
     flex: 1;
 }
 
-body[data-hub-theme="light"] .hub-nav-link--group {
-    color: rgba(15, 23, 42, 0.78);
-}
 
-body[data-hub-theme="light"] .hub-nav-sublist {
-    border-left-color: rgba(15, 23, 42, 0.1);
-}
-
-body[data-hub-theme="light"] .hub-nav-sublink {
-    color: rgba(15, 23, 42, 0.62);
-}
-
-body[data-hub-theme="light"] .hub-nav-sublink:hover {
-    background: rgba(15, 23, 42, 0.04);
-    color: rgba(15, 23, 42, 0.95);
-}
-
-body[data-hub-theme="light"] .hub-nav-sublink.active {
-    background: rgba(10, 77, 255, 0.1);
-    color: var(--color-bright-blue, #0a4dff);
-}
-
-body[data-hub-theme="light"] .hub-nav-sublink__dot {
-    background: rgba(15, 23, 42, 0.25);
-}
 
 .hub-sidebar__footer {
     padding: var(--space-3);

@@ -2,22 +2,7 @@
    ELO 42 — Management Module Styles
    ============================================= */
 
-/* --- Logo theme switcher --- */
-.mgmt-layout .hub-sidebar__logo .logo-dark {
-    display: none;
-}
-
-.mgmt-layout .hub-sidebar__logo .logo-light {
-    display: inline-block;
-}
-
-body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-dark {
-    display: inline-block;
-}
-
-body[data-hub-theme="dark"] .mgmt-layout .hub-sidebar__logo .logo-light {
-    display: none;
-}
+/* --- Logo theme switcher removed to maintain fixed dark sidebar --- */
 
 .mgmt-layout h1,
 .mgmt-layout h2,
