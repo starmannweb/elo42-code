@@ -260,8 +260,8 @@
                     '/gestao/sermoes/expositor-ia',
                 ];
                 echo $navGroup('administracao', 'Administração', 'admin', [
-                    $subNavItem('/gestao/sermoes', 'Séries e Sermões', true, ['/gestao/sermoes']),
-                    $subNavItem('/gestao/pregadores', 'Pregadores', true, ['/gestao/pregadores']),
+                    $subNavItem('/gestao/sermoes', 'Séries e Sermões', false, ['/gestao/sermoes']),
+                    $subNavItem('/gestao/pregadores', 'Pregadores', false, ['/gestao/pregadores']),
                     $subNavItem('/gestao/relatorios', 'Relatórios', true, ['/gestao/relatorios']),
                 ], $administrationPaths);
                 ?>

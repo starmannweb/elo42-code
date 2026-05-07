@@ -50,19 +50,26 @@
 }
 
 .hub-sidebar__header {
-    padding: var(--space-4) var(--space-5);
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 18px;
+    padding-right: 18px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .hub-sidebar__logo {
     display: inline-flex;
     align-items: center;
+    justify-content: flex-end;
+    width: 100%;
     text-decoration: none;
 }
 
 .hub-sidebar__logo img {
-    max-height: 54px;
-    max-width: 170px;
+    max-height: 46px;
+    max-width: 150px;
     width: auto;
     object-fit: contain;
 }
