@@ -1,7 +1,7 @@
 {
-  "name": "Elo 42 - Gestao para Igrejas",
+  "name": "Elo 42 - Gestão para Igrejas",
   "short_name": "Elo 42",
-  "description": "Gestao, tecnologia e impacto para a sua missao. Plataforma completa para igrejas e organizacoes.",
+  "description": "Gestão, tecnologia e impacto para a sua missão. Plataforma completa para igrejas e organizações.",
   "start_url": "/hub",
   "scope": "/",
   "display": "standalone",
@@ -26,8 +26,8 @@
   "categories": ["business", "productivity"],
   "shortcuts": [
     {
-      "name": "Gestao da Igreja",
-      "short_name": "Gestao",
+      "name": "Gestão da Igreja",
+      "short_name": "Gestão",
       "url": "/gestao",
       "icons": [{"src": "/assets/img/logo-color-new.png", "sizes": "96x96"}]
     },

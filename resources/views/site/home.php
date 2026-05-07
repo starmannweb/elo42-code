@@ -133,14 +133,14 @@
             <a href="<?= url('/servico/central-elo42') ?>" class="bento-card bento-card--central bento-card--accent">
                 <div class="bento-card__icon bento-card__icon--bolt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
                 <h3 class="bento-card__title">Central Elo 42</h3>
-                <p class="bento-card__text">O Hub central onde líderes e gestores acessam recursos, relatórios, implantação e acompanhamentos da organização em tempo real.</p>
+                <p class="bento-card__text">O Hub central onde líderes e gestores acessam recursos, relatórios e acompanhamentos, em tempo real.</p>
             </a>
 
             <a href="<?= url('/servico/plataforma-gestao') ?>" class="bento-card bento-card--large bento-card--platform bento-card--accent">
                 <div class="bento-card__body">
                     <div class="bento-card__icon bento-card__icon--check"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
                     <h3 class="bento-card__title">Plataforma de Gestão</h3>
-                    <p class="bento-card__text">Cadastro de membros, controle financeiro, agenda de eventos, grupos, comunicação interna e relatórios em um só lugar.</p>
+                    <p class="bento-card__text">Cadastro de membros, controle financeiro, agenda de eventos, grupos, comunicação interna e relatórios: tudo em um só lugar.</p>
                 </div>
                 <div class="bento-card__image">
                     <img src="<?= url('/assets/img/dashboard.png') ?>" alt="Plataforma de Gestão" />
@@ -153,19 +153,19 @@
                 </div>
                 <div class="bento-card__icon bento-card__icon--megaphone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
                 <h3 class="bento-card__title">Google para Nonprofits</h3>
-                <p class="bento-card__text">Alcance mais pessoas com até US$ 10.000/mês em anúncios gratuitos do Google Ad Grants, com campanhas focadas no seu ministério.</p>
+                <p class="bento-card__text">Alcance mais pessoas com até US$ 10.000/mês em anúncios gratuitos do Google Ad Grants. Estruturamos campanhas focadas no seu ministério.</p>
             </a>
 
             <a href="<?= url('/servico/expositor-ia') ?>" class="bento-card bento-card--expositor">
                 <div class="bento-card__icon bento-card__icon--book"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
                 <h3 class="bento-card__title">Central Pastoral IA</h3>
-                <p class="bento-card__text">Ambiente de aprofundamento exegético com IA para pastores, onde a exegese vem primeiro e o sermão nasce do texto.</p>
+                <p class="bento-card__text">Ambiente de aprofundamento exegético com IA para pastores. A exegese vem primeiro; o sermão nasce do texto.</p>
             </a>
 
             <a href="<?= url('/servico/consultoria') ?>" class="bento-card bento-card--consultoria bento-card--accent">
                 <div class="bento-card__icon bento-card__icon--lightbulb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></div>
                 <h3 class="bento-card__title">Consultoria <span class="bento-badge">(em breve)</span></h3>
-                <p class="bento-card__text">Consultoria estratégica e operacional sob medida para organizações que precisam de orientação qualificada e contínua.</p>
+                <p class="bento-card__text">Consultoria estratégica e operacional, sob medida, para organizações que precisam de orientação qualificada e contínua.</p>
             </a>
 
             <a href="<?= url('/servico/sites-prontos') ?>" class="bento-card bento-card--wide bento-card--sites">
@@ -173,7 +173,7 @@
                     <div>
                         <div class="bento-card__icon bento-card__icon--globe"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
                         <h3 class="bento-card__title">Site para igrejas</h3>
-                        <p class="bento-card__text">Sites profissionais e responsivos, prontos para publicação, com a identidade visual e informações da sua organização.</p>
+                        <p class="bento-card__text">Sites profissionais, responsivos e prontos para publicação, com identidade visual e informações da sua organização.</p>
                     </div>
                     <div class="bento-card__image bento-card__image--side">
                         <img src="<?= url('/assets/img/ipporto.png') ?>" alt="Site para igrejas" />
