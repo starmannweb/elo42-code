@@ -45,7 +45,7 @@ $showMembers   = in_array($reportType, ['overview', 'members'], true);
 $showEvents    = in_array($reportType, ['overview', 'events'], true);
 ?>
 
-<div class="mgmt-report-banner" style="background: rgba(10,77,255,.05); border:1px solid rgba(10,77,255,.18); border-radius:12px; padding: 12px 16px; margin-bottom: var(--space-5); font-size: 13px; color: var(--color-text-primary);">
+<div class="mgmt-report-banner">
     <strong><?= e($reportTypes[$reportType] ?? 'Relatório') ?></strong>
     · <?= e(date('d/m/Y', strtotime((string) ($filters['start_date'] ?? date('Y-m-01'))))) ?>
     a <?= e(date('d/m/Y', strtotime((string) ($filters['end_date'] ?? date('Y-m-t'))))) ?>

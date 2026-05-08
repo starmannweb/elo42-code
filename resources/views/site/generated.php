@@ -500,23 +500,45 @@ $heroBadge = $templateBadges[$templateKey];
         <?php endif; ?>
 
         <?php if (!empty($galleryImages)): ?>
-        <section class="banners">
+        <section class="site-photo-gallery">
             <div class="container">
                 <span class="section-eyebrow">Galeria</span>
-                <h2 class="section-title">Imagens da comunidade</h2>
-                <div class="banners__grid">
-                    <?php foreach (array_slice($galleryImages, 0, 6) as $imageUrl): ?>
-                        <article class="banner-card">
-                            <span class="banner-card__media" style="background-image:url('<?= e(trim((string) $imageUrl)) ?>');"></span>
-                            <div class="banner-card__body">
-                                <strong><?= e($title) ?></strong>
-                                <p>Imagem cadastrada no painel Meu Site.</p>
-                            </div>
-                        </article>
+                <h2 class="section-title">Nossa comunidade em fotos</h2>
+                <div class="site-photo-gallery__grid">
+                    <?php foreach (array_slice($galleryImages, 0, 9) as $imageUrl): ?>
+                        <div class="site-photo-gallery__item">
+                            <img src="<?= e(trim((string) $imageUrl)) ?>" alt="Foto da comunidade" loading="lazy">
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </div>
         </section>
+        <style>
+        .site-photo-gallery { padding: 64px 0; background: var(--site-bg, #fff); }
+        .site-photo-gallery__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 2rem;
+        }
+        .site-photo-gallery__item {
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            background: #eef3fb;
+        }
+        .site-photo-gallery__item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .site-photo-gallery__item:hover img { transform: scale(1.04); }
+        @media (max-width: 640px) {
+            .site-photo-gallery__grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        </style>
         <?php endif; ?>
 
         <section id="agenda" class="events">

@@ -7,7 +7,7 @@ $articles = is_array($articles ?? null) ? $articles : [];
 $pagination = is_array($pagination ?? null) ? $pagination : ['total' => 0, 'page' => 1, 'perPage' => 20, 'totalPages' => 1];
 ?>
 
-<div class="mgmt-header">
+<div class="mgmt-header" style="margin-bottom: var(--space-8);">
     <div>
         <h1 class="mgmt-header__title">Blog</h1>
         <p class="mgmt-header__subtitle">Gerencie os artigos publicados no blog do site.</p>

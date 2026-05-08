@@ -46,6 +46,9 @@
             'tiktok' => '<path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>',
             'linkedin' => '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>',
             'telegram' => '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+            'whatsapp' => '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+            'city'     => '<path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/>',
+            'state'    => '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/>',
         ];
         $path = $paths[$name] ?? $paths['text'];
         return '<span class="site-field-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' . $path . '</svg></span>';
@@ -136,7 +139,7 @@
                     <input id="contact_email" name="contact_email" class="form-input" value="<?= e((string) ($currentSite['contact_email'] ?? '')) ?>" placeholder="contato@igreja.org">
                 </div>
                 <div class="form-group">
-                    <label class="form-label site-field-label" for="whatsapp_url"><?= $fieldIcon('social') ?>WhatsApp</label>
+                    <label class="form-label site-field-label" for="whatsapp_url"><?= $fieldIcon('whatsapp') ?>WhatsApp</label>
                     <input id="whatsapp_url" name="whatsapp_url" class="form-input" value="<?= e((string) ($currentSite['whatsapp_url'] ?? '')) ?>" placeholder="https://wa.me/55...">
                 </div>
             </div>
@@ -147,11 +150,11 @@
                     <input id="address_line" name="address_line" class="form-input" value="<?= e((string) ($currentSite['address_line'] ?? '')) ?>" placeholder="Rua, número e bairro">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="city">Cidade</label>
+                    <label class="form-label site-field-label" for="city"><?= $fieldIcon('city') ?>Cidade</label>
                     <input id="city" name="city" class="form-input" value="<?= e((string) ($currentSite['city'] ?? '')) ?>" placeholder="Cidade">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="state">Estado</label>
+                    <label class="form-label site-field-label" for="state"><?= $fieldIcon('state') ?>Estado</label>
                     <input id="state" name="state" class="form-input" value="<?= e((string) ($currentSite['state'] ?? '')) ?>" placeholder="UF">
                 </div>
             </div>

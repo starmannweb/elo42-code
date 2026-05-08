@@ -241,9 +241,9 @@ final class WorkflowRegistry
                 'icon' => 'search',
                 'accent' => '#2563EB',
                 'fields' => [
-                    self::select('depth', 'Profundidade', true, [['pastoral', 'Pastoral'], ['academico', 'Acadêmico']]),
-                    self::text('passage', 'Passagem bíblica', true, 'Ex.: Romanos 8:28-39'),
-                    self::select('bible_version', 'Versão bíblica', true, self::bibleVersionOptions()),
+                    self::select('depth', 'Profundidade', true, [['pastoral', 'Pastoral'], ['academico', 'Acadêmico']]) + ['width' => 'third'],
+                    self::text('passage', 'Passagem bíblica', true, 'Ex.: Romanos 8:28-39') + ['width' => 'third'],
+                    self::select('bible_version', 'Versão bíblica', true, self::bibleVersionOptions()) + ['width' => 'third'],
                 ],
             ],
             'estudo_biblico' => [
