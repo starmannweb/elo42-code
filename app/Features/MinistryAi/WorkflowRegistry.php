@@ -101,43 +101,21 @@ final class WorkflowRegistry
                 'fields' => [
                     self::textarea('pastoral_context', 'Visão e Contexto Pastoral', true, 'Escreva livremente. Quanto mais contexto, mais preciso o discernimento.'),
                     self::text('reference_year', 'Ano de referência', true, (string) ((int) date('Y') + 1)) + ['width' => 'third'],
-                    self::select('denominational_base', 'Base Denominacional', true, [
-                        ['presbiteriana', 'Presbiteriana'],
-                        ['batista_reformada', 'Batista reformada'],
-                        ['batista_tradicional', 'Batista (Tradicional)'],
-                        ['congregacional', 'Congregacional'],
-                        ['pentecostal', 'Pentecostal'],
-                        ['assembleiana', 'Assembleiana'],
-                        ['luterana', 'Luterana'],
-                        ['anglicana', 'Anglicana'],
-                        ['independente', 'Independente'],
-                        ['outra', 'Outra']
-                    ]) + ['width' => 'third'],
+                    self::select('denominational_base', 'Base Denominacional', true, self::denominationalBaseOptions()) + ['width' => 'third'],
                     self::select('confessional_layer', 'Camada Confessional', true, self::confessionalLayerOptions()) + ['width' => 'third'],
                 ],
             ],
             'treinamento_lideranca' => [
                 'module' => 'planejamento',
                 'title' => 'Treinamento de Liderança',
-                'description' => 'Monte uma trilha para formação de líderes e equipes ministeriais.',
+                'description' => 'Monte uma trilha para formation de líderes e equipes ministeriais.',
                 'icon' => 'award',
                 'accent' => '#0D9488',
                 'fields' => [
                     self::select('training_type', 'Tipo de treinamento', true, [['base_geral', 'Base geral'], ['presbiteros', 'Formação de presbíteros'], ['diaconos', 'Formação de diáconos'], ['jovens', 'Líderes de jovens'], ['professores_ebd', 'Professores de EBD'], ['pequenos_grupos', 'Líderes de pequenos grupos']]),
                     self::select('member_count', 'Número aproximado de membros', true, [['ate_50', 'Até 50 membros'], ['50_150', '50 a 150 membros'], ['150_500', '150 a 500 membros'], ['500_plus', 'Acima de 500 membros']]),
                     self::select('church_moment', 'Momento atual da igreja', true, [['rotina_ministerial', 'Rotina ministerial'], ['eleicao_proxima', 'Eleição próxima'], ['crescimento', 'Fase de crescimento'], ['conflito', 'Conflito interno'], ['reorganizacao', 'Reorganização'], ['outra', 'Outra']]),
-                    self::select('denominational_base', 'Base Denominacional', true, [
-                        ['presbiteriana', 'Presbiteriana'],
-                        ['batista_reformada', 'Batista reformada'],
-                        ['batista_tradicional', 'Batista (Tradicional)'],
-                        ['congregacional', 'Congregacional'],
-                        ['pentecostal', 'Pentecostal'],
-                        ['assembleiana', 'Assembleiana'],
-                        ['luterana', 'Luterana'],
-                        ['anglicana', 'Anglicana'],
-                        ['independente', 'Independente'],
-                        ['outra', 'Outra']
-                    ]),
+                    self::select('denominational_base', 'Base Denominacional', true, self::denominationalBaseOptions()),
                     self::select('depth', 'Profundidade', true, [['pastoral', 'Pastoral'], ['estruturada', 'Estruturada']]),
                     self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
                     self::textarea('pastor_notes', 'Observações do pastor', false, 'Opcional'),
@@ -364,6 +342,22 @@ final class WorkflowRegistry
     private static function pastoralEmphasisOptions(): array
     {
         return [['doutrinaria', 'Doutrinária'], ['pastoral_consoladora', 'Pastoral / Consoladora'], ['exortativa', 'Exortativa'], ['evangelistica', 'Evangelística'], ['devocional', 'Devocional']];
+    }
+
+    private static function denominationalBaseOptions(): array
+    {
+        return [
+            ['presbiteriana', 'Presbiteriana'],
+            ['batista_reformada', 'Batista reformada'],
+            ['batista_tradicional', 'Batista (Tradicional)'],
+            ['congregacional', 'Congregacional'],
+            ['pentecostal', 'Pentecostal'],
+            ['assembleiana', 'Assembleiana'],
+            ['luterana', 'Luterana'],
+            ['anglicana', 'Anglicana'],
+            ['independente', 'Independente'],
+            ['outra', 'Outra'],
+        ];
     }
 
     private static function confessionalLayerOptions(): array
