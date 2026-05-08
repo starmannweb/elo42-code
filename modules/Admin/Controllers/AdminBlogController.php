@@ -74,7 +74,7 @@ class AdminBlogController extends Controller
 
         try {
             $pdo = Database::connection();
-            $stmt = $pdo->prepare("INSERT INTO blog_articles (title, slug, summary, content, cover_image, author, status, published_at) VALUES (:title, :slug, :summary, :content, :cover_image, :author, :status, :published_at)");
+            $stmt = $pdo->prepare("INSERT INTO blog_articles (title, slug, summary, content, cover_image, author, status, published_at, meta_title, meta_description, focus_keyword, noindex) VALUES (:title, :slug, :summary, :content, :cover_image, :author, :status, :published_at, :meta_title, :meta_description, :focus_keyword, :noindex)");
             $stmt->execute($data);
             Session::flash('success', 'Artigo criado com sucesso.');
         } catch (\Throwable $e) {
@@ -121,7 +121,7 @@ class AdminBlogController extends Controller
 
         try {
             $pdo = Database::connection();
-            $stmt = $pdo->prepare("UPDATE blog_articles SET title=:title, slug=:slug, summary=:summary, content=:content, cover_image=:cover_image, author=:author, status=:status, published_at=:published_at WHERE id=:id");
+            $stmt = $pdo->prepare("UPDATE blog_articles SET title=:title, slug=:slug, summary=:summary, content=:content, cover_image=:cover_image, author=:author, status=:status, published_at=:published_at, meta_title=:meta_title, meta_description=:meta_description, focus_keyword=:focus_keyword, noindex=:noindex WHERE id=:id");
             $stmt->execute($data + ['id' => $id]);
             Session::flash('success', 'Artigo atualizado.');
         } catch (\Throwable $e) {
@@ -181,15 +181,24 @@ class AdminBlogController extends Controller
             $publishedAt = date('Y-m-d H:i:s');
         }
 
+        $metaTitle = trim((string) $request->input('meta_title', '')) ?: null;
+        $metaDescription = trim((string) $request->input('meta_description', '')) ?: null;
+        $focusKeyword = trim((string) $request->input('focus_keyword', '')) ?: null;
+        $noindex = $request->input('noindex', '0') === '1' ? 1 : 0;
+
         return [
-            'title'        => $title,
-            'slug'         => $slug,
-            'summary'      => $summary,
-            'content'      => $content,
-            'cover_image'  => $coverImage,
-            'author'       => $author,
-            'status'       => $status,
-            'published_at' => $publishedAt,
+            'title'            => $title,
+            'slug'             => $slug,
+            'summary'          => $summary,
+            'content'          => $content,
+            'cover_image'      => $coverImage,
+            'author'           => $author,
+            'status'           => $status,
+            'published_at'     => $publishedAt,
+            'meta_title'       => $metaTitle,
+            'meta_description' => $metaDescription,
+            'focus_keyword'    => $focusKeyword,
+            'noindex'          => $noindex,
         ];
     }
 

@@ -433,9 +433,12 @@ class SiteController extends Controller
             // database not available — show empty state
         }
 
+        $baseUrl = $this->siteBaseUrl();
         $this->view('site/blog', [
             'pageTitle'       => 'Blog — Elo 42',
-            'metaDescription' => 'Artigos, reflexões e novidades da equipe Elo 42.',
+            'metaDescription' => 'Artigos, reflexões e novidades da equipe Elo 42 para igrejas e organizações.',
+            'canonicalUrl'    => $baseUrl . '/blog',
+            'ogImage'         => $baseUrl . '/assets/img/logo-color-new.png',
             'articles'        => $articles,
             'pagination'      => ['total' => $total, 'page' => $page, 'perPage' => $perPage, 'totalPages' => (int) ceil(max(1, $total) / $perPage)],
         ]);
@@ -462,11 +465,28 @@ class SiteController extends Controller
             return;
         }
 
+        $baseUrl      = $this->siteBaseUrl();
+        $canonicalUrl = $baseUrl . '/blog/' . rawurlencode((string) $article['slug']);
+        $metaTitle    = !empty($article['meta_title']) ? (string) $article['meta_title'] : ((string) $article['title'] . ' — Blog Elo 42');
+        $metaDesc     = !empty($article['meta_description']) ? (string) $article['meta_description'] : mb_substr((string) ($article['summary'] ?: strip_tags((string) $article['content'])), 0, 160, 'UTF-8');
+        $noindex      = !empty($article['noindex']) ? 'noindex, nofollow' : 'index, follow';
+
         $this->view('site/blog-article', [
-            'pageTitle'       => e((string) $article['title']) . ' — Blog Elo 42',
-            'metaDescription' => e(mb_substr((string) ($article['summary'] ?: strip_tags((string) $article['content'])), 0, 160, 'UTF-8')),
+            'pageTitle'       => $metaTitle,
+            'metaDescription' => $metaDesc,
+            'metaRobots'      => $noindex,
+            'canonicalUrl'    => $canonicalUrl,
+            'ogImage'         => !empty($article['cover_image']) ? (string) $article['cover_image'] : $baseUrl . '/assets/img/logo-color-new.png',
             'article'         => $article,
+            'baseUrl'         => $baseUrl,
         ]);
+    }
+
+    private function siteBaseUrl(): string
+    {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host   = (string) ($_SERVER['HTTP_HOST'] ?? 'elo42.com.br');
+        return $scheme . '://' . $host;
     }
 
     public function contact(Request $request): void

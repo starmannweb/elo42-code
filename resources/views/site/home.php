@@ -203,7 +203,7 @@
             </div>
 
             <div id="step-1" class="steps__content active">
-                <div class="step-card" style="max-width: 720px; margin: 0 auto;">
+                <div class="step-card">
                     <div class="step-card__number">1</div>
                     <div style="flex: 1;">
                         <h3 class="step-card__title" style="text-align: center;">Cadastre sua organização</h3>
@@ -217,7 +217,7 @@
             </div>
 
             <div id="step-2" class="steps__content">
-                <div class="step-card" style="max-width: 720px; margin: 0 auto;">
+                <div class="step-card">
                     <div class="step-card__number">2</div>
                     <div style="flex: 1;">
                         <h3 class="step-card__title" style="text-align: center;">Ative seus recursos</h3>
@@ -231,7 +231,7 @@
             </div>
 
             <div id="step-3" class="steps__content">
-                <div class="step-card" style="max-width: 720px; margin: 0 auto;">
+                <div class="step-card">
                     <div class="step-card__number">3</div>
                     <div style="flex: 1;">
                         <h3 class="step-card__title" style="text-align: center;">Centralize sua operação</h3>

@@ -1,5 +1,16 @@
 <?php $__view->extends('public'); ?>
 
+<?php $__view->section('head'); ?>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Blog — Elo 42">
+<meta property="og:description" content="Reflexões, novidades e conteúdos da equipe Elo 42 para igrejas e organizações.">
+<?php if (!empty($canonicalUrl)): ?><meta property="og:url" content="<?= e($canonicalUrl) ?>"><?php endif; ?>
+<meta property="og:site_name" content="Elo 42">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Blog — Elo 42">
+<meta name="twitter:description" content="Reflexões, novidades e conteúdos da equipe Elo 42 para igrejas e organizações.">
+<?php $__view->endSection(); ?>
+
 <?php $__view->section('content'); ?>
 <?php
 $articles = is_array($articles ?? null) ? $articles : [];

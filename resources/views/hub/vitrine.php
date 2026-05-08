@@ -4,7 +4,7 @@
 
 <section class="hub-page">
     <header class="hub-page__header">
-        <h1 class="hub-page__title">Loja</h1>
+        <h1 class="hub-page__title">Catálogo</h1>
         <p class="hub-page__subtitle">
             Soluções do ecossistema Elo 42 para gestão, implantação, benefícios, tráfego e operação contínua.
         </p>

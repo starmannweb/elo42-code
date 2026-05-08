@@ -1035,7 +1035,6 @@
     font-size: var(--text-base);
     color: var(--color-text-secondary);
     line-height: 1.7;
-    max-width: 520px;
     text-align: justify;
 }
 
@@ -1380,8 +1379,6 @@
 
 /* --- FAQ / Accordion --- */
 .faq-list {
-    max-width: 720px;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: var(--space-3);

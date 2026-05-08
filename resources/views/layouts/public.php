@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?= e($metaDescription ?? 'Elo 42 — Gestão, tecnologia e impacto para igrejas e organizações.') ?>">
+    <?php if (!empty($metaRobots)): ?><meta name="robots" content="<?= e($metaRobots) ?>"><?php else: ?><meta name="robots" content="index, follow"><?php endif; ?>
+    <?php if (!empty($canonicalUrl)): ?><link rel="canonical" href="<?= e($canonicalUrl) ?>"><?php endif; ?>
     <meta name="theme-color" content="#1455FF">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Elo 42">
     <link rel="manifest" href="<?= url('/app-manifest') ?>">
     <link rel="apple-touch-icon" href="<?= url('/assets/img/logo-color-new.png') ?>">
     <title><?= e($pageTitle ?? 'Elo 42 Platform') ?></title>
+    <?= $__view->yield('head') ?>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

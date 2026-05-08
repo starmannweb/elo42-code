@@ -1,6 +1,5 @@
 <?php $__view->extends('public'); ?>
 
-<?php $__view->section('content'); ?>
 <?php
 $article = is_array($article ?? null) ? $article : [];
 $title = (string) ($article['title'] ?? '');
@@ -9,7 +8,39 @@ $publishedAt = (string) ($article['published_at'] ?? $article['created_at'] ?? '
 $coverImage = (string) ($article['cover_image'] ?? '');
 $summary = (string) ($article['summary'] ?? '');
 $content = (string) ($article['content'] ?? '');
+$_ogImage = e($ogImage ?? $coverImage ?? '');
+$_canonicalUrl = e($canonicalUrl ?? '');
+$_baseUrl = e($baseUrl ?? '');
 ?>
+
+<?php $__view->section('head'); ?>
+<meta property="og:type" content="article">
+<meta property="og:title" content="<?= e($pageTitle ?? $title) ?>">
+<meta property="og:description" content="<?= e($metaDescription ?? $summary) ?>">
+<?php if ($_canonicalUrl): ?><meta property="og:url" content="<?= $_canonicalUrl ?>"><?php endif; ?>
+<?php if ($_ogImage): ?><meta property="og:image" content="<?= $_ogImage ?>"><?php endif; ?>
+<meta property="og:site_name" content="Blog Elo 42">
+<?php if ($publishedAt): ?><meta property="article:published_time" content="<?= e($publishedAt) ?>"><?php endif; ?>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<?= e($pageTitle ?? $title) ?>">
+<meta name="twitter:description" content="<?= e($metaDescription ?? $summary) ?>">
+<?php if ($_ogImage): ?><meta name="twitter:image" content="<?= $_ogImage ?>"><?php endif; ?>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": <?= json_encode($title) ?>,
+  "description": <?= json_encode($summary) ?>,
+  <?php if ($_ogImage): ?>"image": <?= json_encode($ogImage ?? $coverImage) ?>,<?php endif; ?>
+  "author": {"@type": "Person", "name": <?= json_encode($author) ?>},
+  "publisher": {"@type": "Organization", "name": "Elo 42", "url": <?= json_encode($baseUrl ?? '') ?>},
+  <?php if ($publishedAt): ?>"datePublished": <?= json_encode($publishedAt) ?>,<?php endif; ?>
+  "url": <?= json_encode($canonicalUrl ?? '') ?>
+}
+</script>
+<?php $__view->endSection(); ?>
+
+<?php $__view->section('content'); ?>
 
 <section class="page-hero">
     <div class="container">

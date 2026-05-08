@@ -152,7 +152,7 @@ $nextPendingStep = $pendingSteps[0] ?? null;
                 <a href="<?= url('/hub/ministry-ai') ?>" class="church-link-card">Central Pastoral IA</a>
                 <a href="<?= url('/hub/suporte') ?>" class="church-link-card">Suporte</a>
                 <a href="<?= url('/hub/creditos') ?>" class="church-link-card">Créditos</a>
-                <a href="<?= url('/hub/vitrine') ?>" class="church-link-card">Loja do Hub</a>
+                <a href="<?= url('/hub/vitrine') ?>" class="church-link-card">Catálogo do Hub</a>
             </div>
         </article>
     </section>

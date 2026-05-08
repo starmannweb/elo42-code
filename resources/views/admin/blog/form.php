@@ -57,6 +57,36 @@
             </div>
         </div>
 
+        <hr style="margin: var(--space-6) 0; border: none; border-top: 1px solid var(--color-border);">
+        <h3 style="font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-4); color: var(--color-text-primary);">SEO</h3>
+
+        <div class="form-group">
+            <label class="form-label">Meta título <span style="font-weight:400;color:var(--color-text-secondary);">(deixe em branco para usar o título do artigo)</span></label>
+            <input type="text" name="meta_title" class="form-input" maxlength="255" value="<?= e($isEdit ? (string) ($item['meta_title'] ?? '') : '') ?>" placeholder="Título para mecanismos de busca">
+            <small class="form-hint">Recomendado: até 60 caracteres.</small>
+        </div>
+
+        <div class="mgmt-form-row">
+            <div class="form-group">
+                <label class="form-label">Meta descrição</label>
+                <textarea name="meta_description" class="form-input" rows="2" maxlength="320" placeholder="Descrição exibida nos resultados de busca"><?= e($isEdit ? (string) ($item['meta_description'] ?? '') : '') ?></textarea>
+                <small class="form-hint">Recomendado: 120–160 caracteres.</small>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Palavra-chave foco</label>
+                <input type="text" name="focus_keyword" class="form-input" maxlength="120" value="<?= e($isEdit ? (string) ($item['focus_keyword'] ?? '') : '') ?>" placeholder="Ex: gestão de igrejas">
+                <small class="form-hint">Palavra-chave principal do artigo.</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="checkbox" name="noindex" value="1" <?= $isEdit && !empty($item['noindex']) ? 'checked' : '' ?>>
+                <span class="form-label" style="margin:0;">Não indexar (noindex)</span>
+            </label>
+            <small class="form-hint">Impede que este artigo apareça nos resultados de busca.</small>
+        </div>
+
         <div class="mgmt-form-actions">
             <button type="submit" class="btn btn--primary"><?= $isEdit ? 'Salvar alterações' : 'Criar artigo' ?></button>
             <a href="<?= url('/admin/blog') ?>" class="btn btn--secondary">Cancelar</a>
