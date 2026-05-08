@@ -328,6 +328,51 @@
     </div>
 </section>
 
+<?php if (!empty($recentArticles)): ?>
+<!-- Blog -->
+<section class="section" id="blog">
+    <div class="container">
+        <div class="section__header animate-on-scroll">
+            <span class="section__badge">✦ Blog</span>
+            <h2 class="section__title">Conteúdo para a sua organização</h2>
+            <p class="section__subtitle">
+                Reflexões, recursos e novidades da equipe Elo 42 para líderes e gestores.
+            </p>
+        </div>
+
+        <div class="blog-grid animate-on-scroll">
+            <?php foreach ($recentArticles as $a): ?>
+                <article class="blog-card">
+                    <?php if (!empty($a['cover_image'])): ?>
+                        <a href="<?= url('/blog/' . e((string) $a['slug'])) ?>" class="blog-card__cover" aria-hidden="true" tabindex="-1">
+                            <img src="<?= e((string) $a['cover_image']) ?>" alt="" loading="lazy">
+                        </a>
+                    <?php endif; ?>
+                    <div class="blog-card__body">
+                        <p class="blog-card__meta">
+                            <?= e((string) ($a['author'] ?? 'Equipe Elo 42')) ?>
+                            &middot;
+                            <?= date('d/m/Y', strtotime((string) ($a['article_date'] ?? 'now'))) ?>
+                        </p>
+                        <h2 class="blog-card__title">
+                            <a href="<?= url('/blog/' . e((string) $a['slug'])) ?>"><?= e((string) $a['title']) ?></a>
+                        </h2>
+                        <?php if (!empty($a['summary'])): ?>
+                            <p class="blog-card__summary"><?= e((string) $a['summary']) ?></p>
+                        <?php endif; ?>
+                        <a href="<?= url('/blog/' . e((string) $a['slug'])) ?>" class="blog-card__link">Ler artigo →</a>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="section__cta animate-on-scroll">
+            <a href="<?= url('/blog') ?>" class="btn btn--outline btn--lg">Ver todos os artigos</a>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <!-- FAQ -->
 <section class="section" id="faq">
     <div class="container">

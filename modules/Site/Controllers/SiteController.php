@@ -350,9 +350,24 @@ class SiteController extends Controller
 
     public function home(Request $request): void
     {
+        $recentArticles = [];
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare(
+                "SELECT id, title, slug, summary, cover_image, author, COALESCE(published_at, created_at) AS article_date
+                 FROM blog_articles WHERE status = 'published'
+                 ORDER BY article_date DESC LIMIT 3"
+            );
+            $stmt->execute();
+            $recentArticles = $stmt->fetchAll();
+        } catch (\Throwable) {
+            // database not available
+        }
+
         $this->view('site/home', [
-            'pageTitle' => 'Elo 42 — Gestão, tecnologia e impacto para a sua missão',
-            'metaDescription' => 'A Elo 42 reúne implantação, benefícios, suporte e gestão em uma plataforma feita para igrejas e organizações.',
+            'pageTitle'        => 'Elo 42 — Gestão, tecnologia e impacto para a sua missão',
+            'metaDescription'  => 'A Elo 42 reúne implantação, benefícios, suporte e gestão em uma plataforma feita para igrejas e organizações.',
+            'recentArticles'   => $recentArticles,
         ]);
     }
 
@@ -606,6 +621,38 @@ class SiteController extends Controller
             'metaDescription' => $service['meta'],
             'service' => $service,
             'slug' => $slug,
+        ]);
+    }
+
+    public function terms(Request $request): void
+    {
+        $this->view('site/terms', [
+            'pageTitle'       => 'Termos de Uso — Elo 42',
+            'metaDescription' => 'Leia os Termos de Uso da plataforma Elo 42 para igrejas e organizações.',
+        ]);
+    }
+
+    public function privacy(Request $request): void
+    {
+        $this->view('site/privacy', [
+            'pageTitle'       => 'Política de Privacidade — Elo 42',
+            'metaDescription' => 'Saiba como a Elo 42 coleta, utiliza e protege seus dados pessoais conforme a LGPD.',
+        ]);
+    }
+
+    public function cookiePolicy(Request $request): void
+    {
+        $this->view('site/cookies', [
+            'pageTitle'       => 'Política de Cookies — Elo 42',
+            'metaDescription' => 'Entenda como a Elo 42 utiliza cookies e tecnologias similares.',
+        ]);
+    }
+
+    public function help(Request $request): void
+    {
+        $this->view('site/help', [
+            'pageTitle'       => 'Central de Ajuda — Elo 42',
+            'metaDescription' => 'Encontre respostas, tutoriais e recursos para usar a plataforma Elo 42.',
         ]);
     }
 

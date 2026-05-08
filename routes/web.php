@@ -19,4 +19,8 @@ $router->group(['middleware' => ['csrf']], function ($router) {
     $router->get('/blog/{slug}', [SiteController::class, 'blogArticle']);
     $router->get('/contato', [SiteController::class, 'contact']);
     $router->post('/contato', [SiteController::class, 'contactSubmit']);
+    $router->get('/termos', [SiteController::class, 'terms']);
+    $router->get('/privacidade', [SiteController::class, 'privacy']);
+    $router->get('/politica-de-cookies', [SiteController::class, 'cookiePolicy']);
+    $router->get('/ajuda', [SiteController::class, 'help']);
 });

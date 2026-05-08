@@ -3082,3 +3082,21 @@ body[data-hub-theme="dark"] .mgmt-report-banner {
 body[data-hub-theme="dark"] .mgmt-report-banner strong {
     color: #ffffff;
 }
+
+/* Dark mode: dashboard empty states */
+body[data-hub-theme="dark"] .mgmt-dashboard-empty strong {
+    color: #f4f8ff;
+}
+
+body[data-hub-theme="dark"] .mgmt-dashboard-empty span {
+    color: #94a3b8;
+}
+
+body[data-hub-theme="dark"] .mgmt-empty-circle {
+    background: #1a2d49;
+    color: #93c5fd;
+}
+
+body[data-hub-theme="dark"] .mgmt-dashboard-card__header a {
+    color: #94a3b8 !important;
+}

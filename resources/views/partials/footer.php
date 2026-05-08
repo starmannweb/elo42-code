@@ -38,13 +38,21 @@
                 <ul class="footer__links">
                     <li><a href="<?= url('/login') ?>" class="footer__link">Entrar</a></li>
                     <li><a href="<?= url('/cadastro') ?>" class="footer__link">Criar conta</a></li>
+                    <li><a href="<?= url('/blog') ?>" class="footer__link">Blog</a></li>
+                    <li><a href="<?= url('/ajuda') ?>" class="footer__link">Central de Ajuda</a></li>
                 </ul>
             </div>
         </div>
 
         <div class="footer__bottom">
             <p>&copy; <?= date('Y') ?> Elo 42. Todos os direitos reservados.</p>
-            <p>Feito com propósito e tecnologia.</p>
+            <div class="footer__legal-links">
+                <a href="<?= url('/termos') ?>" class="footer__link">Termos de Uso</a>
+                <span>·</span>
+                <a href="<?= url('/privacidade') ?>" class="footer__link">Política de Privacidade</a>
+                <span>·</span>
+                <a href="<?= url('/politica-de-cookies') ?>" class="footer__link">Cookies</a>
+            </div>
         </div>
     </div>
 </footer>
