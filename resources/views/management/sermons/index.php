@@ -41,10 +41,6 @@
     </div>
     <div class="mgmt-header__actions">
         <button type="button" class="btn btn--outline" onclick="document.getElementById('series-modal').style.display='flex'">+ Nova série</button>
-        <a href="<?= url('/gestao/pregadores') ?>" class="btn btn--outline">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:.4rem;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg>
-            Pregadores
-        </a>
         <button type="button" class="btn btn--primary" onclick="document.getElementById('sermon-modal').style.display='flex'">+ Novo sermão</button>
     </div>
 </div>

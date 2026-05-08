@@ -304,11 +304,11 @@
                 </div>
                 <div class="hub-topbar__right" style="display:flex;align-items:center;gap:1rem;">
                     <?php if ($isSystemAdmin): ?>
-                        <a href="<?= url('/membro') ?>" class="hub-topbar__link mgmt-member-shortcut" title="Abrir área do membro">Área do membro</a>
+                        <a href="<?= url('/membro') ?>" class="hub-topbar__link mgmt-member-shortcut" title="Abrir área do membro" style="display:inline-flex;align-items:center;gap:6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:#f59e0b;flex-shrink:0;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            Área do membro
+                        </a>
                     <?php endif; ?>
-                    <a href="<?= url('/gestao/configuracoes/usuarios') ?>" class="hub-topbar__link" aria-label="Configurações" title="Configurações">
-                        <?= $icon('settings') ?>
-                    </a>
                     <button type="button" class="hub-topbar__theme-toggle" id="hub-theme-toggle" aria-label="Alternar tema" data-theme-toggle>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="theme-icon theme-icon--light"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="theme-icon theme-icon--dark"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>

@@ -996,6 +996,8 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
     column-gap: 10px;
     color: #b9c7df;
     font-size: 0.98rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
     min-height: 44px;
     padding: 9px 12px;
     margin-bottom: 0;
@@ -1047,6 +1049,7 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
     min-height: 34px;
     padding: 7px 8px;
     color: #b9c7df;
+    font-family: 'Inter', sans-serif;
 }
 
 .mgmt-layout .hub-nav-sublink:hover {
@@ -2935,7 +2938,8 @@ body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__section-title {
 body[data-hub-theme="light"] .mgmt-layout .hub-nav-link {
     color: #b9c7df !important;
     font-size: 0.98rem !important;
-    font-family: var(--font-body) !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 400 !important;
 }
 
 body[data-hub-theme="light"] .mgmt-layout .hub-nav-link:hover {
