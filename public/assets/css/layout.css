@@ -1036,6 +1036,7 @@
     color: var(--color-text-secondary);
     line-height: 1.7;
     max-width: 520px;
+    text-align: justify;
 }
 
 /* --- Bento Grid (Services) --- */
@@ -1442,6 +1443,7 @@
     font-size: var(--text-base);
     color: var(--color-text-secondary);
     line-height: 1.7;
+    text-align: justify;
 }
 
 .faq-item.active .faq-item__answer {

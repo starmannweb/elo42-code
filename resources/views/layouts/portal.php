@@ -89,12 +89,10 @@
     $parts = preg_split('/\s+/', trim((string) ($user['name'] ?? 'Usuário'))) ?: ['Usuário'];
     $initials = strtoupper(substr((string) ($parts[0] ?? 'U'), 0, 1) . substr((string) (end($parts) ?: 'U'), 0, 1));
     $nav = [
-        ['section' => 'Menu principal'],
         ['href' => '/membro', 'label' => 'Início', 'icon' => 'home', 'active' => $linkClass('/membro', $uri)],
         ['href' => '/membro/biblia', 'label' => 'Bíblia', 'icon' => 'bible', 'active' => $linkClass('/membro/biblia', $uri, true)],
         ['href' => '/membro/planos-leitura', 'label' => 'Planos de leitura', 'icon' => 'plans', 'active' => $linkClass('/membro/planos-leitura', $uri, true)],
         ['href' => '/membro/eventos', 'label' => 'Eventos', 'icon' => 'events', 'active' => $linkClass('/membro/eventos', $uri, true)],
-        ['section' => 'Recursos premium'],
         ['href' => '/membro/ministracoes', 'label' => 'Séries e Ministrações', 'icon' => 'sermons', 'premium' => true, 'active' => $linkClass('/membro/ministracoes', $uri, true)],
         ['href' => '/membro/cursos', 'label' => 'Cursos', 'icon' => 'courses', 'premium' => true, 'active' => $linkClass('/membro/cursos', $uri, true)],
         ['href' => '/membro/solicitacoes', 'label' => 'Solicitações', 'icon' => 'requests', 'premium' => true, 'active' => $linkClass('/membro/solicitacoes', $uri, true) ?: $linkClass('/membro/pedidos', $uri, true)],

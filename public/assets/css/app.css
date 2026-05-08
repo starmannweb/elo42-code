@@ -329,6 +329,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: var(--text-lg);
     color: var(--color-text-secondary);
     line-height: 1.7;
+    text-align: justify;
 }
 
 .section--dark .section__subtitle {

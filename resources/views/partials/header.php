@@ -11,6 +11,7 @@
             <li role="none"><a href="<?= url('/') ?>#projetos" class="navbar__link" role="menuitem">Como funciona</a></li>
             <li role="none"><a href="<?= url('/') ?>#funcionalidades" class="navbar__link" role="menuitem">Funcionalidades</a></li>
             <li role="none"><a href="<?= url('/') ?>#faq" class="navbar__link" role="menuitem">FAQ</a></li>
+            <li role="none"><a href="<?= url('/blog') ?>" class="navbar__link" role="menuitem">Blog</a></li>
             <li role="none"><a href="<?= url('/contato') ?>" class="navbar__link" role="menuitem">Contato</a></li>
         </ul>
 

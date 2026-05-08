@@ -3714,12 +3714,20 @@ body[data-hub-theme="dark"] .admin-sidebar .hub-nav-link__icon {
 
 .ministry-ai-form {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: var(--space-4);
+}
+
+.ministry-ai-field {
+    grid-column: span 3;
 }
 
 .ministry-ai-field--wide {
     grid-column: 1 / -1;
+}
+
+.ministry-ai-field--third {
+    grid-column: span 2;
 }
 
 .ministry-ai-insights {

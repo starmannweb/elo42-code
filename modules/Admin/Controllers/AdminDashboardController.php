@@ -26,6 +26,7 @@ class AdminDashboardController extends Controller
         $openTickets = 0;
         $activeBenefits = 0;
         $activeServices = 0;
+        $publishedArticles = 0;
         $recentUsers = [];
         $recentOrgs = [];
         $report = $this->emptyReport();
@@ -55,6 +56,7 @@ class AdminDashboardController extends Controller
             $openTickets = $safeInt(static fn () => Ticket::countOpen());
             $activeBenefits = $safeInt(static fn () => $pdo->query("SELECT COUNT(*) FROM benefits WHERE status = 'active'")->fetchColumn());
             $activeServices = $safeInt(static fn () => $pdo->query("SELECT COUNT(*) FROM services WHERE status = 'active'")->fetchColumn());
+            $publishedArticles = $safeInt(static fn () => $pdo->query("SELECT COUNT(*) FROM blog_articles WHERE status = 'published'")->fetchColumn());
             $recentUsers = $safeArray(static fn () => $pdo->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 5")->fetchAll());
             $recentOrgs = $safeArray(static fn () => $pdo->query("SELECT * FROM organizations ORDER BY created_at DESC LIMIT 5")->fetchAll());
             $report = $this->buildReport($pdo, $startDate, $endDate);
@@ -76,8 +78,9 @@ class AdminDashboardController extends Controller
             'activeSubs'     => $activeSubs,
             'trialSubs'      => $trialSubs,
             'openTickets'    => $openTickets,
-            'activeBenefits' => $activeBenefits,
-            'activeProducts' => $activeServices,
+            'activeBenefits'     => $activeBenefits,
+            'activeProducts'     => $activeServices,
+            'publishedArticles'  => $publishedArticles,
             'recentUsers'    => $recentUsers,
             'recentOrgs'     => $recentOrgs,
             'report'         => $report,

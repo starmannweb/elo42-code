@@ -15,6 +15,8 @@ $router->group(['middleware' => ['csrf']], function ($router) {
     $router->get('/consultoria', [SiteController::class, 'consulting']);
     $router->get('/funcionalidades', [SiteController::class, 'features']);
     $router->get('/faq', [SiteController::class, 'faq']);
+    $router->get('/blog', [SiteController::class, 'blog']);
+    $router->get('/blog/{slug}', [SiteController::class, 'blogArticle']);
     $router->get('/contato', [SiteController::class, 'contact']);
     $router->post('/contato', [SiteController::class, 'contactSubmit']);
 });

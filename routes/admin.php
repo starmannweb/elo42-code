@@ -68,6 +68,14 @@ $router->group(['middleware' => ['auth', 'csrf', 'admin']], function (Router $r)
     // Logs
     $r->get('/admin/logs', [\Modules\Admin\Controllers\AdminCatalogController::class, 'logs']);
 
+    // Blog
+    $r->get('/admin/blog', [\Modules\Admin\Controllers\AdminBlogController::class, 'index']);
+    $r->get('/admin/blog/novo', [\Modules\Admin\Controllers\AdminBlogController::class, 'create']);
+    $r->post('/admin/blog', [\Modules\Admin\Controllers\AdminBlogController::class, 'store']);
+    $r->get('/admin/blog/{id}/editar', [\Modules\Admin\Controllers\AdminBlogController::class, 'edit']);
+    $r->post('/admin/blog/{id}/editar', [\Modules\Admin\Controllers\AdminBlogController::class, 'update']);
+    $r->post('/admin/blog/{id}/excluir', [\Modules\Admin\Controllers\AdminBlogController::class, 'destroy']);
+
     // Settings
     $r->get('/admin/configuracoes', [\Modules\Admin\Controllers\AdminCatalogController::class, 'settings']);
     $r->post('/admin/configuracoes', [\Modules\Admin\Controllers\AdminCatalogController::class, 'updateSettings']);

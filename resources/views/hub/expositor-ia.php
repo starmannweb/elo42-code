@@ -293,20 +293,20 @@
             var required = field.required ? ' required' : '';
             var condition = field.condition || {};
             var conditionAttrs = condition.field ? ' data-condition-field="' + escapeHtml(condition.field) + '" data-condition-equals="' + escapeHtml(condition.equals || '') + '"' : '';
-            var wide = field.type === 'textarea' ? ' ministry-ai-field--wide' : '';
+            var widthClass = field.type === 'textarea' ? ' ministry-ai-field--wide' : (field.width === 'third' ? ' ministry-ai-field--third' : '');
             var label = '<label class="form-label" for="ministry_' + escapeHtml(field.name) + '">' + escapeHtml(field.label) + (field.required ? ' *' : '') + '</label>';
             if (field.type === 'textarea') {
-                return '<div class="form-group ministry-ai-field' + wide + '"' + conditionAttrs + '>' + label +
+                return '<div class="form-group ministry-ai-field' + widthClass + '"' + conditionAttrs + '>' + label +
                     '<textarea id="ministry_' + escapeHtml(field.name) + '" name="' + escapeHtml(field.name) + '" class="form-textarea" maxlength="8000" rows="5" placeholder="' + escapeHtml(field.placeholder || '') + '"' + required + '></textarea></div>';
             }
             if (field.type === 'select') {
                 var options = (field.options || []).map(function (option) {
                     return '<option value="' + escapeHtml(option[0]) + '">' + escapeHtml(option[1]) + '</option>';
                 }).join('');
-                return '<div class="form-group ministry-ai-field"' + conditionAttrs + '>' + label +
+                return '<div class="form-group ministry-ai-field' + widthClass + '"' + conditionAttrs + '>' + label +
                     '<select id="ministry_' + escapeHtml(field.name) + '" name="' + escapeHtml(field.name) + '" class="form-select"' + required + '>' + options + '</select></div>';
             }
-            return '<div class="form-group ministry-ai-field"' + conditionAttrs + '>' + label +
+            return '<div class="form-group ministry-ai-field' + widthClass + '"' + conditionAttrs + '>' + label +
                 '<input id="ministry_' + escapeHtml(field.name) + '" name="' + escapeHtml(field.name) + '" class="form-input" maxlength="500" placeholder="' + escapeHtml(field.placeholder || '') + '"' + required + '></div>';
         }).join('');
 

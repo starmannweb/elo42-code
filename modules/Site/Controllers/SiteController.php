@@ -412,6 +412,63 @@ class SiteController extends Controller
         ]);
     }
 
+    public function blog(Request $request): void
+    {
+        $page = (int) ($request->input('page', '1'));
+        $perPage = 9;
+        $articles = [];
+        $total = 0;
+
+        try {
+            $pdo = Database::connection();
+            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM blog_articles WHERE status = 'published'");
+            $countStmt->execute();
+            $total = (int) $countStmt->fetchColumn();
+
+            $offset = ($page - 1) * $perPage;
+            $stmt = $pdo->prepare("SELECT id, title, slug, summary, cover_image, author, published_at, created_at FROM blog_articles WHERE status = 'published' ORDER BY COALESCE(published_at, created_at) DESC LIMIT {$perPage} OFFSET {$offset}");
+            $stmt->execute();
+            $articles = $stmt->fetchAll();
+        } catch (\Throwable) {
+            // database not available — show empty state
+        }
+
+        $this->view('site/blog', [
+            'pageTitle'       => 'Blog — Elo 42',
+            'metaDescription' => 'Artigos, reflexões e novidades da equipe Elo 42.',
+            'articles'        => $articles,
+            'pagination'      => ['total' => $total, 'page' => $page, 'perPage' => $perPage, 'totalPages' => (int) ceil(max(1, $total) / $perPage)],
+        ]);
+    }
+
+    public function blogArticle(Request $request): void
+    {
+        $slug = trim((string) $request->param('slug', ''));
+
+        $article = null;
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("SELECT * FROM blog_articles WHERE slug = :slug AND status = 'published' LIMIT 1");
+            $stmt->execute(['slug' => $slug]);
+            $row = $stmt->fetch();
+            $article = $row ?: null;
+        } catch (\Throwable) {
+            // database not available
+        }
+
+        if (!$article) {
+            http_response_code(404);
+            $this->view('errors/404', ['pageTitle' => 'Página não encontrada — Elo 42']);
+            return;
+        }
+
+        $this->view('site/blog-article', [
+            'pageTitle'       => e((string) $article['title']) . ' — Blog Elo 42',
+            'metaDescription' => e(mb_substr((string) ($article['summary'] ?: strip_tags((string) $article['content'])), 0, 160, 'UTF-8')),
+            'article'         => $article,
+        ]);
+    }
+
     public function contact(Request $request): void
     {
         $this->view('site/contact', [

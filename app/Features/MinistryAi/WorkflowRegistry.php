@@ -86,10 +86,10 @@ final class WorkflowRegistry
                 'accent' => '#DB2777',
                 'fields' => [
                     self::select('couples_track', 'Sugestão de trilha', true, [['estrutura_7', 'Estrutura fixa - 7 encontros'], ['noivos', 'Preparação para noivos'], ['casais_novos', 'Casais no início da caminhada'], ['restauracao', 'Restauração e renovação conjugal']]),
+                    self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
                     self::textarea('couple_context', 'Contexto do casal', true, 'Descreva o contexto com cuidado pastoral.'),
                     self::select('meeting_duration', 'Duração do encontro', true, [['60', '60 minutos'], ['75', '75 minutos'], ['90', '90 minutos']]),
                     self::select('environment', 'Ambiente', true, [['sala_igreja', 'Sala na igreja'], ['casa_pastoral', 'Casa pastoral'], ['casa_casal', 'Casa do casal'], ['online', 'Online']]),
-                    self::select('confessional_layer', 'Camada confessional', true, self::confessionalLayerOptions()),
                 ],
             ],
             'plano_anual_igreja' => [
@@ -100,7 +100,7 @@ final class WorkflowRegistry
                 'accent' => '#F59E0B',
                 'fields' => [
                     self::textarea('pastoral_context', 'Visão e Contexto Pastoral', true, 'Escreva livremente. Quanto mais contexto, mais preciso o discernimento.'),
-                    self::text('reference_year', 'Ano de referência', true, (string) ((int) date('Y') + 1)),
+                    self::text('reference_year', 'Ano de referência', true, (string) ((int) date('Y') + 1)) + ['width' => 'third'],
                     self::select('denominational_base', 'Base Denominacional', true, [
                         ['presbiteriana', 'Presbiteriana'],
                         ['batista_reformada', 'Batista reformada'],
@@ -112,7 +112,7 @@ final class WorkflowRegistry
                         ['anglicana', 'Anglicana'],
                         ['independente', 'Independente'],
                         ['outra', 'Outra']
-                    ]),
+                    ]) + ['width' => 'third'],
                     self::select('confessional_layer', 'Camada Confessional', true, [
                         ['somente_biblico', 'Somente bíblico'],
                         ['westminster', 'Confissão de Westminster'],
@@ -125,7 +125,7 @@ final class WorkflowRegistry
                         ['trinta_nove_artigos', 'Trinta e Nove Artigos'],
                         ['metodista_wesleyana', 'Base metodista / wesleyana'],
                         ['batista_fe_mensagem', 'Fé e Mensagem Batista']
-                    ]),
+                    ]) + ['width' => 'third'],
                 ],
             ],
             'treinamento_lideranca' => [

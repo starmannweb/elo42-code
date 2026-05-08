@@ -40,6 +40,7 @@
                     'settings'   => '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6h.09A1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.32.23.66.26 1H21a2 2 0 0 1 0 4h-1.34c-.03.34-.12.68-.26 1z"></path>',
                     'home'       => '<path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z"></path>',
                     'flask'      => '<path d="M9 2h6"></path><path d="M10 2v7l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V2"></path><path d="M7 14h10"></path>',
+                    'blog'       => '<path d="M4 4h16v16H4z" rx="2"></path><path d="M8 9h8"></path><path d="M8 13h5"></path>',
                 ];
                 return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . ($icons[$name] ?? $icons['dashboard']) . '</svg>';
             };
@@ -75,6 +76,11 @@
                 <p class="hub-sidebar__section-title">Financeiro</p>
                 <a href="<?= url('/admin/assinaturas') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/assinaturas') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/assinaturas') ? 'aria-current="page"' : '' ?>>
                     <span class="hub-nav-link__icon" aria-hidden="true"><?= $adminIcon('card') ?></span> Assinaturas
+                </a>
+
+                <p class="hub-sidebar__section-title">Conteúdo</p>
+                <a href="<?= url('/admin/blog') ?>" class="hub-nav-link <?= str_starts_with($uri, '/admin/blog') ? 'active' : '' ?>" <?= str_starts_with($uri, '/admin/blog') ? 'aria-current="page"' : '' ?>>
+                    <span class="hub-nav-link__icon" aria-hidden="true"><?= $adminIcon('blog') ?></span> Blog
                 </a>
 
                 <p class="hub-sidebar__section-title">Operação</p>
