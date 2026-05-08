@@ -79,48 +79,48 @@ $nextPendingStep = $pendingSteps[0] ?? null;
         </div>
     <?php endif; ?>
 
-    <section class="church-metrics-grid" aria-label="Indicadores principais">
+    <section class="church-metrics-grid" aria-label="Indicadores do Hub">
         <article class="church-metric-card">
             <div class="church-metric-card__icon church-metric-card__icon--blue" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.5"></path><path d="M16 3.2a4 4 0 0 1 0 7.6"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             </div>
             <div class="church-metric-card__body">
-                <p class="church-metric-card__label">Membros cadastrados</p>
-                <p class="church-metric-card__value"><?= e((string) (int) ($churchMetrics['members_total'] ?? 0)) ?></p>
+                <p class="church-metric-card__label">Organização</p>
+                <p class="church-metric-card__value is-text"><?= e($churchStatusLabel) ?></p>
                 <p class="church-metric-card__meta"><?= e($churchStatusMeta) ?></p>
             </div>
         </article>
 
         <article class="church-metric-card">
             <div class="church-metric-card__icon church-metric-card__icon--indigo" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14.5 14.5 0 0 1 0 18M12 3a14.5 14.5 0 0 0 0 18"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
             </div>
             <div class="church-metric-card__body">
-                <p class="church-metric-card__label">Eventos ativos</p>
-                <p class="church-metric-card__value"><?= e((string) (int) ($churchMetrics['events_active'] ?? 0)) ?></p>
-                <p class="church-metric-card__meta">Agenda e comunicação</p>
+                <p class="church-metric-card__label">Site institucional</p>
+                <p class="church-metric-card__value is-text"><?= e($siteStatusLabel) ?></p>
+                <p class="church-metric-card__meta"><?= e($siteStatusMeta) ?></p>
             </div>
         </article>
 
         <article class="church-metric-card">
             <div class="church-metric-card__icon church-metric-card__icon--gold" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
             </div>
             <div class="church-metric-card__body">
-                <p class="church-metric-card__label">Solicitações abertas</p>
-                <p class="church-metric-card__value"><?= e((string) (int) ($churchMetrics['pending_requests'] ?? 0)) ?></p>
-                <p class="church-metric-card__meta">Demandas da comunidade</p>
+                <p class="church-metric-card__label">Créditos de IA</p>
+                <p class="church-metric-card__value"><?= e((string) $iaCreditsCount) ?></p>
+                <p class="church-metric-card__meta">Central Pastoral IA</p>
             </div>
         </article>
 
         <article class="church-metric-card">
             <div class="church-metric-card__icon church-metric-card__icon--green" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
             </div>
             <div class="church-metric-card__body">
-                <p class="church-metric-card__label">Saldo do período</p>
-                <p class="church-metric-card__value is-text"><?= e($formatMoney($churchBalance)) ?></p>
-                <p class="church-metric-card__meta">Receitas menos despesas</p>
+                <p class="church-metric-card__label">Suporte</p>
+                <p class="church-metric-card__value is-text"><?= e($supportStatusLabel) ?></p>
+                <p class="church-metric-card__meta"><?= e($supportStatusMeta) ?></p>
             </div>
         </article>
     </section>

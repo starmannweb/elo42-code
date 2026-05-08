@@ -1035,7 +1035,7 @@
     font-size: var(--text-base);
     color: var(--color-text-secondary);
     line-height: 1.7;
-    text-align: justify;
+    max-width: 520px;
 }
 
 /* --- Bento Grid (Services) --- */

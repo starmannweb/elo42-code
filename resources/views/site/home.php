@@ -203,11 +203,11 @@
             </div>
 
             <div id="step-1" class="steps__content active">
-                <div class="step-card">
+                <div class="step-card" style="max-width: 720px; margin: 0 auto;">
                     <div class="step-card__number">1</div>
                     <div style="flex: 1;">
-                        <h3 class="step-card__title" style="text-align: center;">Cadastre sua organização</h3>
-                        <p class="step-card__text" style="max-width: none; text-align: justify;">
+                        <h3 class="step-card__title">Cadastre sua organização</h3>
+                        <p class="step-card__text">
                             Crie sua conta, registre sua organização e defina seu perfil.
                             Em poucos minutos, você já terá acesso ao painel completo e poderá
                             iniciar a configuração com apoio da equipe Elo 42.
@@ -217,11 +217,11 @@
             </div>
 
             <div id="step-2" class="steps__content">
-                <div class="step-card">
+                <div class="step-card" style="max-width: 720px; margin: 0 auto;">
                     <div class="step-card__number">2</div>
                     <div style="flex: 1;">
-                        <h3 class="step-card__title" style="text-align: center;">Ative seus recursos</h3>
-                        <p class="step-card__text" style="max-width: none; text-align: justify;">
+                        <h3 class="step-card__title">Ative seus recursos</h3>
+                        <p class="step-card__text">
                             Escolha os módulos que fazem sentido para a sua realidade:
                             gestão de membros, finanças, eventos, comunicação, benefícios e mais.
                             Cada módulo é ativado sob demanda, sem obrigatoriedade.
@@ -231,11 +231,11 @@
             </div>
 
             <div id="step-3" class="steps__content">
-                <div class="step-card">
+                <div class="step-card" style="max-width: 720px; margin: 0 auto;">
                     <div class="step-card__number">3</div>
                     <div style="flex: 1;">
-                        <h3 class="step-card__title" style="text-align: center;">Centralize sua operação</h3>
-                        <p class="step-card__text" style="max-width: none; text-align: justify;">
+                        <h3 class="step-card__title">Centralize sua operação</h3>
+                        <p class="step-card__text">
                             Com tudo em um só lugar, sua equipe opera com mais foco,
                             sua liderança toma decisões com dados e sua organização
                             cresce com estrutura de verdade.
