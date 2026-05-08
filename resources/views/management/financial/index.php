@@ -91,7 +91,7 @@
                 </td>
                 <td>
                     <?php if ($t['category_name']): ?>
-                    <span class="badge" style="background: rgba(30,58,138,0.08); color: #1e3a8a; font-size:10px; text-transform:uppercase;"><?= e($t['category_name']) ?></span>
+                    <span class="badge badge--category"><?= e($t['category_name']) ?></span>
                     <?php else: ?>—<?php endif; ?>
                 </td>
                 <td><div class="mgmt-table__name"><?= e($t['description']) ?></div></td>

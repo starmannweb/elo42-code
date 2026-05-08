@@ -368,15 +368,20 @@ body[data-hub-theme="dark"] .mgmt-report-banner strong {
 }
 
 body[data-hub-theme="dark"] .mgmt-filter-card {
-    background: #fff;
-    border-color: #d7e3f5;
+    background: #0f172a;
+    border-color: #1e293b;
 }
 
-body[data-hub-theme="dark"] .mgmt-filter-field .form-label,
+body[data-hub-theme="dark"] .mgmt-filter-field .form-label {
+    color: #94a3b8;
+}
+
 body[data-hub-theme="dark"] .mgmt-filter-field .form-control,
 body[data-hub-theme="dark"] .mgmt-filter-field .form-input,
 body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
-    color: #06183a;
+    background: #111c31;
+    border-color: #2c3b55;
+    color: #f8fafc;
 }
 
 @media (max-width: 960px) {
@@ -1874,6 +1879,19 @@ textarea.form-input,
     color: #0f4eea;
 }
 
+.badge--category {
+    background: rgba(30, 58, 138, 0.1);
+    color: #1e3a8a;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+body[data-hub-theme="dark"] .badge--category {
+    background: rgba(96, 130, 220, 0.2);
+    color: #93b4ff;
+}
+
 .badge-warning {
     background: #fff3d6;
     color: #a16207;
@@ -2069,6 +2087,7 @@ body[data-hub-theme="dark"] .mgmt-layout .pwa-upload-field {
     grid-template-columns: minmax(220px, 1fr) repeat(auto-fit, minmax(150px, max-content));
     align-items: end !important;
     gap: 0.8rem !important;
+    margin-bottom: 1.5rem;
 }
 
 .mgmt-filter-form .btn {
@@ -3019,4 +3038,47 @@ body[data-hub-theme="light"] .mgmt-layout .mgmt-sidebar-action--logout:hover {
     background: rgba(185, 28, 28, 0.28) !important;
     border-color: #ef4444 !important;
     color: #fecaca !important;
+}
+
+/* ================================================================
+   Dark mode: table headers + hover rows
+   ================================================================ */
+body[data-hub-theme="dark"] .mgmt-layout .mgmt-table th,
+body[data-hub-theme="dark"] .mgmt-layout .data-table th {
+    background: #0d1d35;
+    border-color: #1e293b;
+    color: #94a3b8;
+}
+
+body[data-hub-theme="dark"] .mgmt-layout .mgmt-table td,
+body[data-hub-theme="dark"] .mgmt-layout .data-table td {
+    border-color: #1a2d49;
+}
+
+body[data-hub-theme="dark"] .mgmt-layout .mgmt-table tr:hover td,
+body[data-hub-theme="dark"] .mgmt-layout .data-table tr:hover td {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* Dark mode: mgmt-subtitle / mgmt-panel__hint hardcoded overrides */
+body[data-hub-theme="dark"] .mgmt-layout .mgmt-header__subtitle,
+body[data-hub-theme="dark"] .mgmt-layout .mgmt-subtitle,
+body[data-hub-theme="dark"] .mgmt-layout .mgmt-panel__hint {
+    color: #94a3b8;
+}
+
+/* Dark mode: badges that use hardcoded light colors in financial pages */
+body[data-hub-theme="dark"] .mgmt-layout .badge:not([class*="badge--"]):not([class*="badge-"]) {
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+}
+
+/* Dark mode: mgmt-report-banner (already covered, reinforcing) */
+body[data-hub-theme="dark"] .mgmt-report-banner {
+    background: rgba(10, 77, 255, 0.15);
+    border-color: rgba(99, 144, 255, 0.35);
+    color: #e2eaf8;
+}
+body[data-hub-theme="dark"] .mgmt-report-banner strong {
+    color: #ffffff;
 }

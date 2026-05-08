@@ -928,6 +928,52 @@
                 @media (max-width: 860px) {
                     .site-publish-summary { grid-template-columns: 1fr; }
                 }
+
+                body[data-hub-theme="dark"] .site-publish-summary,
+                body[data-hub-theme="dark"] .site-publish-controls {
+                    background: #0f172a;
+                    border-color: #1e293b;
+                }
+                body[data-hub-theme="dark"] .site-publish-summary__meta dt {
+                    color: #94a3b8;
+                }
+                body[data-hub-theme="dark"] .site-publish-summary__meta dd,
+                body[data-hub-theme="dark"] .site-publish-controls .hub-panel__title,
+                body[data-hub-theme="dark"] .site-publish-summary .hub-panel__title {
+                    color: #f4f8ff;
+                }
+                body[data-hub-theme="dark"] .site-publish-controls .hub-panel__text,
+                body[data-hub-theme="dark"] .site-publish-summary .hub-panel__text {
+                    color: #94a3b8;
+                }
+                body[data-hub-theme="dark"] .site-publish-summary__copy {
+                    background: #111c31;
+                    border-color: #2c3b55;
+                    color: #94a3b8;
+                }
+                body[data-hub-theme="dark"] .site-publish-dns p {
+                    color: #94a3b8;
+                }
+                body[data-hub-theme="dark"] .site-publish-dns code {
+                    background: #111c31;
+                    color: #93c5fd;
+                }
+                body[data-hub-theme="dark"] .site-publish-dns__row {
+                    color: #94a3b8;
+                    border-color: #1e293b;
+                }
+                body[data-hub-theme="dark"] .site-publish-dns__row:first-of-type {
+                    background: #0d1d35;
+                }
+                body[data-hub-theme="dark"] .site-publish-dns__row--data {
+                    color: #c8d8f0;
+                }
+                body[data-hub-theme="dark"] .site-readiness-list li:has(button.site-readiness-list__row):hover {
+                    background: rgba(10,77,255,.12);
+                }
+                body[data-hub-theme="dark"] .site-publish-cta .hub-panel__title {
+                    color: #f4f8ff;
+                }
             </style>
 
             <script>
