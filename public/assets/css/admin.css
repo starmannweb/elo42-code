@@ -76,7 +76,7 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
 }
 
 .admin-dashboard-stats {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     align-items: stretch;
 }
 
@@ -128,7 +128,13 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
     justify-content: center;
 }
 
-@media (max-width: 1500px) {
+@media (max-width: 1300px) {
+    .admin-dashboard-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
     .admin-dashboard-stats {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
