@@ -113,19 +113,7 @@ final class WorkflowRegistry
                         ['independente', 'Independente'],
                         ['outra', 'Outra']
                     ]) + ['width' => 'third'],
-                    self::select('confessional_layer', 'Camada Confessional', true, [
-                        ['somente_biblico', 'Somente bíblico'],
-                        ['westminster', 'Confissão de Westminster'],
-                        ['londres_1689', 'Confissão Batista de Londres'],
-                        ['tres_formas_unidade', 'Três Formas de Unidade'],
-                        ['catecismo_heidelberg', 'Catecismo de Heidelberg'],
-                        ['canones_dort', 'Cânones de Dort'],
-                        ['confissao_belga', 'Confissão Belga'],
-                        ['augsburgo', 'Confissão de Augsburgo'],
-                        ['trinta_nove_artigos', 'Trinta e Nove Artigos'],
-                        ['metodista_wesleyana', 'Base metodista / wesleyana'],
-                        ['batista_fe_mensagem', 'Fé e Mensagem Batista']
-                    ]) + ['width' => 'third'],
+                    self::select('confessional_layer', 'Camada Confessional', true, self::confessionalLayerOptions()) + ['width' => 'third'],
                 ],
             ],
             'treinamento_lideranca' => [
@@ -389,9 +377,20 @@ final class WorkflowRegistry
             ['canones_dort', 'Cânones de Dort'],
             ['confissao_belga', 'Confissão Belga'],
             ['augsburgo', 'Confissão de Augsburgo'],
+            ['formula_concordia', 'Fórmula de Concórdia'],
+            ['catecismo_lutero', 'Catecismo de Lutero'],
             ['trinta_nove_artigos', 'Trinta e Nove Artigos'],
+            ['confissao_savoy', 'Declaração de Savoy'],
+            ['new_hampshire', 'Confissão de New Hampshire'],
             ['metodista_wesleyana', 'Base metodista / wesleyana'],
             ['batista_fe_mensagem', 'Fé e Mensagem Batista'],
+            ['pentecostal_classico', 'Pentecostal clássico'],
+            ['carismatica_renovacao', 'Carismática / Renovação'],
+            ['declaracao_lausanne', 'Declaração de Lausanne'],
+            ['dispensacionalista', 'Dispensacionalista'],
+            ['anabatista', 'Anabatista / Menonita'],
+            ['adventista_28_crencas', '28 Crenças Fundamentais (Adventista)'],
+            ['outra', 'Outra'],
         ];
     }
 }
