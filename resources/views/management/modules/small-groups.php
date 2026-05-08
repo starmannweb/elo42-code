@@ -123,7 +123,12 @@
                 </div>
                 <div class="form-group">
                     <label for="leader_name" class="form-label">Líder <span style="color: var(--danger);">*</span></label>
-                    <input type="text" id="leader_name" name="leader_name" class="form-control" required>
+                    <select id="leader_name" name="leader_name" class="form-control" required>
+                        <option value="">Selecione o líder...</option>
+                        <?php foreach ($members ?? [] as $member): ?>
+                            <option value="<?= e($member['name']) ?>"><?= e($member['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-group">

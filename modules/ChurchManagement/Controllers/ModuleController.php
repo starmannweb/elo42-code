@@ -195,6 +195,7 @@ class ModuleController extends Controller
                     $stmt = $pdo->prepare("SELECT * FROM small_groups WHERE organization_id = :org_id ORDER BY name ASC");
                     $stmt->execute(['org_id' => $orgId]);
                     $groups = $stmt->fetchAll();
+                    $members = Member::byOrg($orgId, [], 1, 500)['data'] ?? [];
                 } catch (\Throwable $e) {
                     error_log('Error fetching small groups: ' . $e->getMessage());
                 }
@@ -205,6 +206,7 @@ class ModuleController extends Controller
                 'breadcrumb' => 'Grupos Pequenos',
                 'activeMenu' => 'celulas',
                 'groups' => $groups,
+                'members' => $members ?? [],
                 'csrf' => Session::get('csrf_token', ''),
             ]);
         } catch (\Throwable $e) {

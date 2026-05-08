@@ -937,12 +937,12 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
    Management Layout (Church Reference)
    ============================================= */
 .mgmt-layout .hub-sidebar {
-    background: #f7f9fc;
-    border-right: 1px solid #e4e8f0;
+    background: #0A1F44;
+    border-right: 1px solid #142a59;
 }
 
 .mgmt-layout .hub-sidebar__header {
-    border-bottom: 1px solid #e4e8f0;
+    border-bottom: 1px solid #142a59;
     min-height: 82px;
     display: flex;
     align-items: center;
@@ -965,11 +965,11 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 }
 
 .mgmt-layout .hub-sidebar__brand-subtitle {
-    color: #6d7890;
+    color: #8aa3cc;
 }
 
 .mgmt-layout .hub-sidebar__section-title {
-    color: #8a95ac;
+    color: #6b85b5;
 }
 
 .mgmt-layout .hub-sidebar__nav {
@@ -994,7 +994,7 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
     align-items: center;
     justify-items: stretch;
     column-gap: 10px;
-    color: #3b4a65;
+    color: #b9c7df;
     font-size: 0.98rem;
     min-height: 44px;
     padding: 9px 12px;
@@ -1036,6 +1036,7 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 .mgmt-layout .hub-nav-sublist {
     margin: 2px 0 8px 26px;
     padding: 3px 0 3px 16px;
+    border-left: 1px solid rgba(185, 199, 223, 0.18);
 }
 
 .mgmt-layout .hub-nav-sublink {
@@ -1045,6 +1046,19 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
     gap: 9px;
     min-height: 34px;
     padding: 7px 8px;
+    color: #b9c7df;
+}
+
+.mgmt-layout .hub-nav-sublink:hover {
+    background: #112852;
+    color: #ffffff;
+    border-radius: 8px;
+}
+
+.mgmt-layout .hub-nav-sublink.active {
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    border-radius: 8px;
 }
 
 .mgmt-layout .hub-nav-sublink__label {
@@ -1112,21 +1126,21 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 }
 
 .mgmt-layout .hub-nav-link:hover {
-    background: #ecf2fb;
-    color: #11284f;
+    background: #112852;
+    color: #ffffff;
 }
 
 .mgmt-layout .hub-nav-link.active {
-    background: #dfeafb;
-    color: #0d3f8f;
+    background: #112852;
+    color: #38bdf8;
 }
 
 .mgmt-layout .hub-nav-link.active::before {
-    background: #0a4dff;
+    background: #38bdf8;
 }
 
 .mgmt-layout .hub-sidebar__footer {
-    border-top: 1px solid #e4e8f0;
+    border-top: 1px solid #142a59;
     display: grid;
     gap: 0.6rem;
     padding: 14px;
@@ -1178,16 +1192,16 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 }
 
 .mgmt-layout .hub-sidebar__user-avatar {
-    background: #e6eefc;
-    color: #1f3a68;
+    background: #112852;
+    color: #ffffff;
 }
 
 .mgmt-layout .hub-sidebar__user-name {
-    color: #1f3359;
+    color: #ffffff;
 }
 
 .mgmt-layout .hub-sidebar__user-role {
-    color: #6c7b97;
+    color: #8aa3cc;
 }
 
 .mgmt-layout .hub-main {
