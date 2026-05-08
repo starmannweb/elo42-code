@@ -328,7 +328,6 @@
     </div>
 </section>
 
-<?php if (!empty($recentArticles)): ?>
 <!-- Blog -->
 <section class="section" id="blog">
     <div class="container">
@@ -340,38 +339,51 @@
             </p>
         </div>
 
-        <div class="blog-grid animate-on-scroll">
-            <?php foreach ($recentArticles as $a): ?>
-                <article class="blog-card">
-                    <?php if (!empty($a['cover_image'])): ?>
-                        <a href="<?= url('/blog/' . e((string) $a['slug'])) ?>" class="blog-card__cover" aria-hidden="true" tabindex="-1">
-                            <img src="<?= e((string) $a['cover_image']) ?>" alt="" loading="lazy">
-                        </a>
-                    <?php endif; ?>
-                    <div class="blog-card__body">
-                        <p class="blog-card__meta">
-                            <?= e((string) ($a['author'] ?? 'Equipe Elo 42')) ?>
-                            &middot;
-                            <?= date('d/m/Y', strtotime((string) ($a['article_date'] ?? 'now'))) ?>
-                        </p>
-                        <h2 class="blog-card__title">
-                            <a href="<?= url('/blog/' . e((string) $a['slug'])) ?>"><?= e((string) $a['title']) ?></a>
-                        </h2>
-                        <?php if (!empty($a['summary'])): ?>
-                            <p class="blog-card__summary"><?= e((string) $a['summary']) ?></p>
+        <?php $recentArticles = is_array($recentArticles ?? null) ? $recentArticles : []; ?>
+        <?php if (!empty($recentArticles)): ?>
+            <div class="blog-grid animate-on-scroll">
+                <?php foreach ($recentArticles as $a): ?>
+                    <article class="blog-card">
+                        <?php if (!empty($a['cover_image'])): ?>
+                            <a href="<?= url('/blog/' . e((string) $a['slug'])) ?>" class="blog-card__cover" aria-hidden="true" tabindex="-1">
+                                <img src="<?= e((string) $a['cover_image']) ?>" alt="" loading="lazy">
+                            </a>
                         <?php endif; ?>
-                        <a href="<?= url('/blog/' . e((string) $a['slug'])) ?>" class="blog-card__link">Ler artigo →</a>
-                    </div>
-                </article>
-            <?php endforeach; ?>
-        </div>
+                        <div class="blog-card__body">
+                            <p class="blog-card__meta">
+                                <?= e((string) ($a['author'] ?? 'Equipe Elo 42')) ?>
+                                &middot;
+                                <?= date('d/m/Y', strtotime((string) ($a['article_date'] ?? 'now'))) ?>
+                            </p>
+                            <h2 class="blog-card__title">
+                                <a href="<?= url('/blog/' . e((string) $a['slug'])) ?>"><?= e((string) $a['title']) ?></a>
+                            </h2>
+                            <?php if (!empty($a['summary'])): ?>
+                                <p class="blog-card__summary"><?= e((string) $a['summary']) ?></p>
+                            <?php endif; ?>
+                            <a href="<?= url('/blog/' . e((string) $a['slug'])) ?>" class="blog-card__link">Ler artigo →</a>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="blog-coming-soon animate-on-scroll">
+                <div class="blog-coming-soon__icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <h3>Conteúdo em breve</h3>
+                <p>Artigos, reflexões e recursos para líderes e gestores de organizações.</p>
+                <a href="<?= url('/blog') ?>" class="btn btn--outline">Visitar o blog</a>
+            </div>
+        <?php endif; ?>
 
-        <div class="section__cta animate-on-scroll">
-            <a href="<?= url('/blog') ?>" class="btn btn--outline btn--lg">Ver todos os artigos</a>
-        </div>
+        <?php if (!empty($recentArticles)): ?>
+            <div class="section__cta animate-on-scroll">
+                <a href="<?= url('/blog') ?>" class="btn btn--outline btn--lg">Ver todos os artigos</a>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
-<?php endif; ?>
 
 <!-- FAQ -->
 <section class="section" id="faq">

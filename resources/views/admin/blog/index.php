@@ -24,7 +24,7 @@ $pagination = is_array($pagination ?? null) ? $pagination : ['total' => 0, 'page
         <option value="published" <?= ($filters['status'] ?? '') === 'published' ? 'selected' : '' ?>>Publicados</option>
         <option value="draft" <?= ($filters['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Rascunhos</option>
     </select>
-    <button type="submit" class="btn btn--primary">Filtrar</button>
+    <button type="submit" class="btn btn--outline">Filtrar</button>
 </form>
 
 <?php if (empty($articles)): ?>
