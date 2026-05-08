@@ -2353,6 +2353,16 @@ body[data-hub-theme="dark"] .modal textarea {
     color: #f8fafc;
 }
 
+body[data-hub-theme="dark"] .form-control option,
+body[data-hub-theme="dark"] .form-input option,
+body[data-hub-theme="dark"] .form-select option,
+body[data-hub-theme="dark"] .mgmt-card select option,
+body[data-hub-theme="dark"] .modal select option,
+body[data-hub-theme="dark"] select option {
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
 /* Final UI normalization */
 .hub-content {
     color: #08122d;

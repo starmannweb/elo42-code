@@ -2785,8 +2785,10 @@ body[data-hub-theme="dark"] .form-textarea:focus {
     box-shadow: 0 0 0 4px rgba(95, 151, 255, 0.14);
 }
 
-body[data-hub-theme="dark"] .form-select option {
-    color: #102445;
+body[data-hub-theme="dark"] .form-select option,
+body[data-hub-theme="dark"] select option {
+    background-color: #0d1e38;
+    color: #f0f6ff;
 }
 
 body[data-hub-theme="dark"] .church-step-item.is-pending {
