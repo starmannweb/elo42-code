@@ -318,6 +318,72 @@ class MemberPortalController extends Controller
         }
     }
 
+    public function subscribeRequired(Request $request): void
+    {
+        $user         = Session::user() ?? [];
+        $organization = Session::get('organization') ?? [];
+        $this->view('portal/subscribe-required', [
+            'pageTitle'    => 'Área do Membro — Assinatura Necessária',
+            'user'         => $user,
+            'organization' => $organization,
+            'activeMenu'   => '',
+            'breadcrumb'   => 'Área do Membro',
+            'appearanceSettings' => [],
+        ]);
+    }
+
+    public function rsvpEvent(Request $request): void
+    {
+        try {
+            $eventId = (int) $request->param('id');
+            $orgId   = $this->orgId();
+            $userId  = (int) (Session::user()['id'] ?? 0);
+
+            if ($orgId <= 0 || $eventId <= 0 || $userId <= 0) {
+                Session::flash('error', 'Não foi possível confirmar a inscrição.');
+                redirect('/membro/eventos');
+            }
+
+            $pdo = $this->connection();
+            if (!$pdo) {
+                Session::flash('error', 'Serviço indisponível no momento.');
+                redirect('/membro/eventos');
+            }
+
+            // Ensure table exists
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS event_registrations (
+                    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                    event_id INT UNSIGNED NOT NULL,
+                    organization_id INT UNSIGNED NOT NULL,
+                    user_id INT UNSIGNED NOT NULL,
+                    status VARCHAR(20) NOT NULL DEFAULT 'confirmed',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE KEY uk_event_user (event_id, user_id)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ");
+
+            $check = $pdo->prepare("SELECT id FROM event_registrations WHERE event_id = :eid AND user_id = :uid");
+            $check->execute(['eid' => $eventId, 'uid' => $userId]);
+
+            if ($check->fetch()) {
+                Session::flash('success', 'Você já está inscrito neste evento.');
+            } else {
+                $pdo->prepare("
+                    INSERT INTO event_registrations (event_id, organization_id, user_id, status, created_at)
+                    VALUES (:eid, :oid, :uid, 'confirmed', NOW())
+                ")->execute(['eid' => $eventId, 'oid' => $orgId, 'uid' => $userId]);
+
+                Session::flash('success', 'Presença confirmada com sucesso!');
+            }
+        } catch (\Throwable $e) {
+            error_log('[PORTAL_RSVP] ' . $e->getMessage());
+            Session::flash('error', 'Não foi possível confirmar a presença agora.');
+        }
+
+        redirect('/membro/eventos');
+    }
+
     private function quickActions(): array
     {
         return [

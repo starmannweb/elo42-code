@@ -43,13 +43,18 @@ class PlanMiddleware implements MiddlewareInterface
             } catch (\Throwable $e) {}
         }
 
-        // Lógica: se exige premium e está no free (e fora do trial), barra. 
+        // Lógica: se exige premium e está no free (e fora do trial), barra.
         if ($requiredPlan === 'premium' && !$isPremiumLike && !$isSystemAdmin && !$isTrialActive) {
             if ($request->isAjax() || str_starts_with($request->uri(), '/api/')) {
                 http_response_code(403);
                 header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'error' => 'Recurso restrito ao Plano Premium.']);
                 exit;
+            }
+
+            // Members accessing the portal get a portal-specific blocked page
+            if (str_starts_with($request->uri(), '/membro')) {
+                redirect('/membro/assine');
             }
 
             Session::flash('warning', 'Este recurso é exclusivo do Plano Premium. Assine agora para desbloquear!');

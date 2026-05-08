@@ -2908,3 +2908,87 @@ body[data-hub-theme="dark"] .mgmt-dashboard-card {
     background: #10223d;
     border-color: rgba(155, 183, 226, 0.22);
 }
+
+/* --- Management sidebar: fixed dark appearance regardless of hub theme --- */
+body[data-hub-theme="light"] .mgmt-layout .hub-sidebar {
+    background: #0A1F44 !important;
+    border-right: 1px solid #142a59 !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__header,
+body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__footer {
+    border-color: #142a59 !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__logo .logo-dark {
+    display: inline-block !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__logo .logo-light {
+    display: none !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__section-title {
+    color: #6b85b5 !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-nav-link {
+    color: #b9c7df !important;
+    font-size: 0.98rem !important;
+    font-family: var(--font-body) !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-nav-link:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+    color: #f8fafc !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-nav-link.active {
+    background: rgba(10, 77, 255, 0.18) !important;
+    color: #ffffff !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-nav-sublink {
+    color: #8aa3cc !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-nav-sublink.active {
+    color: #ffffff !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__user-avatar {
+    background: #112852 !important;
+    color: #ffffff !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__user-name {
+    color: #ffffff !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__user-role {
+    color: #8aa3cc !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .mgmt-sidebar-action {
+    background: #111f35 !important;
+    border: 1px solid #243857 !important;
+    color: #cbd5e1 !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .mgmt-sidebar-action:hover {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .mgmt-sidebar-action--logout {
+    background: rgba(127, 29, 29, 0.18) !important;
+    border-color: rgba(248, 113, 113, 0.32) !important;
+    color: #fca5a5 !important;
+}
+
+body[data-hub-theme="light"] .mgmt-layout .mgmt-sidebar-action--logout:hover {
+    background: rgba(185, 28, 28, 0.28) !important;
+    border-color: #ef4444 !important;
+    color: #fecaca !important;
+}

@@ -138,6 +138,7 @@ class AdminCatalogController extends Controller
         $this->view('admin/benefits/form', [
             'pageTitle' => 'Nova cortesia', 'breadcrumb' => 'Cortesias / Nova', 'item' => null,
             'services' => Service::all('sort_order'),
+            'organizations' => $this->listOrganizations(),
         ]);
     }
 
@@ -156,8 +157,9 @@ class AdminCatalogController extends Controller
         $this->ensureDefaultServices();
 
         $this->view('admin/benefits/form', [
-            'services' => Service::all('sort_order'),
-            'pageTitle' => 'Editar — ' . e($item['name']), 'breadcrumb' => 'Cortesias / Editar', 'item' => $item,
+            'services'      => Service::all('sort_order'),
+            'organizations' => $this->listOrganizations(),
+            'pageTitle'     => 'Editar — ' . e($item['name']), 'breadcrumb' => 'Cortesias / Editar', 'item' => $item,
         ]);
     }
 
@@ -407,6 +409,18 @@ class AdminCatalogController extends Controller
         }
 
         return $data;
+    }
+
+    private function listOrganizations(): array
+    {
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->query("SELECT id, name FROM organizations ORDER BY name ASC");
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_BENEFITS_ORGS] ' . $e->getMessage());
+            return [];
+        }
     }
 
     private function ensureDefaultServices(): void

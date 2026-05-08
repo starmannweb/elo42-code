@@ -3099,7 +3099,8 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar__user-avatar {
 }
 
 .hub-sidebar__header .hub-sidebar__logo img {
-    max-height: 38px;
+    max-height: 46px;
+    max-width: 150px;
     object-position: left center;
 }
 

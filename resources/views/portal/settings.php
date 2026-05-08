@@ -21,7 +21,7 @@
                 <form class="portal-form" method="POST" action="<?= url('/membro/configuracoes/salvar') ?>">
                     <?= csrf_field() ?>
                     <div style="display:flex;align-items:center;gap:16px;">
-                        <span class="portal-avatar" style="width:72px;height:72px;font-size:1.4rem;"><?= e(strtoupper(substr($user['name'] ?? 'U', 0, 1))) ?></span>
+                        <span class="portal-avatar" style="width:72px;height:72px;font-size:1.4rem;border-radius:50%;flex-shrink:0;"><?= e(strtoupper(substr($user['name'] ?? 'U', 0, 1))) ?></span>
                         <div>
                             <strong><?= e($user['name'] ?? 'Usuário') ?></strong>
                             <p class="portal-list-card__text" style="margin:2px 0 0;"><?= e($user['email'] ?? '') ?></p>

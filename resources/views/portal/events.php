@@ -64,6 +64,7 @@
         <?php else: ?>
             <div class="portal-grid portal-grid--2">
                 <?php foreach ($events as $event): ?>
+                    <?php $eventId = (int) ($event['id'] ?? 0); ?>
                     <article class="portal-card">
                         <div class="portal-card__body">
                             <div style="display:flex;align-items:flex-start;gap:16px;">
@@ -78,6 +79,15 @@
                                         <span><?= e($formatDate($event['start_date'] ?? null)) ?></span>
                                         <span><?= e($event['location'] ?? 'Local a confirmar') ?></span>
                                     </div>
+                                    <?php if ($eventId > 0): ?>
+                                        <form method="POST" action="<?= url('/membro/eventos/' . $eventId . '/inscricao') ?>" style="margin-top:14px;">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="portal-btn portal-btn--primary" style="font-size:0.85rem;padding:8px 18px;">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px;margin-right:5px;"><path d="M20 6L9 17l-5-5"></path></svg>
+                                                Confirmar presença
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>

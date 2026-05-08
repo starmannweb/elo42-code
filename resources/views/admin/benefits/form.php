@@ -1,8 +1,11 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
 <?php
-$isEdit = $item !== null;
-$services = $services ?? [];
+$isEdit        = $item !== null;
+$services      = $services ?? [];
+$organizations = $organizations ?? [];
+$currentTargetType = $isEdit ? ($item['target_type'] ?? '') : '';
+$currentTargetId   = $isEdit ? ($item['target_id'] ?? '') : '';
 ?>
 <div class="mgmt-header"><div><h1 class="mgmt-header__title"><?= $isEdit ? 'Editar cortesia' : 'Nova cortesia' ?></h1></div></div>
 <div class="mgmt-form-card" style="max-width:760px;">
@@ -13,9 +16,9 @@ $services = $services ?? [];
         </div>
         <div class="mgmt-form-row">
             <div class="form-group">
-                <label class="form-label">Produto/serviço liberado</label>
+                <label class="form-label">Serviço liberado</label>
                 <select name="service_id" class="form-select">
-                    <option value="">Qualquer serviço</option>
+                    <option value="">Todos os serviços</option>
                     <?php foreach ($services as $service): ?>
                         <option value="<?= $service['id'] ?>" <?= $isEdit && (int)($item['service_id'] ?? 0) === (int)$service['id'] ? 'selected' : '' ?>><?= e($service['name']) ?></option>
                     <?php endforeach; ?>
@@ -26,14 +29,27 @@ $services = $services ?? [];
         <div class="mgmt-form-row">
             <div class="form-group">
                 <label class="form-label">Vincular a</label>
-                <select name="target_type" class="form-select">
-                    <option value="">Definir depois</option>
-                    <option value="organization" <?= $isEdit && ($item['target_type'] ?? '') === 'organization' ? 'selected' : '' ?>>Instituição</option>
-                    <option value="user" <?= $isEdit && ($item['target_type'] ?? '') === 'user' ? 'selected' : '' ?>>Usuário</option>
+                <select name="target_type" id="benefit_target_type" class="form-select" onchange="benefitTargetTypeChanged(this.value)">
+                    <option value="">Todas as instituições</option>
+                    <option value="organization" <?= $currentTargetType === 'organization' ? 'selected' : '' ?>>Instituição específica</option>
+                    <option value="user" <?= $currentTargetType === 'user' ? 'selected' : '' ?>>Usuário específico</option>
                 </select>
             </div>
-            <div class="form-group"><label class="form-label">ID do vínculo</label><input type="number" name="target_id" class="form-input" value="<?= e($isEdit ? ($item['target_id'] ?? '') : '') ?>" placeholder="ID da instituição ou usuário"></div>
+            <div class="form-group" id="benefit_org_wrap" style="<?= $currentTargetType !== 'organization' ? 'display:none' : '' ?>">
+                <label class="form-label">Instituição</label>
+                <select name="target_id" id="benefit_target_org" class="form-select">
+                    <option value="">Selecione…</option>
+                    <?php foreach ($organizations as $org): ?>
+                        <option value="<?= $org['id'] ?>" <?= (string)$currentTargetId === (string)$org['id'] ? 'selected' : '' ?>><?= e($org['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group" id="benefit_user_wrap" style="<?= $currentTargetType !== 'user' ? 'display:none' : '' ?>">
+                <label class="form-label">ID do usuário</label>
+                <input type="number" name="target_id" id="benefit_target_user" class="form-input" value="<?= $currentTargetType === 'user' ? e($currentTargetId) : '' ?>" placeholder="ID do usuário">
+            </div>
         </div>
+        <input type="hidden" name="target_id" id="benefit_target_none" value="" <?= $currentTargetType !== '' ? 'disabled' : '' ?>>
         <div class="form-group"><label class="form-label">Nome exibido do vínculo</label><input type="text" name="target_label" class="form-input" value="<?= e($isEdit ? ($item['target_label'] ?? '') : '') ?>" placeholder="Ex.: Igreja Central ou Maria Silva"></div>
         <div class="form-group"><label class="form-label">Descrição</label><textarea name="description" class="form-input" rows="3"><?= e($isEdit ? $item['description'] : '') ?></textarea></div>
         <div class="form-group"><label class="form-label">Requisitos</label><textarea name="requirements" class="form-input" rows="3"><?= e($isEdit ? $item['requirements'] : '') ?></textarea></div>
@@ -45,4 +61,26 @@ $services = $services ?? [];
         <div class="mgmt-form-actions"><button type="submit" class="btn btn--primary"><?= $isEdit ? 'Salvar' : 'Criar' ?></button><a href="<?= url('/admin/cortesias') ?>" class="btn btn--secondary">Cancelar</a></div>
     </form>
 </div>
+<script>
+function benefitTargetTypeChanged(type) {
+    var orgWrap  = document.getElementById('benefit_org_wrap');
+    var userWrap = document.getElementById('benefit_user_wrap');
+    var noneInput = document.getElementById('benefit_target_none');
+    var orgSel   = document.getElementById('benefit_target_org');
+    var userInput = document.getElementById('benefit_target_user');
+
+    orgWrap.style.display  = type === 'organization' ? '' : 'none';
+    userWrap.style.display = type === 'user' ? '' : 'none';
+
+    orgSel.disabled    = type !== 'organization';
+    userInput.disabled = type !== 'user';
+    noneInput.disabled = type !== '';
+
+    if (type !== 'organization') orgSel.value = '';
+    if (type !== 'user') userInput.value = '';
+}
+document.addEventListener('DOMContentLoaded', function () {
+    benefitTargetTypeChanged(document.getElementById('benefit_target_type').value);
+});
+</script>
 <?php $__view->endSection(); ?>

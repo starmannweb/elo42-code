@@ -327,6 +327,45 @@
                 <?php if ($alert = flash('warning')): ?>
                     <div class="alert alert--warning" role="alert"><?= e($alert) ?></div>
                 <?php endif; ?>
+                <?php
+                    $mgmtTrialExpired = false;
+                    $mgmtAdminEmail   = 'ricieri@starmannweb.com.br';
+                    $mgmtUserEmail    = strtolower((string) ($user['email'] ?? ''));
+                    $mgmtCreatedAt    = (string) ($user['created_at'] ?? '');
+                    $mgmtOrgId        = (int) ($organization['id'] ?? 0);
+                    $mgmtPlan         = (string) ($organization['plan'] ?? 'free');
+                    $mgmtPremiumPlans = ['premium', 'professional', 'enterprise'];
+
+                    if ($mgmtUserEmail !== $mgmtAdminEmail
+                        && !in_array($mgmtPlan, $mgmtPremiumPlans, true)
+                        && $mgmtCreatedAt !== ''
+                        && $mgmtOrgId > 0
+                    ) {
+                        try {
+                            $mgmtDeadline = (new \DateTimeImmutable($mgmtCreatedAt))->modify('+7 days');
+                            if (new \DateTimeImmutable('now') >= $mgmtDeadline) {
+                                $mgmtPdo  = \App\Core\Database::connection();
+                                $mgmtStmt = $mgmtPdo->prepare("SELECT COUNT(*) FROM subscriptions WHERE organization_id = :oid AND status IN ('active','trialing')");
+                                $mgmtStmt->execute(['oid' => $mgmtOrgId]);
+                                if ((int) $mgmtStmt->fetchColumn() === 0) {
+                                    $mgmtTrialExpired = true;
+                                }
+                            }
+                        } catch (\Throwable $mgmtEx) {}
+                    }
+                ?>
+                <?php if ($mgmtTrialExpired): ?>
+                    <div class="alert" role="alert" style="background:rgba(217,119,6,0.14);border:1px solid #d97706;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            <div>
+                                <strong style="color:#fcd34d;display:block;">Período de teste encerrado</strong>
+                                <span style="font-size:0.875rem;color:rgba(255,255,255,0.72);">Assine o plano de gestão para continuar usando o sistema sem interrupções.</span>
+                            </div>
+                        </div>
+                        <a href="<?= url('/gestao/assinatura') ?>" style="flex-shrink:0;padding:8px 18px;border-radius:6px;background:#d97706;color:#fff;font-weight:600;font-size:0.875rem;text-decoration:none;">Ver planos</a>
+                    </div>
+                <?php endif; ?>
 
                 <?php
                     if ($isActive(['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico'], $uri)) {
