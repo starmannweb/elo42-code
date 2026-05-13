@@ -176,6 +176,9 @@
                 ['href' => '/gestao/configuracoes/pix', 'label' => 'PIX / Ofertas', 'icon' => 'pix', 'premium' => true],
                 ['href' => '/gestao/configuracoes/seo', 'label' => 'SEO', 'icon' => 'seo', 'premium' => true],
                 ['href' => '/gestao/configuracoes/pwa', 'label' => 'APP', 'icon' => 'pwa', 'premium' => true],
+                ['href' => '/gestao/configuracoes/cadastro-publico', 'label' => 'Cadastro Público', 'icon' => 'users'],
+                ['href' => '/gestao/configuracoes/backup', 'label' => 'Backup', 'icon' => 'settings'],
+                ['href' => '/gestao/configuracoes/perigo', 'label' => 'Perigo', 'icon' => 'settings'],
             ];
             $adminTabs = [
                 ['href' => '/gestao/sermoes', 'label' => 'Séries e Sermões', 'icon' => 'sermon', 'active' => ['/gestao/sermoes']],
@@ -370,6 +373,10 @@
                 <?php
                     if ($isActive(['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico'], $uri)) {
                         $renderTabs($peopleTabs);
+                    } elseif ($isActive(['/gestao/receitas', '/gestao/doacoes', '/gestao/despesas', '/gestao/categorias-financeiras', '/gestao/aprovacoes-despesas', '/gestao/auditoria', '/gestao/contas'], $uri)) {
+                        $renderTabs($treasuryTabs);
+                    } elseif ($isActive(['/gestao/sermoes', '/gestao/pregadores', '/gestao/relatorios'], $uri)) {
+                        $renderTabs($adminTabs);
                     } elseif ($isActive(['/gestao/configuracoes', '/gestao/usuarios'], $uri)) {
                         $renderTabs($settingsTabs);
                     }
