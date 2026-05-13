@@ -48,6 +48,7 @@
     font-size: var(--text-sm);
     color: var(--color-text-muted);
     margin-top: 4px;
+    margin-bottom: 0.5rem;
 }
 
 .mgmt-report-banner {

@@ -15,12 +15,12 @@
             <p class="mgmt-header__subtitle"><?= e($monthLabel) ?></p>
         </div>
         <div style="display:flex; align-items:center; gap:16px;">
-            <span class="hub-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M4 21h16"></path><path d="M5 12h14v9H5z"></path><path d="M7 12V9a5 5 0 0 1 10 0v3"></path><path d="M9 7c0-1 .7-2 1.5-3C11.3 5 12 6 12 7"></path><path d="M14 7c0-1 .7-2 1.5-3C16.3 5 17 6 17 7"></path>
+            <div style="display:inline-flex; align-items:center; gap:8px; font-size:16px; font-weight:800; color:var(--color-text-primary); text-transform:uppercase; letter-spacing:0.5px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" style="opacity:0.8;">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                <?= $birthdayCount ?> aniversariante<?= $birthdayCount !== 1 ? 's' : '' ?>
-            </span>
+                <?= $birthdayCount ?> ANIVERSARIANTE<?= $birthdayCount !== 1 ? 'S' : '' ?>
+            </div>
             <?php if ($birthdayCount > 0): ?>
                 <button type="button" class="btn btn--primary" onclick="openCardsModal()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>

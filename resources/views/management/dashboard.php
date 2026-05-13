@@ -187,28 +187,61 @@ $balance = (float) ($financial['balance'] ?? 0);
             <header class="mgmt-dashboard-card__header">
                 <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Gênero</h2>
             </header>
-            <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
+            <div style="margin-top:20px; display:flex; gap:24px; align-items:center; flex:1;">
                 <?php 
                 $totalGender = array_sum($demographics['gender']);
                 $pctM = $totalGender > 0 ? round(($demographics['gender']['M'] / $totalGender) * 100) : 0;
                 $pctF = $totalGender > 0 ? round(($demographics['gender']['F'] / $totalGender) * 100) : 0;
                 $pctO = $totalGender > 0 ? round(($demographics['gender']['other'] / $totalGender) * 100) : 0;
+                
+                // SVG Pie Chart calculations (using dasharray)
+                // Circumference of r=15.9 is ~100
+                $dashF = $pctF;
+                $dashM = $pctM;
+                $dashO = $pctO;
                 ?>
-                <div class="mgmt-progress-item">
-                    <div class="mgmt-progress-item__head" style="margin-bottom:8px;">
-                        <span style="font-weight:600; color:var(--color-text-primary);">Feminino</span>
-                        <strong style="color:var(--text-muted);"><?= $pctF ?>%</strong>
-                    </div>
-                    <div class="progress-bar" style="height:8px; background:var(--color-bg-light);"><div class="progress-bar__fill" style="width:<?= $pctF ?>%; background:#ec4899; border-radius:4px;"></div></div>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><?= $demographics['gender']['F'] ?> pessoas</div>
+                <div style="width: 140px; height: 140px; position: relative; flex-shrink: 0;">
+                    <?php if ($totalGender > 0): ?>
+                    <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="#ec4899" stroke-width="6" stroke-dasharray="<?= $dashF ?> <?= 100 - $dashF ?>" stroke-dashoffset="0"></circle>
+                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="#3b82f6" stroke-width="6" stroke-dasharray="<?= $dashM ?> <?= 100 - $dashM ?>" stroke-dashoffset="-<?= $dashF ?>"></circle>
+                        <?php if ($pctO > 0): ?>
+                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="#94a3b8" stroke-width="6" stroke-dasharray="<?= $dashO ?> <?= 100 - $dashO ?>" stroke-dashoffset="-<?= $dashF + $dashM ?>"></circle>
+                        <?php endif; ?>
+                    </svg>
+                    <?php else: ?>
+                    <svg viewBox="0 0 36 36" style="width: 100%; height: 100%;">
+                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--color-border-light)" stroke-width="6"></circle>
+                    </svg>
+                    <?php endif; ?>
                 </div>
-                <div class="mgmt-progress-item">
-                    <div class="mgmt-progress-item__head" style="margin-bottom:8px;">
-                        <span style="font-weight:600; color:var(--color-text-primary);">Masculino</span>
-                        <strong style="color:var(--text-muted);"><?= $pctM ?>%</strong>
+                <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                            <span style="width:12px; height:12px; border-radius:50%; background:#ec4899;"></span>
+                            <span style="font-weight:600; color:var(--color-text-primary); font-size: 14px;">Feminino</span>
+                            <strong style="color:var(--text-muted); margin-left:auto;"><?= $pctF ?>%</strong>
+                        </div>
+                        <div style="font-size:12px; color:var(--text-muted); padding-left: 20px;"><?= $demographics['gender']['F'] ?> pessoas</div>
                     </div>
-                    <div class="progress-bar" style="height:8px; background:var(--color-bg-light);"><div class="progress-bar__fill" style="width:<?= $pctM ?>%; background:#3b82f6; border-radius:4px;"></div></div>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><?= $demographics['gender']['M'] ?> pessoas</div>
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                            <span style="width:12px; height:12px; border-radius:50%; background:#3b82f6;"></span>
+                            <span style="font-weight:600; color:var(--color-text-primary); font-size: 14px;">Masculino</span>
+                            <strong style="color:var(--text-muted); margin-left:auto;"><?= $pctM ?>%</strong>
+                        </div>
+                        <div style="font-size:12px; color:var(--text-muted); padding-left: 20px;"><?= $demographics['gender']['M'] ?> pessoas</div>
+                    </div>
+                    <?php if ($pctO > 0): ?>
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                            <span style="width:12px; height:12px; border-radius:50%; background:#94a3b8;"></span>
+                            <span style="font-weight:600; color:var(--color-text-primary); font-size: 14px;">Outro / Ñ Inf.</span>
+                            <strong style="color:var(--text-muted); margin-left:auto;"><?= $pctO ?>%</strong>
+                        </div>
+                        <div style="font-size:12px; color:var(--text-muted); padding-left: 20px;"><?= $demographics['gender']['other'] ?> pessoas</div>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </article>
