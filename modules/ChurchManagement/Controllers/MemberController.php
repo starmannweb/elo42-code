@@ -145,6 +145,11 @@ class MemberController extends Controller
         try {
             $member = Member::find((int) $request->param('id'));
             if (!$member || (int) $member['organization_id'] !== $this->orgId()) {
+                if ($request->isAjax()) {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Membro não encontrado.']);
+                    exit;
+                }
                 redirect('/gestao/membros');
             }
             $member['unit_name'] = null;
@@ -154,12 +159,24 @@ class MemberController extends Controller
                     break;
                 }
             }
+            
+            if ($request->isAjax()) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'member' => $member]);
+                exit;
+            }
+
             $this->view('management/members/show', [
                 'pageTitle'  => e($member['name']) . ' - Gestao',
                 'breadcrumb' => 'Membros / ' . $member['name'],
                 'member'     => $member,
             ]);
         } catch (\Throwable $e) {
+            if ($request->isAjax()) {
+                http_response_code(500);
+                echo json_encode(['error' => $e->getMessage()]);
+                exit;
+            }
             Session::flash('error', 'Erro ao carregar membro: ' . $e->getMessage());
             redirect('/gestao/membros');
         }

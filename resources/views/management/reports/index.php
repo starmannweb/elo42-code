@@ -31,7 +31,10 @@
             <span>Fim</span>
             <input type="date" name="end_date" class="form-control" value="<?= e((string) ($filters['end_date'] ?? date('Y-m-t'))) ?>">
         </label>
-        <div class="mgmt-report-filter__actions">
+        <div class="mgmt-report-filter__actions" style="display:flex; gap:8px;">
+            <button type="submit" name="export" value="excel" class="btn btn--outline" style="color: #059669; border-color: #059669;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Exportar Excel
+            </button>
             <button type="submit" name="export" value="pdf" class="btn btn--primary" formtarget="_blank">Exportar PDF</button>
         </div>
     </form>

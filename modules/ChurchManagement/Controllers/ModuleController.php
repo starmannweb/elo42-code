@@ -394,39 +394,74 @@ class ModuleController extends Controller
             $type = trim((string) $request->input('type', ''));
             $month = trim((string) $request->input('month', date('Y-m'))) ?: date('Y-m');
 
+            // Handle the Ranking logic
+            $path = parse_url((string) $_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '';
+            $isTopDonors = str_ends_with($path, '/ranking');
+            
             $donations = [];
             $summary = ['total' => 0, 'tithe' => 0, 'offering' => 0, 'donors' => 0];
             $pixKey = '';
             $pixWarning = true;
             $members = [];
             $units = [];
+            $topDonors = [];
 
             if ($orgId > 0) {
-                try {
-                    $period = \DateTimeImmutable::createFromFormat('!Y-m', $month) ?: new \DateTimeImmutable('first day of this month');
-                    $filters = [
-                        'search' => $search,
-                        'type' => in_array($type, ['tithe', 'offering', 'special', 'campaign', 'other'], true) ? $type : '',
-                        'start_date' => $period->format('Y-m-01'),
-                        'end_date'   => $period->format('Y-m-t'),
-                    ];
-                    $result = Donation::byOrg($orgId, $filters, 1, 30);
-                    $donations = $result['data'] ?? [];
-                    $summaryData = Donation::summaryByType($orgId, $filters['start_date'], $filters['end_date']);
-                    foreach (is_array($summaryData) ? $summaryData : [] as $row) {
-                        $type = (string) ($row['type'] ?? '');
-                        $amount = (float) ($row['total'] ?? 0);
-                        $summary['total'] += $amount;
-                        if ($type === 'tithe') {
-                            $summary['tithe'] += $amount;
-                        } elseif ($type === 'offering') {
-                            $summary['offering'] += $amount;
-                        }
-                        $summary['donors'] += (int) ($row['count'] ?? 0);
+                if ($isTopDonors) {
+                    try {
+                        $pdo = \App\Core\Database::connection();
+                        $currentYear = date('Y');
+                        $stmt = $pdo->prepare("
+                            SELECT 
+                                m.name, 
+                                COUNT(ft.id) as donations_count, 
+                                SUM(ft.amount) as total_amount
+                            FROM financial_transactions ft
+                            JOIN members m ON ft.member_id = m.id
+                            WHERE ft.organization_id = :org_id 
+                              AND (ft.type = 'tithe' OR ft.type = 'offering')
+                              AND ft.status = 'confirmed'
+                              AND ft.transaction_date LIKE :year_pattern
+                            GROUP BY ft.member_id
+                            ORDER BY total_amount DESC
+                            LIMIT 50
+                        ");
+                        $stmt->execute([
+                            'org_id' => $orgId,
+                            'year_pattern' => $currentYear . '-%'
+                        ]);
+                        $topDonors = $stmt->fetchAll();
+                    } catch (\Throwable $e) {
+                        error_log('Error fetching top donors: ' . $e->getMessage());
                     }
-                    $members = Member::byOrg($orgId, [], 1, 500)['data'] ?? [];
-                    $units = $this->churchUnits();
-                } catch (\Throwable $e) {}
+                } else {
+                    try {
+                        $period = \DateTimeImmutable::createFromFormat('!Y-m', $month) ?: new \DateTimeImmutable('first day of this month');
+                        $filters = [
+                            'search' => $search,
+                            'type' => in_array($type, ['tithe', 'offering', 'special', 'campaign', 'other'], true) ? $type : '',
+                            'start_date' => $period->format('Y-m-01'),
+                            'end_date'   => $period->format('Y-m-t'),
+                        ];
+                        $result = Donation::byOrg($orgId, $filters, 1, 30);
+                        $donations = $result['data'] ?? [];
+                        $summaryData = Donation::summaryByType($orgId, $filters['start_date'], $filters['end_date']);
+                        foreach (is_array($summaryData) ? $summaryData : [] as $row) {
+                            $typeStr = (string) ($row['type'] ?? '');
+                            $amount = (float) ($row['total'] ?? 0);
+                            $summary['total'] += $amount;
+                            if ($typeStr === 'tithe') {
+                                $summary['tithe'] += $amount;
+                            } elseif ($typeStr === 'offering') {
+                                $summary['offering'] += $amount;
+                            }
+                            $summary['donors'] += (int) ($row['count'] ?? 0);
+                        }
+                    } catch (\Throwable $e) {}
+                }
+
+                $members = Member::byOrg($orgId, [], 1, 500)['data'] ?? [];
+                $units = $this->churchUnits();
 
                 try {
                     $pdo = \App\Core\Database::connection();
@@ -441,17 +476,19 @@ class ModuleController extends Controller
             }
 
             $this->view('management/modules/tithes', [
-                'pageTitle'  => 'Dízimos & Ofertas — Gestão',
-                'breadcrumb' => 'Dízimos & Ofertas',
-                'activeMenu' => 'dizimos-ofertas',
-                'donations'  => $donations,
-                'summary'    => $summary,
-                'pixKey'     => $pixKey,
-                'pixWarning' => $pixWarning,
-                'orgName'    => $orgName,
-                'members'    => $members,
-                'units'      => $units,
-                'filters'    => ['search' => $search, 'type' => $filters['type'] ?? $type, 'month' => $month],
+                'pageTitle'   => ($isTopDonors ? 'Top Dizimistas' : 'Dízimos & Ofertas') . ' — Gestão',
+                'breadcrumb'  => 'Dízimos & Ofertas',
+                'activeMenu'  => 'dizimos-ofertas',
+                'donations'   => $donations,
+                'summary'     => $summary,
+                'pixKey'      => $pixKey,
+                'pixWarning'  => $pixWarning,
+                'orgName'     => $orgName,
+                'members'     => $members,
+                'units'       => $units,
+                'filters'     => ['search' => $search, 'type' => $type, 'month' => $month],
+                'isTopDonors' => $isTopDonors,
+                'topDonors'   => $topDonors,
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar dizimos & ofertas.');

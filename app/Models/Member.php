@@ -102,4 +102,63 @@ class Member extends Model
             return 0;
         }
     }
+
+    public static function getDemographics(int $orgId): array
+    {
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("
+                SELECT gender, birth_date
+                FROM members
+                WHERE organization_id = :org AND status = 'active'
+            ");
+            $stmt->execute(['org' => $orgId]);
+            $members = $stmt->fetchAll();
+
+            $demographics = [
+                'gender' => ['M' => 0, 'F' => 0, 'other' => 0],
+                'age' => ['0-12' => 0, '13-17' => 0, '18-25' => 0, '26-35' => 0, '36-50' => 0, '51+' => 0, 'unknown' => 0]
+            ];
+
+            $now = new \DateTime();
+
+            foreach ($members as $member) {
+                // Gender
+                $g = strtoupper(trim((string) ($member['gender'] ?? '')));
+                if ($g === 'M' || $g === 'MALE' || $g === 'MASCULINO') {
+                    $demographics['gender']['M']++;
+                } elseif ($g === 'F' || $g === 'FEMALE' || $g === 'FEMININO') {
+                    $demographics['gender']['F']++;
+                } else {
+                    $demographics['gender']['other']++;
+                }
+
+                // Age
+                if (!empty($member['birth_date'])) {
+                    try {
+                        $birthDate = new \DateTime($member['birth_date']);
+                        $age = $now->diff($birthDate)->y;
+
+                        if ($age <= 12) $demographics['age']['0-12']++;
+                        elseif ($age <= 17) $demographics['age']['13-17']++;
+                        elseif ($age <= 25) $demographics['age']['18-25']++;
+                        elseif ($age <= 35) $demographics['age']['26-35']++;
+                        elseif ($age <= 50) $demographics['age']['36-50']++;
+                        else $demographics['age']['51+']++;
+                    } catch (\Exception $e) {
+                        $demographics['age']['unknown']++;
+                    }
+                } else {
+                    $demographics['age']['unknown']++;
+                }
+            }
+
+            return $demographics;
+        } catch (\Throwable $e) {
+            return [
+                'gender' => ['M' => 0, 'F' => 0, 'other' => 0],
+                'age' => ['0-12' => 0, '13-17' => 0, '18-25' => 0, '26-35' => 0, '36-50' => 0, '51+' => 0, 'unknown' => 0]
+            ];
+        }
+    }
 }

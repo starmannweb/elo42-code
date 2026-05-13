@@ -179,6 +179,72 @@ $balance = (float) ($financial['balance'] ?? 0);
     </section>
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 class="mgmt-section-title" style="margin-bottom: 0;">Demografia</h2>
+    </div>
+
+    <section class="mgmt-dashboard-grid">
+        <article class="mgmt-dashboard-card" style="display:flex; flex-direction:column;">
+            <header class="mgmt-dashboard-card__header">
+                <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Gênero</h2>
+            </header>
+            <div style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
+                <?php 
+                $totalGender = array_sum($demographics['gender']);
+                $pctM = $totalGender > 0 ? round(($demographics['gender']['M'] / $totalGender) * 100) : 0;
+                $pctF = $totalGender > 0 ? round(($demographics['gender']['F'] / $totalGender) * 100) : 0;
+                $pctO = $totalGender > 0 ? round(($demographics['gender']['other'] / $totalGender) * 100) : 0;
+                ?>
+                <div class="mgmt-progress-item">
+                    <div class="mgmt-progress-item__head" style="margin-bottom:8px;">
+                        <span style="font-weight:600; color:var(--color-text-primary);">Feminino</span>
+                        <strong style="color:var(--text-muted);"><?= $pctF ?>%</strong>
+                    </div>
+                    <div class="progress-bar" style="height:8px; background:var(--color-bg-light);"><div class="progress-bar__fill" style="width:<?= $pctF ?>%; background:#ec4899; border-radius:4px;"></div></div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><?= $demographics['gender']['F'] ?> pessoas</div>
+                </div>
+                <div class="mgmt-progress-item">
+                    <div class="mgmt-progress-item__head" style="margin-bottom:8px;">
+                        <span style="font-weight:600; color:var(--color-text-primary);">Masculino</span>
+                        <strong style="color:var(--text-muted);"><?= $pctM ?>%</strong>
+                    </div>
+                    <div class="progress-bar" style="height:8px; background:var(--color-bg-light);"><div class="progress-bar__fill" style="width:<?= $pctM ?>%; background:#3b82f6; border-radius:4px;"></div></div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><?= $demographics['gender']['M'] ?> pessoas</div>
+                </div>
+            </div>
+        </article>
+
+        <article class="mgmt-dashboard-card" style="display:flex; flex-direction:column;">
+            <header class="mgmt-dashboard-card__header">
+                <h2 style="display:flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg> Faixa Etária</h2>
+            </header>
+            <div style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+                <?php 
+                $totalAge = array_sum($demographics['age']);
+                $labels = [
+                    '0-12' => ['Crianças (0-12)', '#10b981'],
+                    '13-17' => ['Adolescentes (13-17)', '#f59e0b'],
+                    '18-25' => ['Jovens (18-25)', '#8b5cf6'],
+                    '26-35' => ['Jovens Adultos (26-35)', '#6366f1'],
+                    '36-50' => ['Adultos (36-50)', '#ec4899'],
+                    '51+' => ['Melhor Idade (51+)', '#64748b']
+                ];
+                foreach ($labels as $key => $data): 
+                    $count = $demographics['age'][$key];
+                    $pct = $totalAge > 0 ? round(($count / $totalAge) * 100) : 0;
+                ?>
+                <div class="mgmt-progress-item">
+                    <div class="mgmt-progress-item__head" style="margin-bottom:6px; font-size: 13px;">
+                        <span style="font-weight:600; color:var(--color-text-primary);"><?= $data[0] ?></span>
+                        <strong style="color:var(--text-muted); font-size: 12px;"><?= $pct ?>% (<?= $count ?>)</strong>
+                    </div>
+                    <div class="progress-bar" style="height:6px; background:var(--color-bg-light);"><div class="progress-bar__fill" style="width:<?= $pct ?>%; background:<?= $data[1] ?>; border-radius:3px;"></div></div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </article>
+    </section>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h2 class="mgmt-section-title" style="margin-bottom: 0;">Visão Geral</h2>
     </div>
 

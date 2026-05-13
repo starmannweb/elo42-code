@@ -76,6 +76,13 @@ class ManagementDashboardController extends Controller
             return FinancialTransaction::summary($orgId, $startOfMonth, $endOfMonth);
         }, ['income' => 0, 'expense' => 0, 'balance' => 0]);
 
+        $demographics = $safe(static function () use ($orgId): array {
+            return Member::getDemographics($orgId);
+        }, [
+            'gender' => ['M' => 0, 'F' => 0, 'other' => 0],
+            'age' => ['0-12' => 0, '13-17' => 0, '18-25' => 0, '26-35' => 0, '36-50' => 0, '51+' => 0, 'unknown' => 0]
+        ]);
+
         $this->view('management/dashboard', [
             'pageTitle'        => 'Gestão - Elo 42',
             'breadcrumb'       => 'Gestão',
@@ -90,6 +97,7 @@ class ManagementDashboardController extends Controller
             'pendingTasks'     => $safe(static fn (): int => ActionPlan::pendingTasks($orgId), 0),
             'donationsMonth'   => $safe(static fn (): float => Donation::totalByOrg($orgId), 0.0),
             'financial'        => $financial,
+            'demographics'     => $demographics,
         ]);
     }
 }

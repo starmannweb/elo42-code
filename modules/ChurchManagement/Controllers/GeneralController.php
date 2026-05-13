@@ -730,6 +730,44 @@ class GeneralController extends Controller
                 return;
             }
 
+            if ($req->input('export') === 'excel') {
+                header('Content-Type: text/csv; charset=utf-8');
+                header('Content-Disposition: attachment; filename=relatorio-' . $reportType . '-' . date('Ymd_His') . '.csv');
+                $output = fopen('php://output', 'w');
+                // Adiciona BOM para UTF-8 no Excel
+                fputs($output, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
+
+                fputcsv($output, ['Relatorio de Gestao Elo 42', date('d/m/Y H:i:s')], ';');
+                fputcsv($output, ['Tipo:', $reportType], ';');
+                fputcsv($output, ['Periodo:', $startDate . ' a ' . $endDate], ';');
+                fputcsv($output, [], ';');
+
+                if (in_array($reportType, ['overview', 'members'])) {
+                    fputcsv($output, ['--- MEMBROS ---'], ';');
+                    fputcsv($output, ['Total de Membros', $data['totalMembers']], ';');
+                    fputcsv($output, ['Membros Ativos', $data['activeMembers']], ';');
+                    fputcsv($output, ['Novos no Periodo', $data['newMembers']], ';');
+                    fputcsv($output, [], ';');
+                }
+
+                if (in_array($reportType, ['overview', 'financial'])) {
+                    fputcsv($output, ['--- FINANCEIRO ---'], ';');
+                    fputcsv($output, ['Total Receitas (R$)', number_format($financial['income'] ?? 0, 2, ',', '')], ';');
+                    fputcsv($output, ['Total Despesas (R$)', number_format($financial['expense'] ?? 0, 2, ',', '')], ';');
+                    fputcsv($output, ['Saldo (R$)', number_format($financial['balance'] ?? 0, 2, ',', '')], ';');
+                    fputcsv($output, [], ';');
+                }
+
+                if (in_array($reportType, ['overview', 'events'])) {
+                    fputcsv($output, ['--- EVENTOS ---'], ';');
+                    fputcsv($output, ['Eventos Ativos', $data['activeEvents']], ';');
+                    fputcsv($output, [], ';');
+                }
+
+                fclose($output);
+                exit;
+            }
+
             $this->view('management/reports/index', $data);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar relatórios: ' . $e->getMessage());
@@ -886,6 +924,34 @@ class GeneralController extends Controller
     public function settingsCategories(Request $req): void
     {
         redirect('/gestao/categorias-financeiras');
+    }
+
+    public function settingsRegistration(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Cadastro Público', 'configuracoes/cadastro-publico');
+            $this->view('management/settings/registration', array_merge($context, [
+                'pageTitle' => 'Cadastro Público — Gestão',
+                'activeTab' => 'cadastro'
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar cadastro público: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function settingsBackup(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Backup e Restauração', 'configuracoes/backup');
+            $this->view('management/settings/backup', array_merge($context, [
+                'pageTitle' => 'Backup e Restauração — Gestão',
+                'activeTab' => 'backup'
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar configurações de backup: ' . $e->getMessage());
+            redirect('/gestao');
+        }
     }
 
     public function settingsUnits(Request $req): void
