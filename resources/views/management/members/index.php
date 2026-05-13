@@ -12,17 +12,7 @@
     </div>
 </div>
 
-<!-- Tabs de navegação -->
-<div style="border-bottom: 1px solid var(--color-border-light); margin-bottom: 1.5rem; display: flex; gap: 1.5rem; overflow-x: auto;">
-    <a href="<?= url('/gestao/membros') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= empty($isTopDonors) ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= empty($isTopDonors) ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= empty($isTopDonors) ? '600' : '500' ?>; white-space: nowrap;">
-        Todos os Membros
-    </a>
-    <a href="<?= url('/gestao/membros/top-ofertantes') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= !empty($isTopDonors) ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= !empty($isTopDonors) ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= !empty($isTopDonors) ? '600' : '500' ?>; white-space: nowrap; display:flex; align-items:center; gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
-        Top Ofertantes
-        <span class="badge badge--warning" style="font-size:9px; padding: 2px 6px;">PREMIUM</span>
-    </a>
-</div>
+<!-- Tabs removidas pois são renderizadas pelo layout base -->
 
 <?php if (!empty($isTopDonors)): ?>
 <div class="mgmt-dashboard-card" style="padding:0;overflow:hidden;">

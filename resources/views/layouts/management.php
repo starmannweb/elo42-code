@@ -161,6 +161,7 @@
                 ['href' => '/gestao/aniversarios', 'label' => 'Aniversariantes', 'icon' => 'birthday', 'premium' => true],
                 ['href' => '/gestao/jornadas', 'label' => 'Jornada espiritual', 'icon' => 'journey', 'premium' => true],
                 ['href' => '/gestao/historico', 'label' => 'Histórico', 'icon' => 'audit', 'premium' => true],
+                ['href' => '/gestao/membros/top-ofertantes', 'label' => 'Top Ofertantes', 'icon' => 'award', 'premium' => true],
             ];
             $treasuryTabs = [
                 ['href' => '/gestao/receitas', 'label' => 'Receitas', 'icon' => 'income', 'active' => ['/gestao/receitas', '/gestao/doacoes']],
