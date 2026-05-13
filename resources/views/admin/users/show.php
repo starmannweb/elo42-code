@@ -4,7 +4,40 @@
 $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'suspended' => 'Suspenso'];
 $membershipLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'pending' => 'Pendente', 'invited' => 'Convidado', 'suspended' => 'Suspenso'];
 ?>
-<div class="mgmt-header"><div><h1 class="mgmt-header__title"><?= e($user['name']) ?></h1><p class="mgmt-header__subtitle"><?= e($user['email']) ?></p></div><div class="mgmt-header__actions"><a href="<?= url('/admin/usuarios/' . $user['id'] . '/editar') ?>" class="btn btn--secondary">Editar</a></div></div>
+<div class="mgmt-header">
+    <div>
+        <h1 class="mgmt-header__title"><?= e($user['name']) ?></h1>
+        <p class="mgmt-header__subtitle"><?= e($user['email']) ?></p>
+    </div>
+    <div class="mgmt-header__actions" style="display:flex; gap:8px;">
+        <button type="button" class="btn btn--outline" onclick="document.getElementById('modal-reset-password').style.display='flex'">Redefinir Senha</button>
+        <a href="<?= url('/admin/usuarios/' . $user['id'] . '/editar') ?>" class="btn btn--secondary">Editar</a>
+    </div>
+</div>
+
+<div class="modal" id="modal-reset-password" style="display:none;" role="dialog" aria-modal="true">
+    <div class="modal__content">
+        <div class="modal__header">
+            <h2 class="modal__title">Redefinir Senha</h2>
+            <button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'">&times;</button>
+        </div>
+        <form method="POST" action="<?= url('/admin/usuarios/' . $user['id'] . '/reset-password') ?>">
+            <?= csrf_field() ?>
+            <div class="modal__body">
+                <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Defina uma nova senha para este usuário. Ele poderá acessar o sistema imediatamente com a nova credencial.</p>
+                <div class="form-group">
+                    <label class="form-label">Nova Senha</label>
+                    <input type="password" name="password" class="form-input" required minlength="6">
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Salvar Nova Senha</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="mgmt-detail">
     <div class="mgmt-detail__main">
         <div class="mgmt-info-card"><h3 class="mgmt-info-card__title">Dados do usuário</h3>

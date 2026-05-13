@@ -116,6 +116,8 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
     $router->get('/configuracoes/usuarios', [GeneralController::class, 'settingsUsers']);
     $router->get('/configuracoes/cadastro-publico', [GeneralController::class, 'settingsRegistration']);
     $router->get('/configuracoes/backup', [GeneralController::class, 'settingsBackup']);
+    $router->get('/configuracoes/perigo', [GeneralController::class, 'settingsDanger']);
+    $router->post('/configuracoes/zerar', [GeneralController::class, 'resetSystem']);
     $router->get('/configuracoes/unidades', [GeneralController::class, 'settingsUnits']);
     $router->post('/configuracoes/unidades', [GeneralController::class, 'storeUnit']);
     $router->post('/configuracoes/unidades/{id}/remover', [GeneralController::class, 'removeUnit']);

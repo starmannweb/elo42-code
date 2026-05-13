@@ -954,6 +954,85 @@ class GeneralController extends Controller
         }
     }
 
+    public function settingsDanger(Request $req): void
+    {
+        try {
+            $context = $this->buildBaseContext('Zona de Perigo', 'configuracoes/perigo');
+            $this->view('management/settings/danger', array_merge($context, [
+                'pageTitle' => 'Zona de Perigo — Gestão',
+                'activeTab' => 'perigo'
+            ]));
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());
+            redirect('/gestao');
+        }
+    }
+
+    public function resetSystem(Request $req): void
+    {
+        try {
+            $orgId = $this->orgId();
+            if ($orgId <= 0) {
+                redirect('/gestao');
+            }
+
+            $pdo = \App\Core\Database::connection();
+
+            // Tables to truncate for the specific organization
+            $tables = [
+                'activity_history',
+                'church_requests',
+                'counseling_sessions',
+                'donations',
+                'events',
+                'event_attendees',
+                'financial_transactions',
+                'financial_categories',
+                'financial_accounts',
+                'members',
+                'member_relationships',
+                'ministries',
+                'sermons',
+                'visits',
+                'visitors',
+                'converts',
+                'reading_plans',
+                'campaigns',
+                'courses',
+                'achievements',
+                'banners',
+                'small_groups',
+                'expense_approvals',
+                'action_plans'
+            ];
+
+            // Disable foreign keys checks before deleting
+            $driver = (string) $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+            if ($driver === 'mysql') {
+                $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+            }
+
+            foreach ($tables as $table) {
+                try {
+                    $stmt = $pdo->prepare("DELETE FROM {$table} WHERE organization_id = ?");
+                    $stmt->execute([$orgId]);
+                } catch (\Throwable $e) {
+                    // Ignore errors for non-existent tables
+                }
+            }
+
+            if ($driver === 'mysql') {
+                $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+            }
+
+            Session::flash('success', 'Todos os dados da organização foram apagados permanentemente.');
+            redirect('/gestao');
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao tentar zerar o sistema: ' . $e->getMessage());
+            redirect('/gestao/configuracoes/perigo');
+        }
+    }
+
     public function settingsUnits(Request $req): void
     {
         try {

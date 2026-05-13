@@ -16,6 +16,7 @@ $router->group(['middleware' => ['auth', 'csrf', 'admin']], function (Router $r)
     $r->get('/admin/usuarios/{id}', [\Modules\Admin\Controllers\AdminUserController::class, 'show']);
     $r->get('/admin/usuarios/{id}/editar', [\Modules\Admin\Controllers\AdminUserController::class, 'edit']);
     $r->post('/admin/usuarios/{id}/editar', [\Modules\Admin\Controllers\AdminUserController::class, 'update']);
+    $r->post('/admin/usuarios/{id}/reset-password', [\Modules\Admin\Controllers\AdminUserController::class, 'resetPassword']);
     $r->post('/admin/usuarios/{id}/excluir', [\Modules\Admin\Controllers\AdminUserController::class, 'destroy']);
 
     // Organizations

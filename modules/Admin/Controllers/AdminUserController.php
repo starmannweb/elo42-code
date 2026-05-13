@@ -158,6 +158,32 @@ class AdminUserController extends Controller
         redirect('/admin/usuarios/' . $id);
     }
 
+    public function resetPassword(Request $request): void
+    {
+        $id = (int) $request->param('id');
+        $user = User::find($id);
+
+        if (!$user) {
+            Session::flash('error', 'Usuário não encontrado.');
+            redirect('/admin/usuarios');
+        }
+
+        $newPassword = $request->input('password');
+        if (empty($newPassword) || strlen($newPassword) < 6) {
+            Session::flash('error', 'A nova senha deve ter pelo menos 6 caracteres.');
+            redirect('/admin/usuarios/' . $id);
+        }
+
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare("UPDATE users SET password = :pass, updated_at = NOW() WHERE id = :id");
+        $stmt->execute(['pass' => $hashedPassword, 'id' => $id]);
+
+        Session::flash('success', 'Senha redefinida com sucesso.');
+        redirect('/admin/usuarios/' . $id);
+    }
+
     public function destroy(Request $request): void
     {
         $id = (int) $request->param('id');
