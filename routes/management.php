@@ -78,6 +78,7 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
 
     // ── Free Features ────────────────────────────────────────
     $router->get('/membros', [MemberController::class, 'index']);
+    $router->get('/membros/top-ofertantes', [MemberController::class, 'index']);
     $router->get('/membros/novo', [MemberController::class, 'create']);
     $router->post('/membros', [MemberController::class, 'store']);
     $router->get('/membros/{id}', [MemberController::class, 'show']);
@@ -86,7 +87,6 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
     $router->post('/membros/{id}/excluir', [MemberController::class, 'destroy']);
 
     $router->get('/receitas', [ModuleController::class, 'tithesOfferings']);
-    $router->get('/receitas/ranking', [ModuleController::class, 'tithesOfferings']);
     $router->get('/despesas', [ModuleController::class, 'expenses']);
     $router->get('/financeiro/novo', [FinancialController::class, 'create']);
     $router->post('/financeiro', [FinancialController::class, 'store']);

@@ -64,6 +64,39 @@ class MemberController extends Controller
                 redirect('/onboarding/organizacao');
             }
 
+            $path = parse_url((string) $_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '';
+            $isTopDonors = str_ends_with($path, '/ranking');
+
+            $topDonors = [];
+            if ($isTopDonors) {
+                try {
+                    $pdo = Database::connection();
+                    $currentYear = date('Y');
+                    $stmt = $pdo->prepare("
+                        SELECT 
+                            m.name, 
+                            COUNT(ft.id) as donations_count, 
+                            SUM(ft.amount) as total_amount
+                        FROM financial_transactions ft
+                        JOIN members m ON ft.member_id = m.id
+                        WHERE ft.organization_id = :org_id 
+                          AND (ft.type = 'tithe' OR ft.type = 'offering')
+                          AND ft.status = 'confirmed'
+                          AND ft.transaction_date LIKE :year_pattern
+                        GROUP BY ft.member_id
+                        ORDER BY total_amount DESC
+                        LIMIT 50
+                    ");
+                    $stmt->execute([
+                        'org_id' => $orgId,
+                        'year_pattern' => $currentYear . '-%'
+                    ]);
+                    $topDonors = $stmt->fetchAll();
+                } catch (\Throwable $e) {
+                    error_log('Error fetching top donors: ' . $e->getMessage());
+                }
+            }
+
             $page = (int) ($request->input('page', '1'));
             $filters = [
                 'search' => $request->input('search', ''),
@@ -73,12 +106,14 @@ class MemberController extends Controller
             $result = Member::byOrg($orgId, $filters, $page);
 
             $this->view('management/members/index', [
-                'pageTitle'   => 'Membros - Gestao',
+                'pageTitle'   => ($isTopDonors ? 'Top Ofertantes' : 'Membros') . ' - Gestao',
                 'breadcrumb'  => 'Membros',
                 'members'     => $result['data'],
                 'pagination'  => $result,
                 'filters'     => $filters,
                 'units'       => $this->churchUnits(),
+                'isTopDonors' => $isTopDonors,
+                'topDonors'   => $topDonors,
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar membros: ' . $e->getMessage());

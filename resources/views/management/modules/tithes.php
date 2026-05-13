@@ -17,53 +17,7 @@
     </div>
 </div>
 
-<!-- Tabs de navegação -->
-<div style="border-bottom: 1px solid var(--color-border-light); margin-bottom: 1.5rem; display: flex; gap: 1.5rem; overflow-x: auto;">
-    <a href="<?= url('/gestao/receitas') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= empty($isTopDonors) ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= empty($isTopDonors) ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= empty($isTopDonors) ? '600' : '500' ?>; white-space: nowrap;">
-        Lançamentos
-    </a>
-    <a href="<?= url('/gestao/receitas/ranking') ?>" style="padding-bottom: 0.75rem; text-decoration: none; color: <?= !empty($isTopDonors) ? 'var(--color-primary)' : 'var(--text-muted)' ?>; border-bottom: 2px solid <?= !empty($isTopDonors) ? 'var(--color-primary)' : 'transparent' ?>; font-weight: <?= !empty($isTopDonors) ? '600' : '500' ?>; white-space: nowrap; display:flex; align-items:center; gap:6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
-        Top Dizimistas
-        <span class="badge badge--warning" style="font-size:9px; padding: 2px 6px;">PREMIUM</span>
-    </a>
-</div>
-
-<?php if (!empty($isTopDonors)): ?>
-<div class="mgmt-dashboard-card" style="padding:0;overflow:hidden;">
-    <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--color-border-light);">
-        <h2 class="mgmt-info-card__title" style="margin:0;">Ranking de Dizimistas (Ano Atual)</h2>
-        <p style="margin:4px 0 0; font-size:12px; color:var(--text-muted);">Acompanhe os membros mais engajados financeiramente com a organização.</p>
-    </div>
-    <?php if (empty($topDonors)): ?>
-        <div class="mgmt-empty" style="padding:2.5rem 1.5rem;text-align:center;">
-            <p class="mgmt-empty__text" style="margin:0;color:var(--color-text-muted);">Nenhum dado financeiro registrado neste ano.</p>
-        </div>
-    <?php else: ?>
-        <table class="mgmt-table">
-            <thead>
-                <tr>
-                    <th style="width: 50px; text-align: center;">Posição</th>
-                    <th>Doador</th>
-                    <th style="text-align:center;">Quantidade de Lançamentos</th>
-                    <th style="text-align:right;">Valor Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $pos = 1; foreach ($topDonors as $d): ?>
-                    <tr <?= $pos <= 3 ? 'style="background:rgba(217, 119, 6, 0.05);"' : '' ?>>
-                        <td style="text-align:center; font-weight: 800; color: <?= $pos === 1 ? '#d97706' : ($pos === 2 ? '#64748b' : ($pos === 3 ? '#b45309' : 'var(--text-muted)')) ?>;"><?= $pos ?>º</td>
-                        <td><div class="mgmt-table__name"><?= e($d['name'] ?? 'Anônimo') ?></div></td>
-                        <td style="text-align:center;"><?= (int) $d['donations_count'] ?> lançamentos</td>
-                        <td style="text-align:right;font-weight:800; color:#059669;">R$ <?= number_format((float)($d['total_amount'] ?? 0), 2, ',', '.') ?></td>
-                    </tr>
-                <?php $pos++; endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
-</div>
-
-<?php else: ?>
+<!-- Tabs removidas do Receitas -->
 
 <div class="mgmt-kpi-grid" style="grid-template-columns:repeat(4,minmax(0,1fr));">
     <div class="mgmt-kpi-card"><div><div class="mgmt-kpi-card__label">Total do mês</div><div class="mgmt-kpi-card__value">R$ <?= number_format(($summary['total'] ?? 0), 2, ',', '.') ?></div></div></div>
@@ -132,8 +86,6 @@
         </table>
     <?php endif; ?>
 </div>
-
-<?php endif; // Fechamento do bloco isTopDonors ?>
 
 <div class="modal" id="modal-new-donation" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-new-donation-title">
     <div class="modal__content">
