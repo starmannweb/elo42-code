@@ -177,6 +177,9 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
     font-size: 0.72rem;
     line-height: 1;
     transition: background 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+    pointer-events: auto;
+    z-index: 1;
 }
 
 .admin-service-toggle__knob {

@@ -30,7 +30,7 @@ $recurrenceLabels = ['one_time' => 'Único', 'monthly' => 'Mensal', 'quarterly' 
                     <form method="POST" action="<?= url('/admin/servicos/' . $serviceId . '/toggle-status') ?>" class="admin-service-toggle-form">
                         <?= csrf_field() ?>
                         <input type="hidden" name="status" value="<?= $isActiveService ? 'inactive' : 'active' ?>">
-                        <button type="submit" class="admin-service-toggle <?= $isActiveService ? 'is-active' : '' ?>" aria-label="<?= $isActiveService ? 'Desativar servico' : 'Ativar servico' ?>">
+                        <button type="button" class="admin-service-toggle <?= $isActiveService ? 'is-active' : '' ?>" aria-label="<?= $isActiveService ? 'Desativar servico' : 'Ativar servico' ?>">
                             <span class="admin-service-toggle__knob"></span>
                             <span class="admin-service-toggle__text"><?= $isActiveService ? 'ON' : 'OFF' ?></span>
                         </button>
@@ -73,4 +73,19 @@ $recurrenceLabels = ['one_time' => 'Único', 'monthly' => 'Mensal', 'quarterly' 
         </form>
     </div>
 </div>
+<script>
+document.querySelectorAll('.admin-service-toggle-form').forEach((form) => {
+    const button = form.querySelector('.admin-service-toggle');
+    if (!button) return;
+    button.addEventListener('click', () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        if (typeof form.requestSubmit === 'function') {
+            form.requestSubmit();
+        } else {
+            form.submit();
+        }
+    });
+});
+</script>
 <?php $__view->endSection(); ?>

@@ -96,13 +96,17 @@ class AdminOrganizationController extends Controller
 
     public function show(Request $request): void
     {
+        $id = (int) $request->param('id');
+        $degraded = false;
+
         try {
-            $org = Organization::find((int) $request->param('id'));
+            $org = Organization::find($id);
         } catch (\Throwable $e) {
+            $degraded = true;
             error_log('[ADMIN_ORGS_SHOW_FIND] ' . $e->getMessage());
-            Session::flash('error', 'Nao foi possivel carregar esta instituicao agora.');
-            redirect('/admin/organizacoes');
+            $org = $this->fallbackOrganizationForId($id);
         }
+
         if (!$org) {
             Session::flash('warning', 'Instituicao nao encontrada.');
             redirect('/admin/organizacoes');
@@ -111,7 +115,6 @@ class AdminOrganizationController extends Controller
         $org = $this->hydrateOrganization($org);
         $users = [];
         $subscription = null;
-        $degraded = false;
 
         try {
             $pdo = Database::connection();
@@ -126,6 +129,7 @@ class AdminOrganizationController extends Controller
         } catch (\Throwable $e) {
             $degraded = true;
             error_log('[ADMIN_ORGS_SHOW_DETAILS] ' . $e->getMessage());
+            $users = $this->fallbackOrganizationUsers();
         }
 
         $this->view('admin/organizations/show', [
@@ -140,7 +144,16 @@ class AdminOrganizationController extends Controller
 
     public function edit(Request $request): void
     {
-        $org = Organization::find((int) $request->param('id'));
+        $id = (int) $request->param('id');
+        $degraded = false;
+
+        try {
+            $org = Organization::find($id);
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_ORGS_EDIT_FIND] ' . $e->getMessage());
+            $org = $this->fallbackOrganizationForId($id);
+        }
         if (!$org) {
             redirect('/admin/organizacoes');
         }
@@ -149,6 +162,7 @@ class AdminOrganizationController extends Controller
             'pageTitle'  => 'Editar — ' . e($org['name']),
             'breadcrumb' => 'Instituições / Editar',
             'org'        => $this->hydrateOrganization($org),
+            'degraded'   => $degraded,
         ]);
     }
 
@@ -157,7 +171,25 @@ class AdminOrganizationController extends Controller
         $id = (int) $request->param('id');
         $this->validate($request, ['name' => 'required|min:3']);
 
-        $org = Organization::find($id);
+        try {
+            $org = Organization::find($id);
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_ORGS_UPDATE_FIND] ' . $e->getMessage());
+            $org = $this->fallbackOrganizationForId($id);
+            if ($org) {
+                $sessionOrg = Session::get('organization');
+                $sessionOrg = is_array($sessionOrg) ? $sessionOrg : [];
+                if ((int) ($sessionOrg['id'] ?? 0) === $id) {
+                    $sessionOrg['name'] = $request->input('name');
+                    $sessionOrg['status'] = $request->input('status');
+                    $sessionOrg['plan'] = $this->normalizePlan((string) $request->input('plan', (string) ($org['plan'] ?? 'free')));
+                    Session::set('organization', $sessionOrg);
+                }
+                Session::flash('warning', 'Banco indisponivel agora. Os dados foram mantidos na sessao e podem nao persistir no cadastro.');
+                redirect('/admin/organizacoes/' . $id . '/editar');
+            }
+        }
+
         if (!$org) {
             redirect('/admin/organizacoes');
         }
@@ -187,6 +219,29 @@ class AdminOrganizationController extends Controller
         $organization['cnpj'] = $organization['document'] ?? ($organization['cnpj'] ?? null);
 
         return $organization;
+    }
+
+    private function fallbackOrganizationForId(int $id): ?array
+    {
+        $fallback = $this->currentSessionOrganizationRow();
+        if (empty($fallback)) {
+            return null;
+        }
+
+        return (int) ($fallback['id'] ?? 0) === $id ? $fallback : null;
+    }
+
+    private function fallbackOrganizationUsers(): array
+    {
+        $user = Session::user();
+        if (!is_array($user) || empty($user)) {
+            return [];
+        }
+
+        $user['role_name'] = $user['role_name'] ?? 'Administrador';
+        $user['membership_status'] = $user['membership_status'] ?? 'active';
+
+        return [$user];
     }
 
     private function decodeSettings(mixed $settings): array

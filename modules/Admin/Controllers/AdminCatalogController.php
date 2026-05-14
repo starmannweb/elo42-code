@@ -129,6 +129,7 @@ class AdminCatalogController extends Controller
         $benefits = [];
         $services = [];
         $users = [];
+        $organizations = [];
         $degraded = false;
 
         try {
@@ -136,6 +137,7 @@ class AdminCatalogController extends Controller
             $benefits = Benefit::allWithUsageCount();
             $services = Service::all('sort_order');
             $users = $this->listUsers();
+            $organizations = $this->listOrganizations();
         } catch (\Throwable $e) {
             $degraded = true;
             error_log('[ADMIN_BENEFITS] ' . $e->getMessage());
@@ -146,6 +148,7 @@ class AdminCatalogController extends Controller
             'benefits' => $benefits,
             'services' => $services,
             'users' => $users,
+            'organizations' => $organizations,
             'degraded' => $degraded,
         ]);
     }
@@ -433,6 +436,15 @@ class AdminCatalogController extends Controller
             foreach ($this->listUsers() as $user) {
                 if ((int) ($user['id'] ?? 0) === (int) $data['target_id']) {
                     $data['target_label'] = (string) ($user['name'] ?? $user['email'] ?? '');
+                    break;
+                }
+            }
+        }
+
+        if (($data['target_type'] ?? null) === 'organization' && !empty($data['target_id']) && trim((string) ($data['target_label'] ?? '')) === '') {
+            foreach ($this->listOrganizations() as $organization) {
+                if ((int) ($organization['id'] ?? 0) === (int) $data['target_id']) {
+                    $data['target_label'] = (string) ($organization['name'] ?? '');
                     break;
                 }
             }

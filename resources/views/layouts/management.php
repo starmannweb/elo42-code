@@ -179,6 +179,7 @@
                 ['href' => '/gestao/jornadas', 'label' => 'Jornada espiritual', 'icon' => 'journey', 'premium' => true],
                 ['href' => '/gestao/historico', 'label' => 'Histórico', 'icon' => 'audit', 'premium' => true],
                 ['href' => '/gestao/membros/top-ofertantes', 'label' => 'Top Ofertantes', 'icon' => 'award', 'premium' => true],
+                ['href' => '/hub/suporte', 'label' => 'Ajuda', 'icon' => 'audit'],
             ];
             $treasuryTabs = [
                 ['href' => '/gestao/receitas', 'label' => 'Receitas', 'icon' => 'income', 'active' => ['/gestao/receitas', '/gestao/doacoes']],
@@ -195,12 +196,13 @@
                 ['href' => '/gestao/configuracoes/seo', 'label' => 'SEO', 'icon' => 'seo', 'premium' => true],
                 ['href' => '/gestao/configuracoes/pwa', 'label' => 'APP', 'icon' => 'pwa', 'premium' => true],
                 ['href' => '/gestao/configuracoes/cadastro-publico', 'label' => 'Cadastro Público', 'icon' => 'users', 'premium' => true],
-                ['href' => '/gestao/configuracoes/backup', 'label' => 'Backup', 'icon' => 'backup'],
-                ['href' => '/gestao/configuracoes/perigo', 'label' => 'Perigo', 'icon' => 'danger'],
+                ['href' => '/gestao/configuracoes/backup', 'label' => 'Backup', 'icon' => 'backup', 'premium' => true],
+                ['href' => '/gestao/configuracoes/perigo', 'label' => 'Perigo', 'icon' => 'danger', 'premium' => true],
             ];
             $adminTabs = [
                 ['href' => '/gestao/sermoes', 'label' => 'Séries e Sermões', 'icon' => 'sermon', 'active' => ['/gestao/sermoes']],
                 ['href' => '/gestao/pregadores', 'label' => 'Pregadores', 'icon' => 'users'],
+                ['href' => '/hub/suporte', 'label' => 'Ajuda', 'icon' => 'audit'],
                 ['href' => '/gestao/relatorios', 'label' => 'Relatórios', 'icon' => 'reports'],
             ];
         ?>
@@ -297,13 +299,13 @@
                     <span class="hub-nav-link__icon" aria-hidden="true"><?= $icon('home') ?></span>
                     <span class="hub-nav-link__label">Voltar ao Hub</span>
                 </a>
-                <form action="<?= url('/logout') ?>" method="POST" class="mgmt-sidebar-logout">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="hub-nav-link mgmt-sidebar-action mgmt-sidebar-action--logout">
-                        <span class="hub-nav-link__icon" aria-hidden="true"><?= $icon('logout') ?></span>
-                        <span class="hub-nav-link__label">Sair</span>
-                    </button>
-                </form>
+                <div class="hub-sidebar__user">
+                    <div class="hub-sidebar__user-avatar" aria-hidden="true"><?= e($initials) ?></div>
+                    <div class="hub-sidebar__user-info">
+                        <div class="hub-sidebar__user-name"><?= e((string) ($user['name'] ?? 'UsuÃ¡rio')) ?></div>
+                        <div class="hub-sidebar__user-role"><?= e((string) ($organization['role_name'] ?? 'Administrador')) ?></div>
+                    </div>
+                </div>
             </div>
         </aside>
 
@@ -336,6 +338,10 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="theme-icon theme-icon--light"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="theme-icon theme-icon--dark"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                     </button>
+                    <form method="POST" action="<?= url('/logout') ?>" class="mgmt-topbar-logout">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="hub-topbar__link hub-topbar__link--danger">Sair</button>
+                    </form>
                     <a href="<?= url('/hub/configuracoes') ?>" class="hub-topbar__link" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:6px;background:var(--color-primary);color:var(--color-white);font-weight:700;" title="Configurações do Hub"><?= e($initials) ?></a>
                 </div>
             </header>
@@ -391,10 +397,13 @@
                 <?php endif; ?>
 
                 <?php
-                    if ($isActive(['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico'], $uri)) {
+                    $isMemberMapPage = $uri === '/gestao/membros/mapa';
+                    if (!$isMemberMapPage && $isActive(['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico'], $uri)) {
                         $renderTabs($peopleTabs);
                     } elseif ($isActive(['/gestao/configuracoes', '/gestao/usuarios'], $uri)) {
                         $renderTabs($settingsTabs);
+                    } elseif (!$isMemberMapPage && $isActive(['/gestao/sermoes', '/gestao/pregadores', '/gestao/relatorios'], $uri)) {
+                        $renderTabs($adminTabs);
                     }
                 ?>
 

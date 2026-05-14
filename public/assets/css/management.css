@@ -125,7 +125,55 @@ body[data-hub-theme="dark"] .mgmt-report-banner strong {
     }
 }
 
-/* --- Dashboard KPI Grid --- */
+/* --- Dashboard Shortcuts / KPI Grid --- */
+.mgmt-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.mgmt-shortcut {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-white);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    min-height: 74px;
+}
+
+.mgmt-shortcut:hover {
+    border-color: rgba(10, 77, 255, 0.35);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.mgmt-shortcut__icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 77, 255, 0.1);
+    color: var(--color-primary);
+    flex: 0 0 38px;
+}
+
+.mgmt-shortcut strong,
+.mgmt-shortcut small {
+    display: block;
+}
+
+.mgmt-shortcut small {
+    margin-top: 2px;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
 .mgmt-kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -563,7 +611,12 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 }
 
 .mgmt-member-form-card {
-    max-width: 980px;
+    max-width: 1120px;
+    width: 100%;
+}
+
+.mgmt-form-field--span-2 {
+    grid-column: span 2;
 }
 
 .mgmt-form-actions {
@@ -1183,6 +1236,22 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
     display: grid;
     gap: 0.6rem;
     padding: 14px;
+}
+
+.mgmt-layout .hub-sidebar__footer .hub-sidebar__user {
+    padding: 8px 6px 2px;
+}
+
+.mgmt-topbar-logout {
+    margin: 0;
+}
+
+.mgmt-topbar-logout .hub-topbar__link {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
 }
 
 .mgmt-sidebar-logout {

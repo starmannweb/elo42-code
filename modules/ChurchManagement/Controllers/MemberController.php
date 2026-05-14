@@ -213,6 +213,7 @@ class MemberController extends Controller
                 'name','email','phone','birth_date','gender','marital_status','church_unit_id',
                 'address','city','state','zip_code','latitude','longitude','membership_date','baptism_date','status','notes'
             ]);
+            $data['address'] = $this->composeMemberAddress((string) ($data['address'] ?? ''), (string) $request->input('address_number', ''));
             $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
             $this->normalizeMemberCoordinates($data);
             $data = $this->applyMemberPhoto($request, $data, $orgId);
@@ -314,6 +315,7 @@ class MemberController extends Controller
                 'name','email','phone','birth_date','gender','marital_status','church_unit_id',
                 'address','city','state','zip_code','latitude','longitude','membership_date','baptism_date','status','notes'
             ]);
+            $data['address'] = $this->composeMemberAddress((string) ($data['address'] ?? ''), (string) $request->input('address_number', ''));
             $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
             $this->normalizeMemberCoordinates($data);
             $data = $this->applyMemberPhoto($request, $data, $this->orgId());
@@ -379,6 +381,22 @@ class MemberController extends Controller
 
             $data[$key] = number_format($float, 7, '.', '');
         }
+    }
+
+    private function composeMemberAddress(string $address, string $number): string
+    {
+        $address = trim($address);
+        $number = trim($number);
+
+        if ($address === '' || $number === '') {
+            return $address;
+        }
+
+        if (preg_match('/(?:^|,\s*)' . preg_quote($number, '/') . '$/', $address) === 1) {
+            return $address;
+        }
+
+        return $address . ', ' . $number;
     }
 
     private function applyMemberPhoto(Request $request, array $data, int $orgId): array

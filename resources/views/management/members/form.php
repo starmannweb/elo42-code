@@ -98,9 +98,15 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Endere&ccedil;o</label>
-            <input type="text" name="address" class="form-input" value="<?= e($isEdit ? $member['address'] : old('address')) ?>">
+        <div class="mgmt-form-row--3">
+            <div class="form-group mgmt-form-field--span-2">
+                <label class="form-label">Endere&ccedil;o</label>
+                <input type="text" name="address" class="form-input" value="<?= e($isEdit ? $member['address'] : old('address')) ?>" autocomplete="street-address">
+            </div>
+            <div class="form-group">
+                <label class="form-label">N&ordm;</label>
+                <input type="text" name="address_number" class="form-input" value="<?= e(old('address_number')) ?>" inputmode="numeric" autocomplete="address-line2">
+            </div>
         </div>
 
         <h3 class="mgmt-form-card__title" style="margin-top: var(--space-6)">Igreja</h3>

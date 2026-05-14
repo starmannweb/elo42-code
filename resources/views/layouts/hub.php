@@ -164,6 +164,9 @@
                     </span>
                     Configurações
                 </a>
+            </nav>
+
+            <div class="hub-sidebar__footer">
                 <?php if ($isMasterAdmin): ?>
                     <a href="<?= url('/admin') ?>" class="hub-nav-link hub-nav-link--boxed <?= e($isMenuActive('admin', $activeMenu)) ?>">
                         <span class="hub-nav-link__icon" aria-hidden="true">
@@ -172,10 +175,6 @@
                         Super Admin
                     </a>
                 <?php endif; ?>
-
-            </nav>
-
-            <div class="hub-sidebar__footer">
                 <div class="hub-sidebar__user">
                     <div class="hub-sidebar__user-avatar" aria-hidden="true"><?= e($initials) ?></div>
                     <div class="hub-sidebar__user-info">
