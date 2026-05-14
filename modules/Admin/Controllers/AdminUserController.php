@@ -135,7 +135,7 @@ class AdminUserController extends Controller
         ]);
 
         Session::flash('success', 'Usuário criado com sucesso.');
-        redirect('/admin/usuarios/' . $userId);
+        redirect('/admin/usuarios/' . $userId . '/editar');
     }
 
     public function edit(Request $request): void
@@ -155,7 +155,7 @@ class AdminUserController extends Controller
         $this->validate($request, ['name' => 'required|min:3']);
         User::update($id, $request->only(['name', 'email', 'phone', 'status']));
         Session::flash('success', 'Usuário atualizado.');
-        redirect('/admin/usuarios/' . $id);
+        redirect('/admin/usuarios/' . $id . '/editar');
     }
 
     public function resetPassword(Request $request): void
@@ -171,7 +171,7 @@ class AdminUserController extends Controller
         $newPassword = $request->input('password');
         if (empty($newPassword) || strlen($newPassword) < 6) {
             Session::flash('error', 'A nova senha deve ter pelo menos 6 caracteres.');
-            redirect('/admin/usuarios/' . $id);
+            redirect('/admin/usuarios/' . $id . '/editar');
         }
 
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
@@ -181,7 +181,7 @@ class AdminUserController extends Controller
         $stmt->execute(['pass' => $hashedPassword, 'id' => $id]);
 
         Session::flash('success', 'Senha redefinida com sucesso.');
-        redirect('/admin/usuarios/' . $id);
+        redirect('/admin/usuarios/' . $id . '/editar');
     }
 
     public function destroy(Request $request): void

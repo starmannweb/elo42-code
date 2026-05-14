@@ -74,11 +74,13 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
         $router->get('/configuracoes/pwa', [GeneralController::class, 'settingsPwa']);
         $router->get('/configuracoes/integracoes', [GeneralController::class, 'settingsIntegrations']);
         $router->get('/configuracoes/redes-sociais', [GeneralController::class, 'settingsSocial']);
+        $router->get('/configuracoes/cadastro-publico', [GeneralController::class, 'settingsRegistration']);
     });
 
     // ── Free Features ────────────────────────────────────────
     $router->get('/membros', [MemberController::class, 'index']);
     $router->get('/membros/top-ofertantes', [MemberController::class, 'index']);
+    $router->get('/membros/mapa', [MemberController::class, 'map']);
     $router->get('/membros/novo', [MemberController::class, 'create']);
     $router->post('/membros', [MemberController::class, 'store']);
     $router->get('/membros/{id}', [MemberController::class, 'show']);
@@ -115,7 +117,6 @@ $router->group(['prefix' => 'gestao', 'middleware' => ['csrf', 'auth', 'organiza
 
     $router->get('/configuracoes', [GeneralController::class, 'settings']);
     $router->get('/configuracoes/usuarios', [GeneralController::class, 'settingsUsers']);
-    $router->get('/configuracoes/cadastro-publico', [GeneralController::class, 'settingsRegistration']);
     $router->get('/configuracoes/backup', [GeneralController::class, 'settingsBackup']);
     $router->get('/configuracoes/perigo', [GeneralController::class, 'settingsDanger']);
     $router->post('/configuracoes/zerar', [GeneralController::class, 'resetSystem']);

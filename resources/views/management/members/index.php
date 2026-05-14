@@ -1,6 +1,7 @@
 <?php $__view->extends('management'); ?>
 
 <?php $__view->section('content'); ?>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <div class="mgmt-header">
     <div>
@@ -8,7 +9,7 @@
         <p class="mgmt-header__subtitle">Gerencie os membros da igreja</p>
     </div>
     <div class="mgmt-header__actions">
-        <button type="button" class="btn btn--primary" onclick="document.getElementById('modal-new-member').style.display='flex'">+ Novo membro</button>
+        <button type="button" class="btn btn--primary" onclick="openMemberEdit()">+ Novo membro</button>
     </div>
 </div>
 
@@ -136,7 +137,7 @@ foreach ($members as $m) {
         <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg></div>
         <h3 style="font-weight:700; margin-bottom:4px;">Nenhum membro encontrado</h3>
         <p style="font-size:13px; margin-bottom: var(--space-4);">Comece cadastrando o primeiro membro da sua organização.</p>
-        <button type="button" onclick="document.getElementById('modal-new-member').style.display='flex'" class="btn btn--primary">Cadastrar membro</button>
+        <button type="button" onclick="openMemberEdit()" class="btn btn--primary">Cadastrar membro</button>
     </div>
 <?php else: ?>
     <table class="mgmt-table">
@@ -285,16 +286,18 @@ foreach ($members as $m) {
             <h2 class="modal__title" id="modal-new-member-title">Cadastrar membro</h2>
             <button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'" aria-label="Fechar">&times;</button>
         </div>
-        <form id="form-member" method="POST" action="<?= url('/gestao/membros') ?>" data-loading>
+        <form id="form-member" method="POST" action="<?= url('/gestao/membros') ?>" enctype="multipart/form-data" data-loading>
             <?= csrf_field() ?>
             <div class="modal__body">
                 
-                <div style="display:flex; flex-direction:column; align-items:center; margin-bottom: 24px;">
-                    <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--color-bg-light); border: 1px dashed var(--color-border-light); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; color: var(--text-muted);">
+                <div class="member-photo-upload">
+                    <div class="member-photo-upload__preview" id="member-photo-preview">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button type="button" class="btn btn--outline" style="padding: 6px 12px; font-size: 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Enviar foto</button>
+                    <div class="member-photo-upload__actions">
+                        <input type="file" id="member-photo-input" accept="image/png,image/jpeg,image/webp" hidden>
+                        <input type="hidden" name="photo_cropped" id="member-photo-cropped">
+                        <button type="button" class="btn btn--outline btn--sm" id="btn-upload-member-photo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Enviar foto</button>
                     </div>
                 </div>
 
@@ -318,12 +321,14 @@ foreach ($members as $m) {
                     </div>
                 </div>
 
-                <div style="background: var(--color-bg-light); border: 1px solid var(--color-border-light); border-radius: 8px; padding: 16px; margin: 24px 0;">
+                <div class="member-location-panel">
+                    <input type="hidden" name="latitude" id="inp-latitude">
+                    <input type="hidden" name="longitude" id="inp-longitude">
                     <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 12px;">
                         <h4 style="margin:0; font-size: 13px; display:flex; align-items:center; gap: 8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Localização no Mapa</h4>
-                        <button type="button" class="btn btn--outline" style="padding: 4px 10px; font-size: 11px;">Definir no mapa</button>
+                        <button type="button" class="btn btn--outline btn--sm" id="btn-open-member-map">Definir no mapa</button>
                     </div>
-                    <div style="font-size: 11px; color: var(--color-success); display:flex; align-items:center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Localização não definida (automática pelo endereço)</div>
+                    <div class="member-location-panel__status" id="member-location-status"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Localizacao nao definida (automatica pelo endereco)</div>
                 </div>
 
                 <div class="modal-grid">
@@ -343,6 +348,53 @@ foreach ($members as $m) {
     </div>
 </div>
 
+<div class="modal" id="modal-photo-crop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-photo-crop-title">
+    <div class="modal__content modal__content--crop">
+        <div class="modal__header">
+            <h2 class="modal__title" id="modal-photo-crop-title">Recortar Foto</h2>
+            <button type="button" class="modal__close" onclick="closePhotoCropModal()" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal__body modal__body--compact">
+            <div class="photo-cropper">
+                <div class="photo-cropper__stage" id="photo-crop-stage">
+                    <img id="photo-crop-image" alt="">
+                    <div class="photo-cropper__frame" aria-hidden="true"></div>
+                </div>
+                <label class="photo-cropper__zoom">
+                    <span>Zoom</span>
+                    <input type="range" id="photo-crop-zoom" min="1" max="3" step="0.01" value="1">
+                </label>
+                <p class="photo-cropper__hint">Arraste para posicionar e use o controle para redimensionar. A imagem sera recortada em formato quadrado.</p>
+            </div>
+        </div>
+        <div class="modal__footer">
+            <button type="button" class="btn btn--ghost" onclick="closePhotoCropModal()">Cancelar</button>
+            <button type="button" class="btn btn--primary" id="btn-apply-photo-crop">Aplicar Recorte</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal-member-map" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-member-map-title">
+    <div class="modal__content modal__content--map">
+        <div class="modal__header">
+            <h2 class="modal__title" id="modal-member-map-title">Definir Localizacao</h2>
+            <button type="button" class="modal__close" onclick="closeMemberMapModal()" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal__body modal__body--compact">
+            <div class="member-map-picker-toolbar">
+                <button type="button" class="btn btn--outline btn--sm" id="btn-geocode-member-address">Buscar pelo endereco</button>
+                <span id="member-map-helper">Clique no mapa ou arraste o marcador.</span>
+            </div>
+            <div id="member-map-picker" class="member-map-picker"></div>
+        </div>
+        <div class="modal__footer">
+            <button type="button" class="btn btn--ghost" onclick="closeMemberMapModal()">Cancelar</button>
+            <button type="button" class="btn btn--primary" id="btn-save-member-location">Salvar Localizacao</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 function calculateAge(birthDateString) {
     if (!birthDateString) return '--';
@@ -360,6 +412,225 @@ function formatDate(dateString) {
     if (!dateString) return '--';
     const [year, month, day] = dateString.split('-');
     return `${day}/${month}/${year}`;
+}
+
+const memberAvatarSvg = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+const photoInput = document.getElementById('member-photo-input');
+const photoPreview = document.getElementById('member-photo-preview');
+const photoCropped = document.getElementById('member-photo-cropped');
+const cropModal = document.getElementById('modal-photo-crop');
+const cropStage = document.getElementById('photo-crop-stage');
+const cropImage = document.getElementById('photo-crop-image');
+const cropZoom = document.getElementById('photo-crop-zoom');
+let cropOffset = { x: 0, y: 0 };
+let cropDragging = false;
+let cropStart = { x: 0, y: 0 };
+
+document.getElementById('btn-upload-member-photo')?.addEventListener('click', () => photoInput?.click());
+photoInput?.addEventListener('change', (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => openPhotoCropModal(String(reader.result || ''));
+    reader.readAsDataURL(file);
+});
+
+cropZoom?.addEventListener('input', updateCropImageTransform);
+cropImage?.addEventListener('load', resetCropImageLayout);
+cropStage?.addEventListener('pointerdown', (event) => {
+    cropDragging = true;
+    cropStage.setPointerCapture(event.pointerId);
+    cropStart = { x: event.clientX - cropOffset.x, y: event.clientY - cropOffset.y };
+});
+cropStage?.addEventListener('pointermove', (event) => {
+    if (!cropDragging) return;
+    cropOffset = { x: event.clientX - cropStart.x, y: event.clientY - cropStart.y };
+    updateCropImageTransform();
+});
+cropStage?.addEventListener('pointerup', () => { cropDragging = false; });
+document.getElementById('btn-apply-photo-crop')?.addEventListener('click', applyPhotoCrop);
+
+function openPhotoCropModal(src) {
+    cropOffset = { x: 0, y: 0 };
+    if (cropZoom) cropZoom.value = '1';
+    if (cropImage) cropImage.src = src;
+    if (cropModal) cropModal.style.display = 'flex';
+}
+
+function closePhotoCropModal() {
+    if (cropModal) cropModal.style.display = 'none';
+    if (photoInput) photoInput.value = '';
+}
+window.closePhotoCropModal = closePhotoCropModal;
+
+function resetCropImageLayout() {
+    if (!cropImage || !cropStage || !cropImage.naturalWidth || !cropImage.naturalHeight) return;
+    const rect = cropStage.getBoundingClientRect();
+    const scale = Math.max(rect.width / cropImage.naturalWidth, rect.height / cropImage.naturalHeight);
+    cropImage.style.width = `${cropImage.naturalWidth * scale}px`;
+    cropImage.style.height = `${cropImage.naturalHeight * scale}px`;
+    updateCropImageTransform();
+}
+
+function updateCropImageTransform() {
+    if (!cropImage || !cropZoom) return;
+    cropImage.style.transform = `translate(-50%, -50%) translate(${cropOffset.x}px, ${cropOffset.y}px) scale(${cropZoom.value})`;
+}
+
+function applyPhotoCrop() {
+    if (!cropImage || !cropStage || !photoCropped || !photoPreview) return;
+    const frame = cropStage.querySelector('.photo-cropper__frame');
+    if (!frame) return;
+    const frameRect = frame.getBoundingClientRect();
+    const imageRect = cropImage.getBoundingClientRect();
+    const sx = Math.max(0, (frameRect.left - imageRect.left) * (cropImage.naturalWidth / imageRect.width));
+    const sy = Math.max(0, (frameRect.top - imageRect.top) * (cropImage.naturalHeight / imageRect.height));
+    const sw = Math.min(cropImage.naturalWidth - sx, frameRect.width * (cropImage.naturalWidth / imageRect.width));
+    const sh = Math.min(cropImage.naturalHeight - sy, frameRect.height * (cropImage.naturalHeight / imageRect.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = 500;
+    canvas.height = 500;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(cropImage, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    photoCropped.value = dataUrl;
+    setMemberPhotoPreview(dataUrl);
+    closePhotoCropModal();
+}
+
+function setMemberPhotoPreview(src) {
+    if (!photoPreview) return;
+    if (src) {
+        photoPreview.innerHTML = `<img src="${escapeHtml(src)}" alt="">`;
+        return;
+    }
+    photoPreview.innerHTML = memberAvatarSvg;
+}
+
+const memberMapModal = document.getElementById('modal-member-map');
+const memberMapHelper = document.getElementById('member-map-helper');
+let memberPickerMap = null;
+let memberPickerMarker = null;
+let pendingMemberLocation = null;
+
+document.getElementById('btn-open-member-map')?.addEventListener('click', openMemberMapModal);
+document.getElementById('btn-geocode-member-address')?.addEventListener('click', geocodeMemberAddress);
+document.getElementById('btn-save-member-location')?.addEventListener('click', () => {
+    if (pendingMemberLocation) {
+        setMemberLocation(pendingMemberLocation.lat, pendingMemberLocation.lng);
+    }
+    closeMemberMapModal();
+});
+
+function openMemberMapModal() {
+    if (!memberMapModal) return;
+    memberMapModal.style.display = 'flex';
+    const lat = parseFloat(document.getElementById('inp-latitude')?.value || '');
+    const lng = parseFloat(document.getElementById('inp-longitude')?.value || '');
+    const start = Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : { lat: -22.7057, lng: -46.9854 };
+    pendingMemberLocation = start;
+    window.setTimeout(() => initMemberPickerMap(start), 80);
+}
+
+function closeMemberMapModal() {
+    if (memberMapModal) memberMapModal.style.display = 'none';
+}
+window.closeMemberMapModal = closeMemberMapModal;
+
+function initMemberPickerMap(center) {
+    const mapEl = document.getElementById('member-map-picker');
+    if (!mapEl || typeof L === 'undefined') return;
+    if (!memberPickerMap) {
+        memberPickerMap = L.map(mapEl).setView([center.lat, center.lng], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(memberPickerMap);
+        memberPickerMap.on('click', (event) => setPendingMemberMarker(event.latlng.lat, event.latlng.lng));
+    } else {
+        memberPickerMap.setView([center.lat, center.lng], 15);
+    }
+    memberPickerMap.invalidateSize();
+    setPendingMemberMarker(center.lat, center.lng);
+}
+
+function setPendingMemberMarker(lat, lng) {
+    pendingMemberLocation = { lat, lng };
+    if (!memberPickerMap || typeof L === 'undefined') return;
+    if (!memberPickerMarker) {
+        memberPickerMarker = L.marker([lat, lng], { draggable: true }).addTo(memberPickerMap);
+        memberPickerMarker.on('dragend', () => {
+            const pos = memberPickerMarker.getLatLng();
+            pendingMemberLocation = { lat: pos.lat, lng: pos.lng };
+            updateMapHelper(pos.lat, pos.lng);
+        });
+    } else {
+        memberPickerMarker.setLatLng([lat, lng]);
+    }
+    updateMapHelper(lat, lng);
+}
+
+function setMemberLocation(lat, lng) {
+    const latInput = document.getElementById('inp-latitude');
+    const lngInput = document.getElementById('inp-longitude');
+    if (latInput) latInput.value = Number(lat).toFixed(7);
+    if (lngInput) lngInput.value = Number(lng).toFixed(7);
+    updateLocationStatus();
+}
+
+function updateMapHelper(lat, lng) {
+    if (memberMapHelper) memberMapHelper.textContent = `${Number(lat).toFixed(6)}, ${Number(lng).toFixed(6)}`;
+}
+
+function updateLocationStatus() {
+    const status = document.getElementById('member-location-status');
+    const lat = document.getElementById('inp-latitude')?.value;
+    const lng = document.getElementById('inp-longitude')?.value;
+    if (!status) return;
+    if (lat && lng) {
+        status.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Localizacao definida no mapa';
+        status.classList.add('is-defined');
+    } else {
+        status.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Localizacao nao definida (automatica pelo endereco)';
+        status.classList.remove('is-defined');
+    }
+}
+
+async function geocodeMemberAddress() {
+    const parts = ['inp-address', 'inp-city', 'inp-state'].map((id) => document.getElementById(id)?.value || '').filter(Boolean);
+    if (parts.length === 0) {
+        if (memberMapHelper) memberMapHelper.textContent = 'Preencha o endereco antes de buscar.';
+        return;
+    }
+    if (memberMapHelper) memberMapHelper.textContent = 'Buscando no OpenStreetMap...';
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q=${encodeURIComponent(parts.join(', '))}`);
+        const data = await response.json();
+        if (!Array.isArray(data) || !data[0]) {
+            if (memberMapHelper) memberMapHelper.textContent = 'Endereco nao encontrado. Clique no mapa para definir.';
+            return;
+        }
+        const lat = parseFloat(data[0].lat);
+        const lng = parseFloat(data[0].lon);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+            memberPickerMap?.setView([lat, lng], 16);
+            setPendingMemberMarker(lat, lng);
+        }
+    } catch (error) {
+        if (memberMapHelper) memberMapHelper.textContent = 'Nao foi possivel consultar o OpenStreetMap agora.';
+    }
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    }[char]));
 }
 
 async function openMemberDetails(id) {
@@ -446,6 +717,11 @@ async function openMemberEdit(id) {
                 document.getElementById('inp-status').value = m.status || 'active';
                 document.getElementById('inp-marital').value = m.marital_status || '';
                 document.getElementById('inp-notes').value = m.notes || '';
+                document.getElementById('inp-latitude').value = m.latitude || '';
+                document.getElementById('inp-longitude').value = m.longitude || '';
+                if (photoCropped) photoCropped.value = '';
+                setMemberPhotoPreview(m.photo || '');
+                updateLocationStatus();
                 
                 document.getElementById('modal-new-member').style.display = 'flex';
             }
@@ -458,6 +734,13 @@ async function openMemberEdit(id) {
         document.getElementById('modal-new-member-title').textContent = 'Cadastrar Membro';
         document.getElementById('form-member').action = `<?= url('/gestao/membros') ?>`;
         document.getElementById('form-member').reset();
+        document.getElementById('inp-membership').value = '<?= date('Y-m-d') ?>';
+        document.getElementById('inp-latitude').value = '';
+        document.getElementById('inp-longitude').value = '';
+        if (photoCropped) photoCropped.value = '';
+        if (photoInput) photoInput.value = '';
+        setMemberPhotoPreview('');
+        updateLocationStatus();
         document.getElementById('btn-submit-member').textContent = 'Cadastrar';
         document.getElementById('modal-new-member').style.display = 'flex';
     }

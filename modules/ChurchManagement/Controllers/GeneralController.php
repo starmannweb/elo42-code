@@ -114,6 +114,9 @@ class GeneralController extends Controller
             'background_color',
             'pwa_icon_192',
             'pwa_icon_512',
+            'public_registration_active',
+            'public_registration_slug',
+            'public_registration_welcome',
         ];
 
         $prefixes = [
@@ -932,7 +935,8 @@ class GeneralController extends Controller
             $context = $this->buildBaseContext('Cadastro Público', 'configuracoes/cadastro-publico');
             $this->view('management/settings/registration', array_merge($context, [
                 'pageTitle' => 'Cadastro Público — Gestão',
-                'activeTab' => 'cadastro'
+                'activeTab' => 'cadastro',
+                'settings' => $this->settingValues(),
             ]));
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar cadastro público: ' . $e->getMessage());

@@ -50,8 +50,18 @@
 
             $isActive = static function(array|string $paths, string $uri): bool {
                 foreach ((array) $paths as $path) {
+                    $exact = str_ends_with($path, '$');
+                    if ($exact) {
+                        $path = substr($path, 0, -1);
+                    }
                     if ($path === '/gestao') {
                         if ($uri === '/gestao') {
+                            return true;
+                        }
+                        continue;
+                    }
+                    if ($exact) {
+                        if ($exact && $uri === $path) {
                             return true;
                         }
                         continue;
@@ -83,6 +93,7 @@
                     'audit' => '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line>',
                     'wallet' => '<rect x="2.5" y="5" width="19" height="14" rx="2"></rect><path d="M16 12h.01"></path><path d="M2.5 9h19"></path>',
                     'calendar' => '<rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>',
+                    'map' => '<path d="M9 18l-6 3V6l6-3 6 3 6-3v15l-6 3-6-3z"></path><path d="M9 3v15"></path><path d="M15 6v15"></path>',
                     'book' => '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>',
                     'image' => '<rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>',
                     'courses' => '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M4 4.5A2.5 2.5 0 0 1 6.5 7H20"></path><path d="M6.5 7v10"></path>',
@@ -144,7 +155,11 @@
                 foreach ($tabs as $tab) {
                     $isTabActive = false;
                     foreach ((array) ($tab['active'] ?? [$tab['href']]) as $path) {
-                        if ($uri === $path || ($path !== '/gestao/configuracoes' && str_starts_with($uri, rtrim($path, '/') . '/'))) {
+                        $exact = str_ends_with($path, '$');
+                        if ($exact) {
+                            $path = substr($path, 0, -1);
+                        }
+                        if ($uri === $path || (!$exact && $path !== '/gestao/configuracoes' && str_starts_with($uri, rtrim($path, '/') . '/'))) {
                             $isTabActive = true;
                             break;
                         }
@@ -157,10 +172,11 @@
             };
 
             $peopleTabs = [
-                ['href' => '/gestao/membros', 'label' => 'Membros', 'icon' => 'users', 'active' => ['/gestao/membros']],
+                ['href' => '/gestao/membros', 'label' => 'Membros', 'icon' => 'users', 'active' => ['/gestao/membros$']],
                 ['href' => '/gestao/visitantes', 'label' => 'Visitantes', 'icon' => 'users', 'premium' => true],
                 ['href' => '/gestao/novos-convertidos', 'label' => 'Novos Convertidos', 'icon' => 'award', 'premium' => true],
                 ['href' => '/gestao/aniversarios', 'label' => 'Aniversariantes', 'icon' => 'birthday', 'premium' => true],
+                ['href' => '/gestao/membros/mapa', 'label' => 'Mapa de Membros', 'icon' => 'map', 'active' => ['/gestao/membros/mapa']],
                 ['href' => '/gestao/jornadas', 'label' => 'Jornada espiritual', 'icon' => 'journey', 'premium' => true],
                 ['href' => '/gestao/historico', 'label' => 'Histórico', 'icon' => 'audit', 'premium' => true],
                 ['href' => '/gestao/membros/top-ofertantes', 'label' => 'Top Ofertantes', 'icon' => 'award', 'premium' => true],
@@ -179,7 +195,7 @@
                 ['href' => '/gestao/configuracoes/pix', 'label' => 'PIX / Ofertas', 'icon' => 'pix', 'premium' => true],
                 ['href' => '/gestao/configuracoes/seo', 'label' => 'SEO', 'icon' => 'seo', 'premium' => true],
                 ['href' => '/gestao/configuracoes/pwa', 'label' => 'APP', 'icon' => 'pwa', 'premium' => true],
-                ['href' => '/gestao/configuracoes/cadastro-publico', 'label' => 'Cadastro Público', 'icon' => 'users'],
+                ['href' => '/gestao/configuracoes/cadastro-publico', 'label' => 'Cadastro Público', 'icon' => 'users', 'premium' => true],
                 ['href' => '/gestao/configuracoes/backup', 'label' => 'Backup', 'icon' => 'backup'],
                 ['href' => '/gestao/configuracoes/perigo', 'label' => 'Perigo', 'icon' => 'danger'],
             ];
@@ -209,6 +225,7 @@
                     '/gestao/visitantes',
                     '/gestao/novos-convertidos',
                     '/gestao/aniversarios',
+                    '/gestao/membros/mapa',
                     '/gestao/jornadas',
                     '/gestao/historico',
                     '/gestao/atendimento-pastoral',
@@ -216,7 +233,8 @@
                     '/gestao/ministerios',
                 ];
                 echo $navGroup('membros', 'Membros', 'users', [
-                    $subNavItem('/gestao/membros', 'Servos', false, ['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico']),
+                    $subNavItem('/gestao/membros', 'Servos', false, ['/gestao/membros$', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico']),
+                    $subNavItem('/gestao/membros/mapa', 'Mapa de Membros', false, ['/gestao/membros/mapa']),
                     $subNavItem('/gestao/atendimento-pastoral', 'Atendimento pastoral', true, ['/gestao/atendimento-pastoral']),
                     $subNavItem('/gestao/celulas', 'Grupos Pequenos', true, ['/gestao/celulas']),
                     $subNavItem('/gestao/ministerios', 'Ministérios', true, ['/gestao/ministerios']),

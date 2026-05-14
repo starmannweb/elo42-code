@@ -47,7 +47,6 @@
                     <td><span class="badge badge--<?= e($u['status']) ?>"><?= e($statusLabels[$u['status'] ?? ''] ?? ($u['status'] ?? '-')) ?></span></td>
                     <td><?= $u['last_login_at'] ? date('d/m/Y H:i', strtotime($u['last_login_at'])) : '-' ?></td>
                     <td class="mgmt-table__actions" style="display:flex;gap:0.5rem;align-items:center;">
-                        <a href="<?= url('/admin/usuarios/' . $u['id']) ?>">Ver</a>
                         <a href="<?= url('/admin/usuarios/' . $u['id'] . '/editar') ?>">Editar</a>
                         <form method="POST" action="<?= url('/admin/usuarios/' . $u['id'] . '/excluir') ?>" onsubmit="return confirm('Tem certeza que deseja remover este usuário?');" style="margin:0;">
                             <?= csrf_field() ?>

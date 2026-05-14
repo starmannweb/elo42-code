@@ -14,7 +14,7 @@ class Member extends Model
     protected static array $fillable = [
         'organization_id', 'church_unit_id', 'name', 'email', 'phone', 'birth_date',
         'gender', 'marital_status', 'address', 'city', 'state', 'zip_code',
-        'photo', 'membership_date', 'baptism_date', 'status', 'notes', 'created_by',
+        'latitude', 'longitude', 'photo', 'membership_date', 'baptism_date', 'status', 'notes', 'created_by',
     ];
 
     public static function byOrg(int $orgId, array $filters = [], int $page = 1, int $perPage = 20): array

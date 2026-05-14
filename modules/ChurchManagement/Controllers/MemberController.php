@@ -65,7 +65,7 @@ class MemberController extends Controller
             }
 
             $path = parse_url((string) $_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '';
-            $isTopDonors = str_ends_with($path, '/ranking');
+            $isTopDonors = str_ends_with($path, '/top-ofertantes') || str_ends_with($path, '/ranking');
 
             $topDonors = [];
             if ($isTopDonors) {
@@ -73,17 +73,16 @@ class MemberController extends Controller
                     $pdo = Database::connection();
                     $currentYear = date('Y');
                     $stmt = $pdo->prepare("
-                        SELECT 
-                            m.name, 
-                            COUNT(ft.id) as donations_count, 
-                            SUM(ft.amount) as total_amount
-                        FROM financial_transactions ft
-                        JOIN members m ON ft.member_id = m.id
-                        WHERE ft.organization_id = :org_id 
-                          AND (ft.type = 'tithe' OR ft.type = 'offering')
-                          AND ft.status = 'confirmed'
-                          AND ft.transaction_date LIKE :year_pattern
-                        GROUP BY ft.member_id
+                        SELECT
+                            COALESCE(m.name, d.donor_name, 'Anonimo') AS name,
+                            COUNT(d.id) AS donations_count,
+                            SUM(d.amount) AS total_amount
+                        FROM donations d
+                        LEFT JOIN members m ON d.member_id = m.id
+                        WHERE d.organization_id = :org_id
+                          AND d.type IN ('tithe', 'offering')
+                          AND d.donation_date LIKE :year_pattern
+                        GROUP BY d.member_id, d.donor_name, m.name
                         ORDER BY total_amount DESC
                         LIMIT 50
                     ");
@@ -118,6 +117,44 @@ class MemberController extends Controller
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar membros: ' . $e->getMessage());
             redirect('/gestao');
+        }
+    }
+
+    public function map(Request $request): void
+    {
+        try {
+            $orgId = $this->orgId();
+            if ($orgId <= 0) {
+                Session::flash('warning', 'Complete o cadastro da organizacao para acessar o mapa de membros.');
+                redirect('/onboarding/organizacao');
+            }
+
+            $members = [];
+            try {
+                $stmt = Database::connection()->prepare("
+                    SELECT id, name, email, phone, address, city, state, status, photo, latitude, longitude
+                    FROM members
+                    WHERE organization_id = :org_id
+                      AND latitude IS NOT NULL
+                      AND longitude IS NOT NULL
+                    ORDER BY name ASC
+                ");
+                $stmt->execute(['org_id' => $orgId]);
+                $members = $stmt->fetchAll() ?: [];
+            } catch (\Throwable $e) {
+                error_log('Error fetching member map: ' . $e->getMessage());
+            }
+
+            $this->view('management/members/map', [
+                'pageTitle'      => 'Mapa de Membros - Gestao',
+                'breadcrumb'     => 'Membros / Mapa',
+                'members'        => $members,
+                'totalMembers'   => Member::countByOrg($orgId),
+                'locatedMembers' => count($members),
+            ]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Erro ao carregar mapa de membros: ' . $e->getMessage());
+            redirect('/gestao/membros');
         }
     }
 
@@ -157,9 +194,11 @@ class MemberController extends Controller
         try {
             $data = $request->only([
                 'name','email','phone','birth_date','gender','marital_status','church_unit_id',
-                'address','city','state','zip_code','membership_date','baptism_date','status','notes'
+                'address','city','state','zip_code','latitude','longitude','membership_date','baptism_date','status','notes'
             ]);
             $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+            $this->normalizeMemberCoordinates($data);
+            $data = $this->applyMemberPhoto($request, $data, $orgId);
 
             Member::create(array_merge($data, [
                 'organization_id' => $orgId,
@@ -256,9 +295,11 @@ class MemberController extends Controller
         try {
             $data = $request->only([
                 'name','email','phone','birth_date','gender','marital_status','church_unit_id',
-                'address','city','state','zip_code','membership_date','baptism_date','status','notes'
+                'address','city','state','zip_code','latitude','longitude','membership_date','baptism_date','status','notes'
             ]);
             $data['church_unit_id'] = (int) ($data['church_unit_id'] ?? 0) ?: null;
+            $this->normalizeMemberCoordinates($data);
+            $data = $this->applyMemberPhoto($request, $data, $this->orgId());
             Member::update($id, $data);
         } catch (\Throwable $e) {
             Session::flash('error', 'Nao foi possivel atualizar membro agora. Tente novamente.');
@@ -294,5 +335,71 @@ class MemberController extends Controller
 
         Session::flash('success', 'Membro removido.');
         redirect('/gestao/membros');
+    }
+
+    private function normalizeMemberCoordinates(array &$data): void
+    {
+        foreach (['latitude', 'longitude'] as $key) {
+            if (!array_key_exists($key, $data)) {
+                continue;
+            }
+
+            $value = str_replace(',', '.', trim((string) $data[$key]));
+            if ($value === '' || !is_numeric($value)) {
+                $data[$key] = null;
+                continue;
+            }
+
+            $float = (float) $value;
+            if ($key === 'latitude' && ($float < -90 || $float > 90)) {
+                $data[$key] = null;
+                continue;
+            }
+            if ($key === 'longitude' && ($float < -180 || $float > 180)) {
+                $data[$key] = null;
+                continue;
+            }
+
+            $data[$key] = number_format($float, 7, '.', '');
+        }
+    }
+
+    private function applyMemberPhoto(Request $request, array $data, int $orgId): array
+    {
+        $photoData = trim((string) $request->input('photo_cropped', ''));
+        if ($photoData === '') {
+            return $data;
+        }
+
+        $data['photo'] = $this->storeMemberPhotoData($photoData, $orgId);
+        return $data;
+    }
+
+    private function storeMemberPhotoData(string $photoData, int $orgId): string
+    {
+        if (!preg_match('/^data:image\/(png|jpeg|jpg|webp);base64,([A-Za-z0-9+\/=]+)$/', $photoData, $matches)) {
+            throw new \RuntimeException('Imagem de membro invalida.');
+        }
+
+        $binary = base64_decode($matches[2], true);
+        if ($binary === false || strlen($binary) > 6 * 1024 * 1024) {
+            throw new \RuntimeException('Imagem de membro invalida ou muito grande.');
+        }
+
+        $relativeDir = '/uploads/members/' . max(0, $orgId);
+        $targetDir = BASE_PATH . '/public' . $relativeDir;
+        if (!is_dir($targetDir) && !mkdir($targetDir, 0775, true) && !is_dir($targetDir)) {
+            throw new \RuntimeException('Nao foi possivel preparar a pasta de fotos.');
+        }
+
+        $extension = $matches[1] === 'jpeg' ? 'jpg' : $matches[1];
+        $fileName = 'member-' . date('YmdHis') . '-' . bin2hex(random_bytes(4)) . '.' . $extension;
+        $target = $targetDir . '/' . $fileName;
+
+        if (file_put_contents($target, $binary) === false) {
+            throw new \RuntimeException('Nao foi possivel salvar a foto do membro.');
+        }
+
+        return $relativeDir . '/' . $fileName;
     }
 }

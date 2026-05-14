@@ -172,7 +172,7 @@ class SiteController extends Controller
             return [];
         }
         try {
-            $stmt = Database::connection()->prepare("SELECT title, image_url, link_url, description FROM banners WHERE organization_id = :organization_id AND status = 'active' ORDER BY priority DESC, created_at DESC LIMIT 6");
+            $stmt = Database::connection()->prepare("SELECT title, image_url, link_url, '' AS description FROM banners WHERE organization_id = :organization_id AND status = 'active' ORDER BY sort_order DESC, created_at DESC LIMIT 6");
             $stmt->execute(['organization_id' => $organizationId]);
             return $stmt->fetchAll() ?: [];
         } catch (\Throwable $e) {
@@ -201,7 +201,14 @@ class SiteController extends Controller
             return [];
         }
         try {
-            $stmt = Database::connection()->prepare("SELECT name, description, leader_name FROM ministries WHERE organization_id = :organization_id ORDER BY created_at DESC LIMIT 4");
+            $stmt = Database::connection()->prepare("
+                SELECT mi.name, mi.description, m.name AS leader_name
+                FROM ministries mi
+                LEFT JOIN members m ON m.id = mi.leader_member_id
+                WHERE mi.organization_id = :organization_id
+                ORDER BY mi.created_at DESC
+                LIMIT 4
+            ");
             $stmt->execute(['organization_id' => $organizationId]);
             return $stmt->fetchAll() ?: [];
         } catch (\Throwable $e) {
@@ -215,7 +222,14 @@ class SiteController extends Controller
             return [];
         }
         try {
-            $stmt = Database::connection()->prepare("SELECT name, leader_name, meeting_day, location FROM small_groups WHERE organization_id = :organization_id ORDER BY created_at DESC LIMIT 6");
+            $stmt = Database::connection()->prepare("
+                SELECT sg.name, m.name AS leader_name, sg.meeting_day, sg.location
+                FROM small_groups sg
+                LEFT JOIN members m ON m.id = sg.leader_member_id
+                WHERE sg.organization_id = :organization_id
+                ORDER BY sg.created_at DESC
+                LIMIT 6
+            ");
             $stmt->execute(['organization_id' => $organizationId]);
             return $stmt->fetchAll() ?: [];
         } catch (\Throwable $e) {
