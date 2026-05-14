@@ -63,9 +63,9 @@
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Como seu app aparece nos resultados de busca</p>
             
             <div style="background: #ffffff; border: 1px solid var(--color-border-light); border-radius: 12px; padding: 1.5rem;">
-                <div style="font-size: 0.85rem; color: #16a34a; margin-bottom: 0.25rem;">https://seuapp.lovable.app</div>
-                <div style="font-size: 1.1rem; color: #1e3a8a; margin-bottom: 0.25rem; font-weight: 500;">Título do seu app</div>
-                <div style="font-size: 0.875rem; color: #4b5563;">Descrição do seu app aparecerá aqui...</div>
+                <div style="font-size: 0.85rem; color: #16a34a; margin-bottom: 0.25rem;">https://suaigreja.elo42.com.br</div>
+                <div style="font-size: 1.1rem; color: #1e3a8a; margin-bottom: 0.25rem; font-weight: 500;">T&iacute;tulo da sua igreja</div>
+                <div style="font-size: 0.875rem; color: #4b5563;">Descri&ccedil;&atilde;o da sua igreja aparecer&aacute; aqui...</div>
             </div>
         </div>
 
@@ -81,9 +81,9 @@
                     Sem imagem OG
                 </div>
                 <div style="padding: 1.25rem; background: #f9fafb; border-top: 1px solid var(--color-border-light);">
-                    <div style="font-size: 0.7rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">SEUAPP.LOVABLE.APP</div>
-                    <div style="font-size: 1rem; color: #111827; font-weight: 600; margin-bottom: 0.25rem;">Título do app</div>
-                    <div style="font-size: 0.85rem; color: #4b5563;">Descrição do app...</div>
+                    <div style="font-size: 0.7rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">SUAIGREJA.ELO42.COM.BR</div>
+                    <div style="font-size: 1rem; color: #111827; font-weight: 600; margin-bottom: 0.25rem;">T&iacute;tulo da sua igreja</div>
+                    <div style="font-size: 0.85rem; color: #4b5563;">Descri&ccedil;&atilde;o da igreja...</div>
                 </div>
             </div>
         </div>

@@ -66,6 +66,30 @@
         $canAccessChurch = !empty($churchAccess['can_access']) && ($organization['role_slug'] ?? '') !== 'member';
         $churchEntryUrl = (string) ($churchAccess['entry_url'] ?? url('/onboarding/organizacao'));
         $churchIsTrial = !empty($churchAccess['is_trial']);
+        $hubSiteUrl = url('/');
+        if (!empty($organization['id'])) {
+            try {
+                $pdo = \App\Core\Database::connection();
+                $stmt = $pdo->prepare('SHOW TABLES LIKE :table');
+                $stmt->execute(['table' => 'organization_sites']);
+                if ($stmt->fetchColumn()) {
+                    $siteStmt = $pdo->prepare("SELECT domain, slug FROM organization_sites WHERE organization_id = :org_id ORDER BY CASE WHEN status = 'published' THEN 0 ELSE 1 END, updated_at DESC LIMIT 1");
+                    $siteStmt->execute(['org_id' => (int) $organization['id']]);
+                    $site = $siteStmt->fetch();
+                    if (is_array($site)) {
+                        $domain = trim((string) ($site['domain'] ?? ''));
+                        $slug = trim((string) ($site['slug'] ?? ''));
+                        if ($domain !== '') {
+                            $hubSiteUrl = preg_match('/^https?:\/\//i', $domain) ? $domain : 'https://' . $domain;
+                        } elseif ($slug !== '') {
+                            $hubSiteUrl = url('/site/' . rawurlencode($slug));
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                $hubSiteUrl = url('/');
+            }
+        }
 
         $isMenuActive = static function (string $key, string $active): string {
             return $key === $active ? 'active' : '';
@@ -141,7 +165,7 @@
                     Configurações
                 </a>
                 <?php if ($isMasterAdmin): ?>
-                    <a href="<?= url('/admin') ?>" class="hub-nav-link <?= e($isMenuActive('admin', $activeMenu)) ?>">
+                    <a href="<?= url('/admin') ?>" class="hub-nav-link hub-nav-link--boxed <?= e($isMenuActive('admin', $activeMenu)) ?>">
                         <span class="hub-nav-link__icon" aria-hidden="true">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6l8-4z"></path><path d="M9 12l2 2 4-5"></path></svg>
                         </span>
@@ -178,7 +202,7 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                         Ajuda
                     </a>
-                    <a href="<?= url('/') ?>" class="hub-topbar__link">Site</a>
+                    <a href="<?= e($hubSiteUrl) ?>" class="hub-topbar__link">Site</a>
                     <button type="button" class="hub-topbar__theme-toggle" id="hub-theme-toggle-top" aria-label="Alternar modo claro e escuro" data-theme-toggle>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon theme-icon--light"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon theme-icon--dark"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>

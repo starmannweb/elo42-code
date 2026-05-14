@@ -266,6 +266,7 @@ class GeneralController extends Controller
     {
         try {
             $pdo = Database::connection();
+            $this->ensureChurchUnitsZipCodeColumn($pdo);
             $stmt = $pdo->prepare('SELECT * FROM church_units WHERE organization_id = :org_id ORDER BY status ASC, name ASC');
             $stmt->execute(['org_id' => $this->orgId()]);
             return $stmt->fetchAll();
@@ -1030,7 +1031,7 @@ class GeneralController extends Controller
                 $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
             }
 
-            Session::flash('success', 'Todos os dados da organização foram apagados permanentemente.');
+            Session::flash('success', 'Os dados da Gestão para Igrejas desta organização foram apagados permanentemente.');
             redirect('/gestao');
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao tentar zerar o sistema: ' . $e->getMessage());
@@ -1062,9 +1063,11 @@ class GeneralController extends Controller
         }
 
         try {
-            $stmt = Database::connection()->prepare(
-                'INSERT INTO church_units (organization_id, name, code, address, city, state, phone, status, created_at, updated_at)
-                 VALUES (:organization_id, :name, :code, :address, :city, :state, :phone, :status, NOW(), NOW())'
+            $pdo = Database::connection();
+            $this->ensureChurchUnitsZipCodeColumn($pdo);
+            $stmt = $pdo->prepare(
+                'INSERT INTO church_units (organization_id, name, code, address, city, state, zip_code, phone, status, created_at, updated_at)
+                 VALUES (:organization_id, :name, :code, :address, :city, :state, :zip_code, :phone, :status, NOW(), NOW())'
             );
             $stmt->execute([
                 'organization_id' => $this->orgId(),
@@ -1073,6 +1076,7 @@ class GeneralController extends Controller
                 'address' => trim((string) $req->input('address')) ?: null,
                 'city' => trim((string) $req->input('city')) ?: null,
                 'state' => strtoupper(substr(trim((string) $req->input('state')), 0, 2)) ?: null,
+                'zip_code' => preg_replace('/\D+/', '', (string) $req->input('zip_code')) ?: null,
                 'phone' => trim((string) $req->input('phone')) ?: null,
                 'status' => $req->input('status') === 'inactive' ? 'inactive' : 'active',
             ]);
@@ -1334,6 +1338,44 @@ class GeneralController extends Controller
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar ministrações: ' . $e->getMessage());
             redirect('/gestao');
+        }
+    }
+
+    private function ensureChurchUnitsZipCodeColumn(\PDO $pdo): void
+    {
+        try {
+            $driver = (string) $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+            if ($this->columnExists($pdo, 'church_units', 'zip_code', $driver)) {
+                return;
+            }
+
+            $definition = $driver === 'sqlite'
+                ? 'ALTER TABLE church_units ADD COLUMN zip_code VARCHAR(10) NULL'
+                : 'ALTER TABLE church_units ADD COLUMN zip_code VARCHAR(10) NULL AFTER state';
+            $pdo->exec($definition);
+        } catch (\Throwable $e) {
+            // The migration also creates this column; ignore race/missing-table errors.
+        }
+    }
+
+    private function columnExists(\PDO $pdo, string $table, string $column, string $driver): bool
+    {
+        try {
+            if ($driver === 'sqlite') {
+                $stmt = $pdo->query('PRAGMA table_info(' . $table . ')');
+                foreach ($stmt->fetchAll() as $row) {
+                    if (strcasecmp((string) ($row['name'] ?? ''), $column) === 0) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            $stmt = $pdo->prepare('SHOW COLUMNS FROM ' . $table . ' LIKE :column');
+            $stmt->execute(['column' => $column]);
+            return (bool) $stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            return true;
         }
     }
 }

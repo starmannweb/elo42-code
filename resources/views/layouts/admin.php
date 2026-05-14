@@ -96,8 +96,8 @@
             </nav>
 
             <div class="hub-sidebar__footer">
-                <a href="<?= url('/hub') ?>" class="hub-nav-link admin-sidebar__hub-link">
-                    <span class="hub-nav-link__icon" aria-hidden="true"><?= $adminIcon('home') ?></span> Hub
+                <a href="<?= url('/hub') ?>" class="hub-nav-link admin-sidebar__hub-link mgmt-sidebar-action mgmt-sidebar-action--hub">
+                    <span class="hub-nav-link__icon" aria-hidden="true"><?= $adminIcon('home') ?></span> Voltar ao Hub
                 </a>
                 <div class="hub-sidebar__user">
                     <div class="hub-sidebar__user-avatar admin-avatar" aria-hidden="true"><?= $initials ?></div>

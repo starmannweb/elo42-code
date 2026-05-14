@@ -24,9 +24,26 @@ $recurrenceLabels = ['one_time' => 'Único', 'monthly' => 'Mensal', 'quarterly' 
             <td><div class="mgmt-table__name"><?= e($s['name']) ?></div><div class="mgmt-table__sub"><?= e($s['slug']) ?></div></td>
             <td style="font-weight:700;">R$ <?= number_format((float)($s['price'] ?? 0), 2, ',', '.') ?></td>
             <td><?= e($recurrenceLabels[$s['recurrence'] ?? ''] ?? ($s['recurrence'] ?? '-')) ?></td>
-            <td><span class="badge badge--<?= e($s['status']) ?>"><?= e($statusLabels[$s['status'] ?? ''] ?? ($s['status'] ?? '-')) ?></span></td>
+            <td>
+                <?php $serviceId = (int) ($s['id'] ?? 0); $isActiveService = ($s['status'] ?? '') === 'active'; ?>
+                <?php if ($serviceId > 0): ?>
+                    <form method="POST" action="<?= url('/admin/servicos/' . $serviceId . '/toggle-status') ?>" class="admin-service-toggle-form">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="status" value="<?= $isActiveService ? 'inactive' : 'active' ?>">
+                        <button type="submit" class="admin-service-toggle <?= $isActiveService ? 'is-active' : '' ?>" aria-label="<?= $isActiveService ? 'Desativar servico' : 'Ativar servico' ?>">
+                            <span class="admin-service-toggle__knob"></span>
+                            <span class="admin-service-toggle__text"><?= $isActiveService ? 'ON' : 'OFF' ?></span>
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <span class="admin-service-toggle admin-service-toggle--disabled <?= $isActiveService ? 'is-active' : '' ?>" aria-hidden="true">
+                        <span class="admin-service-toggle__knob"></span>
+                        <span class="admin-service-toggle__text"><?= $isActiveService ? 'ON' : 'OFF' ?></span>
+                    </span>
+                <?php endif; ?>
+            </td>
             <td class="mgmt-table__actions">
-                <?php if ((int) ($s['id'] ?? 0) > 0): ?>
+                <?php if ($serviceId > 0): ?>
                     <a href="<?= url('/admin/servicos/' . $s['id'] . '/editar') ?>">Editar</a>
                 <?php else: ?>
                     <span class="badge badge--inactive">Base</span>

@@ -8,7 +8,7 @@
 
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-header__title">Editar usuario</h1>
+        <h1 class="mgmt-header__title">Editar usu&aacute;rio</h1>
         <p class="mgmt-header__subtitle"><?= e($user['email'] ?? '') ?></p>
     </div>
     <div class="mgmt-header__actions" style="display:flex;gap:8px;">
@@ -27,13 +27,13 @@
 
 <?php if ($degraded): ?>
     <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">
-        Banco indisponivel agora. Esta tela esta usando os dados da sessao e pode nao persistir alteracoes no cadastro.
+        Banco indispon&iacute;vel agora. Esta tela est&aacute; usando os dados da sess&atilde;o e pode n&atilde;o persistir altera&ccedil;&otilde;es no cadastro.
     </div>
 <?php endif; ?>
 
 <div class="mgmt-grid admin-user-edit-grid">
     <div class="mgmt-form-card">
-        <h3 class="mgmt-form-card__title">Dados do usuario</h3>
+        <h3 class="mgmt-form-card__title">Dados do usu&aacute;rio</h3>
         <form method="POST" action="<?= url('/admin/usuarios/' . $user['id'] . '/editar') ?>">
             <?= csrf_field() ?>
             <div class="form-group">
@@ -63,9 +63,18 @@
         </form>
     </div>
 
-    <?php if (!$degraded): ?>
     <div class="mgmt-form-card">
         <h3 class="mgmt-form-card__title">Redefinir senha</h3>
+        <?php if ($degraded): ?>
+            <p class="mgmt-auto-note" style="margin-top:0;">
+                Conecte o banco de dados para redefinir a senha deste usu&aacute;rio.
+            </p>
+            <div class="form-group">
+                <label class="form-label">Nova senha</label>
+                <input type="password" class="form-input" disabled>
+            </div>
+            <button type="button" class="btn btn--primary" style="width:100%;" disabled>Salvar nova senha</button>
+        <?php else: ?>
         <form method="POST" action="<?= url('/admin/usuarios/' . $user['id'] . '/reset-password') ?>">
             <?= csrf_field() ?>
             <div class="form-group">
@@ -74,8 +83,8 @@
             </div>
             <button type="submit" class="btn btn--primary" style="width:100%;">Salvar nova senha</button>
         </form>
+        <?php endif; ?>
     </div>
-    <?php endif; ?>
 </div>
 
 <?php $__view->endSection(); ?>

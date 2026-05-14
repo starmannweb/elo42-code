@@ -39,6 +39,7 @@ $router->group(['middleware' => ['auth', 'csrf', 'admin']], function (Router $r)
     $r->post('/admin/servicos', [\Modules\Admin\Controllers\AdminCatalogController::class, 'storeService']);
     $r->get('/admin/servicos/{id}/editar', [\Modules\Admin\Controllers\AdminCatalogController::class, 'editService']);
     $r->post('/admin/servicos/{id}/editar', [\Modules\Admin\Controllers\AdminCatalogController::class, 'updateService']);
+    $r->post('/admin/servicos/{id}/toggle-status', [\Modules\Admin\Controllers\AdminCatalogController::class, 'toggleServiceStatus']);
 
     // Benefits
     $r->get('/admin/cortesias', [\Modules\Admin\Controllers\AdminCatalogController::class, 'benefits']);

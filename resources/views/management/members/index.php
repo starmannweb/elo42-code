@@ -15,7 +15,7 @@
     </div>
     <?php if (empty($isTopDonors)): ?>
     <div class="mgmt-header__actions">
-        <button type="button" class="btn btn--primary" onclick="openMemberEdit()">+ Novo membro</button>
+        <a href="<?= url('/gestao/membros/novo') ?>" class="btn btn--primary">+ Novo membro</a>
     </div>
     <?php endif; ?>
 </div>
@@ -23,9 +23,24 @@
 <!-- Tabs removidas pois são renderizadas pelo layout base -->
 
 <?php if (!empty($isTopDonors)): ?>
+<div class="mgmt-filter-card mgmt-card">
+    <div class="mgmt-card__body">
+        <form method="GET" action="<?= url('/gestao/membros/top-ofertantes') ?>" class="mgmt-filter-grid">
+            <div class="mgmt-filter-field">
+                <label for="top_donors_period" class="form-label">Per&iacute;odo</label>
+                <input type="month" id="top_donors_period" name="period" class="form-control" value="<?= e($topDonorsPeriod ?? date('Y-m')) ?>">
+            </div>
+            <div class="mgmt-filter-actions">
+                <button type="submit" class="btn btn--outline">Filtrar</button>
+                <a href="<?= url('/gestao/membros/top-ofertantes') ?>" class="btn btn--outline">Limpar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="mgmt-dashboard-card" style="padding:0;overflow:hidden;">
     <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--color-border-light);">
-        <h2 class="mgmt-info-card__title" style="margin:0;">Ranking de Ofertantes (Ano Atual)</h2>
+        <h2 class="mgmt-info-card__title" style="margin:0;">Ranking de Ofertantes (<?= e($topDonorsPeriodLabel ?? 'Periodo atual') ?>)</h2>
         <p style="margin:4px 0 0; font-size:12px; color:var(--text-muted);">Acompanhe os membros mais engajados financeiramente com a organização.</p>
     </div>
     <?php if (empty($topDonors)): ?>
@@ -144,7 +159,7 @@ foreach ($members as $m) {
         <div style="margin-bottom:8px; opacity:0.3;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg></div>
         <h3 style="font-weight:700; margin-bottom:4px;">Nenhum membro encontrado</h3>
         <p style="font-size:13px; margin-bottom: var(--space-4);">Comece cadastrando o primeiro membro da sua organização.</p>
-        <button type="button" onclick="openMemberEdit()" class="btn btn--primary">Cadastrar membro</button>
+        <a href="<?= url('/gestao/membros/novo') ?>" class="btn btn--primary">Cadastrar membro</a>
     </div>
 <?php else: ?>
     <table class="mgmt-table">

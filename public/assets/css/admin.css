@@ -129,14 +129,72 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
 }
 
 .admin-user-edit-grid {
-    grid-template-columns: minmax(0, 640px) minmax(320px, 608px);
-    gap: 1.25rem;
+    grid-template-columns: minmax(0, 620px) minmax(320px, 480px);
+    gap: 1rem;
     align-items: start;
-    max-width: 1280px;
+    max-width: 1120px;
 }
 
 .admin-sidebar__hub-link {
     margin-bottom: 0.25rem;
+    border: 1px solid #243857;
+    background: #111f35;
+    color: #cbd5e1;
+    min-height: 42px;
+}
+
+.admin-sidebar__hub-link:hover {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f8fafc;
+}
+
+.admin-service-toggle-form {
+    margin: 0;
+}
+
+.admin-service-toggle {
+    width: 72px;
+    min-height: 34px;
+    border: 2px solid #d7e2f2;
+    border-radius: 999px;
+    background: #edf2f7;
+    color: #475569;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px 3px 4px;
+    font-weight: 800;
+    font-size: 0.72rem;
+    line-height: 1;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.admin-service-toggle__knob {
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.admin-service-toggle.is-active {
+    background: #13ce66;
+    border-color: #13ce66;
+    color: #ffffff;
+    padding-left: 10px;
+    padding-right: 4px;
+}
+
+.admin-service-toggle.is-active .admin-service-toggle__knob {
+    order: 2;
+}
+
+.admin-service-toggle--disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
 }
 
 @media (max-width: 1100px) {

@@ -151,6 +151,18 @@
     border-radius: 0 2px 2px 0;
 }
 
+.hub-nav-link--boxed {
+    margin-top: var(--space-2);
+    border: 1px solid #243857;
+    background: #111f35;
+    border-radius: 10px;
+}
+
+.hub-nav-link--boxed:hover {
+    background: #1e293b;
+    border-color: #334155;
+}
+
 .hub-nav-link__icon {
     width: 22px;
     height: 22px;

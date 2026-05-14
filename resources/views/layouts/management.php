@@ -293,7 +293,7 @@
             </nav>
 
             <div class="hub-sidebar__footer">
-                <a href="<?= url('/hub') ?>" class="hub-nav-link mgmt-sidebar-action">
+                <a href="<?= url('/hub') ?>" class="hub-nav-link mgmt-sidebar-action mgmt-sidebar-action--hub">
                     <span class="hub-nav-link__icon" aria-hidden="true"><?= $icon('home') ?></span>
                     <span class="hub-nav-link__label">Voltar ao Hub</span>
                 </a>

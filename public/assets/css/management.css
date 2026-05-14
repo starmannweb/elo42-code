@@ -3679,27 +3679,54 @@ body[data-hub-theme="dark"] .settings-field-row__actions button {
 
 /* Final modal and dark-mode polish */
 .modal {
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    overflow-y: auto;
+    overflow: hidden;
     padding: 24px;
     box-sizing: border-box;
 }
 
 .modal__content {
-    margin: auto 0;
-    max-height: none;
-    overflow: visible;
+    margin: 0;
+    max-height: calc(100dvh - 2rem);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal__content > form {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
 }
 
 .modal__body {
+    flex: 1 1 auto;
+    min-height: 0;
     max-height: none;
-    overflow: visible;
-    scrollbar-gutter: auto;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 
 .modal__footer {
     position: static;
+    flex: 0 0 auto;
+}
+
+.modal__body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.modal__body::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.08);
+}
+
+.modal__body::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.65);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
 }
 
 .modal__content--crop,
@@ -3731,6 +3758,49 @@ body[data-hub-theme="dark"] .mgmt-dashboard-card [style*="color:var(--text-muted
 
 body[data-hub-theme="dark"] .mgmt-layout .modal__close {
     color: #dbeafe;
+}
+
+body[data-hub-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+body[data-hub-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
+body[data-hub-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+body[data-hub-theme="dark"] input[type="month"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(2) contrast(0.95);
+    opacity: 1;
+}
+
+body[data-hub-theme="dark"] .agenda-toolbar__legend .badge,
+body[data-hub-theme="dark"] .mgmt-table .badge,
+body[data-hub-theme="dark"] .mgmt-layout .badge--info,
+body[data-hub-theme="dark"] .mgmt-layout .badge--active,
+body[data-hub-theme="dark"] .mgmt-layout .badge--inactive,
+body[data-hub-theme="dark"] .mgmt-layout .badge--pending {
+    color: #0f172a !important;
+}
+
+body[data-hub-theme="dark"] .agenda-toolbar__legend .badge-primary,
+body[data-hub-theme="dark"] .agenda-toolbar__legend .badge-success {
+    color: #082f49 !important;
+}
+
+body[data-hub-theme="dark"] .settings-field-row__actions button.is-active {
+    color: #ffffff !important;
+}
+
+.settings-danger-card .settings-action-block {
+    margin-bottom: 0;
+}
+
+.settings-danger-confirm {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    color: var(--color-text-primary);
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+body[data-hub-theme="dark"] .settings-danger-confirm {
+    color: #f8fafc;
 }
 
 @media (max-width: 720px) {

@@ -68,10 +68,13 @@ class MemberController extends Controller
             $isTopDonors = str_ends_with($path, '/top-ofertantes') || str_ends_with($path, '/ranking');
 
             $topDonors = [];
+            $topDonorsPeriod = preg_match('/^\d{4}-\d{2}$/', (string) $request->input('period', ''))
+                ? (string) $request->input('period')
+                : date('Y-m');
+            $topDonorsPeriodLabel = $this->formatMonthLabel($topDonorsPeriod);
             if ($isTopDonors) {
                 try {
                     $pdo = Database::connection();
-                    $currentYear = date('Y');
                     $stmt = $pdo->prepare("
                         SELECT
                             COALESCE(m.name, d.donor_name, 'Anônimo') AS name,
@@ -81,14 +84,14 @@ class MemberController extends Controller
                         LEFT JOIN members m ON d.member_id = m.id
                         WHERE d.organization_id = :org_id
                           AND d.type IN ('tithe', 'offering')
-                          AND d.donation_date LIKE :year_pattern
+                          AND d.donation_date LIKE :period_pattern
                         GROUP BY d.member_id, d.donor_name, m.name
                         ORDER BY total_amount DESC
                         LIMIT 50
                     ");
                     $stmt->execute([
                         'org_id' => $orgId,
-                        'year_pattern' => $currentYear . '-%'
+                        'period_pattern' => $topDonorsPeriod . '-%'
                     ]);
                     $topDonors = $stmt->fetchAll();
                 } catch (\Throwable $e) {
@@ -113,11 +116,25 @@ class MemberController extends Controller
                 'units'       => $this->churchUnits(),
                 'isTopDonors' => $isTopDonors,
                 'topDonors'   => $topDonors,
+                'topDonorsPeriod' => $topDonorsPeriod,
+                'topDonorsPeriodLabel' => $topDonorsPeriodLabel,
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar membros: ' . $e->getMessage());
             redirect('/gestao');
         }
+    }
+
+    private function formatMonthLabel(string $period): string
+    {
+        $date = \DateTimeImmutable::createFromFormat('Y-m-d', $period . '-01');
+        if (!$date) {
+            return 'Período atual';
+        }
+
+        $months = [1 => 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+        return $months[(int) $date->format('n')] . ' de ' . $date->format('Y');
     }
 
     public function map(Request $request): void

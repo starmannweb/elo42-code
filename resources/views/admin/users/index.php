@@ -30,7 +30,7 @@
 </form>
 
 <?php if (!empty($degraded)): ?>
-    <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponivel agora. Exibindo o usuario da sessao como referencia.</div>
+    <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indispon&iacute;vel agora. Exibindo o usu&aacute;rio da sess&atilde;o como refer&ecirc;ncia.</div>
 <?php endif; ?>
 
 <div class="mgmt-table-container">
@@ -45,12 +45,13 @@
             <?php foreach ($users as $u): ?>
                 <?php $isSelf = (int) ($sessionUser['id'] ?? 0) === (int) ($u['id'] ?? 0); ?>
                 <tr>
-                    <td class="mgmt-table__name"><?= e($u['name']) ?><?= !empty($u['is_session_fallback']) ? ' <span class="badge badge--inactive">Sessao</span>' : '' ?></td>
+                    <td class="mgmt-table__name"><?= e($u['name']) ?><?= !empty($u['is_session_fallback']) ? ' <span class="badge badge--inactive">Sess&atilde;o</span>' : '' ?></td>
                     <td class="mgmt-table__sub"><?= e($u['email']) ?></td>
                     <td><?= $u['org_count'] ?></td>
                     <td><span class="badge badge--<?= e($u['status']) ?>"><?= e($statusLabels[$u['status'] ?? ''] ?? ($u['status'] ?? '-')) ?></span></td>
                     <td><?= $u['last_login_at'] ? date('d/m/Y H:i', strtotime($u['last_login_at'])) : '-' ?></td>
                     <td class="mgmt-table__actions" style="display:flex;gap:0.5rem;align-items:center;">
+                        <a href="<?= url('/admin/usuarios/' . $u['id']) ?>">Ver</a>
                         <a href="<?= url('/admin/usuarios/' . $u['id'] . '/editar') ?>">Editar</a>
                         <?php if (empty($u['is_session_fallback']) && !$isSelf): ?>
                         <form method="POST" action="<?= url('/admin/usuarios/' . $u['id'] . '/excluir') ?>" onsubmit="return confirm('Tem certeza que deseja remover este usuário?');" style="margin:0;">

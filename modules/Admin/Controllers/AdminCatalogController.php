@@ -107,6 +107,22 @@ class AdminCatalogController extends Controller
         redirect('/admin/servicos');
     }
 
+    public function toggleServiceStatus(Request $req): void
+    {
+        $id = (int) $req->param('id');
+        $status = $req->input('status') === 'active' ? 'active' : 'inactive';
+
+        try {
+            Service::update($id, ['status' => $status]);
+            Session::flash('success', $status === 'active' ? 'Serviço ativado.' : 'Serviço desativado.');
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_SERVICES_TOGGLE] ' . $e->getMessage());
+            Session::flash('error', 'Nao foi possivel alterar o status do servico agora.');
+        }
+
+        redirect('/admin/servicos');
+    }
+
     // ---- Benefits ----
     public function benefits(Request $req): void
     {

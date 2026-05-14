@@ -202,7 +202,7 @@ $balance = (float) ($financial['balance'] ?? 0);
                 ?>
                 <div style="width: 160px; height: 160px; padding: 10px; position: relative; flex-shrink: 0; overflow: visible;">
                     <?php if ($totalGender > 0): ?>
-                    <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
+                    <svg viewBox="-2 -2 40 40" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
                         <circle cx="18" cy="18" r="15.9" fill="none" stroke="#ec4899" stroke-width="6" stroke-dasharray="<?= $dashF ?> <?= 100 - $dashF ?>" stroke-dashoffset="0"></circle>
                         <circle cx="18" cy="18" r="15.9" fill="none" stroke="#3b82f6" stroke-width="6" stroke-dasharray="<?= $dashM ?> <?= 100 - $dashM ?>" stroke-dashoffset="-<?= $dashF ?>"></circle>
                         <?php if ($pctO > 0): ?>
@@ -210,7 +210,7 @@ $balance = (float) ($financial['balance'] ?? 0);
                         <?php endif; ?>
                     </svg>
                     <?php else: ?>
-                    <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; overflow: visible;">
+                    <svg viewBox="-2 -2 40 40" style="width: 100%; height: 100%; overflow: visible;">
                         <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--color-border-light)" stroke-width="6"></circle>
                     </svg>
                     <?php endif; ?>

@@ -24,17 +24,25 @@
                     <input id="unit_code" name="code" class="form-control" placeholder="Ex: SEDE">
                 </div>
                 <div class="form-group">
+                    <label class="form-label" for="unit_zip_code">CEP</label>
+                    <input id="unit_zip_code" name="zip_code" class="form-control" placeholder="00000-000" inputmode="numeric" autocomplete="postal-code">
+                </div>
+                <div class="form-group">
                     <label class="form-label" for="unit_address">Endereço</label>
                     <input id="unit_address" name="address" class="form-control" placeholder="Rua, número e bairro">
                 </div>
                 <div class="mgmt-grid" style="grid-template-columns: 1fr 90px; gap: .875rem;">
                     <div class="form-group">
                         <label class="form-label" for="unit_city">Cidade</label>
-                        <input id="unit_city" name="city" class="form-control">
+                        <select id="unit_city" name="city" class="form-control">
+                            <option value="">Selecione a UF</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="unit_state">UF</label>
-                        <input id="unit_state" name="state" class="form-control" maxlength="2">
+                        <select id="unit_state" name="state" class="form-control">
+                            <option value="">UF</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -74,7 +82,7 @@
                                     <tr>
                                         <td>
                                             <div class="mgmt-table__name"><?= e((string) ($unit['name'] ?? 'Unidade')) ?></div>
-                                            <small style="color:var(--text-muted);"><?= e((string) ($unit['address'] ?? '')) ?></small>
+                                            <small style="color:var(--text-muted);"><?= e(trim((string) ($unit['zip_code'] ?? '') . ' ' . (string) ($unit['address'] ?? ''))) ?></small>
                                         </td>
                                         <td><?= e(trim((string) ($unit['city'] ?? '') . ' ' . (string) ($unit['state'] ?? '')) ?: '-') ?></td>
                                         <td><span class="badge"><?= (string) ($unit['status'] ?? 'active') === 'active' ? 'Ativa' : 'Inativa' ?></span></td>
@@ -94,4 +102,81 @@
         </section>
     </div>
 </div>
+<script>
+(() => {
+    const stateSelect = document.getElementById('unit_state');
+    const citySelect = document.getElementById('unit_city');
+    const zipInput = document.getElementById('unit_zip_code');
+    const addressInput = document.getElementById('unit_address');
+    const ibgeBase = 'https://servicodados.ibge.gov.br/api/v1/localidades';
+
+    const setCityPlaceholder = (label) => {
+        if (!citySelect) return;
+        citySelect.innerHTML = `<option value="">${label}</option>`;
+    };
+
+    const loadStates = async () => {
+        if (!stateSelect) return;
+        try {
+            const response = await fetch(`${ibgeBase}/estados?orderBy=nome`);
+            const states = await response.json();
+            stateSelect.innerHTML = '<option value="">UF</option>';
+            states.forEach((state) => {
+                const option = document.createElement('option');
+                option.value = state.sigla;
+                option.textContent = state.sigla;
+                stateSelect.appendChild(option);
+            });
+        } catch (error) {}
+    };
+
+    const loadCities = async (uf, selected = '') => {
+        if (!citySelect || !uf) {
+            setCityPlaceholder('Selecione a UF');
+            return;
+        }
+        setCityPlaceholder('Carregando...');
+        try {
+            const response = await fetch(`${ibgeBase}/estados/${encodeURIComponent(uf)}/municipios?orderBy=nome`);
+            const cities = await response.json();
+            citySelect.innerHTML = '<option value="">Selecione</option>';
+            cities.forEach((city) => {
+                const option = document.createElement('option');
+                option.value = city.nome;
+                option.textContent = city.nome;
+                if (selected && selected === city.nome) option.selected = true;
+                citySelect.appendChild(option);
+            });
+        } catch (error) {
+            setCityPlaceholder('Informe manualmente');
+        }
+    };
+
+    const applyCep = async () => {
+        const cep = (zipInput?.value || '').replace(/\D+/g, '');
+        if (cep.length !== 8) return;
+
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+            if (data?.erro) return;
+            if (addressInput && !addressInput.value) {
+                addressInput.value = [data.logradouro, data.bairro].filter(Boolean).join(', ');
+            }
+            if (stateSelect && data.uf) {
+                stateSelect.value = data.uf;
+                await loadCities(data.uf, data.localidade || '');
+            }
+        } catch (error) {}
+    };
+
+    stateSelect?.addEventListener('change', () => loadCities(stateSelect.value));
+    zipInput?.addEventListener('blur', applyCep);
+    zipInput?.addEventListener('input', () => {
+        if ((zipInput.value || '').replace(/\D+/g, '').length === 8) applyCep();
+    });
+
+    loadStates();
+})();
+</script>
 <?php $__view->endSection(); ?>

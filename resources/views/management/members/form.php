@@ -138,4 +138,38 @@
     </form>
 </div>
 
+<script>
+(() => {
+    const form = document.querySelector('form[action*="/gestao/membros"]');
+    if (!form) return;
+
+    const zip = form.querySelector('[name="zip_code"]');
+    const address = form.querySelector('[name="address"]');
+    const city = form.querySelector('[name="city"]');
+    const state = form.querySelector('[name="state"]');
+
+    const applyCep = async () => {
+        const value = (zip?.value || '').replace(/\D+/g, '');
+        if (value.length !== 8) return;
+
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${value}/json/`);
+            const data = await response.json();
+            if (data?.erro) return;
+
+            if (address && !address.value) {
+                address.value = [data.logradouro, data.bairro].filter(Boolean).join(', ');
+            }
+            if (city && data.localidade) city.value = data.localidade;
+            if (state && data.uf) state.value = data.uf;
+        } catch (error) {}
+    };
+
+    zip?.addEventListener('blur', applyCep);
+    zip?.addEventListener('input', () => {
+        if ((zip.value || '').replace(/\D+/g, '').length === 8) applyCep();
+    });
+})();
+</script>
+
 <?php $__view->endSection(); ?>
