@@ -1,6 +1,9 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
-<?php $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'suspended' => 'Suspenso']; ?>
+<?php
+    $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'suspended' => 'Suspenso'];
+    $sessionUser = \App\Core\Session::user() ?? [];
+?>
 
 <div class="mgmt-header">
     <div>
@@ -40,6 +43,7 @@
                 </tr>
             <?php endif; ?>
             <?php foreach ($users as $u): ?>
+                <?php $isSelf = (int) ($sessionUser['id'] ?? 0) === (int) ($u['id'] ?? 0); ?>
                 <tr>
                     <td class="mgmt-table__name"><?= e($u['name']) ?><?= !empty($u['is_session_fallback']) ? ' <span class="badge badge--inactive">Sessao</span>' : '' ?></td>
                     <td class="mgmt-table__sub"><?= e($u['email']) ?></td>
@@ -48,10 +52,12 @@
                     <td><?= $u['last_login_at'] ? date('d/m/Y H:i', strtotime($u['last_login_at'])) : '-' ?></td>
                     <td class="mgmt-table__actions" style="display:flex;gap:0.5rem;align-items:center;">
                         <a href="<?= url('/admin/usuarios/' . $u['id'] . '/editar') ?>">Editar</a>
+                        <?php if (empty($u['is_session_fallback']) && !$isSelf): ?>
                         <form method="POST" action="<?= url('/admin/usuarios/' . $u['id'] . '/excluir') ?>" onsubmit="return confirm('Tem certeza que deseja remover este usuário?');" style="margin:0;">
                             <?= csrf_field() ?>
                             <button type="submit" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:inherit;padding:0;">Excluir</button>
                         </form>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

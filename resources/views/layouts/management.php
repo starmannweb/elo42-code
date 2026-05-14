@@ -394,10 +394,6 @@
                 <?php
                     if ($isActive(['/gestao/membros', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico'], $uri)) {
                         $renderTabs($peopleTabs);
-                    } elseif ($isActive(['/gestao/receitas', '/gestao/doacoes', '/gestao/despesas', '/gestao/categorias-financeiras', '/gestao/aprovacoes-despesas', '/gestao/auditoria', '/gestao/contas'], $uri)) {
-                        $renderTabs($treasuryTabs);
-                    } elseif ($isActive(['/gestao/sermoes', '/gestao/pregadores', '/gestao/relatorios'], $uri)) {
-                        $renderTabs($adminTabs);
                     } elseif ($isActive(['/gestao/configuracoes', '/gestao/usuarios'], $uri)) {
                         $renderTabs($settingsTabs);
                     }

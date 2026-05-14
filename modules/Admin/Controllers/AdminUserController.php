@@ -75,6 +75,7 @@ class AdminUserController extends Controller
             'id' => (int) $user['id'],
             'name' => (string) ($user['name'] ?? 'Usuario atual'),
             'email' => (string) ($user['email'] ?? ''),
+            'phone' => (string) ($user['phone'] ?? ''),
             'status' => (string) ($user['status'] ?? 'active'),
             'last_login_at' => $user['last_login_at'] ?? null,
             'org_count' => !empty($organization['id']) ? 1 : 0,
@@ -82,24 +83,73 @@ class AdminUserController extends Controller
         ];
     }
 
+    private function isCurrentSessionUser(int $id): bool
+    {
+        $user = Session::user();
+        return is_array($user) && (int) ($user['id'] ?? 0) === $id;
+    }
+
+    private function updateSessionUser(array $data): void
+    {
+        $user = Session::user();
+        if (!is_array($user)) {
+            return;
+        }
+
+        foreach (['name', 'email', 'phone', 'status'] as $field) {
+            if (array_key_exists($field, $data)) {
+                $user[$field] = $data[$field];
+            }
+        }
+
+        Session::set('user', $user);
+    }
+
     public function show(Request $request): void
     {
-        $user = User::find((int) $request->param('id'));
-        if (!$user) { redirect('/admin/usuarios'); }
+        $id = (int) $request->param('id');
+        $user = null;
+        $degraded = false;
 
-        $pdo = Database::connection();
-        $orgs = $pdo->prepare("SELECT o.*, ou.role_id, r.name as role_name, ou.status as membership_status FROM organizations o JOIN organization_users ou ON o.id = ou.organization_id LEFT JOIN roles r ON ou.role_id = r.id WHERE ou.user_id = :uid");
-        $orgs->execute(['uid' => $user['id']]);
+        try {
+            $user = User::find($id);
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_USERS_SHOW_FIND] ' . $e->getMessage());
+        }
 
-        $logs = $pdo->prepare("SELECT * FROM audit_logs WHERE user_id = :uid ORDER BY created_at DESC LIMIT 20");
-        $logs->execute(['uid' => $user['id']]);
+        if (!$user && $this->isCurrentSessionUser($id)) {
+            $user = $this->currentSessionUserRow();
+            $degraded = true;
+        }
+
+        if (!$user) {
+            Session::flash('error', $degraded ? 'Nao foi possivel carregar este usuario agora.' : 'Usuario nao encontrado.');
+            redirect('/admin/usuarios');
+        }
+
+        $organizations = [];
+        $logs = [];
+
+        try {
+            $pdo = Database::connection();
+            $orgs = $pdo->prepare("SELECT o.*, ou.role_id, r.name as role_name, ou.status as membership_status FROM organizations o JOIN organization_users ou ON o.id = ou.organization_id LEFT JOIN roles r ON ou.role_id = r.id WHERE ou.user_id = :uid");
+            $orgs->execute(['uid' => $user['id']]);
+            $organizations = $orgs->fetchAll();
+
+            $logsStmt = $pdo->prepare("SELECT * FROM audit_logs WHERE user_id = :uid ORDER BY created_at DESC LIMIT 20");
+            $logsStmt->execute(['uid' => $user['id']]);
+            $logs = $logsStmt->fetchAll();
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_USERS_SHOW] ' . $e->getMessage());
+        }
 
         $this->view('admin/users/show', [
             'pageTitle'     => e($user['name']) . ' — Admin',
             'breadcrumb'    => 'Usuários / ' . $user['name'],
             'user'          => $user,
-            'organizations' => $orgs->fetchAll(),
-            'logs'          => $logs->fetchAll(),
+            'organizations' => $organizations,
+            'logs'          => $logs,
         ]);
     }
 
@@ -140,12 +190,31 @@ class AdminUserController extends Controller
 
     public function edit(Request $request): void
     {
-        $user = User::find((int) $request->param('id'));
-        if (!$user) { redirect('/admin/usuarios'); }
+        $id = (int) $request->param('id');
+        $user = null;
+        $degraded = false;
+
+        try {
+            $user = User::find($id);
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_USERS_EDIT] ' . $e->getMessage());
+        }
+
+        if (!$user && $this->isCurrentSessionUser($id)) {
+            $user = $this->currentSessionUserRow();
+            $degraded = true;
+        }
+
+        if (!$user) {
+            Session::flash('error', $degraded ? 'Nao foi possivel carregar este usuario agora.' : 'Usuario nao encontrado.');
+            redirect('/admin/usuarios');
+        }
         $this->view('admin/users/edit', [
             'pageTitle' => 'Editar — ' . e($user['name']),
             'breadcrumb' => 'Usuários / Editar',
             'user' => $user,
+            'degraded' => $degraded,
         ]);
     }
 
@@ -153,7 +222,25 @@ class AdminUserController extends Controller
     {
         $id = (int) $request->param('id');
         $this->validate($request, ['name' => 'required|min:3']);
-        User::update($id, $request->only(['name', 'email', 'phone', 'status']));
+        $data = $request->only(['name', 'email', 'phone', 'status']);
+
+        try {
+            User::update($id, $data);
+            if ($this->isCurrentSessionUser($id)) {
+                $this->updateSessionUser($data);
+            }
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_USERS_UPDATE] ' . $e->getMessage());
+
+            if ($this->isCurrentSessionUser($id)) {
+                $this->updateSessionUser($data);
+                Session::flash('warning', 'Banco indisponivel agora. Os dados foram atualizados apenas nesta sessao.');
+                redirect('/admin/usuarios/' . $id . '/editar');
+            }
+
+            Session::flash('error', 'Nao foi possivel atualizar o usuario agora.');
+            redirect('/admin/usuarios/' . $id . '/editar');
+        }
         Session::flash('success', 'Usuário atualizado.');
         redirect('/admin/usuarios/' . $id . '/editar');
     }
@@ -161,7 +248,13 @@ class AdminUserController extends Controller
     public function resetPassword(Request $request): void
     {
         $id = (int) $request->param('id');
-        $user = User::find($id);
+        try {
+            $user = User::find($id);
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_USERS_RESET_FIND] ' . $e->getMessage());
+            Session::flash('error', 'Nao foi possivel carregar este usuario agora.');
+            redirect('/admin/usuarios');
+        }
 
         if (!$user) {
             Session::flash('error', 'Usuário não encontrado.');
@@ -176,9 +269,15 @@ class AdminUserController extends Controller
 
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
         
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("UPDATE users SET password = :pass, updated_at = NOW() WHERE id = :id");
-        $stmt->execute(['pass' => $hashedPassword, 'id' => $id]);
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("UPDATE users SET password = :pass, updated_at = NOW() WHERE id = :id");
+            $stmt->execute(['pass' => $hashedPassword, 'id' => $id]);
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_USERS_RESET] ' . $e->getMessage());
+            Session::flash('error', 'Nao foi possivel redefinir a senha agora.');
+            redirect('/admin/usuarios/' . $id . '/editar');
+        }
 
         Session::flash('success', 'Senha redefinida com sucesso.');
         redirect('/admin/usuarios/' . $id . '/editar');
@@ -187,7 +286,13 @@ class AdminUserController extends Controller
     public function destroy(Request $request): void
     {
         $id = (int) $request->param('id');
-        $user = User::find($id);
+        try {
+            $user = User::find($id);
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_USERS_DESTROY_FIND] ' . $e->getMessage());
+            Session::flash('error', 'Nao foi possivel carregar este usuario agora.');
+            redirect('/admin/usuarios');
+        }
 
         if (!$user) {
             Session::flash('error', 'Usuário não encontrado.');
@@ -199,12 +304,18 @@ class AdminUserController extends Controller
             redirect('/admin/usuarios');
         }
 
-        User::delete($id);
-        
-        // Remove also from organization_users
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("DELETE FROM organization_users WHERE user_id = :uid");
-        $stmt->execute(['uid' => $id]);
+        try {
+            User::delete($id);
+
+            // Remove also from organization_users
+            $pdo = Database::connection();
+            $stmt = $pdo->prepare("DELETE FROM organization_users WHERE user_id = :uid");
+            $stmt->execute(['uid' => $id]);
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_USERS_DESTROY] ' . $e->getMessage());
+            Session::flash('error', 'Nao foi possivel remover o usuario agora.');
+            redirect('/admin/usuarios');
+        }
 
         Session::flash('success', 'Usuário removido com sucesso.');
         redirect('/admin/usuarios');

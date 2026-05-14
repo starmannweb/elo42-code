@@ -2485,6 +2485,19 @@ body[data-hub-theme="dark"] select option {
     align-items: flex-start;
 }
 
+.mgmt-header {
+    margin-bottom: var(--space-4);
+}
+
+.mgmt-container > .mgmt-header {
+    margin-bottom: 0;
+}
+
+.mgmt-header__subtitle,
+.mgmt-subtitle {
+    margin-bottom: 0;
+}
+
 .modal {
     display: none;
 }
