@@ -14,20 +14,14 @@
             <h1 class="mgmt-header__title">Aniversariantes do Mês</h1>
             <p class="mgmt-header__subtitle"><?= e($monthLabel) ?></p>
         </div>
-        <div style="display:flex; align-items:center; gap:16px;">
-            <div style="display:inline-flex; align-items:center; gap:8px; font-size:16px; font-weight:800; color:var(--color-text-primary); text-transform:uppercase; letter-spacing:0.5px;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" style="opacity:0.8;">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <?= $birthdayCount ?> ANIVERSARIANTE<?= $birthdayCount !== 1 ? 'S' : '' ?>
-            </div>
-            <?php if ($birthdayCount > 0): ?>
+        <?php if ($birthdayCount > 0): ?>
+            <div class="mgmt-header__actions">
                 <button type="button" class="btn btn--primary" onclick="openCardsModal()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                     Gerar Cartões
                 </button>
-            <?php endif; ?>
-        </div>
+            </div>
+        <?php endif; ?>
     </div>
 
     <div class="mgmt-card mgmt-filter-card">

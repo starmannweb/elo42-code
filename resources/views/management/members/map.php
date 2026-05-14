@@ -30,7 +30,7 @@
 <div class="mgmt-header">
     <div>
         <h1 class="mgmt-header__title">Mapa de Membros</h1>
-        <p class="mgmt-header__subtitle">Visualize a localizacao geografica dos membros da igreja</p>
+        <p class="mgmt-header__subtitle">Visualize a localização geográfica dos membros da igreja</p>
     </div>
     <div class="mgmt-header__actions">
         <span class="mgmt-map-counter"><?= (int) ($locatedMembers ?? 0) ?> de <?= (int) ($totalMembers ?? 0) ?> membros localizados</span>
@@ -44,15 +44,15 @@
 
 <div class="mgmt-map-help">
     <div>
-        <strong>Instrucoes</strong>
+        <strong>Instruções</strong>
         <span>Clique em um marcador para ver os detalhes do membro.</span>
     </div>
     <div>
-        <strong>Localizacao</strong>
-        <span>Os marcadores sao agrupados automaticamente por proximidade.</span>
+        <strong>Localização</strong>
+        <span>Os marcadores são agrupados automaticamente por proximidade.</span>
     </div>
     <div>
-        <strong>Adicionar localizacao</strong>
+        <strong>Adicionar localização</strong>
         <span>Edite o membro e clique em "Definir no mapa".</span>
     </div>
 </div>
@@ -110,7 +110,7 @@
                 </div>
                 <div class="member-map-popup__body">
                     ${member.phone ? `<div><b>Telefone</b><span>${escapeHtml(member.phone)}</span></div>` : ''}
-                    ${member.address ? `<div><b>Endereco</b><span>${escapeHtml(member.address)}</span></div>` : ''}
+                    ${member.address ? `<div><b>Endereço</b><span>${escapeHtml(member.address)}</span></div>` : ''}
                 </div>
                 <div class="member-map-popup__actions">
                     <a href="https://www.google.com/maps/search/?api=1&query=${member.lat},${member.lng}" target="_blank" rel="noopener">Maps</a>

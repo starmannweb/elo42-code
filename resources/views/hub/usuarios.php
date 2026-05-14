@@ -205,6 +205,27 @@
 body[data-hub-theme="dark"] .hub-modal {
     background: #0f172a;
     border: 1px solid #1e293b;
+    color: #e5edf9;
+}
+body[data-hub-theme="dark"] .hub-modal__header {
+    background: #111c31;
+    border-color: #253650;
+}
+body[data-hub-theme="dark"] .hub-modal__title,
+body[data-hub-theme="dark"] .hub-modal .form-label {
+    color: #f8fafc;
+}
+body[data-hub-theme="dark"] .hub-modal .form-hint {
+    color: #c6d4ea !important;
+}
+body[data-hub-theme="dark"] .hub-modal .form-input,
+body[data-hub-theme="dark"] .hub-modal .form-select {
+    background: #13233b;
+    border-color: #334155;
+    color: #f8fafc;
+}
+body[data-hub-theme="dark"] .hub-modal .form-input::placeholder {
+    color: #94a3b8;
 }
 
 @keyframes modalIn {

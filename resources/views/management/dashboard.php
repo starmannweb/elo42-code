@@ -200,9 +200,9 @@ $balance = (float) ($financial['balance'] ?? 0);
                 $dashM = $pctM;
                 $dashO = $pctO;
                 ?>
-                <div style="width: 140px; height: 140px; position: relative; flex-shrink: 0;">
+                <div style="width: 160px; height: 160px; padding: 10px; position: relative; flex-shrink: 0; overflow: visible;">
                     <?php if ($totalGender > 0): ?>
-                    <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                    <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
                         <circle cx="18" cy="18" r="15.9" fill="none" stroke="#ec4899" stroke-width="6" stroke-dasharray="<?= $dashF ?> <?= 100 - $dashF ?>" stroke-dashoffset="0"></circle>
                         <circle cx="18" cy="18" r="15.9" fill="none" stroke="#3b82f6" stroke-width="6" stroke-dasharray="<?= $dashM ?> <?= 100 - $dashM ?>" stroke-dashoffset="-<?= $dashF ?>"></circle>
                         <?php if ($pctO > 0): ?>
@@ -210,7 +210,7 @@ $balance = (float) ($financial['balance'] ?? 0);
                         <?php endif; ?>
                     </svg>
                     <?php else: ?>
-                    <svg viewBox="0 0 36 36" style="width: 100%; height: 100%;">
+                    <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; overflow: visible;">
                         <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--color-border-light)" stroke-width="6"></circle>
                     </svg>
                     <?php endif; ?>
@@ -236,7 +236,7 @@ $balance = (float) ($financial['balance'] ?? 0);
                     <div>
                         <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
                             <span style="width:12px; height:12px; border-radius:50%; background:#94a3b8;"></span>
-                            <span style="font-weight:600; color:var(--color-text-primary); font-size: 14px;">Outro / Ñ Inf.</span>
+                            <span style="font-weight:600; color:var(--color-text-primary); font-size: 14px;">Outro / não informado</span>
                             <strong style="color:var(--text-muted); margin-left:auto;"><?= $pctO ?>%</strong>
                         </div>
                         <div style="font-size:12px; color:var(--text-muted); padding-left: 20px;"><?= $demographics['gender']['other'] ?> pessoas</div>

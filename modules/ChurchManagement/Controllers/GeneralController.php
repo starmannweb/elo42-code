@@ -357,6 +357,7 @@ class GeneralController extends Controller
                 'breadcrumb' => 'Visitas',
                 'visits' => Visit::byOrg($orgId, $filters),
                 'filters' => $filters,
+                'members' => Member::byOrg($orgId, [], 1, 500)['data'] ?? [],
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar visitas: ' . $e->getMessage());
@@ -374,7 +375,7 @@ class GeneralController extends Controller
             ]);
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar formulário: ' . $e->getMessage());
-            redirect('/gestao/visitas');
+            redirect('/gestao/visitantes');
         }
     }
 
@@ -402,17 +403,17 @@ class GeneralController extends Controller
             Session::flash('error', 'Não foi possível registrar a visita: ' . $e->getMessage());
         }
 
-        redirect('/gestao/visitas');
+        redirect('/gestao/visitantes');
     }
 
     public function updateVisitFollowUp(Request $req): void
     {
         $id = (int) $req->param('id');
         $v = Visit::find($id);
-        if (!$v || (int)$v['organization_id'] !== $this->orgId()) { redirect('/gestao/visitas'); }
+        if (!$v || (int)$v['organization_id'] !== $this->orgId()) { redirect('/gestao/visitantes'); }
         Visit::update($id, ['follow_up' => $req->input('follow_up')]);
         Session::flash('success', 'Status atualizado.');
-        redirect('/gestao/visitas');
+        redirect('/gestao/visitantes');
     }
 
     // --- Counseling ---

@@ -96,6 +96,9 @@
             </nav>
 
             <div class="hub-sidebar__footer">
+                <a href="<?= url('/hub') ?>" class="hub-nav-link admin-sidebar__hub-link">
+                    <span class="hub-nav-link__icon" aria-hidden="true"><?= $adminIcon('home') ?></span> Hub
+                </a>
                 <div class="hub-sidebar__user">
                     <div class="hub-sidebar__user-avatar admin-avatar" aria-hidden="true"><?= $initials ?></div>
                     <div class="hub-sidebar__user-info">
@@ -113,7 +116,6 @@
                     <button class="hub-topbar__mobile-toggle" id="hub-sidebar-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
                 </div>
                 <div class="hub-topbar__right">
-                    <a href="<?= url('/hub') ?>" class="hub-topbar__link">← Hub</a>
                     <form method="POST" action="<?= url('/logout') ?>" style="margin:0;">
                         <?= csrf_field() ?>
                         <button type="submit" class="hub-topbar__link" style="background:none;border:none;cursor:pointer;font:inherit;">Sair</button>

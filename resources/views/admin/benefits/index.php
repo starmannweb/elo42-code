@@ -2,6 +2,7 @@
 <?php $__view->section('content'); ?>
 <?php
 $services = $services ?? [];
+$users = is_array($users ?? null) ? $users : [];
 $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'paused' => 'Pausado'];
 ?>
 
@@ -41,9 +42,10 @@ $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'paused' => 'Paus
                     <div class="form-group"><label class="form-label">Nome *</label><input type="text" name="name" class="form-input" required></div>
                     <div class="form-group"><label class="form-label">Slug *</label><input type="text" name="slug" class="form-input" required></div>
                     <div class="form-group"><label class="form-label">Produto/serviço liberado</label><select name="service_id" class="form-select"><option value="">Qualquer serviço</option><?php foreach ($services as $service): ?><option value="<?= $service['id'] ?>"><?= e($service['name']) ?></option><?php endforeach; ?></select></div>
-                    <div class="form-group"><label class="form-label">Vincular a</label><select name="target_type" class="form-select"><option value="">Definir depois</option><option value="organization">Instituição</option><option value="user">Usuário</option></select></div>
-                    <div class="form-group"><label class="form-label">ID do vínculo</label><input type="number" name="target_id" class="form-input" placeholder="ID da instituição ou usuário"></div>
-                    <div class="form-group"><label class="form-label">Nome exibido do vínculo</label><input type="text" name="target_label" class="form-input" placeholder="Ex.: Igreja Central ou Maria Silva"></div>
+                    <div class="form-group"><label class="form-label">Vincular a</label><select name="target_type" class="form-select" data-benefit-target-type><option value="">Definir depois</option><option value="organization">Instituição</option><option value="user">Usuário cadastrado</option></select></div>
+                    <div class="form-group"><label class="form-label">Usuário cadastrado</label><select name="target_id" class="form-select" data-benefit-user-select disabled><option value="">Selecione um usuário</option><?php foreach ($users as $user): ?><option value="<?= (int) $user['id'] ?>" data-label="<?= e((string) ($user['name'] ?? $user['email'] ?? '')) ?>"><?= e((string) ($user['name'] ?? 'Usuário')) ?><?= !empty($user['email']) ? ' - ' . e((string) $user['email']) : '' ?></option><?php endforeach; ?></select></div>
+                    <div class="form-group"><label class="form-label">ID do vínculo</label><input type="number" name="target_id" class="form-input" placeholder="ID da instituição" data-benefit-target-id></div>
+                    <div class="form-group"><label class="form-label">Nome exibido do vínculo</label><input type="text" name="target_label" class="form-input" placeholder="Ex.: Igreja Central ou Maria Silva" data-benefit-target-label></div>
                     <div class="form-group"><label class="form-label">Duração da cortesia</label><input type="number" name="duration_days" class="form-input" min="1" placeholder="Ex.: 30 dias"></div>
                     <div class="form-group"><label class="form-label">Limite de uso</label><input type="number" name="max_usage" class="form-input" placeholder="Vazio = ilimitado"></div>
                     <div class="form-group"><label class="form-label">Válido até</label><input type="date" name="valid_until" class="form-input"></div>
@@ -56,4 +58,30 @@ $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'paused' => 'Paus
         </form>
     </div>
 </div>
+<script>
+document.querySelectorAll('[data-benefit-target-type]').forEach((typeField) => {
+    const form = typeField.closest('form');
+    const userSelect = form?.querySelector('[data-benefit-user-select]');
+    const targetId = form?.querySelector('[data-benefit-target-id]');
+    const targetLabel = form?.querySelector('[data-benefit-target-label]');
+    const sync = () => {
+        const isUser = typeField.value === 'user';
+        if (userSelect) {
+            userSelect.disabled = !isUser;
+            userSelect.closest('.form-group').style.display = isUser ? '' : 'none';
+        }
+        if (targetId) {
+            targetId.disabled = isUser;
+            targetId.closest('.form-group').style.display = isUser ? 'none' : '';
+            if (isUser) targetId.value = '';
+        }
+    };
+    userSelect?.addEventListener('change', () => {
+        const option = userSelect.selectedOptions[0];
+        if (targetLabel && option?.dataset.label) targetLabel.value = option.dataset.label;
+    });
+    typeField.addEventListener('change', sync);
+    sync();
+});
+</script>
 <?php $__view->endSection(); ?>

@@ -176,7 +176,6 @@
                 ['href' => '/gestao/visitantes', 'label' => 'Visitantes', 'icon' => 'users', 'premium' => true],
                 ['href' => '/gestao/novos-convertidos', 'label' => 'Novos Convertidos', 'icon' => 'award', 'premium' => true],
                 ['href' => '/gestao/aniversarios', 'label' => 'Aniversariantes', 'icon' => 'birthday', 'premium' => true],
-                ['href' => '/gestao/membros/mapa', 'label' => 'Mapa de Membros', 'icon' => 'map', 'active' => ['/gestao/membros/mapa']],
                 ['href' => '/gestao/jornadas', 'label' => 'Jornada espiritual', 'icon' => 'journey', 'premium' => true],
                 ['href' => '/gestao/historico', 'label' => 'Histórico', 'icon' => 'audit', 'premium' => true],
                 ['href' => '/gestao/membros/top-ofertantes', 'label' => 'Top Ofertantes', 'icon' => 'award', 'premium' => true],
@@ -225,7 +224,6 @@
                     '/gestao/visitantes',
                     '/gestao/novos-convertidos',
                     '/gestao/aniversarios',
-                    '/gestao/membros/mapa',
                     '/gestao/jornadas',
                     '/gestao/historico',
                     '/gestao/atendimento-pastoral',
@@ -234,7 +232,6 @@
                 ];
                 echo $navGroup('membros', 'Membros', 'users', [
                     $subNavItem('/gestao/membros', 'Servos', false, ['/gestao/membros$', '/gestao/visitantes', '/gestao/novos-convertidos', '/gestao/aniversarios', '/gestao/jornadas', '/gestao/historico']),
-                    $subNavItem('/gestao/membros/mapa', 'Mapa de Membros', false, ['/gestao/membros/mapa']),
                     $subNavItem('/gestao/atendimento-pastoral', 'Atendimento pastoral', true, ['/gestao/atendimento-pastoral']),
                     $subNavItem('/gestao/celulas', 'Grupos Pequenos', true, ['/gestao/celulas']),
                     $subNavItem('/gestao/ministerios', 'Ministérios', true, ['/gestao/ministerios']),
@@ -282,10 +279,12 @@
                     '/gestao/sermoes',
                     '/gestao/relatorios',
                     '/gestao/sermoes/expositor-ia',
+                    '/gestao/membros/mapa',
                 ];
                 echo $navGroup('administracao', 'Administração', 'admin', [
                     $subNavItem('/gestao/sermoes', 'Séries e Sermões', false, ['/gestao/sermoes']),
                     $subNavItem('/gestao/pregadores', 'Pregadores', false, ['/gestao/pregadores']),
+                    $subNavItem('/gestao/membros/mapa', 'Mapa de Membros', true, ['/gestao/membros/mapa']),
                     $subNavItem('/gestao/relatorios', 'Relatórios', true, ['/gestao/relatorios']),
                 ], $administrationPaths);
                 ?>

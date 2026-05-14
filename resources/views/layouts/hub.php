@@ -84,7 +84,7 @@
             <nav class="hub-sidebar__nav" aria-label="Navegação principal">
                 <a href="<?= url('/hub') ?>" class="hub-nav-link <?= e($isMenuActive('dashboard', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"></path></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                     </span>
                     Dashboard
                 </a>

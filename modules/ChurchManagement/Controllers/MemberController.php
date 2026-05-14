@@ -74,7 +74,7 @@ class MemberController extends Controller
                     $currentYear = date('Y');
                     $stmt = $pdo->prepare("
                         SELECT
-                            COALESCE(m.name, d.donor_name, 'Anonimo') AS name,
+                            COALESCE(m.name, d.donor_name, 'Anônimo') AS name,
                             COUNT(d.id) AS donations_count,
                             SUM(d.amount) AS total_amount
                         FROM donations d
@@ -105,8 +105,8 @@ class MemberController extends Controller
             $result = Member::byOrg($orgId, $filters, $page);
 
             $this->view('management/members/index', [
-                'pageTitle'   => ($isTopDonors ? 'Top Ofertantes' : 'Membros') . ' - Gestao',
-                'breadcrumb'  => 'Membros',
+                'pageTitle'   => ($isTopDonors ? 'Ranking de Ofertantes' : 'Membros') . ' - Gestão',
+                'breadcrumb'  => $isTopDonors ? 'Ranking de Ofertantes' : 'Membros',
                 'members'     => $result['data'],
                 'pagination'  => $result,
                 'filters'     => $filters,
@@ -146,8 +146,8 @@ class MemberController extends Controller
             }
 
             $this->view('management/members/map', [
-                'pageTitle'      => 'Mapa de Membros - Gestao',
-                'breadcrumb'     => 'Membros / Mapa',
+                'pageTitle'      => 'Mapa de Membros - Gestão',
+                'breadcrumb'     => 'Administração / Mapa de Membros',
                 'members'        => $members,
                 'totalMembers'   => Member::countByOrg($orgId),
                 'locatedMembers' => count($members),

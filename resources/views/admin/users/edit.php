@@ -12,6 +12,9 @@
         <p class="mgmt-header__subtitle"><?= e($user['email'] ?? '') ?></p>
     </div>
     <div class="mgmt-header__actions" style="display:flex;gap:8px;">
+        <?php if (!$degraded): ?>
+            <a href="<?= url('/admin/usuarios/' . $user['id']) ?>" class="btn btn--outline">Ver</a>
+        <?php endif; ?>
         <a href="<?= url('/admin/usuarios') ?>" class="btn btn--secondary">Voltar</a>
         <?php if (!$degraded && !$isSelf): ?>
             <form method="POST" action="<?= url('/admin/usuarios/' . $user['id'] . '/excluir') ?>" onsubmit="return confirm('Tem certeza que deseja remover este usuario?');">
@@ -28,7 +31,7 @@
     </div>
 <?php endif; ?>
 
-<div class="mgmt-grid" style="grid-template-columns:minmax(0, 1.2fr) minmax(320px, 0.8fr); gap:1rem; align-items:start;">
+<div class="mgmt-grid admin-user-edit-grid">
     <div class="mgmt-form-card">
         <h3 class="mgmt-form-card__title">Dados do usuario</h3>
         <form method="POST" action="<?= url('/admin/usuarios/' . $user['id'] . '/editar') ?>">

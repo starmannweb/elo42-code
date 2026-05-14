@@ -395,6 +395,13 @@
                 .site-gallery-sortable__thumb { width:46px; height:34px; border-radius:7px; background:#eef4ff; object-fit:cover; flex:0 0 auto; }
                 .site-gallery-sortable__handle { color:#1455ff; font-weight:900; line-height:1; }
                 .site-gallery-sortable__text { min-width:0; flex:1; font-size:.78rem; color:#405372; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+                body[data-hub-theme="dark"] .image-preview { background:#0f1f3a; border-color:rgba(155,183,226,.32); }
+                body[data-hub-theme="dark"] .site-gallery-dropzone { background:#0f1f3a; border-color:rgba(155,183,226,.32); color:#d8e3f6; }
+                body[data-hub-theme="dark"] .site-gallery-dropzone.is-dragging { background:rgba(20,85,255,.16); border-color:#3b82f6; }
+                body[data-hub-theme="dark"] .site-gallery-dropzone strong { color:#f8fbff; }
+                body[data-hub-theme="dark"] .site-gallery-sortable__item { background:#10223d; border-color:rgba(155,183,226,.28); }
+                body[data-hub-theme="dark"] .site-gallery-sortable__text { color:#d8e3f6; }
+                body[data-hub-theme="dark"] .site-gallery-sortable__handle { color:#9fc0ff; }
                 .site-publish-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; align-items:stretch; margin-bottom:1.5rem; }
                 .site-publish-grid > article { margin-bottom:0 !important; }
                 .site-publish-grid .site-publish-summary { order:1; grid-column: 1; }

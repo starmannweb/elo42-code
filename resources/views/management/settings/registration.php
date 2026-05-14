@@ -10,12 +10,12 @@
 
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-title">Configuracoes</h1>
-        <p class="mgmt-subtitle">Gerencie as informacoes principais da sua organizacao</p>
+        <h1 class="mgmt-title">Configurações</h1>
+        <p class="mgmt-subtitle">Gerencie as informações principais da sua organização</p>
     </div>
     <div class="mgmt-actions">
         <a href="<?= url('/gestao') ?>" class="btn btn--ghost">Voltar</a>
-        <button type="submit" form="form-settings" class="btn btn--primary">Salvar Alteracoes</button>
+        <button type="submit" form="form-settings" class="btn btn--primary">Salvar Alterações</button>
     </div>
 </div>
 
@@ -27,17 +27,17 @@
 
         <div class="settings-card__head">
             <div>
-                <h2>Cadastro Publico de Membros</h2>
-                <p>Ative uma rota publica onde visitantes preenchem o formulario sem login. Os cadastros chegam com status inativo para voce aprovar.</p>
+                <h2>Cadastro Público de Membros</h2>
+                <p>Ative uma rota pública onde visitantes preenchem o formulário sem login. Os cadastros chegam com status inativo para você aprovar.</p>
             </div>
-            <label class="settings-switch" aria-label="Ativar cadastro publico">
+            <label class="settings-switch" aria-label="Ativar cadastro público">
                 <input type="checkbox" name="public_registration_active" value="1" <?= $isActive ? 'checked' : '' ?>>
                 <span></span>
             </label>
         </div>
 
         <div class="form-group">
-            <label class="form-label">Slug da rota publica</label>
+            <label class="form-label">Slug da rota pública</label>
             <div class="settings-url-field">
                 <span>https://elo42.com.br/</span>
                 <input type="text" name="public_registration_slug" class="form-input" value="<?= e($slug) ?>">
@@ -53,18 +53,18 @@
 
         <div class="form-group">
             <label class="form-label">Mensagem de boas-vindas</label>
-            <textarea name="public_registration_welcome" class="form-input" rows="3" placeholder="Ex: Preencha com atencao. Logo entraremos em contato."><?= e($settings['public_registration_welcome'] ?? '') ?></textarea>
+            <textarea name="public_registration_welcome" class="form-input" rows="3" placeholder="Ex: Preencha com atenção. Logo entraremos em contato."><?= e($settings['public_registration_welcome'] ?? '') ?></textarea>
         </div>
 
         <div class="settings-warning">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-            Protecoes ativas: token de sessao 30min, honeypot anti-bot, tempo minimo de 8s, rate limit de 3 cadastros/hora por IP. Apos salvar, o link pode demorar alguns segundos para ficar ativo.
+            Proteções ativas: token de sessão 30min, honeypot anti-bot, tempo mínimo de 8s, rate limit de 3 cadastros/hora por IP. Após salvar, o link pode demorar alguns segundos para ficar ativo.
         </div>
 
         <div class="settings-section-head">
             <div>
-                <h3>Campos do formulario</h3>
-                <p>Marque cada campo como Obrigatorio ou Opcional. O campo Nome e sempre obrigatorio.</p>
+                <h3>Campos do formulário</h3>
+                <p>Marque cada campo como Obrigatório ou Opcional. O campo Nome é sempre obrigatório.</p>
             </div>
         </div>
 
@@ -77,7 +77,7 @@
             'UF' => 'state',
             'Email' => 'email',
             'Estado civil' => 'marital_status',
-            'Endereco' => 'address',
+            'Endereço' => 'address',
         ];
         ?>
         <div class="settings-fields-list">
@@ -85,12 +85,12 @@
             <div class="settings-field-row">
                 <div>
                     <span><?= e($label) ?></span>
-                    <small>Obrigatorio</small>
+                    <small>Obrigatório</small>
                 </div>
                 <div class="settings-field-row__actions">
                     <button type="button">Oculto</button>
                     <button type="button">Opcional</button>
-                    <button type="button" class="is-active">* Obrigatorio</button>
+                    <button type="button" class="is-active">* Obrigatório</button>
                 </div>
             </div>
             <?php endforeach; ?>

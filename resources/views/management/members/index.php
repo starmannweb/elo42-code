@@ -5,12 +5,19 @@
 
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-header__title">Membros</h1>
-        <p class="mgmt-header__subtitle">Gerencie os membros da igreja</p>
+        <?php if (!empty($isTopDonors)): ?>
+            <h1 class="mgmt-header__title">Ranking de Ofertantes</h1>
+            <p class="mgmt-header__subtitle">Acompanhe os membros mais engajados financeiramente com a organização.</p>
+        <?php else: ?>
+            <h1 class="mgmt-header__title">Membros</h1>
+            <p class="mgmt-header__subtitle">Gerencie os membros da igreja</p>
+        <?php endif; ?>
     </div>
+    <?php if (empty($isTopDonors)): ?>
     <div class="mgmt-header__actions">
         <button type="button" class="btn btn--primary" onclick="openMemberEdit()">+ Novo membro</button>
     </div>
+    <?php endif; ?>
 </div>
 
 <!-- Tabs removidas pois são renderizadas pelo layout base -->

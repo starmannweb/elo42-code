@@ -112,12 +112,14 @@ class AdminCatalogController extends Controller
     {
         $benefits = [];
         $services = [];
+        $users = [];
         $degraded = false;
 
         try {
             $this->ensureDefaultServices();
             $benefits = Benefit::allWithUsageCount();
             $services = Service::all('sort_order');
+            $users = $this->listUsers();
         } catch (\Throwable $e) {
             $degraded = true;
             error_log('[ADMIN_BENEFITS] ' . $e->getMessage());
@@ -127,6 +129,7 @@ class AdminCatalogController extends Controller
             'pageTitle' => 'Cortesias — Admin', 'breadcrumb' => 'Cortesias',
             'benefits' => $benefits,
             'services' => $services,
+            'users' => $users,
             'degraded' => $degraded,
         ]);
     }
@@ -139,6 +142,7 @@ class AdminCatalogController extends Controller
             'pageTitle' => 'Nova cortesia', 'breadcrumb' => 'Cortesias / Nova', 'item' => null,
             'services' => Service::all('sort_order'),
             'organizations' => $this->listOrganizations(),
+            'users' => $this->listUsers(),
         ]);
     }
 
@@ -159,6 +163,7 @@ class AdminCatalogController extends Controller
         $this->view('admin/benefits/form', [
             'services'      => Service::all('sort_order'),
             'organizations' => $this->listOrganizations(),
+            'users'         => $this->listUsers(),
             'pageTitle'     => 'Editar — ' . e($item['name']), 'breadcrumb' => 'Cortesias / Editar', 'item' => $item,
         ]);
     }
@@ -408,6 +413,15 @@ class AdminCatalogController extends Controller
             $data['valid_until'] = null;
         }
 
+        if (($data['target_type'] ?? null) === 'user' && !empty($data['target_id']) && trim((string) ($data['target_label'] ?? '')) === '') {
+            foreach ($this->listUsers() as $user) {
+                if ((int) ($user['id'] ?? 0) === (int) $data['target_id']) {
+                    $data['target_label'] = (string) ($user['name'] ?? $user['email'] ?? '');
+                    break;
+                }
+            }
+        }
+
         return $data;
     }
 
@@ -423,6 +437,18 @@ class AdminCatalogController extends Controller
         }
     }
 
+    private function listUsers(): array
+    {
+        try {
+            $pdo = Database::connection();
+            $stmt = $pdo->query("SELECT id, name, email FROM users ORDER BY name ASC, email ASC LIMIT 500");
+            return $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_BENEFITS_USERS] ' . $e->getMessage());
+            return [];
+        }
+    }
+
     private function ensureDefaultServices(): void
     {
         $defaults = $this->defaultServices();
@@ -431,8 +457,14 @@ class AdminCatalogController extends Controller
             $service['sort_order'] = ($index + 1) * 10;
             $existing = Service::first('slug', $service['slug']);
             if ($existing) {
-                if ((int) ($existing['sort_order'] ?? 0) !== (int) $service['sort_order']) {
-                    Service::update((int) $existing['id'], ['sort_order' => $service['sort_order']]);
+                $updates = [];
+                foreach (['name', 'description', 'rules', 'sort_order'] as $field) {
+                    if ((string) ($existing[$field] ?? '') !== (string) ($service[$field] ?? '')) {
+                        $updates[$field] = $service[$field];
+                    }
+                }
+                if (!empty($updates)) {
+                    Service::update((int) $existing['id'], $updates);
                 }
                 continue;
             }
@@ -444,17 +476,17 @@ class AdminCatalogController extends Controller
     private function defaultServices(bool $withIds = false): array
     {
         $defaults = [
-            ['name' => 'Painel de Gestao para Igrejas', 'slug' => 'painel-gestao-igrejas', 'description' => 'Sistema completo para membros, financas, ministerios, eventos, relatorios e rotina pastoral. Inclui ate 100 usuarios da plataforma de gestao.', 'rules' => 'Acesso por assinatura da igreja responsavel. Acima de 100 usuarios pode haver custo adicional.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
-            ['name' => 'Site para Igrejas', 'slug' => 'site-para-igrejas', 'description' => 'Construtor de site institucional com modelos, dados cadastrais, preview e publicacao para assinantes.', 'rules' => 'Plano avulso de site por R$ 67,00/mes. No combo com gestao, o total fica R$ 99,90/mes.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
-            ['name' => 'Central Pastoral IA', 'slug' => 'central-pastoral-ia', 'description' => 'Criacao assistida de sermoes, estudos biblicos, series, ministracoes e planos de leitura.', 'rules' => 'Materiais publicados aparecem no sistema de gestao e na area do membro.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
-            ['name' => 'Google Ad Grants', 'slug' => 'google-ad-grants', 'description' => 'Apoio para elegibilidade, configuracao e gestao de campanhas para ONGs e igrejas.', 'rules' => 'Disponibilidade depende das regras do programa e validacao da instituicao.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
-            ['name' => 'Google para ONGs', 'slug' => 'google-para-ongs', 'description' => 'Orientacao para ativar ferramentas Google Workspace e recursos para organizacoes elegiveis.', 'rules' => 'Sujeito a aprovacao externa do programa.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
-            ['name' => 'Gestao de Trafego Pago', 'slug' => 'gestao-trafego-pago', 'description' => 'Planejamento, criacao e acompanhamento de campanhas pagas para comunicacao e captacao.', 'rules' => 'Investimento de midia nao incluso no servico.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
-            ['name' => 'TechSoup Brasil', 'slug' => 'techsoup-brasil', 'description' => 'Apoio para identificar beneficios, licencas e oportunidades de tecnologia para organizacoes.', 'rules' => 'Sujeito as regras e disponibilidade dos parceiros.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
-            ['name' => 'Microsoft, Canva e Slack', 'slug' => 'microsoft-canva-slack', 'description' => 'Apoio na estruturacao de ferramentas colaborativas, design e produtividade para equipes.', 'rules' => 'Beneficios dependem da elegibilidade da instituicao.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
-            ['name' => 'Implantacao Acompanhada', 'slug' => 'implantacao-acompanhada', 'description' => 'Acompanhamento para configurar dados iniciais, equipe, modulos e rotina de adocao.', 'rules' => 'Agenda conforme disponibilidade operacional.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
-            ['name' => 'Diagnostico Organizacional', 'slug' => 'diagnostico-organizacional', 'description' => 'Mapeamento de processos, comunicacao, governanca e oportunidades de melhoria.', 'rules' => 'Pode exigir reuniao de levantamento com responsaveis.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
-            ['name' => 'Workshop de Capacitacao', 'slug' => 'workshop-capacitacao', 'description' => 'Treinamentos para lideranca, comunicacao, tecnologia e uso da plataforma.', 'rules' => 'Formato e duracao definidos por demanda.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Painel de Gestão para Igrejas', 'slug' => 'painel-gestao-igrejas', 'description' => 'Sistema completo para membros, finanças, ministérios, eventos, relatórios e rotina pastoral. Inclui até 100 usuários da plataforma de gestão.', 'rules' => 'Acesso por assinatura da igreja responsável. Acima de 100 usuários pode haver custo adicional.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Site para Igrejas', 'slug' => 'site-para-igrejas', 'description' => 'Construtor de site institucional com modelos, dados cadastrais, preview e publicação para assinantes.', 'rules' => 'Plano avulso de site por R$ 67,00/mês. No combo com gestão, o total fica R$ 99,90/mês.', 'price' => 67.00, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Central Pastoral IA', 'slug' => 'central-pastoral-ia', 'description' => 'Criação assistida de sermões, estudos bíblicos, séries, ministrações e planos de leitura.', 'rules' => 'Materiais publicados aparecem no sistema de gestão e na área do membro.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Google Ad Grants', 'slug' => 'google-ad-grants', 'description' => 'Apoio para elegibilidade, configuração e gestão de campanhas para ONGs e igrejas.', 'rules' => 'Disponibilidade depende das regras do programa e validação da instituição.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'Google para ONGs', 'slug' => 'google-para-ongs', 'description' => 'Orientação para ativar ferramentas Google Workspace e recursos para organizações elegíveis.', 'rules' => 'Sujeito a aprovação externa do programa.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Gestão de Tráfego Pago', 'slug' => 'gestao-trafego-pago', 'description' => 'Planejamento, criação e acompanhamento de campanhas pagas para comunicação e captação.', 'rules' => 'Investimento de mídia não incluso no serviço.', 'price' => 0, 'recurrence' => 'monthly', 'status' => 'active'],
+            ['name' => 'TechSoup Brasil', 'slug' => 'techsoup-brasil', 'description' => 'Apoio para identificar benefícios, licenças e oportunidades de tecnologia para organizações.', 'rules' => 'Sujeito às regras e disponibilidade dos parceiros.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Microsoft, Canva e Slack', 'slug' => 'microsoft-canva-slack', 'description' => 'Apoio na estruturação de ferramentas colaborativas, design e produtividade para equipes.', 'rules' => 'Benefícios dependem da elegibilidade da instituição.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Implantação Acompanhada', 'slug' => 'implantacao-acompanhada', 'description' => 'Acompanhamento para configurar dados iniciais, equipe, módulos e rotina de adoção.', 'rules' => 'Agenda conforme disponibilidade operacional.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Diagnóstico Organizacional', 'slug' => 'diagnostico-organizacional', 'description' => 'Mapeamento de processos, comunicação, governança e oportunidades de melhoria.', 'rules' => 'Pode exigir reunião de levantamento com responsáveis.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
+            ['name' => 'Workshop de Capacitação', 'slug' => 'workshop-capacitacao', 'description' => 'Treinamentos para liderança, comunicação, tecnologia e uso da plataforma.', 'rules' => 'Formato e duração definidos por demanda.', 'price' => 0, 'recurrence' => 'one_time', 'status' => 'active'],
         ];
 
         foreach ($defaults as $index => &$service) {

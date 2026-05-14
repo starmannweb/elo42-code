@@ -4,6 +4,7 @@
 $isEdit        = $item !== null;
 $services      = $services ?? [];
 $organizations = $organizations ?? [];
+$users         = is_array($users ?? null) ? $users : [];
 $currentTargetType = $isEdit ? ($item['target_type'] ?? '') : '';
 $currentTargetId   = $isEdit ? ($item['target_id'] ?? '') : '';
 ?>
@@ -32,25 +33,35 @@ $currentTargetId   = $isEdit ? ($item['target_id'] ?? '') : '';
                 <select name="target_type" id="benefit_target_type" class="form-select" onchange="benefitTargetTypeChanged(this.value)">
                     <option value="">Todas as instituições</option>
                     <option value="organization" <?= $currentTargetType === 'organization' ? 'selected' : '' ?>>Instituição específica</option>
-                    <option value="user" <?= $currentTargetType === 'user' ? 'selected' : '' ?>>Usuário específico</option>
+                    <option value="user" <?= $currentTargetType === 'user' ? 'selected' : '' ?>>Usuário cadastrado</option>
                 </select>
             </div>
             <div class="form-group" id="benefit_org_wrap" style="<?= $currentTargetType !== 'organization' ? 'display:none' : '' ?>">
                 <label class="form-label">Instituição</label>
                 <select name="target_id" id="benefit_target_org" class="form-select">
-                    <option value="">Selecione…</option>
+                    <option value="">Selecione...</option>
                     <?php foreach ($organizations as $org): ?>
                         <option value="<?= $org['id'] ?>" <?= (string)$currentTargetId === (string)$org['id'] ? 'selected' : '' ?>><?= e($org['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="form-group" id="benefit_user_wrap" style="<?= $currentTargetType !== 'user' ? 'display:none' : '' ?>">
-                <label class="form-label">ID do usuário</label>
-                <input type="number" name="target_id" id="benefit_target_user" class="form-input" value="<?= $currentTargetType === 'user' ? e($currentTargetId) : '' ?>" placeholder="ID do usuário">
+                <label class="form-label">Usuário cadastrado</label>
+                <select name="target_id" id="benefit_target_user" class="form-select">
+                    <option value="">Selecione o usuário...</option>
+                    <?php foreach ($users as $user): ?>
+                        <?php
+                            $userName = (string) ($user['name'] ?? '');
+                            $userEmail = (string) ($user['email'] ?? '');
+                            $userLabel = trim($userName . ($userEmail !== '' ? ' - ' . $userEmail : ''));
+                        ?>
+                        <option value="<?= e((string) ($user['id'] ?? '')) ?>" data-label="<?= e($userName !== '' ? $userName : $userEmail) ?>" <?= (string)$currentTargetId === (string)($user['id'] ?? '') ? 'selected' : '' ?>><?= e($userLabel !== '' ? $userLabel : ('Usuário #' . ($user['id'] ?? ''))) ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
         </div>
         <input type="hidden" name="target_id" id="benefit_target_none" value="" <?= $currentTargetType !== '' ? 'disabled' : '' ?>>
-        <div class="form-group"><label class="form-label">Nome exibido do vínculo</label><input type="text" name="target_label" class="form-input" value="<?= e($isEdit ? ($item['target_label'] ?? '') : '') ?>" placeholder="Ex.: Igreja Central ou Maria Silva"></div>
+        <div class="form-group"><label class="form-label">Nome exibido do vínculo</label><input type="text" name="target_label" id="benefit_target_label" class="form-input" value="<?= e($isEdit ? ($item['target_label'] ?? '') : '') ?>" placeholder="Ex.: Igreja Central ou Maria Silva"></div>
         <div class="form-group"><label class="form-label">Descrição</label><textarea name="description" class="form-input" rows="3"><?= e($isEdit ? $item['description'] : '') ?></textarea></div>
         <div class="form-group"><label class="form-label">Requisitos</label><textarea name="requirements" class="form-input" rows="3"><?= e($isEdit ? $item['requirements'] : '') ?></textarea></div>
         <div class="mgmt-form-row">
@@ -68,6 +79,7 @@ function benefitTargetTypeChanged(type) {
     var noneInput = document.getElementById('benefit_target_none');
     var orgSel   = document.getElementById('benefit_target_org');
     var userInput = document.getElementById('benefit_target_user');
+    var targetLabel = document.getElementById('benefit_target_label');
 
     orgWrap.style.display  = type === 'organization' ? '' : 'none';
     userWrap.style.display = type === 'user' ? '' : 'none';
@@ -78,9 +90,22 @@ function benefitTargetTypeChanged(type) {
 
     if (type !== 'organization') orgSel.value = '';
     if (type !== 'user') userInput.value = '';
+    if (type === 'user' && targetLabel && userInput.selectedOptions[0]?.dataset.label && targetLabel.value === '') {
+        targetLabel.value = userInput.selectedOptions[0].dataset.label;
+    }
 }
 document.addEventListener('DOMContentLoaded', function () {
-    benefitTargetTypeChanged(document.getElementById('benefit_target_type').value);
+    var typeField = document.getElementById('benefit_target_type');
+    var userInput = document.getElementById('benefit_target_user');
+    var targetLabel = document.getElementById('benefit_target_label');
+
+    if (userInput) {
+        userInput.addEventListener('change', function () {
+            var option = userInput.selectedOptions[0];
+            if (targetLabel && option?.dataset.label) targetLabel.value = option.dataset.label;
+        });
+    }
+    benefitTargetTypeChanged(typeField.value);
 });
 </script>
 <?php $__view->endSection(); ?>
