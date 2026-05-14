@@ -557,7 +557,13 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 }
 
 .mgmt-form-row--3 {
+    display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.mgmt-member-form-card {
+    max-width: 980px;
 }
 
 .mgmt-form-actions {
@@ -3764,8 +3770,9 @@ body[data-hub-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicato
 body[data-hub-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
 body[data-hub-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator,
 body[data-hub-theme="dark"] input[type="month"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) brightness(2) contrast(0.95);
+    filter: invert(1) brightness(3) contrast(1.1) !important;
     opacity: 1;
+    cursor: pointer;
 }
 
 body[data-hub-theme="dark"] .agenda-toolbar__legend .badge,
@@ -3797,6 +3804,18 @@ body[data-hub-theme="dark"] .settings-field-row__actions button.is-active {
     color: var(--color-text-primary);
     font-weight: 700;
     line-height: 1.45;
+}
+
+.settings-danger-confirm input[type="checkbox"],
+.modal .settings-danger-confirm input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    min-height: 18px;
+    margin: 0.15rem 0 0;
+    padding: 0;
+    border-radius: 4px;
+    accent-color: var(--color-primary);
 }
 
 body[data-hub-theme="dark"] .settings-danger-confirm {

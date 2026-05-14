@@ -96,26 +96,45 @@ class AdminOrganizationController extends Controller
 
     public function show(Request $request): void
     {
-        $org = Organization::find((int) $request->param('id'));
+        try {
+            $org = Organization::find((int) $request->param('id'));
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_ORGS_SHOW_FIND] ' . $e->getMessage());
+            Session::flash('error', 'Nao foi possivel carregar esta instituicao agora.');
+            redirect('/admin/organizacoes');
+        }
         if (!$org) {
+            Session::flash('warning', 'Instituicao nao encontrada.');
             redirect('/admin/organizacoes');
         }
 
         $org = $this->hydrateOrganization($org);
-        $pdo = Database::connection();
+        $users = [];
+        $subscription = null;
+        $degraded = false;
 
-        $users = $pdo->prepare('SELECT u.*, ou.role_id, r.name as role_name, ou.status as membership_status FROM users u JOIN organization_users ou ON u.id = ou.user_id LEFT JOIN roles r ON ou.role_id = r.id WHERE ou.organization_id = :oid');
-        $users->execute(['oid' => $org['id']]);
+        try {
+            $pdo = Database::connection();
 
-        $sub = $pdo->prepare('SELECT * FROM subscriptions WHERE organization_id = :oid ORDER BY created_at DESC LIMIT 1');
-        $sub->execute(['oid' => $org['id']]);
+            $usersStmt = $pdo->prepare('SELECT u.*, ou.role_id, r.name as role_name, ou.status as membership_status FROM users u JOIN organization_users ou ON u.id = ou.user_id LEFT JOIN roles r ON ou.role_id = r.id WHERE ou.organization_id = :oid');
+            $usersStmt->execute(['oid' => $org['id']]);
+            $users = $usersStmt->fetchAll() ?: [];
+
+            $sub = $pdo->prepare('SELECT * FROM subscriptions WHERE organization_id = :oid ORDER BY created_at DESC LIMIT 1');
+            $sub->execute(['oid' => $org['id']]);
+            $subscription = $sub->fetch() ?: null;
+        } catch (\Throwable $e) {
+            $degraded = true;
+            error_log('[ADMIN_ORGS_SHOW_DETAILS] ' . $e->getMessage());
+        }
 
         $this->view('admin/organizations/show', [
             'pageTitle'    => e($org['name']) . ' — Admin',
             'breadcrumb'   => 'Instituições / ' . $org['name'],
             'org'          => $org,
-            'users'        => $users->fetchAll(),
-            'subscription' => $sub->fetch() ?: null,
+            'users'        => $users,
+            'subscription' => $subscription,
+            'degraded'     => $degraded,
         ]);
     }
 

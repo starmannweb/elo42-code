@@ -3,36 +3,51 @@
 <?php
 $statusLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'suspended' => 'Suspenso'];
 $membershipLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'pending' => 'Pendente', 'invited' => 'Convidado', 'suspended' => 'Suspenso'];
+$formatDateTime = static function (mixed $value): string {
+    $value = trim((string) ($value ?? ''));
+    if ($value === '') {
+        return '&mdash;';
+    }
+
+    $timestamp = strtotime($value);
+    return $timestamp ? date('d/m/Y H:i', $timestamp) : '&mdash;';
+};
+$emailVerifiedAt = $user['email_verified_at'] ?? null;
+$lastLoginAt = $user['last_login_at'] ?? null;
+$createdAt = $user['created_at'] ?? null;
 ?>
+
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-header__title"><?= e($user['name']) ?></h1>
-        <p class="mgmt-header__subtitle"><?= e($user['email']) ?></p>
+        <h1 class="mgmt-header__title"><?= e($user['name'] ?? 'Usuario') ?></h1>
+        <p class="mgmt-header__subtitle"><?= e($user['email'] ?? '') ?></p>
     </div>
     <div class="mgmt-header__actions" style="display:flex; gap:8px;">
-        <button type="button" class="btn btn--outline" onclick="document.getElementById('modal-reset-password').style.display='flex'">Redefinir Senha</button>
-        <a href="<?= url('/admin/usuarios/' . $user['id'] . '/editar') ?>" class="btn btn--secondary">Editar</a>
+        <button type="button" class="btn btn--outline" onclick="document.getElementById('modal-reset-password').style.display='flex'">Redefinir senha</button>
+        <a href="<?= url('/admin/usuarios/' . ($user['id'] ?? 0) . '/editar') ?>" class="btn btn--secondary">Editar</a>
     </div>
 </div>
 
 <div class="modal" id="modal-reset-password" style="display:none;" role="dialog" aria-modal="true">
     <div class="modal__content">
         <div class="modal__header">
-            <h2 class="modal__title">Redefinir Senha</h2>
+            <h2 class="modal__title">Redefinir senha</h2>
             <button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'">&times;</button>
         </div>
-        <form method="POST" action="<?= url('/admin/usuarios/' . $user['id'] . '/reset-password') ?>">
+        <form method="POST" action="<?= url('/admin/usuarios/' . ($user['id'] ?? 0) . '/reset-password') ?>">
             <?= csrf_field() ?>
             <div class="modal__body">
-                <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Defina uma nova senha para este usuário. Ele poderá acessar o sistema imediatamente com a nova credencial.</p>
+                <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+                    Defina uma nova senha para este usu&aacute;rio. Ele poder&aacute; acessar o sistema imediatamente com a nova credencial.
+                </p>
                 <div class="form-group">
-                    <label class="form-label">Nova Senha</label>
+                    <label class="form-label">Nova senha</label>
                     <input type="password" name="password" class="form-input" required minlength="6">
                 </div>
             </div>
             <div class="modal__footer">
                 <button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button>
-                <button type="submit" class="btn btn--primary">Salvar Nova Senha</button>
+                <button type="submit" class="btn btn--primary">Salvar nova senha</button>
             </div>
         </form>
     </div>
@@ -40,36 +55,52 @@ $membershipLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'pending' => 
 
 <div class="mgmt-detail">
     <div class="mgmt-detail__main">
-        <div class="mgmt-info-card"><h3 class="mgmt-info-card__title">Dados do usuário</h3>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Nome</span><span class="mgmt-info-row__value"><?= e($user['name']) ?></span></div>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">E-mail</span><span class="mgmt-info-row__value"><?= e($user['email']) ?></span></div>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Telefone</span><span class="mgmt-info-row__value"><?= e($user['phone'] ?? '—') ?></span></div>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Status</span><span class="mgmt-info-row__value"><span class="badge badge--<?= e($user['status']) ?>"><?= e($statusLabels[$user['status'] ?? ''] ?? ($user['status'] ?? '-')) ?></span></span></div>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">E-mail verificado</span><span class="mgmt-info-row__value"><?= $user['email_verified_at'] ? date('d/m/Y H:i', strtotime($user['email_verified_at'])) : '❌ Não verificado' ?></span></div>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Último login</span><span class="mgmt-info-row__value"><?= $user['last_login_at'] ? date('d/m/Y H:i', strtotime($user['last_login_at'])) : '—' ?></span></div>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Cadastrado em</span><span class="mgmt-info-row__value"><?= date('d/m/Y H:i', strtotime($user['created_at'])) ?></span></div>
+        <div class="mgmt-info-card">
+            <h3 class="mgmt-info-card__title">Dados do usu&aacute;rio</h3>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Nome</span><span class="mgmt-info-row__value"><?= e($user['name'] ?? '-') ?></span></div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">E-mail</span><span class="mgmt-info-row__value"><?= e($user['email'] ?? '-') ?></span></div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Telefone</span><span class="mgmt-info-row__value"><?= e($user['phone'] ?? '-') ?></span></div>
+            <div class="mgmt-info-row">
+                <span class="mgmt-info-row__label">Status</span>
+                <span class="mgmt-info-row__value">
+                    <span class="badge badge--<?= e($user['status'] ?? 'inactive') ?>"><?= e($statusLabels[$user['status'] ?? ''] ?? ($user['status'] ?? '-')) ?></span>
+                </span>
+            </div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">E-mail verificado</span><span class="mgmt-info-row__value"><?= $emailVerifiedAt ? $formatDateTime($emailVerifiedAt) : '&#10060; N&atilde;o verificado' ?></span></div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">&Uacute;ltimo login</span><span class="mgmt-info-row__value"><?= $formatDateTime($lastLoginAt) ?></span></div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Cadastrado em</span><span class="mgmt-info-row__value"><?= $formatDateTime($createdAt) ?></span></div>
         </div>
 
         <?php if (!empty($organizations)): ?>
-        <div class="mgmt-info-card" style="margin-top:var(--space-5);"><h3 class="mgmt-info-card__title">Instituições vinculadas</h3>
-            <table class="mgmt-table"><thead><tr><th>Instituição</th><th>Papel</th><th>Status</th></tr></thead><tbody>
-                <?php foreach ($organizations as $o): ?><tr>
-                    <td><a href="<?= url('/admin/organizacoes/' . $o['id']) ?>" class="mgmt-table__name" style="color:var(--color-primary);"><?= e($o['name']) ?></a></td>
-                    <td><?= e($o['role_name'] ?? '—') ?></td>
-                    <td><span class="badge badge--<?= e($o['membership_status']) ?>"><?= e($membershipLabels[$o['membership_status'] ?? ''] ?? ($o['membership_status'] ?? '-')) ?></span></td>
-                </tr><?php endforeach; ?>
-            </tbody></table>
+        <div class="mgmt-info-card" style="margin-top:var(--space-5);">
+            <h3 class="mgmt-info-card__title">Institui&ccedil;&otilde;es vinculadas</h3>
+            <table class="mgmt-table">
+                <thead><tr><th>Institui&ccedil;&atilde;o</th><th>Papel</th><th>Status</th></tr></thead>
+                <tbody>
+                    <?php foreach ($organizations as $o): ?>
+                    <tr>
+                        <td><a href="<?= url('/admin/organizacoes/' . $o['id']) ?>" class="mgmt-table__name" style="color:var(--color-primary);"><?= e($o['name']) ?></a></td>
+                        <td><?= e($o['role_name'] ?? '-') ?></td>
+                        <td><span class="badge badge--<?= e($o['membership_status'] ?? 'inactive') ?>"><?= e($membershipLabels[$o['membership_status'] ?? ''] ?? ($o['membership_status'] ?? '-')) ?></span></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
         <?php endif; ?>
     </div>
     <div class="mgmt-detail__sidebar">
-        <div class="mgmt-info-card"><h3 class="mgmt-info-card__title">Atividade recente</h3>
-            <?php if (empty($logs)): ?><p style="font-size:var(--text-sm);color:var(--color-text-muted);text-align:center;padding:var(--space-4);">Nenhum log registrado.</p>
-            <?php else: ?><?php foreach (array_slice($logs, 0, 10) as $l): ?>
-                <div style="padding:var(--space-2) 0;border-bottom:1px solid var(--color-border-light);font-size:var(--text-xs);">
-                    <span style="color:var(--color-text-muted);"><?= date('d/m H:i', strtotime($l['created_at'])) ?></span> — <?= e($l['action'] ?? '') ?>
-                </div>
-            <?php endforeach; endif; ?>
+        <div class="mgmt-info-card">
+            <h3 class="mgmt-info-card__title">Atividade recente</h3>
+            <?php if (empty($logs)): ?>
+                <p style="font-size:var(--text-sm);color:var(--color-text-muted);text-align:center;padding:var(--space-4);">Nenhum log registrado.</p>
+            <?php else: ?>
+                <?php foreach (array_slice($logs, 0, 10) as $l): ?>
+                    <div style="padding:var(--space-2) 0;border-bottom:1px solid var(--color-border-light);font-size:var(--text-xs);">
+                        <span style="color:var(--color-text-muted);"><?= $formatDateTime($l['created_at'] ?? null) ?></span> &mdash; <?= e($l['action'] ?? '') ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>

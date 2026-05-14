@@ -164,6 +164,7 @@
                 addressInput.value = [data.logradouro, data.bairro].filter(Boolean).join(', ');
             }
             if (stateSelect && data.uf) {
+                await statesReady;
                 stateSelect.value = data.uf;
                 await loadCities(data.uf, data.localidade || '');
             }
@@ -176,7 +177,7 @@
         if ((zipInput.value || '').replace(/\D+/g, '').length === 8) applyCep();
     });
 
-    loadStates();
+    const statesReady = loadStates();
 })();
 </script>
 <?php $__view->endSection(); ?>
