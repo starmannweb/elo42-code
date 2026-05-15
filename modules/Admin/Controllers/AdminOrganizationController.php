@@ -197,16 +197,22 @@ class AdminOrganizationController extends Controller
         $settings = $this->decodeSettings($org['settings'] ?? null);
         $settings['legal_name'] = trim((string) $request->input('legal_name', '')) ?: null;
 
-        Organization::update($id, [
-            'name'     => $request->input('name'),
-            'document' => trim((string) $request->input('cnpj', '')) ?: null,
-            'phone'    => trim((string) $request->input('phone', '')) ?: null,
-            'city'     => trim((string) $request->input('city', '')) ?: null,
-            'state'    => trim((string) $request->input('state', '')) ?: null,
-            'status'   => $request->input('status'),
-            'plan'     => $this->normalizePlan((string) $request->input('plan', (string) ($org['plan'] ?? 'free'))),
-            'settings' => json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-        ]);
+        try {
+            Organization::update($id, [
+                'name'     => $request->input('name'),
+                'document' => trim((string) $request->input('cnpj', '')) ?: null,
+                'phone'    => trim((string) $request->input('phone', '')) ?: null,
+                'city'     => trim((string) $request->input('city', '')) ?: null,
+                'state'    => trim((string) $request->input('state', '')) ?: null,
+                'status'   => $request->input('status'),
+                'plan'     => $this->normalizePlan((string) $request->input('plan', (string) ($org['plan'] ?? 'free'))),
+                'settings' => json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[ADMIN_ORGS_UPDATE] ' . $e->getMessage());
+            Session::flash('error', 'Nao foi possivel salvar a instituicao agora. Tente novamente em alguns instantes.');
+            redirect('/admin/organizacoes/' . $id . '/editar');
+        }
 
         Session::flash('success', 'Instituição atualizada.');
         redirect('/admin/organizacoes/' . $id);

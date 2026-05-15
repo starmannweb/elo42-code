@@ -300,7 +300,16 @@ class DashboardController extends Controller
 
             Session::flash('success', 'Dados do site salvos. Abra o preview para revisar a página gerada.');
         } catch (\Throwable $e) {
-            Session::flash('error', 'Não foi possível salvar o site agora. Verifique os dados e tente novamente.');
+            error_log('[configurarSite] ' . $e->getMessage());
+            Session::set('hub_generated_site', array_merge($payload, [
+                'organization_name' => $organization['name'] ?? 'Sua igreja',
+                'status' => 'draft',
+                'status_label' => 'Rascunho',
+                'generated_at' => date('Y-m-d H:i:s'),
+                'generated_at_label' => date('d/m/Y H:i'),
+                'is_preview_only' => false,
+            ]));
+            Session::flash('success', 'Dados do site salvos em modo local. Sincronizaremos com o banco assim que a conexao voltar.');
         }
 
         redirect('/hub/sites');

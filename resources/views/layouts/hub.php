@@ -90,6 +90,14 @@
                 $hubSiteUrl = url('/');
             }
         }
+        if ($hubSiteUrl === url('/')) {
+            $sessionSite = \App\Core\Session::get('hub_generated_site');
+            $sessionSite = is_array($sessionSite) ? $sessionSite : [];
+            $sessionSlug = trim((string) ($sessionSite['slug'] ?? ''));
+            if ($sessionSlug !== '') {
+                $hubSiteUrl = url('/site/' . rawurlencode($sessionSlug));
+            }
+        }
 
         $isMenuActive = static function (string $key, string $active): string {
             return $key === $active ? 'active' : '';

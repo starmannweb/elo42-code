@@ -26,7 +26,7 @@ $recurrenceLabels = ['one_time' => 'Único', 'monthly' => 'Mensal', 'quarterly' 
             <td><?= e($recurrenceLabels[$s['recurrence'] ?? ''] ?? ($s['recurrence'] ?? '-')) ?></td>
             <td>
                 <?php $serviceId = (int) ($s['id'] ?? 0); $isActiveService = ($s['status'] ?? '') === 'active'; ?>
-                <?php if ($serviceId > 0): ?>
+                <?php if ($serviceId !== 0): ?>
                     <form method="POST" action="<?= url('/admin/servicos/' . $serviceId . '/toggle-status') ?>" class="admin-service-toggle-form">
                         <?= csrf_field() ?>
                         <input type="hidden" name="status" value="<?= $isActiveService ? 'inactive' : 'active' ?>">

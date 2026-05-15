@@ -342,7 +342,6 @@
                         <?= csrf_field() ?>
                         <button type="submit" class="hub-topbar__link hub-topbar__link--danger">Sair</button>
                     </form>
-                    <a href="<?= url('/hub/configuracoes') ?>" class="hub-topbar__link" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:6px;background:var(--color-primary);color:var(--color-white);font-weight:700;" title="Configurações do Hub"><?= e($initials) ?></a>
                 </div>
             </header>
 

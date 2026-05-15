@@ -229,10 +229,13 @@ body[data-portal-theme="dark"] .portal-nav-link.active {
 .portal-avatar {
     width: 44px;
     height: 44px;
+    aspect-ratio: 1 / 1;
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    line-height: 1;
+    overflow: hidden;
     background: var(--portal-primary-soft);
     color: var(--portal-primary-dark);
     font-weight: 500;

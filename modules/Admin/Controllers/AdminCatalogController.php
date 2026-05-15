@@ -66,6 +66,7 @@ class AdminCatalogController extends Controller
             $services = $this->defaultServices(true);
             error_log('[ADMIN_SERVICES] ' . $e->getMessage());
         }
+        $services = $this->applyDefaultServiceStatusOverrides($services);
 
         $this->view('admin/services/index', [
             'pageTitle' => 'Serviços — Admin', 'breadcrumb' => 'Serviços',
@@ -111,6 +112,11 @@ class AdminCatalogController extends Controller
     {
         $id = (int) $req->param('id');
         $status = $req->input('status') === 'active' ? 'active' : 'inactive';
+
+        if ($id < 0 && $this->toggleDefaultServiceStatus($id, $status)) {
+            Session::flash('success', $status === 'active' ? 'Serviço ativado.' : 'Serviço desativado.');
+            redirect('/admin/servicos');
+        }
 
         try {
             Service::update($id, ['status' => $status]);
@@ -526,6 +532,40 @@ class AdminCatalogController extends Controller
         unset($service);
 
         return $defaults;
+    }
+
+    private function applyDefaultServiceStatusOverrides(array $services): array
+    {
+        $overrides = Session::get('admin_default_service_statuses');
+        $overrides = is_array($overrides) ? $overrides : [];
+
+        foreach ($services as &$service) {
+            $slug = (string) ($service['slug'] ?? '');
+            if ($slug !== '' && isset($overrides[$slug])) {
+                $service['status'] = $overrides[$slug] === 'inactive' ? 'inactive' : 'active';
+            }
+        }
+        unset($service);
+
+        return $services;
+    }
+
+    private function toggleDefaultServiceStatus(int $id, string $status): bool
+    {
+        foreach ($this->defaultServices(true) as $service) {
+            if ((int) ($service['id'] ?? 0) !== $id) {
+                continue;
+            }
+
+            $overrides = Session::get('admin_default_service_statuses');
+            $overrides = is_array($overrides) ? $overrides : [];
+            $overrides[(string) $service['slug']] = $status === 'inactive' ? 'inactive' : 'active';
+            Session::set('admin_default_service_statuses', $overrides);
+
+            return true;
+        }
+
+        return false;
     }
 
     private function ensureDefaultPlatformSettings(): void
