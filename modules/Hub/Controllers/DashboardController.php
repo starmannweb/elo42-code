@@ -216,8 +216,10 @@ class DashboardController extends Controller
         } catch (\Throwable $e) {
             Session::set('hub_generated_site', [
                 'template'          => $template,
+                'organization_id'   => (int) ($organization['id'] ?? 0),
                 'organization_name' => $organization['name'] ?? 'Sua Organização',
                 'site_title'        => $organization['name'] ?? 'Site institucional',
+                'slug'              => $this->slugifySiteTitle((string) ($organization['name'] ?? 'site-institucional')),
                 'status'            => 'draft',
                 'status_label'      => 'Rascunho',
                 'generated_at'      => date('Y-m-d H:i:s'),
@@ -302,6 +304,7 @@ class DashboardController extends Controller
         } catch (\Throwable $e) {
             error_log('[configurarSite] ' . $e->getMessage());
             Session::set('hub_generated_site', array_merge($payload, [
+                'organization_id' => (int) ($organization['id'] ?? 0),
                 'organization_name' => $organization['name'] ?? 'Sua igreja',
                 'status' => 'draft',
                 'status_label' => 'Rascunho',

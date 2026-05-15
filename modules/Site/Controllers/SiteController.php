@@ -253,6 +253,17 @@ class SiteController extends Controller
 
     private function fallbackGeneratedSite(string $slug): array
     {
+        $sessionSite = Session::get('hub_generated_site');
+        $sessionSite = is_array($sessionSite) ? $sessionSite : [];
+        if (trim((string) ($sessionSite['slug'] ?? '')) === $slug) {
+            $sessionOrganization = Session::get('organization');
+            $sessionOrganization = is_array($sessionOrganization) ? $sessionOrganization : [];
+            $sessionSite['organization_id'] = (int) ($sessionSite['organization_id'] ?? ($sessionOrganization['id'] ?? 0));
+            $sessionSite['organization_name'] = (string) ($sessionSite['organization_name'] ?? ($sessionOrganization['name'] ?? 'Sua igreja'));
+            $sessionSite['organization_type'] = (string) ($sessionSite['organization_type'] ?? 'church');
+            return $sessionSite;
+        }
+
         $organization = $this->findOrganizationByGeneratedSlug($slug);
         $name = trim((string) ($organization['name'] ?? ''));
         if ($name === '') {

@@ -467,7 +467,12 @@ class AdminCatalogController extends Controller
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
             error_log('[ADMIN_BENEFITS_ORGS] ' . $e->getMessage());
-            return [];
+            $organization = Session::get('organization');
+            $organization = is_array($organization) ? $organization : [];
+            return !empty($organization['id']) ? [[
+                'id' => (int) $organization['id'],
+                'name' => (string) ($organization['name'] ?? 'Instituicao atual'),
+            ]] : [];
         }
     }
 
@@ -479,7 +484,13 @@ class AdminCatalogController extends Controller
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
             error_log('[ADMIN_BENEFITS_USERS] ' . $e->getMessage());
-            return [];
+            $user = Session::user();
+            $user = is_array($user) ? $user : [];
+            return !empty($user['id']) ? [[
+                'id' => (int) $user['id'],
+                'name' => (string) ($user['name'] ?? 'Usuario atual'),
+                'email' => (string) ($user['email'] ?? ''),
+            ]] : [];
         }
     }
 
