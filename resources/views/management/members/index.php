@@ -211,89 +211,89 @@ foreach ($members as $m) {
 <?php $units = is_array($units ?? null) ? $units : []; ?>
 
 <!-- Modal Ficha do Membro -->
-<div class="modal" id="modal-member-details" style="display:none;" role="dialog" aria-modal="true">
-    <div class="modal__content" style="max-width: 500px; padding: 0; overflow: hidden;">
-        <div style="background: var(--color-primary); color: white; padding: 24px; position: relative;">
-            <button type="button" style="position:absolute; top: 16px; right: 16px; background:transparent; border:none; color:white; cursor:pointer; font-size: 20px;" onclick="this.closest('.modal').style.display='none'">&times;</button>
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
+<div class="modal member-details-drawer" id="modal-member-details" style="display:none;" role="dialog" aria-modal="true">
+    <div class="modal__content member-details-drawer__panel">
+        <div class="member-details-drawer__hero">
+            <button type="button" class="member-details-drawer__close" onclick="this.closest('.modal').style.display='none'" aria-label="Fechar">&times;</button>
+            <div class="member-details-drawer__identity">
+                <div class="member-details-drawer__avatar">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 </div>
-                <div>
-                    <h2 style="margin: 0; font-size: 20px; font-weight: 700;" id="det-name">Nome do Membro</h2>
-                    <div style="font-size: 13px; opacity: 0.9; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                <div class="member-details-drawer__intro">
+                    <h2 class="member-details-drawer__name" id="det-name">Nome do Membro</h2>
+                    <div class="member-details-drawer__meta">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                         <span id="det-age">--</span>
                     </div>
-                    <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <span id="det-status-badge" style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Ativo</span>
-                        <span id="det-category-badge" style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Membro</span>
+                    <div class="member-details-drawer__badges">
+                        <span id="det-status-badge" class="member-details-drawer__badge">Ativo</span>
+                        <span id="det-category-badge" class="member-details-drawer__badge">Membro</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div style="padding: 24px;">
-            <div style="display: flex; gap: 12px; margin-bottom: 24px;">
-                <div style="flex:1; background: var(--color-bg-light); border: 1px solid var(--color-border-light); padding: 12px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Total Dízimos</div>
-                    <div style="font-size: 16px; font-weight: 700; color: #6366f1;">R$ 0,00</div>
-                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">0 registros</div>
+        <div class="member-details-drawer__body">
+            <div class="member-details-drawer__stats">
+                <div class="member-details-drawer__stat-card">
+                    <div class="member-details-drawer__stat-label">Total Dízimos</div>
+                    <div class="member-details-drawer__stat-value member-details-drawer__stat-value--tithe">R$ 0,00</div>
+                    <div class="member-details-drawer__stat-note">0 registros</div>
                 </div>
-                <div style="flex:1; background: var(--color-bg-light); border: 1px solid var(--color-border-light); padding: 12px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Total Ofertas</div>
-                    <div style="font-size: 16px; font-weight: 700; color: #10b981;">R$ 0,00</div>
-                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">0 registros</div>
-                </div>
-            </div>
-
-            <h3 style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid var(--color-border-light); padding-bottom: 8px;">Dados Pessoais</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-                <div>
-                    <div style="font-size: 11px; color: var(--text-muted);">Gênero</div>
-                    <div style="font-size: 14px; font-weight: 500;" id="det-gender">--</div>
-                </div>
-                <div>
-                    <div style="font-size: 11px; color: var(--text-muted);">Estado Civil</div>
-                    <div style="font-size: 14px; font-weight: 500;" id="det-marital">--</div>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                    <div style="font-size: 11px; color: var(--text-muted);">Endereço</div>
-                    <div style="font-size: 14px; font-weight: 500;" id="det-address">--</div>
+                <div class="member-details-drawer__stat-card">
+                    <div class="member-details-drawer__stat-label">Total Ofertas</div>
+                    <div class="member-details-drawer__stat-value member-details-drawer__stat-value--offering">R$ 0,00</div>
+                    <div class="member-details-drawer__stat-note">0 registros</div>
                 </div>
             </div>
 
-            <h3 style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid var(--color-border-light); padding-bottom: 8px;">Contato</h3>
-            <div style="display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px;">
-                <div>
-                    <div style="font-size: 11px; color: var(--text-muted);">Email</div>
-                    <div style="font-size: 14px; font-weight: 500; display:flex; align-items:center; gap:6px;" id="det-email"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> <span>--</span></div>
+            <h3 class="member-details-drawer__section-title">Dados Pessoais</h3>
+            <div class="member-details-drawer__grid">
+                <div class="member-details-drawer__field">
+                    <div class="member-details-drawer__label">Gênero</div>
+                    <div class="member-details-drawer__value" id="det-gender">--</div>
                 </div>
-                <div>
-                    <div style="font-size: 11px; color: var(--text-muted);">Telefone</div>
-                    <div style="font-size: 14px; font-weight: 500; display:flex; align-items:center; gap:6px;" id="det-phone"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> <span>--</span></div>
+                <div class="member-details-drawer__field">
+                    <div class="member-details-drawer__label">Estado Civil</div>
+                    <div class="member-details-drawer__value" id="det-marital">--</div>
+                </div>
+                <div class="member-details-drawer__field member-details-drawer__field--wide">
+                    <div class="member-details-drawer__label">Endereço</div>
+                    <div class="member-details-drawer__value" id="det-address">--</div>
                 </div>
             </div>
 
-            <h3 style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid var(--color-border-light); padding-bottom: 8px;">Dados Eclesiásticos</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-                <div>
-                    <div style="font-size: 11px; color: var(--text-muted);">Membresia</div>
-                    <div style="font-size: 14px; font-weight: 500;" id="det-membership">--</div>
+            <h3 class="member-details-drawer__section-title">Contato</h3>
+            <div class="member-details-drawer__grid member-details-drawer__grid--single">
+                <div class="member-details-drawer__field">
+                    <div class="member-details-drawer__label">Email</div>
+                    <div class="member-details-drawer__value member-details-drawer__contact" id="det-email"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1455ff" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> <span>--</span></div>
                 </div>
-                <div>
-                    <div style="font-size: 11px; color: var(--text-muted);">Batismo</div>
-                    <div style="font-size: 14px; font-weight: 500;" id="det-baptism">--</div>
+                <div class="member-details-drawer__field">
+                    <div class="member-details-drawer__label">Telefone</div>
+                    <div class="member-details-drawer__value member-details-drawer__contact" id="det-phone"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1455ff" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> <span>--</span></div>
                 </div>
-                <div style="grid-column: 1 / -1;">
-                    <div style="font-size: 11px; color: var(--text-muted);">Unidade</div>
-                    <div style="font-size: 14px; font-weight: 500;" id="det-unit">--</div>
+            </div>
+
+            <h3 class="member-details-drawer__section-title">Dados Eclesiásticos</h3>
+            <div class="member-details-drawer__grid">
+                <div class="member-details-drawer__field">
+                    <div class="member-details-drawer__label">Membresia</div>
+                    <div class="member-details-drawer__value" id="det-membership">--</div>
+                </div>
+                <div class="member-details-drawer__field">
+                    <div class="member-details-drawer__label">Batismo</div>
+                    <div class="member-details-drawer__value" id="det-baptism">--</div>
+                </div>
+                <div class="member-details-drawer__field member-details-drawer__field--wide">
+                    <div class="member-details-drawer__label">Unidade</div>
+                    <div class="member-details-drawer__value" id="det-unit">--</div>
                 </div>
             </div>
 
             <div id="det-notes-container" style="display:none;">
-                <h3 style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid var(--color-border-light); padding-bottom: 8px;">Observações</h3>
-                <div style="background: var(--color-bg-light); border: 1px solid var(--color-border-light); padding: 12px; border-radius: 8px; font-size: 13px; color: var(--text-muted);" id="det-notes">
+                <h3 class="member-details-drawer__section-title">Observações</h3>
+                <div class="member-details-drawer__notes" id="det-notes">
                     --
                 </div>
             </div>

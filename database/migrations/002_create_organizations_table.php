@@ -16,7 +16,7 @@ return [
             zip_code VARCHAR(10) NULL,
             logo VARCHAR(500) NULL,
             website VARCHAR(500) NULL,
-            plan ENUM('free', 'starter', 'professional', 'enterprise') DEFAULT 'free',
+            plan ENUM('free', 'starter', 'premium', 'professional', 'enterprise') DEFAULT 'free',
             status ENUM('active', 'inactive', 'trial', 'suspended') DEFAULT 'trial',
             trial_ends_at TIMESTAMP NULL,
             settings JSON NULL,

@@ -77,14 +77,19 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
 }
 
 .admin-sidebar .hub-sidebar__user {
-    background: #112852;
-    border: 1px solid #243857;
+    background: transparent;
+    border: 1px solid transparent;
     padding: 10px 12px;
 }
 
 .admin-sidebar .hub-sidebar__user:hover {
-    background: #173763;
-    border-color: #334155;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: transparent;
+}
+
+.admin-sidebar .hub-sidebar__user:focus {
+    outline: 2px solid rgba(214, 166, 70, 0.55);
+    outline-offset: 2px;
 }
 
 .hub-topbar.admin-topbar {

@@ -59,6 +59,7 @@ $renderOrgEditModal = static function (array $org, string $returnTo): void {
                             <select name="plan" class="form-select">
                                 <option value="free" <?= ($org['plan'] ?? '') === 'free' ? 'selected' : '' ?>>Gratuito</option>
                                 <option value="starter" <?= ($org['plan'] ?? '') === 'starter' ? 'selected' : '' ?>>Starter</option>
+                                <option value="premium" <?= ($org['plan'] ?? '') === 'premium' ? 'selected' : '' ?>>Premium</option>
                                 <option value="professional" <?= ($org['plan'] ?? '') === 'professional' ? 'selected' : '' ?>>Professional</option>
                                 <option value="enterprise" <?= ($org['plan'] ?? '') === 'enterprise' ? 'selected' : '' ?>>Enterprise</option>
                             </select>

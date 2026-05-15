@@ -218,7 +218,7 @@ class AdminDashboardController extends Controller
 
             $users = [
                 ['name' => 'Pastor Demo', 'email' => 'pastor@' . self::DEMO_EMAIL_DOMAIN, 'role' => $managerRoleId, 'org' => $orgIds[0]],
-                ['name' => 'Líder Demo', 'email' => 'lider@' . self::DEMO_EMAIL_DOMAIN, 'role' => $memberRoleId, 'org' => $orgIds[0]],
+                ['name' => 'Líder Demo', 'email' => 'lider@' . self::DEMO_EMAIL_DOMAIN, 'role' => $managerRoleId, 'org' => $orgIds[0]],
                 ['name' => 'Membro Demo', 'email' => 'membro@' . self::DEMO_EMAIL_DOMAIN, 'role' => $memberRoleId, 'org' => $orgIds[1]],
             ];
 
@@ -238,6 +238,9 @@ class AdminDashboardController extends Controller
                 $check->execute(['org' => $u['org'], 'u' => $userId]);
                 if (!$check->fetchColumn()) {
                     $link = $pdo->prepare("INSERT INTO organization_users (organization_id, user_id, role_id, status, joined_at) VALUES (:org, :u, :r, 'active', NOW())");
+                    $link->execute(['org' => $u['org'], 'u' => $userId, 'r' => $u['role']]);
+                } else {
+                    $link = $pdo->prepare("UPDATE organization_users SET role_id = :r, status = 'active' WHERE organization_id = :org AND user_id = :u");
                     $link->execute(['org' => $u['org'], 'u' => $userId, 'r' => $u['role']]);
                 }
             }

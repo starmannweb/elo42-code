@@ -281,7 +281,7 @@ class AdminOrganizationController extends Controller
         return match ($plan) {
             'basic' => 'starter',
             'pro' => 'professional',
-            'free', 'starter', 'professional', 'enterprise' => $plan,
+            'free', 'starter', 'premium', 'professional', 'enterprise' => $plan,
             default => 'free',
         };
     }

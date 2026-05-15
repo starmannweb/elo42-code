@@ -276,6 +276,10 @@ class Migrator
             return 'ALTER TABLE ' . $matches[1] . ' ADD COLUMN ' . $matches[2] . ' ' . $definition;
         }
 
+        if (preg_match('/^ALTER\s+TABLE\s+[A-Za-z0-9_]+\s+MODIFY\s+COLUMN\s+/is', $statement)) {
+            return null;
+        }
+
         $statement = preg_replace('/\s+AFTER\s+[A-Za-z0-9_]+/i', '', $statement);
 
         return $statement;
