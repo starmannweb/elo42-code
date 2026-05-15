@@ -99,13 +99,13 @@
                 <a href="<?= url('/hub') ?>" class="hub-nav-link admin-sidebar__hub-link mgmt-sidebar-action mgmt-sidebar-action--hub">
                     <span class="hub-nav-link__icon" aria-hidden="true"><?= $adminIcon('home') ?></span> Voltar ao Hub
                 </a>
-                <div class="hub-sidebar__user">
+                <a href="<?= url('/hub/configuracoes') ?>" class="hub-sidebar__user" style="text-decoration: none; color: inherit;">
                     <div class="hub-sidebar__user-avatar admin-avatar" aria-hidden="true"><?= $initials ?></div>
                     <div class="hub-sidebar__user-info">
                         <div class="hub-sidebar__user-name"><?= e($user['name'] ?? '') ?></div>
                         <div class="hub-sidebar__user-role">Administrador</div>
                     </div>
-                </div>
+                </a>
             </div>
         </aside>
         <div class="hub-sidebar-overlay" aria-hidden="true"></div>

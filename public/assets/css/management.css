@@ -1244,6 +1244,12 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 
 .mgmt-layout .hub-sidebar__footer .hub-sidebar__user {
     padding: 8px 6px 2px;
+    transition: background 0.2s ease;
+    border-radius: var(--radius-md);
+}
+
+.mgmt-layout .hub-sidebar__footer .hub-sidebar__user:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .mgmt-topbar-logout {

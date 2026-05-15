@@ -183,13 +183,13 @@
                         Super Admin
                     </a>
                 <?php endif; ?>
-                <div class="hub-sidebar__user">
+                <a href="<?= url('/hub/configuracoes') ?>" class="hub-sidebar__user" style="text-decoration: none; color: inherit;">
                     <div class="hub-sidebar__user-avatar" aria-hidden="true"><?= e($initials) ?></div>
                     <div class="hub-sidebar__user-info">
                         <div class="hub-sidebar__user-name"><?= e((string) ($user['name'] ?? 'Usuário')) ?></div>
                         <div class="hub-sidebar__user-role"><?= e((string) ($organization['role_name'] ?? 'Conta ativa')) ?></div>
                     </div>
-                </div>
+                </a>
             </div>
         </aside>
 

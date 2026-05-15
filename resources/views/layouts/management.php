@@ -299,13 +299,13 @@
                     <span class="hub-nav-link__icon" aria-hidden="true"><?= $icon('home') ?></span>
                     <span class="hub-nav-link__label">Voltar ao Hub</span>
                 </a>
-                <div class="hub-sidebar__user">
+                <a href="<?= url('/hub/configuracoes') ?>" class="hub-sidebar__user" style="text-decoration: none; color: inherit;">
                     <div class="hub-sidebar__user-avatar" aria-hidden="true"><?= e($initials) ?></div>
                     <div class="hub-sidebar__user-info">
-                        <div class="hub-sidebar__user-name"><?= e((string) ($user['name'] ?? 'UsuÃ¡rio')) ?></div>
+                        <div class="hub-sidebar__user-name"><?= e((string) ($user['name'] ?? 'Usuário')) ?></div>
                         <div class="hub-sidebar__user-role"><?= e((string) ($organization['role_name'] ?? 'Administrador')) ?></div>
                     </div>
-                </div>
+                </a>
             </div>
         </aside>
 
