@@ -179,7 +179,6 @@
                 ['href' => '/gestao/jornadas', 'label' => 'Jornada espiritual', 'icon' => 'journey', 'premium' => true],
                 ['href' => '/gestao/historico', 'label' => 'Histórico', 'icon' => 'audit', 'premium' => true],
                 ['href' => '/gestao/membros/top-ofertantes', 'label' => 'Top Ofertantes', 'icon' => 'award', 'premium' => true],
-                ['href' => '/hub/suporte', 'label' => 'Ajuda', 'icon' => 'audit'],
             ];
             $treasuryTabs = [
                 ['href' => '/gestao/receitas', 'label' => 'Receitas', 'icon' => 'income', 'active' => ['/gestao/receitas', '/gestao/doacoes']],
@@ -198,12 +197,6 @@
                 ['href' => '/gestao/configuracoes/cadastro-publico', 'label' => 'Cadastro Público', 'icon' => 'users', 'premium' => true],
                 ['href' => '/gestao/configuracoes/backup', 'label' => 'Backup', 'icon' => 'backup', 'premium' => true],
                 ['href' => '/gestao/configuracoes/perigo', 'label' => 'Perigo', 'icon' => 'danger', 'premium' => true],
-            ];
-            $adminTabs = [
-                ['href' => '/gestao/sermoes', 'label' => 'Séries e Sermões', 'icon' => 'sermon', 'active' => ['/gestao/sermoes']],
-                ['href' => '/gestao/pregadores', 'label' => 'Pregadores', 'icon' => 'users'],
-                ['href' => '/hub/suporte', 'label' => 'Ajuda', 'icon' => 'audit'],
-                ['href' => '/gestao/relatorios', 'label' => 'Relatórios', 'icon' => 'reports'],
             ];
         ?>
 
@@ -323,11 +316,15 @@
                         }
                     ?>
                     <div class="hub-topbar__context">
-                        <span>Gest&atilde;o para Igrejas</span>
+                        <span>Gestão para Igrejas</span>
                         <strong><?= e($orgDisplayName) ?></strong>
                     </div>
                 </div>
                 <div class="hub-topbar__right" style="display:flex;align-items:center;gap:1rem;">
+                    <a href="<?= url('/hub/suporte') ?>" class="hub-topbar__link mgmt-help-shortcut" title="Abrir ajuda" style="display:inline-flex;align-items:center;gap:6px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>
+                        Ajuda
+                    </a>
                     <?php if ($isSystemAdmin): ?>
                         <a href="<?= url('/membro') ?>" class="hub-topbar__link mgmt-member-shortcut" title="Abrir área do membro" style="display:inline-flex;align-items:center;gap:6px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:#f59e0b;flex-shrink:0;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -401,8 +398,6 @@
                         $renderTabs($peopleTabs);
                     } elseif ($isActive(['/gestao/configuracoes', '/gestao/usuarios'], $uri)) {
                         $renderTabs($settingsTabs);
-                    } elseif (!$isMemberMapPage && $isActive(['/gestao/sermoes', '/gestao/pregadores', '/gestao/relatorios'], $uri)) {
-                        $renderTabs($adminTabs);
                     }
                 ?>
 

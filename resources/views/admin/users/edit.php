@@ -8,7 +8,7 @@
 
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-header__title">Editar usu&aacute;rio</h1>
+        <h1 class="mgmt-header__title">Editar usuário</h1>
         <p class="mgmt-header__subtitle"><?= e($user['email'] ?? '') ?></p>
     </div>
     <div class="mgmt-header__actions" style="display:flex;gap:8px;">
@@ -17,7 +17,7 @@
         <?php endif; ?>
         <a href="<?= url('/admin/usuarios') ?>" class="btn btn--secondary">Voltar</a>
         <?php if (!$degraded && !$isSelf): ?>
-            <form method="POST" action="<?= url('/admin/usuarios/' . $user['id'] . '/excluir') ?>" onsubmit="return confirm('Tem certeza que deseja remover este usuario?');">
+            <form method="POST" action="<?= url('/admin/usuarios/' . $user['id'] . '/excluir') ?>" onsubmit="return confirm('Tem certeza que deseja remover este usuário?');">
                 <?= csrf_field() ?>
                 <button type="submit" class="btn btn--danger-outline">Excluir</button>
             </form>
@@ -27,13 +27,13 @@
 
 <?php if ($degraded): ?>
     <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">
-        Banco indispon&iacute;vel agora. Esta tela est&aacute; usando os dados da sess&atilde;o e pode n&atilde;o persistir altera&ccedil;&otilde;es no cadastro.
+        Banco indisponível agora. Esta tela está usando os dados da sessão e pode não persistir alterações no cadastro.
     </div>
 <?php endif; ?>
 
 <div class="mgmt-grid admin-user-edit-grid">
     <div class="mgmt-form-card">
-        <h3 class="mgmt-form-card__title">Dados do usu&aacute;rio</h3>
+        <h3 class="mgmt-form-card__title">Dados do usuário</h3>
         <form method="POST" action="<?= url('/admin/usuarios/' . $user['id'] . '/editar') ?>">
             <?= csrf_field() ?>
             <div class="form-group">
@@ -67,7 +67,7 @@
         <h3 class="mgmt-form-card__title">Redefinir senha</h3>
         <?php if ($degraded): ?>
             <p class="mgmt-auto-note" style="margin-top:0;">
-                Conecte o banco de dados para redefinir a senha deste usu&aacute;rio.
+                Conecte o banco de dados para redefinir a senha deste usuário.
             </p>
             <div class="form-group">
                 <label class="form-label">Nova senha</label>

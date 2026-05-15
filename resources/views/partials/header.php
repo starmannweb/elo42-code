@@ -7,7 +7,7 @@
         <ul class="navbar__menu" id="nav-menu" role="menubar">
             <li role="none"><a href="<?= url('/') ?>#inicio" class="navbar__link" role="menuitem">Início</a></li>
             <li role="none"><a href="<?= url('/') ?>#sobre" class="navbar__link" role="menuitem">Sobre</a></li>
-            <li role="none"><a href="<?= url('/') ?>#servicos" class="navbar__link" role="menuitem">Serviços</a></li>
+            <li role="none"><a href="<?= url('/') ?>#serviços" class="navbar__link" role="menuitem">Serviços</a></li>
             <li role="none"><a href="<?= url('/') ?>#projetos" class="navbar__link" role="menuitem">Como funciona</a></li>
             <li role="none"><a href="<?= url('/') ?>#funcionalidades" class="navbar__link" role="menuitem">Funcionalidades</a></li>
             <li role="none"><a href="<?= url('/') ?>#faq" class="navbar__link" role="menuitem">FAQ</a></li>

@@ -11,10 +11,10 @@ $statusLabels = ['active' => 'Ativa', 'trial' => 'Teste', 'inactive' => 'Inativa
     <button type="submit" class="btn btn--secondary">Filtrar</button>
 </form>
 <?php if (!empty($degraded)): ?>
-    <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponivel agora. Exibindo a instituicao da sessao como referencia.</div>
+    <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponivel agora. Exibindo a instituição da sessao como referencia.</div>
 <?php endif; ?>
 <div class="mgmt-table-container"><table class="mgmt-table"><thead><tr><th>Instituição</th><th>Tipo</th><th>Usuários</th><th>Membros</th><th>Status</th><th>Criação</th><th>Ações</th></tr></thead><tbody>
-    <?php if (empty($organizations)): ?><tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:1.25rem;">Nenhuma instituicao encontrada.</td></tr><?php endif; ?>
+    <?php if (empty($organizations)): ?><tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:1.25rem;">Nenhuma instituição encontrada.</td></tr><?php endif; ?>
     <?php foreach ($organizations as $o): ?><tr>
         <td><div class="mgmt-table__name"><?= e($o['name']) ?><?= !empty($o['is_session_fallback']) ? ' <span class="badge badge--inactive">Sessao</span>' : '' ?></div><?php if ($o['cnpj']): ?><div class="mgmt-table__sub"><?= e($o['cnpj']) ?></div><?php endif; ?></td>
         <td><?= e($typeLabels[$o['type'] ?? ''] ?? ($o['type'] ?? '—')) ?></td>

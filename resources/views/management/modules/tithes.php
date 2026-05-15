@@ -1,4 +1,4 @@
-<?php $__view->extends('management', ['pageTitle' => $pageTitle ?? 'Dízimos & Ofertas', 'breadcrumb' => $breadcrumb ?? 'Dízimos & Ofertas', 'activeMenu' => 'dizimos-ofertas']); ?>
+<?php $__view->extends('management', ['pageTitle' => $pageTitle ?? 'Dízimos & Ofertas', 'breadcrumb' => $breadcrumb ?? 'Dízimos & Ofertas', 'activeMenu' => 'dízimos-ofertas']); ?>
 
 <?php $__view->section('content'); ?>
 <?php

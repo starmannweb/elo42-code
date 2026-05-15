@@ -1,7 +1,7 @@
 <?php $__view->extends('admin'); ?>
 <?php $__view->section('content'); ?>
 <?php
-$typeLabels = ['church' => 'Igreja', 'association' => 'Associa&ccedil;&atilde;o', 'ministry' => 'Minist&eacute;rio', 'ong' => 'ONG', 'other' => 'Outro'];
+$typeLabels = ['church' => 'Igreja', 'association' => 'Associação', 'ministry' => 'Ministério', 'ong' => 'ONG', 'other' => 'Outro'];
 $statusLabels = ['active' => 'Ativa', 'trial' => 'Teste', 'inactive' => 'Inativa', 'suspended' => 'Suspensa'];
 $membershipLabels = ['active' => 'Ativo', 'inactive' => 'Inativo', 'pending' => 'Pendente', 'invited' => 'Convidado', 'suspended' => 'Suspenso'];
 $subscriptionLabels = ['trial' => 'Teste', 'active' => 'Ativa', 'past_due' => 'Pendente', 'cancelled' => 'Cancelada', 'expired' => 'Expirada'];
@@ -27,7 +27,7 @@ $formatDate = static function (mixed $value): string {
 
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-header__title"><?= e($org['name'] ?? 'Instituicao') ?></h1>
+        <h1 class="mgmt-header__title"><?= e($org['name'] ?? 'Instituição') ?></h1>
         <p class="mgmt-header__subtitle">
             <span class="badge badge--<?= e($org['status'] ?? 'inactive') ?>"><?= e($statusLabels[$org['status'] ?? ''] ?? ($org['status'] ?? '-')) ?></span>
         </p>
@@ -39,16 +39,16 @@ $formatDate = static function (mixed $value): string {
 
 <?php if (!empty($degraded)): ?>
     <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">
-        N&atilde;o foi poss&iacute;vel carregar todos os v&iacute;nculos desta institui&ccedil;&atilde;o agora. Os dados principais continuam dispon&iacute;veis.
+        Não foi possível carregar todos os vínculos desta instituição agora. Os dados principais continuam disponíveis.
     </div>
 <?php endif; ?>
 
 <div class="mgmt-detail">
     <div class="mgmt-detail__main">
         <div class="mgmt-info-card">
-            <h3 class="mgmt-info-card__title">Dados da institui&ccedil;&atilde;o</h3>
+            <h3 class="mgmt-info-card__title">Dados da instituição</h3>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Nome</span><span class="mgmt-info-row__value"><?= e($org['name'] ?? '-') ?></span></div>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Raz&atilde;o social</span><span class="mgmt-info-row__value"><?= e($org['legal_name'] ?? '-') ?></span></div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Razão social</span><span class="mgmt-info-row__value"><?= e($org['legal_name'] ?? '-') ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">CNPJ</span><span class="mgmt-info-row__value"><?= e($org['cnpj'] ?? '-') ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Tipo</span><span class="mgmt-info-row__value"><?= $typeLabels[$org['type'] ?? ''] ?? e($org['type'] ?? '-') ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Cidade/UF</span><span class="mgmt-info-row__value"><?= e(trim((string) ($org['city'] ?? '') . (($org['state'] ?? '') ? '/' . $org['state'] : '')) ?: '-') ?></span></div>
@@ -56,12 +56,12 @@ $formatDate = static function (mixed $value): string {
         </div>
 
         <div class="mgmt-info-card" style="margin-top:var(--space-5);">
-            <h3 class="mgmt-info-card__title">Usu&aacute;rios vinculados (<?= count($users) ?>)</h3>
+            <h3 class="mgmt-info-card__title">Usuários vinculados (<?= count($users) ?>)</h3>
             <table class="mgmt-table">
                 <thead><tr><th>Nome</th><th>E-mail</th><th>Papel</th><th>Status</th></tr></thead>
                 <tbody>
                     <?php if (empty($users)): ?>
-                        <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:1rem;">Nenhum usu&aacute;rio vinculado.</td></tr>
+                        <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:1rem;">Nenhum usuário vinculado.</td></tr>
                     <?php endif; ?>
                     <?php foreach ($users as $u): ?>
                     <tr>

@@ -36,7 +36,7 @@
                     <div class="glowbox-borders-masker">
                         <div class="glowbox-borders"></div>
                     </div>
-                    <a href="#servicos">
+                    <a href="#serviços">
                         <div class="btn-cta-box">
                             <div class="btn-cta">Quero conhecer o ecossistema</div>
                             <img src="https://zeph.com.br/wp-content/uploads/2023/12/seta-2.svg" class="arrow-icon" alt="Seta" />
@@ -118,7 +118,7 @@
 </section>
 
 <!-- Serviços — Bento Grid -->
-<section class="section section--dark" id="servicos">
+<section class="section section--dark" id="serviços">
     <div class="container">
         <div class="section__header animate-on-scroll">
             <span class="section__badge">✦ Serviços</span>

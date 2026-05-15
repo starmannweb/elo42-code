@@ -13,14 +13,6 @@ $balance = (float) ($financial['balance'] ?? 0);
         </div>
     <?php endif; ?>
 
-    <section class="mgmt-shortcuts" aria-label="Atalhos principais">
-        <a href="<?= url('/gestao/membros') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg></span><span><strong>Membros</strong><small>Cadastro e acompanhamento</small></span></a>
-        <a href="<?= url('/gestao/membros/novo') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span><strong>Novo membro</strong><small>Adicionar servo</small></span></a>
-        <a href="<?= url('/gestao/receitas') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span><span><strong>Receitas</strong><small>Dizimos e ofertas</small></span></a>
-        <a href="<?= url('/gestao/agenda') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h18"></path></svg></span><span><strong>Agenda</strong><small>Eventos e visitas</small></span></a>
-        <a href="<?= url('/hub/suporte') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></span><span><strong>Ajuda</strong><small>Suporte e orientacao</small></span></a>
-    </section>
-
     <section class="mgmt-kpi-grid" aria-label="Indicadores">
         <article class="mgmt-kpi-card" style="justify-content:space-between;">
             <div>
@@ -313,6 +305,14 @@ $balance = (float) ($financial['balance'] ?? 0);
                 <span>Pedidos pastorais e demandas aparecem aqui assim que forem registrados.</span>
             </div>
         </article>
+    </section>
+
+    <section class="mgmt-shortcuts" aria-label="Atalhos principais">
+        <a href="<?= url('/gestao/membros') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg></span><span><strong>Membros</strong><small>Cadastro e acompanhamento</small></span></a>
+        <a href="<?= url('/gestao/membros/novo') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span><strong>Novo membro</strong><small>Adicionar servo</small></span></a>
+        <a href="<?= url('/gestao/receitas') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span><span><strong>Receitas</strong><small>Dízimos e ofertas</small></span></a>
+        <a href="<?= url('/gestao/agenda') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h18"></path></svg></span><span><strong>Agenda</strong><small>Eventos e visitas</small></span></a>
+        <a href="<?= url('/hub/suporte') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></span><span><strong>Ajuda</strong><small>Suporte e orientação</small></span></a>
     </section>
 </section>
 <?php $__view->endSection(); ?>

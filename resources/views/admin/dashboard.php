@@ -29,7 +29,7 @@
     <div style="display:flex; flex-wrap:wrap; gap:var(--space-4); align-items:center; justify-content:space-between;">
         <div style="flex:1; min-width: 280px;">
             <h3 class="mgmt-info-card__title" style="margin:0 0 var(--space-1);">Dados de demonstração</h3>
-            <p class="mgmt-header__subtitle" style="margin:0;">Popule o sistema com 2 organiza&ccedil;&otilde;es, 3 usu&aacute;rios e dados completos do painel da igreja: membros, mapa, financeiro, eventos, campanhas, serm&otilde;es e site p&uacute;blico (senha padr&atilde;o: <code>demo@2026</code>). Use "Remover" para limpar dados de demo sem afetar contas reais.</p>
+            <p class="mgmt-header__subtitle" style="margin:0;">Popule o sistema com 2 organizações, 3 usuários e dados completos do painel da igreja: membros, mapa, financeiro, eventos, campanhas, sermões e site público (senha padrão: <code>demo@2026</code>). Use "Remover" para limpar dados de demo sem afetar contas reais.</p>
         </div>
         <div style="display:flex; gap:var(--space-2); flex-wrap:wrap;">
             <form method="POST" action="<?= url('/admin/seed-demo') ?>" style="margin:0;" onsubmit="return confirm('Popular dados de demonstração?');">

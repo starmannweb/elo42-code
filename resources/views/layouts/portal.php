@@ -88,6 +88,8 @@
 
     $parts = preg_split('/\s+/', trim((string) ($user['name'] ?? 'Usuário'))) ?: ['Usuário'];
     $initials = strtoupper(substr((string) ($parts[0] ?? 'U'), 0, 1) . substr((string) (end($parts) ?: 'U'), 0, 1));
+    $portalMemberPhoto = trim((string) (($member['photo'] ?? '') ?: ($user['avatar'] ?? '')));
+    $portalMemberPhotoUrl = $portalMemberPhoto !== '' ? (preg_match('#^https?://#i', $portalMemberPhoto) ? $portalMemberPhoto : url($portalMemberPhoto)) : '';
     $nav = [
         ['href' => '/membro', 'label' => 'Início', 'icon' => 'home', 'active' => $linkClass('/membro', $uri)],
         ['href' => '/membro/biblia', 'label' => 'Bíblia', 'icon' => 'bible', 'active' => $linkClass('/membro/biblia', $uri, true)],
@@ -128,7 +130,13 @@
 
             <div class="portal-sidebar__footer">
                 <a href="<?= url('/membro/configuracoes') ?>" class="portal-user-card">
-                    <span class="portal-avatar"><?= e($initials) ?></span>
+                    <span class="portal-avatar">
+                        <?php if ($portalMemberPhotoUrl !== ''): ?>
+                            <img src="<?= e($portalMemberPhotoUrl) ?>" alt="Foto de <?= e($user['name'] ?? 'membro') ?>">
+                        <?php else: ?>
+                            <?= e($initials) ?>
+                        <?php endif; ?>
+                    </span>
                     <span class="portal-user-card__meta">
                         <span class="portal-user-card__name"><?= e($user['name'] ?? 'Usuário') ?></span>
                         <span class="portal-user-card__email"><?= e($user['email'] ?? '') ?></span>

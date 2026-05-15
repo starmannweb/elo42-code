@@ -174,6 +174,27 @@ body[data-hub-theme="dark"] .mgmt-report-banner strong {
     font-size: 0.78rem;
 }
 
+body[data-hub-theme="dark"] .mgmt-shortcut {
+    background: #10223d;
+    border-color: #243857;
+    color: #f8fafc;
+    box-shadow: none;
+}
+
+body[data-hub-theme="dark"] .mgmt-shortcut:hover {
+    border-color: #3b5f91;
+    background: #122946;
+}
+
+body[data-hub-theme="dark"] .mgmt-shortcut small {
+    color: #b9c7df;
+}
+
+body[data-hub-theme="dark"] .mgmt-shortcut__icon {
+    background: rgba(37, 99, 235, 0.18);
+    color: #78a8ff;
+}
+
 .mgmt-kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1344,6 +1365,16 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
     color: #0a4dff;
 }
 
+.mgmt-layout .hub-topbar__link.hub-topbar__link--danger,
+.admin-topbar .hub-topbar__link.hub-topbar__link--danger {
+    color: #ef4444;
+}
+
+.mgmt-layout .hub-topbar__link.hub-topbar__link--danger:hover,
+.admin-topbar .hub-topbar__link.hub-topbar__link--danger:hover {
+    color: #dc2626;
+}
+
 /* --- Dashboard Reference Blocks --- */
 .mgmt-dashboard {
     display: flex;
@@ -1566,6 +1597,8 @@ body[data-hub-theme="dark"] .mgmt-layout .hub-topbar__breadcrumb,
 body[data-hub-theme="dark"] .mgmt-layout .hub-topbar__link { color: #94a3b8; }
 body[data-hub-theme="dark"] .mgmt-layout .hub-topbar__link:hover { color: #f8fafc; }
 body[data-hub-theme="dark"] .mgmt-layout .hub-topbar__link[id="hub-theme-toggle"] { color: #cbd5e1; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-topbar__link.hub-topbar__link--danger { color: #ff7b7b; }
+body[data-hub-theme="dark"] .mgmt-layout .hub-topbar__link.hub-topbar__link--danger:hover { color: #fecaca; }
 
 body[data-hub-theme="dark"] .mgmt-header__title { color: #f8fafc; }
 body[data-hub-theme="dark"] .mgmt-header__subtitle { color: #94a3b8; }
@@ -3272,6 +3305,16 @@ body[data-hub-theme="dark"] .mgmt-layout .modal label {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.member-photo-upload__button {
+    min-width: 132px;
+}
+
+.member-photo-upload__hint {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    text-align: center;
 }
 
 .member-location-panel {

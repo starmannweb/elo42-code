@@ -27,7 +27,7 @@
     <div class="mgmt-card__body">
         <form method="GET" action="<?= url('/gestao/membros/top-ofertantes') ?>" class="mgmt-filter-grid">
             <div class="mgmt-filter-field">
-                <label for="top_donors_period" class="form-label">Per&iacute;odo</label>
+                <label for="top_donors_period" class="form-label">Período</label>
                 <input type="month" id="top_donors_period" name="period" class="form-control" value="<?= e($topDonorsPeriod ?? date('Y-m')) ?>">
             </div>
             <div class="mgmt-filter-actions">

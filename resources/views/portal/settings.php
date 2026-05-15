@@ -1,6 +1,11 @@
 <?php $__view->extends('portal'); ?>
 
 <?php $__view->section('content'); ?>
+<?php
+    $memberPhoto = trim((string) (($member['photo'] ?? '') ?: ($user['avatar'] ?? '')));
+    $memberPhotoUrl = $memberPhoto !== '' ? (preg_match('#^https?://#i', $memberPhoto) ? $memberPhoto : url($memberPhoto)) : '';
+    $profileInitial = strtoupper(substr((string) ($user['name'] ?? 'U'), 0, 1));
+?>
 <div class="portal-page portal-page--wide">
     <div class="portal-page-header">
         <div>
@@ -21,7 +26,13 @@
                 <form class="portal-form" method="POST" action="<?= url('/membro/configuracoes/salvar') ?>">
                     <?= csrf_field() ?>
                     <div style="display:flex;align-items:center;gap:16px;">
-                        <span class="portal-avatar" style="width:72px;height:72px;aspect-ratio:1 / 1;font-size:1.4rem;border-radius:50%;flex:0 0 72px;"><?= e(strtoupper(substr($user['name'] ?? 'U', 0, 1))) ?></span>
+                        <span class="portal-avatar portal-avatar--profile">
+                            <?php if ($memberPhotoUrl !== ''): ?>
+                                <img src="<?= e($memberPhotoUrl) ?>" alt="Foto de <?= e($user['name'] ?? 'membro') ?>">
+                            <?php else: ?>
+                                <?= e($profileInitial) ?>
+                            <?php endif; ?>
+                        </span>
                         <div>
                             <strong><?= e($user['name'] ?? 'Usuário') ?></strong>
                             <p class="portal-list-card__text" style="margin:2px 0 0;"><?= e($user['email'] ?? '') ?></p>
@@ -60,15 +71,21 @@
                     <h3 class="portal-card__title">Preferências</h3>
                     <p class="portal-list-card__text">Aparência e alertas da área de membros.</p>
                     <div class="portal-list" style="margin-top:18px;">
-                        <label class="portal-list-card" style="cursor:pointer;">
-                            <input type="checkbox" checked>
+                        <label class="portal-switch-card">
+                            <span class="portal-switch">
+                                <input type="checkbox" checked>
+                                <span class="portal-switch__track" aria-hidden="true"></span>
+                            </span>
                             <span class="portal-list-card__content">
                                 <strong class="portal-list-card__title">Notificar eventos</strong>
                                 <span class="portal-list-card__text">Receber lembretes de agenda.</span>
                             </span>
                         </label>
-                        <label class="portal-list-card" style="cursor:pointer;">
-                            <input type="checkbox" checked>
+                        <label class="portal-switch-card">
+                            <span class="portal-switch">
+                                <input type="checkbox" checked>
+                                <span class="portal-switch__track" aria-hidden="true"></span>
+                            </span>
                             <span class="portal-list-card__content">
                                 <strong class="portal-list-card__title">Planos de leitura</strong>
                                 <span class="portal-list-card__text">Lembretes para manter constância.</span>

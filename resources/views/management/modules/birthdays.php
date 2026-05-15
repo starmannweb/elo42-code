@@ -1,4 +1,4 @@
-<?php $__view->extends('management', ['pageTitle' => $pageTitle ?? 'Aniversários', 'breadcrumb' => $breadcrumb ?? 'Aniversários', 'activeMenu' => $activeMenu ?? 'aniversarios']); ?>
+<?php $__view->extends('management', ['pageTitle' => $pageTitle ?? 'Aniversários', 'breadcrumb' => $breadcrumb ?? 'Aniversários', 'activeMenu' => $activeMenu ?? 'aniversários']); ?>
 
 <?php $__view->section('content'); ?>
 <?php

@@ -19,7 +19,7 @@ $createdAt = $user['created_at'] ?? null;
 
 <div class="mgmt-header">
     <div>
-        <h1 class="mgmt-header__title"><?= e($user['name'] ?? 'Usuario') ?></h1>
+        <h1 class="mgmt-header__title"><?= e($user['name'] ?? 'Usuário') ?></h1>
         <p class="mgmt-header__subtitle"><?= e($user['email'] ?? '') ?></p>
     </div>
     <div class="mgmt-header__actions" style="display:flex; gap:8px;">
@@ -38,7 +38,7 @@ $createdAt = $user['created_at'] ?? null;
             <?= csrf_field() ?>
             <div class="modal__body">
                 <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
-                    Defina uma nova senha para este usu&aacute;rio. Ele poder&aacute; acessar o sistema imediatamente com a nova credencial.
+                    Defina uma nova senha para este usuário. Ele poderá acessar o sistema imediatamente com a nova credencial.
                 </p>
                 <div class="form-group">
                     <label class="form-label">Nova senha</label>
@@ -56,7 +56,7 @@ $createdAt = $user['created_at'] ?? null;
 <div class="mgmt-detail">
     <div class="mgmt-detail__main">
         <div class="mgmt-info-card">
-            <h3 class="mgmt-info-card__title">Dados do usu&aacute;rio</h3>
+            <h3 class="mgmt-info-card__title">Dados do usuário</h3>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Nome</span><span class="mgmt-info-row__value"><?= e($user['name'] ?? '-') ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">E-mail</span><span class="mgmt-info-row__value"><?= e($user['email'] ?? '-') ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Telefone</span><span class="mgmt-info-row__value"><?= e($user['phone'] ?? '-') ?></span></div>
@@ -66,16 +66,16 @@ $createdAt = $user['created_at'] ?? null;
                     <span class="badge badge--<?= e($user['status'] ?? 'inactive') ?>"><?= e($statusLabels[$user['status'] ?? ''] ?? ($user['status'] ?? '-')) ?></span>
                 </span>
             </div>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">E-mail verificado</span><span class="mgmt-info-row__value"><?= $emailVerifiedAt ? $formatDateTime($emailVerifiedAt) : '&#10060; N&atilde;o verificado' ?></span></div>
-            <div class="mgmt-info-row"><span class="mgmt-info-row__label">&Uacute;ltimo login</span><span class="mgmt-info-row__value"><?= $formatDateTime($lastLoginAt) ?></span></div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">E-mail verificado</span><span class="mgmt-info-row__value"><?= $emailVerifiedAt ? $formatDateTime($emailVerifiedAt) : '&#10060; Não verificado' ?></span></div>
+            <div class="mgmt-info-row"><span class="mgmt-info-row__label">Último login</span><span class="mgmt-info-row__value"><?= $formatDateTime($lastLoginAt) ?></span></div>
             <div class="mgmt-info-row"><span class="mgmt-info-row__label">Cadastrado em</span><span class="mgmt-info-row__value"><?= $formatDateTime($createdAt) ?></span></div>
         </div>
 
         <?php if (!empty($organizations)): ?>
         <div class="mgmt-info-card" style="margin-top:var(--space-5);">
-            <h3 class="mgmt-info-card__title">Institui&ccedil;&otilde;es vinculadas</h3>
+            <h3 class="mgmt-info-card__title">Instituições vinculadas</h3>
             <table class="mgmt-table">
-                <thead><tr><th>Institui&ccedil;&atilde;o</th><th>Papel</th><th>Status</th></tr></thead>
+                <thead><tr><th>Instituição</th><th>Papel</th><th>Status</th></tr></thead>
                 <tbody>
                     <?php foreach ($organizations as $o): ?>
                     <tr>

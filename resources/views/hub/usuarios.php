@@ -15,7 +15,7 @@
 
     <div class="hub-panel">
         <?php if (!empty($degraded)): ?>
-            <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponivel agora. Exibindo o usuario atual como referencia.</div>
+            <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponivel agora. Exibindo o usuário atual como referencia.</div>
         <?php endif; ?>
         <div class="table-responsive">
             <table class="table">

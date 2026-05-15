@@ -118,7 +118,7 @@
                 <div class="hub-topbar__right">
                     <form method="POST" action="<?= url('/logout') ?>" style="margin:0;">
                         <?= csrf_field() ?>
-                        <button type="submit" class="hub-topbar__link" style="background:none;border:none;cursor:pointer;font:inherit;">Sair</button>
+                        <button type="submit" class="hub-topbar__link hub-topbar__link--danger" style="background:none;border:none;cursor:pointer;font:inherit;">Sair</button>
                     </form>
                 </div>
             </header>

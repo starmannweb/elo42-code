@@ -30,7 +30,7 @@
 </form>
 
 <?php if (!empty($degraded)): ?>
-    <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indispon&iacute;vel agora. Exibindo o usu&aacute;rio da sess&atilde;o como refer&ecirc;ncia.</div>
+    <div class="alert alert--warning" role="alert" style="margin-bottom:1rem;">Banco indisponível agora. Exibindo o usuário da sessão como referência.</div>
 <?php endif; ?>
 
 <div class="mgmt-table-container">
@@ -39,13 +39,13 @@
         <tbody>
             <?php if (empty($users)): ?>
                 <tr>
-                    <td colspan="6" style="text-align:center;color:var(--text-muted);padding:1.25rem;">Nenhum usuario encontrado.</td>
+                    <td colspan="6" style="text-align:center;color:var(--text-muted);padding:1.25rem;">Nenhum usuário encontrado.</td>
                 </tr>
             <?php endif; ?>
             <?php foreach ($users as $u): ?>
                 <?php $isSelf = (int) ($sessionUser['id'] ?? 0) === (int) ($u['id'] ?? 0); ?>
                 <tr>
-                    <td class="mgmt-table__name"><?= e($u['name']) ?><?= !empty($u['is_session_fallback']) ? ' <span class="badge badge--inactive">Sess&atilde;o</span>' : '' ?></td>
+                    <td class="mgmt-table__name"><?= e($u['name']) ?><?= !empty($u['is_session_fallback']) ? ' <span class="badge badge--inactive">Sessão</span>' : '' ?></td>
                     <td class="mgmt-table__sub"><?= e($u['email']) ?></td>
                     <td><?= $u['org_count'] ?></td>
                     <td><span class="badge badge--<?= e($u['status']) ?>"><?= e($statusLabels[$u['status'] ?? ''] ?? ($u['status'] ?? '-')) ?></span></td>
