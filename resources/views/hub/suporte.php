@@ -21,12 +21,11 @@
         <form method="POST" action="<?= url('/hub/suporte/tickets') ?>" data-loading>
             <?= csrf_field() ?>
 
-            <div class="form-group">
-                <label class="form-label" for="support-subject">Assunto</label>
-                <input id="support-subject" type="text" name="subject" class="form-input" placeholder="Descreva brevemente" required>
-            </div>
-
             <div class="hub-form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="support-subject">Assunto</label>
+                    <input id="support-subject" type="text" name="subject" class="form-input" placeholder="Descreva brevemente" required>
+                </div>
                 <div class="form-group">
                     <label class="form-label" for="support-category">Categoria</label>
                     <select id="support-category" name="category" class="form-select">
@@ -35,7 +34,6 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div></div>
             </div>
 
             <div class="form-group">
