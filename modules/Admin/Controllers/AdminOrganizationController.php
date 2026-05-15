@@ -169,6 +169,7 @@ class AdminOrganizationController extends Controller
     public function update(Request $request): void
     {
         $id = (int) $request->param('id');
+        $redirectTo = $this->adminReturnTo($request, '/admin/organizacoes/' . $id);
         $this->validate($request, ['name' => 'required|min:3']);
 
         try {
@@ -186,12 +187,12 @@ class AdminOrganizationController extends Controller
                     Session::set('organization', $sessionOrg);
                 }
                 Session::flash('warning', 'Banco indisponivel agora. Os dados foram mantidos na sessao e podem nao persistir no cadastro.');
-                redirect('/admin/organizacoes/' . $id . '/editar');
+                redirect($redirectTo);
             }
         }
 
         if (!$org) {
-            redirect('/admin/organizacoes');
+            redirect($redirectTo);
         }
 
         $settings = $this->decodeSettings($org['settings'] ?? null);
@@ -211,11 +212,25 @@ class AdminOrganizationController extends Controller
         } catch (\Throwable $e) {
             error_log('[ADMIN_ORGS_UPDATE] ' . $e->getMessage());
             Session::flash('error', 'Nao foi possivel salvar a instituicao agora. Tente novamente em alguns instantes.');
-            redirect('/admin/organizacoes/' . $id . '/editar');
+            redirect($redirectTo);
         }
 
         Session::flash('success', 'Instituição atualizada.');
-        redirect('/admin/organizacoes/' . $id);
+        redirect($redirectTo);
+    }
+
+    private function adminReturnTo(Request $request, string $fallback): string
+    {
+        $returnTo = trim((string) $request->input('return_to', ''));
+        if ($returnTo !== ''
+            && str_starts_with($returnTo, '/admin/')
+            && !str_contains($returnTo, "\n")
+            && !str_contains($returnTo, "\r")
+        ) {
+            return $returnTo;
+        }
+
+        return $fallback;
     }
 
     private function hydrateOrganization(array $organization): array

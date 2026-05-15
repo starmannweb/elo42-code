@@ -1366,10 +1366,19 @@ body[data-portal-theme="dark"] .portal-chip.active {
     box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
 }
 
+body[data-portal-theme="dark"] input[type="date"],
+body[data-portal-theme="dark"] input[type="time"],
+body[data-portal-theme="dark"] input[type="datetime-local"],
+body[data-portal-theme="dark"] input[type="month"] {
+    color-scheme: dark;
+}
+
 body[data-portal-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
 body[data-portal-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
-body[data-portal-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-    filter: invert(0.85) brightness(1.4);
+body[data-portal-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+body[data-portal-theme="dark"] input[type="month"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(3.2) contrast(1.15) !important;
+    opacity: 1;
     cursor: pointer;
 }
 

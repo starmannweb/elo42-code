@@ -52,7 +52,7 @@
                     <td><?= $u['last_login_at'] ? date('d/m/Y H:i', strtotime($u['last_login_at'])) : '-' ?></td>
                     <td class="mgmt-table__actions" style="display:flex;gap:0.5rem;align-items:center;">
                         <a href="<?= url('/admin/usuarios/' . $u['id']) ?>">Ver</a>
-                        <a href="<?= url('/admin/usuarios/' . $u['id'] . '/editar') ?>">Editar</a>
+                        <button type="button" class="mgmt-action-link" onclick="document.getElementById('modal-edit-user-<?= (int) $u['id'] ?>').style.display='flex'">Editar</button>
                         <?php if (empty($u['is_session_fallback']) && !$isSelf): ?>
                         <form method="POST" action="<?= url('/admin/usuarios/' . $u['id'] . '/excluir') ?>" onsubmit="return confirm('Tem certeza que deseja remover este usuário?');" style="margin:0;">
                             <?= csrf_field() ?>
@@ -73,6 +73,52 @@
         </div>
     <?php endif; ?>
 </div>
+
+<?php foreach ($users as $u): ?>
+    <?php $userId = (int) ($u['id'] ?? 0); ?>
+    <?php if ($userId > 0): ?>
+    <div class="modal" id="modal-edit-user-<?= $userId ?>" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-edit-user-title-<?= $userId ?>">
+        <div class="modal__content modal__content--wide">
+            <div class="modal__header">
+                <h2 class="modal__title" id="modal-edit-user-title-<?= $userId ?>">Editar usu&aacute;rio</h2>
+                <button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'" aria-label="Fechar">&times;</button>
+            </div>
+            <form method="POST" action="<?= url('/admin/usuarios/' . $userId . '/editar') ?>" data-loading>
+                <?= csrf_field() ?>
+                <input type="hidden" name="return_to" value="<?= e('/admin/usuarios') ?>">
+                <div class="modal__body">
+                    <div class="modal-grid">
+                        <div class="form-group">
+                            <label class="form-label">Nome *</label>
+                            <input type="text" name="name" class="form-input" value="<?= e($u['name'] ?? '') ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">E-mail *</label>
+                            <input type="email" name="email" class="form-input" value="<?= e($u['email'] ?? '') ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefone</label>
+                            <input type="text" name="phone" class="form-input" value="<?= e($u['phone'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="active" <?= ($u['status'] ?? '') === 'active' ? 'selected' : '' ?>>Ativo</option>
+                                <option value="inactive" <?= ($u['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inativo</option>
+                                <option value="suspended" <?= ($u['status'] ?? '') === 'suspended' ? 'selected' : '' ?>>Suspenso</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal__footer">
+                    <button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button>
+                    <button type="submit" class="btn btn--primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <?php endif; ?>
+<?php endforeach; ?>
 
 <div class="modal" id="modal-new-user" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-new-user-title">
     <div class="modal__content">

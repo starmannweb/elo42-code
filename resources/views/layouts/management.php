@@ -322,7 +322,7 @@
                 </div>
                 <div class="hub-topbar__right" style="display:flex;align-items:center;gap:1rem;">
                     <a href="<?= url('/hub/suporte') ?>" class="hub-topbar__link mgmt-help-shortcut" title="Abrir ajuda" style="display:inline-flex;align-items:center;gap:6px;">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.7 9.35a2.55 2.55 0 0 1 4.95.85c0 1.85-2.35 2.25-2.35 4.15"></path><path d="M12 17.8h.01"></path></svg>
                         Ajuda
                     </a>
                     <?php if ($isSystemAdmin): ?>

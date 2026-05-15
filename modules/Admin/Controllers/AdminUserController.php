@@ -105,6 +105,20 @@ class AdminUserController extends Controller
         Session::set('user', $user);
     }
 
+    private function adminReturnTo(Request $request, string $fallback): string
+    {
+        $returnTo = trim((string) $request->input('return_to', ''));
+        if ($returnTo !== ''
+            && str_starts_with($returnTo, '/admin/')
+            && !str_contains($returnTo, "\n")
+            && !str_contains($returnTo, "\r")
+        ) {
+            return $returnTo;
+        }
+
+        return $fallback;
+    }
+
     public function show(Request $request): void
     {
         $id = (int) $request->param('id');
@@ -221,6 +235,7 @@ class AdminUserController extends Controller
     public function update(Request $request): void
     {
         $id = (int) $request->param('id');
+        $redirectTo = $this->adminReturnTo($request, '/admin/usuarios/' . $id);
         $this->validate($request, ['name' => 'required|min:3']);
         $data = $request->only(['name', 'email', 'phone', 'status']);
 
@@ -235,36 +250,37 @@ class AdminUserController extends Controller
             if ($this->isCurrentSessionUser($id)) {
                 $this->updateSessionUser($data);
                 Session::flash('warning', 'Banco indisponivel agora. Os dados foram atualizados apenas nesta sessao.');
-                redirect('/admin/usuarios/' . $id . '/editar');
+                redirect($redirectTo);
             }
 
             Session::flash('error', 'Nao foi possivel atualizar o usuario agora.');
-            redirect('/admin/usuarios/' . $id . '/editar');
+            redirect($redirectTo);
         }
         Session::flash('success', 'Usuário atualizado.');
-        redirect('/admin/usuarios/' . $id . '/editar');
+        redirect($redirectTo);
     }
 
     public function resetPassword(Request $request): void
     {
         $id = (int) $request->param('id');
+        $redirectTo = $this->adminReturnTo($request, '/admin/usuarios/' . $id);
         try {
             $user = User::find($id);
         } catch (\Throwable $e) {
             error_log('[ADMIN_USERS_RESET_FIND] ' . $e->getMessage());
             Session::flash('error', 'Nao foi possivel carregar este usuario agora.');
-            redirect('/admin/usuarios');
+            redirect($redirectTo);
         }
 
         if (!$user) {
             Session::flash('error', 'Usuário não encontrado.');
-            redirect('/admin/usuarios');
+            redirect($redirectTo);
         }
 
         $newPassword = $request->input('password');
         if (empty($newPassword) || strlen($newPassword) < 6) {
             Session::flash('error', 'A nova senha deve ter pelo menos 6 caracteres.');
-            redirect('/admin/usuarios/' . $id . '/editar');
+            redirect($redirectTo);
         }
 
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
@@ -276,11 +292,11 @@ class AdminUserController extends Controller
         } catch (\Throwable $e) {
             error_log('[ADMIN_USERS_RESET] ' . $e->getMessage());
             Session::flash('error', 'Nao foi possivel redefinir a senha agora.');
-            redirect('/admin/usuarios/' . $id . '/editar');
+            redirect($redirectTo);
         }
 
         Session::flash('success', 'Senha redefinida com sucesso.');
-        redirect('/admin/usuarios/' . $id . '/editar');
+        redirect($redirectTo);
     }
 
     public function destroy(Request $request): void

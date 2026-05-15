@@ -11,7 +11,7 @@
 <div class="mgmt-dashboard-card settings-card settings-danger-card">
     <div class="settings-action-block settings-action-block--danger">
         <div class="settings-action-block__icon settings-action-block__icon--danger">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 22 20H2L12 3Z"></path><path d="M12 9v5"></path><path d="M12 17.5h.01"></path></svg>
         </div>
         <div class="settings-action-block__content">
             <h2>Zerar dados da Gestão para Igrejas</h2>

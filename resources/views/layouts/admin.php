@@ -49,7 +49,8 @@
         <aside class="hub-sidebar admin-sidebar" id="hub-sidebar" role="navigation" aria-label="Menu admin">
             <div class="hub-sidebar__header">
                 <a href="<?= url('/admin') ?>" class="hub-sidebar__logo">
-                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42 Admin" height="28">
+                    <img src="<?= url('/assets/img/logo.png') ?>" alt="Elo 42 Admin" class="logo-dark">
+                    <img src="<?= url('/assets/img/logo-color-new.png') ?>" alt="Elo 42 Admin" class="logo-light">
                 </a>
             </div>
 

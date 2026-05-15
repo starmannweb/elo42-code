@@ -156,7 +156,7 @@
                 </a>
                 <a href="<?= url('/hub/suporte') ?>" class="hub-nav-link <?= e($isMenuActive('suporte', $activeMenu)) ?>">
                     <span class="hub-nav-link__icon" aria-hidden="true">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.7 9.35a2.55 2.55 0 0 1 4.95.85c0 1.85-2.35 2.25-2.35 4.15"></path><path d="M12 17.8h.01"></path></svg>
                     </span>
                     Ajuda
                 </a>
@@ -206,7 +206,7 @@
                 </div>
                 <div class="hub-topbar__right">
                     <a href="<?= url('/hub/suporte') ?>" class="hub-topbar__link" style="display: flex; align-items: center; gap: 4px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.7 9.35a2.55 2.55 0 0 1 4.95.85c0 1.85-2.35 2.25-2.35 4.15"></path><path d="M12 17.8h.01"></path></svg>
                         Ajuda
                     </a>
                     <a href="<?= e($hubSiteUrl) ?>" class="hub-topbar__link">Site</a>

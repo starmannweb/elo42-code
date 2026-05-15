@@ -15,12 +15,16 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
 }
 
 .admin-sidebar .hub-sidebar__header {
-    min-height: 66px;
-    padding: 8px 18px;
+    min-height: 82px;
+    padding: 0 18px;
 }
 
 .admin-sidebar .hub-sidebar__logo img {
-    max-height: 34px;
+    max-height: 46px;
+    max-width: 150px;
+    width: auto;
+    object-fit: contain;
+    object-position: left center;
 }
 
 .admin-sidebar .hub-sidebar__nav {
@@ -68,7 +72,19 @@ body[data-hub-theme="light"] .hub-layout .hub-sidebar.admin-sidebar {
 }
 
 .hub-sidebar__user-avatar.admin-avatar {
-    background: linear-gradient(135deg, #dc2626, #f97316);
+    background: linear-gradient(135deg, var(--color-gold), #e8ca80);
+    color: #0f2149;
+}
+
+.admin-sidebar .hub-sidebar__user {
+    background: #112852;
+    border: 1px solid #243857;
+    padding: 10px 12px;
+}
+
+.admin-sidebar .hub-sidebar__user:hover {
+    background: #173763;
+    border-color: #334155;
 }
 
 .hub-topbar.admin-topbar {

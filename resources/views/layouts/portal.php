@@ -180,6 +180,7 @@
                         </div>
                     </div>
                     <button type="button" class="portal-icon-btn portal-theme-toggle" data-portal-theme-toggle aria-label="Alternar tema"><?= $icon('moon') ?></button>
+                    <a href="<?= url('/membro/configuracoes') ?>" class="portal-icon-btn portal-settings-btn" aria-label="Configura&ccedil;&otilde;es"><?= $icon('settings') ?></a>
                     <form method="POST" action="<?= url('/logout') ?>" class="portal-logout-form">
                         <?= csrf_field() ?>
                         <button type="submit" class="portal-icon-btn portal-logout-btn" aria-label="Sair"><?= $icon('logout') ?></button>

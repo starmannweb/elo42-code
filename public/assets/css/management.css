@@ -1264,13 +1264,16 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 }
 
 .mgmt-layout .hub-sidebar__footer .hub-sidebar__user {
-    padding: 8px 6px 2px;
+    padding: 10px 12px;
+    background: #112852;
+    border: 1px solid #243857;
     transition: background 0.2s ease;
     border-radius: var(--radius-md);
 }
 
 .mgmt-layout .hub-sidebar__footer .hub-sidebar__user:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: #173763;
+    border-color: #334155;
 }
 
 .mgmt-topbar-logout {
@@ -1331,8 +1334,8 @@ body[data-hub-theme="dark"] .mgmt-filter-field .form-select {
 }
 
 .mgmt-layout .hub-sidebar__user-avatar {
-    background: #112852;
-    color: #ffffff;
+    background: linear-gradient(135deg, var(--color-gold), #e8ca80);
+    color: #0f2149;
 }
 
 .mgmt-layout .hub-sidebar__user-name {
@@ -3146,8 +3149,8 @@ body[data-hub-theme="light"] .mgmt-layout .hub-nav-sublink.active {
 }
 
 body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__user-avatar {
-    background: #112852 !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--color-gold), #e8ca80) !important;
+    color: #0f2149 !important;
 }
 
 body[data-hub-theme="light"] .mgmt-layout .hub-sidebar__user-name {
@@ -3888,13 +3891,43 @@ body[data-hub-theme="dark"] .mgmt-layout .modal__close {
     color: #dbeafe;
 }
 
+body[data-hub-theme="dark"] input[type="date"],
+body[data-hub-theme="dark"] input[type="time"],
+body[data-hub-theme="dark"] input[type="datetime-local"],
+body[data-hub-theme="dark"] input[type="month"] {
+    color-scheme: dark;
+}
+
 body[data-hub-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
 body[data-hub-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
 body[data-hub-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator,
 body[data-hub-theme="dark"] input[type="month"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) brightness(3) contrast(1.1) !important;
+    filter: invert(1) brightness(3.2) contrast(1.15) !important;
     opacity: 1;
     cursor: pointer;
+}
+
+.mgmt-action-link {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 0;
+}
+
+.mgmt-action-link:hover {
+    color: var(--color-primary-dark);
+}
+
+.modal__content--wide {
+    width: min(760px, calc(100vw - 2rem));
+}
+
+.settings-action-block__icon--danger svg {
+    filter: drop-shadow(0 6px 14px rgba(239, 68, 68, 0.16));
 }
 
 body[data-hub-theme="dark"] .agenda-toolbar__legend .badge,

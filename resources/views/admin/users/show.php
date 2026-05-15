@@ -24,7 +24,32 @@ $createdAt = $user['created_at'] ?? null;
     </div>
     <div class="mgmt-header__actions" style="display:flex; gap:8px;">
         <button type="button" class="btn btn--outline" onclick="document.getElementById('modal-reset-password').style.display='flex'">Redefinir senha</button>
-        <a href="<?= url('/admin/usuarios/' . ($user['id'] ?? 0) . '/editar') ?>" class="btn btn--secondary">Editar</a>
+        <button type="button" class="btn btn--secondary" onclick="document.getElementById('modal-edit-user-detail').style.display='flex'">Editar</button>
+    </div>
+</div>
+
+<div class="modal" id="modal-edit-user-detail" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-edit-user-detail-title">
+    <div class="modal__content modal__content--wide">
+        <div class="modal__header">
+            <h2 class="modal__title" id="modal-edit-user-detail-title">Editar usu&aacute;rio</h2>
+            <button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'" aria-label="Fechar">&times;</button>
+        </div>
+        <form method="POST" action="<?= url('/admin/usuarios/' . ($user['id'] ?? 0) . '/editar') ?>" data-loading>
+            <?= csrf_field() ?>
+            <input type="hidden" name="return_to" value="<?= e('/admin/usuarios/' . ($user['id'] ?? 0)) ?>">
+            <div class="modal__body">
+                <div class="modal-grid">
+                    <div class="form-group"><label class="form-label">Nome *</label><input type="text" name="name" class="form-input" value="<?= e($user['name'] ?? '') ?>" required></div>
+                    <div class="form-group"><label class="form-label">E-mail *</label><input type="email" name="email" class="form-input" value="<?= e($user['email'] ?? '') ?>" required></div>
+                    <div class="form-group"><label class="form-label">Telefone</label><input type="text" name="phone" class="form-input" value="<?= e($user['phone'] ?? '') ?>"></div>
+                    <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active" <?= ($user['status'] ?? '') === 'active' ? 'selected' : '' ?>>Ativo</option><option value="inactive" <?= ($user['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inativo</option><option value="suspended" <?= ($user['status'] ?? '') === 'suspended' ? 'selected' : '' ?>>Suspenso</option></select></div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Salvar</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -36,6 +61,7 @@ $createdAt = $user['created_at'] ?? null;
         </div>
         <form method="POST" action="<?= url('/admin/usuarios/' . ($user['id'] ?? 0) . '/reset-password') ?>">
             <?= csrf_field() ?>
+            <input type="hidden" name="return_to" value="<?= e('/admin/usuarios/' . ($user['id'] ?? 0)) ?>">
             <div class="modal__body">
                 <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
                     Defina uma nova senha para este usuário. Ele poderá acessar o sistema imediatamente com a nova credencial.

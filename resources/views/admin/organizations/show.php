@@ -33,7 +33,36 @@ $formatDate = static function (mixed $value): string {
         </p>
     </div>
     <div class="mgmt-header__actions">
-        <a href="<?= url('/admin/organizacoes/' . ($org['id'] ?? 0) . '/editar') ?>" class="btn btn--secondary">Editar</a>
+        <button type="button" class="btn btn--secondary" onclick="document.getElementById('modal-edit-org-detail').style.display='flex'">Editar</button>
+    </div>
+</div>
+
+<div class="modal" id="modal-edit-org-detail" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-edit-org-detail-title">
+    <div class="modal__content modal__content--wide">
+        <div class="modal__header">
+            <h2 class="modal__title" id="modal-edit-org-detail-title">Editar institui&ccedil;&atilde;o</h2>
+            <button type="button" class="modal__close" onclick="this.closest('.modal').style.display='none'" aria-label="Fechar">&times;</button>
+        </div>
+        <form method="POST" action="<?= url('/admin/organizacoes/' . ($org['id'] ?? 0) . '/editar') ?>" data-loading>
+            <?= csrf_field() ?>
+            <input type="hidden" name="return_to" value="<?= e('/admin/organizacoes/' . ($org['id'] ?? 0)) ?>">
+            <div class="modal__body">
+                <div class="modal-grid">
+                    <div class="form-group modal-grid__full"><label class="form-label">Nome *</label><input type="text" name="name" class="form-input" value="<?= e($org['name'] ?? '') ?>" required></div>
+                    <div class="form-group"><label class="form-label">Raz&atilde;o social</label><input type="text" name="legal_name" class="form-input" value="<?= e($org['legal_name'] ?? '') ?>"></div>
+                    <div class="form-group"><label class="form-label">CNPJ</label><input type="text" name="cnpj" class="form-input" value="<?= e($org['cnpj'] ?? '') ?>"></div>
+                    <div class="form-group"><label class="form-label">Telefone</label><input type="tel" name="phone" class="form-input" value="<?= e($org['phone'] ?? '') ?>"></div>
+                    <div class="form-group"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active" <?= ($org['status'] ?? '') === 'active' ? 'selected' : '' ?>>Ativa</option><option value="trial" <?= ($org['status'] ?? '') === 'trial' ? 'selected' : '' ?>>Teste</option><option value="inactive" <?= ($org['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inativa</option><option value="suspended" <?= ($org['status'] ?? '') === 'suspended' ? 'selected' : '' ?>>Suspensa</option></select></div>
+                    <div class="form-group"><label class="form-label">Cidade</label><input type="text" name="city" class="form-input" value="<?= e($org['city'] ?? '') ?>"></div>
+                    <div class="form-group"><label class="form-label">Estado</label><input type="text" name="state" class="form-input" value="<?= e($org['state'] ?? '') ?>"></div>
+                    <div class="form-group modal-grid__full"><label class="form-label">Plano</label><select name="plan" class="form-select"><option value="free" <?= ($org['plan'] ?? '') === 'free' ? 'selected' : '' ?>>Gratuito</option><option value="starter" <?= ($org['plan'] ?? '') === 'starter' ? 'selected' : '' ?>>Starter</option><option value="professional" <?= ($org['plan'] ?? '') === 'professional' ? 'selected' : '' ?>>Professional</option><option value="enterprise" <?= ($org['plan'] ?? '') === 'enterprise' ? 'selected' : '' ?>>Enterprise</option></select></div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--ghost" onclick="this.closest('.modal').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn btn--primary">Salvar</button>
+            </div>
+        </form>
     </div>
 </div>
 

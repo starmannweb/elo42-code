@@ -307,6 +307,10 @@ $balance = (float) ($financial['balance'] ?? 0);
         </article>
     </section>
 
+    <div class="mgmt-section-heading mgmt-shortcuts-heading">
+        <h2 class="mgmt-section-title">Acesso R&aacute;pido</h2>
+    </div>
+
     <section class="mgmt-shortcuts" aria-label="Atalhos principais">
         <a href="<?= url('/gestao/membros') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path></svg></span><span><strong>Membros</strong><small>Cadastro e acompanhamento</small></span></a>
         <a href="<?= url('/gestao/membros/novo') ?>" class="mgmt-shortcut"><span class="mgmt-shortcut__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span><strong>Novo membro</strong><small>Adicionar servo</small></span></a>
