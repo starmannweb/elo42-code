@@ -2447,9 +2447,20 @@ body[data-hub-theme="dark"] .mgmt-card,
 body[data-hub-theme="dark"] .stat-card,
 body[data-hub-theme="dark"] .modal__content,
 body[data-hub-theme="dark"] .mgmt-calendar-shell,
-body[data-hub-theme="dark"] .mgmt-calendar-day {
+body[data-hub-theme="dark"] .mgmt-calendar-day,
+body[data-hub-theme="dark"] .mgmt-list__item {
     background: #0f172a;
     border-color: #1e293b;
+}
+
+body[data-hub-theme="dark"] .mgmt-list__item strong,
+body[data-hub-theme="dark"] .mgmt-list__date strong {
+    color: #f8fafc;
+}
+
+body[data-hub-theme="dark"] .avatar {
+    background: #1e293b;
+    color: #38bdf8;
 }
 
 body[data-hub-theme="dark"] .mgmt-title,

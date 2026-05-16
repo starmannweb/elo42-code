@@ -117,11 +117,13 @@ class GeneralController extends Controller
             'public_registration_active',
             'public_registration_slug',
             'public_registration_welcome',
+            'public_registration_fields',
         ];
 
         $prefixes = [
             'appearance_',
             'social_',
+            'campaign_pix_',
         ];
 
         foreach (array_keys($payload) as $key) {
@@ -1194,10 +1196,20 @@ class GeneralController extends Controller
     {
         try {
             $context = $this->buildBaseContext('Configurações PIX / Ofertas', 'configuracoes/pix');
+            
+            $campaigns = [];
+            try {
+                $pdo = Database::connection();
+                $stmt = $pdo->prepare("SELECT id, title, designation FROM campaigns WHERE organization_id = :org_id AND status IN ('active', 'published', 'completed') ORDER BY created_at DESC");
+                $stmt->execute(['org_id' => $this->orgId()]);
+                $campaigns = $stmt->fetchAll();
+            } catch (\Throwable $e) {}
+
             $this->view('management/settings/pix', array_merge($context, [
                 'pageTitle' => 'PIX / Ofertas — Gestão',
                 'activeTab' => 'pix',
-                'settings' => $this->settingValues()
+                'settings' => $this->settingValues(),
+                'campaigns' => $campaigns
             ]));
         } catch (\Throwable $e) {
             Session::flash('error', 'Erro ao carregar configurações: ' . $e->getMessage());

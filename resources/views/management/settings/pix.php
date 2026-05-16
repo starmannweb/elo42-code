@@ -72,6 +72,32 @@
     </div>
 </div>
 
+<?php if (!empty($campaigns)): ?>
+<div class="mgmt-panel" style="margin-top: 1.5rem;">
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--color-text-primary); margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        Chaves PIX Específicas por Campanha / Obra
+    </h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Configure chaves PIX exclusivas para direcionar ofertas de campanhas específicas. Se deixado em branco, a campanha usará a chave PIX principal configurada acima.</p>
+    
+    <div class="mgmt-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <?php foreach ($campaigns as $campaign): ?>
+            <?php 
+                $settingKey = 'campaign_pix_key_' . $campaign['id'];
+                $currentKey = $settings[$settingKey] ?? '';
+            ?>
+            <div class="form-group" style="padding: 1rem; border: 1px solid var(--color-border-light); border-radius: 8px; background: var(--color-bg-light);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <label for="<?= e($settingKey) ?>" style="margin: 0;"><strong><?= e($campaign['title']) ?></strong></label>
+                    <span class="badge badge-warning" style="font-size: 0.7rem;"><?= e($campaign['designation'] ?: 'Campanha') ?></span>
+                </div>
+                <input type="text" id="<?= e($settingKey) ?>" name="<?= e($settingKey) ?>" class="form-control" value="<?= e($currentKey) ?>" placeholder="Chave PIX exclusiva (opcional)">
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="mgmt-panel" style="margin-top: 1.5rem;">
     <h3 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--color-text-primary); margin: 0 0 1rem;">Instruções para Doação</h3>
     <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Texto de orientação exibido na página de ofertas</p>

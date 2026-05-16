@@ -285,9 +285,30 @@ class MemberPortalController extends Controller
         try {
             $context = $this->buildBaseContext('Ofertas', 'ofertas');
 
+            $campaigns = $this->campaignData();
+            $campaignKeys = [];
+            
+            if ($this->tableExists('settings')) {
+                $rows = $this->fetchAll(
+                    "SELECT `key`, value FROM settings WHERE organization_id = :org AND `key` LIKE 'campaign_pix_key_%'",
+                    ['org' => $this->orgId()]
+                );
+                foreach ($rows as $row) {
+                    $campaignKeys[(string) $row['key']] = (string) $row['value'];
+                }
+            }
+
+            foreach ($campaigns as &$c) {
+                $cKey = 'campaign_pix_key_' . $c['id'];
+                if (!empty($campaignKeys[$cKey])) {
+                    $c['pix_key'] = $campaignKeys[$cKey];
+                }
+            }
+            unset($c);
+
             $this->view('portal/offerings', array_merge($context, [
                 'pageTitle' => 'Ofertas — Portal do Membro',
-                'campaigns' => $this->campaignData(),
+                'campaigns' => $campaigns,
                 'pix' => $this->pixSettings(),
             ]));
         } catch (\Throwable $e) {

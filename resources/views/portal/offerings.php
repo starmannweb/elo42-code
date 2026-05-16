@@ -22,13 +22,17 @@
                     $raised = (float) ($campaign['raised_amount'] ?? 0);
                     $progress = (int) ($campaign['progress'] ?? 0);
                     $campaignTitle = (string) ($campaign['title'] ?? 'Campanha');
+                    
+                    // Use campaign specific PIX key if available, otherwise fallback to global
+                    $currentPixKey = trim((string) ($campaign['pix_key'] ?? $pixKey));
+                    
                     $qrPayload = implode(' | ', array_filter([
-                        $pixKey,
+                        $currentPixKey,
                         $campaignTitle,
                         (string) ($campaign['designation'] ?? ''),
                         (string) ($pix['pix_name'] ?? ''),
                     ]));
-                    $qrUrl = $pixKey !== ''
+                    $qrUrl = $currentPixKey !== ''
                         ? 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' . rawurlencode($qrPayload)
                         : '';
                 ?>
@@ -36,7 +40,7 @@
                     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
                         <div>
                             <span class="portal-status portal-status--warning"><?= e($campaign['designation'] ?? 'Campanha') ?></span>
-                            <h3 class="portal-card__title" style="margin-top:12px;"><?= e($campaign['title'] ?? 'Campanha') ?></h3>
+                            <h3 class="portal-card__title" style="margin-top:12px;"><?= e($campaignTitle) ?></h3>
                             <p class="portal-list-card__text"><?= e($campaign['description'] ?? '') ?></p>
                         </div>
                         <span class="portal-soft-icon" style="background:var(--portal-gold-soft);color:var(--portal-gold);">
@@ -61,9 +65,16 @@
                             </div>
                         </div>
                     <?php endif; ?>
-                    <div class="portal-actions" style="justify-content:flex-start;">
-                        <button class="portal-btn portal-btn--primary" type="button" data-copy-pix="<?= e($pixKey) ?>">Copiar PIX</button>
-                        <a class="portal-btn portal-btn--secondary" href="#pix">Dados de pagamento</a>
+                    <div class="portal-actions" style="justify-content:flex-start;align-items:center;">
+                        <?php if ($currentPixKey !== ''): ?>
+                            <button class="portal-btn portal-btn--primary" type="button" data-copy-pix="<?= e($currentPixKey) ?>">Copiar PIX</button>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($campaign['pix_key'])): ?>
+                            <span style="font-size:0.85rem;color:var(--portal-text-soft);font-weight:600;">Chave PIX: <?= e($campaign['pix_key']) ?></span>
+                        <?php else: ?>
+                            <a class="portal-btn portal-btn--secondary" href="#pix">Dados de pagamento</a>
+                        <?php endif; ?>
                     </div>
                 </article>
             <?php endforeach; ?>
